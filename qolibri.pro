@@ -55,7 +55,7 @@ macx {
         LIBS += -leb
     }
     i18n.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
-    i18n.extra = cp -f src/i18n/* $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
+    i18n.extra = cp -rf src/i18n/* $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
     ICON = qolibri.icns
 }
 win32 {
@@ -72,12 +72,12 @@ win32 {
     #}
     LIBS += -leb
     i18n.path = $$DESTDIR/i18n
-    i18n.extra = copy src/i18n/* $$DESTDIR/i18n
+    i18n.extra = xcopy src/i18n/* $$DESTDIR/i18n /s
     RC_FILE = qolibri.rc
 } 
 unix:!macx {
     i18n.path = $$[QT_INSTALL_TRANSLATIONS]
-    i18n.extra = cp -f src/i18n/* $$[QT_INSTALL_TRANSLATIONS]
+    i18n.extra = cp -rf src/i18n/* $$[QT_INSTALL_TRANSLATIONS]
     LIBS += -leb
 }
 
