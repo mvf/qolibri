@@ -52,7 +52,7 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
 
 #if defined (Q_WS_MAC) || defined (Q_WS_WIN)
     QString path = QCoreApplication::applicationDirPath();
-    QString fname = (dic) ? "/i18n/qolibri/dictsample_"/ : "/i18n/qolibribooksample_";
+    QString fname = (dic) ? "/i18n/qolibri/dictsample_" : "/i18n/qolibri/booksample_";
 
 #else
     QString path = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
