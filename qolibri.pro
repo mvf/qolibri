@@ -89,7 +89,7 @@ unix:!macx {
 
 i18n.files = src/i18n/*.qm
 i18n_s.files = src/i18n/qolibri/*sample*
-INSTALLS += i18n
+INSTALLS += i18n i18n_s
 
 TRANSLATIONS = src/qolibri_ja_JP.ts
 
