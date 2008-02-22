@@ -89,9 +89,9 @@ FontSetting::FontSetting(Book *pbook, QWidget *parent)
     QDialogButtonBox *bBox;
     bBox  = new QDialogButtonBox(QDialogButtonBox::Ok |
                                  QDialogButtonBox::Cancel);
-    QPushButton *save = bBox->addButton(tr("Save"),
+    QPushButton *save = bBox->addButton(tr("Save to file..."),
                                         QDialogButtonBox::ActionRole);
-    QPushButton *load = bBox->addButton(tr("Load"),
+    QPushButton *load = bBox->addButton(tr("Load from file..."),
                                         QDialogButtonBox::ActionRole);
     bBox->addButton(load, QDialogButtonBox::ActionRole);
     connect(save, SIGNAL(clicked()), this, SLOT(save()));
