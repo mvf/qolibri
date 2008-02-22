@@ -55,7 +55,7 @@ macx {
         LIBS += -leb
     }
     i18n.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
-    i18n.extra = cp -rf src/i18n/* $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
+    i18n_s.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n/qolibri
     ICON = src/qolibri.icns
 }
 win32 {
@@ -71,19 +71,27 @@ win32 {
     #    CONFIG += console
     #}
     LIBS += -leb
+
+    #
+    # Error will be occurred, when you try to "mingw32-make install".
+    # This may be BUG. (see Makefile.Debug or MakeFile.Release).
+    # Then please copy translation files to target directory manually.
+    #
     i18n.path = $$DESTDIR/i18n
-    i18n.extra = xcopy src/i18n/* $$DESTDIR/i18n /s
-    RC_FILE = qolibri.rc
+    i18n_s.path = $$DESTDIR/i18n/qolibri
+    RC_FILE = src/qolibri.rc
 } 
 unix:!macx {
     i18n.path = $$[QT_INSTALL_TRANSLATIONS]
-    i18n.extra = cp -rf src/i18n/* $$[QT_INSTALL_TRANSLATIONS]
+    i18n_s.path = $$[QT_INSTALL_TRANSLATIONS]/qolibri
     LIBS += -leb
 }
 
+i18n.files = src/i18n/*.qm
+i18n_s.files = src/i18n/qolibri/*sample*
 INSTALLS += i18n
 
-TRANSLATIONS = qolibri_ja_JP.ts
+TRANSLATIONS = src/qolibri_ja_JP.ts
 
 message(Version = $$QT_VERSION)
 macx {
