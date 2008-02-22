@@ -52,11 +52,11 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
 
 #if defined (Q_WS_MAC) || defined (Q_WS_WIN)
     QString path = QCoreApplication::applicationDirPath();
-    QString fname = (dic) ? "/i18n/dictsample_" : "/i18n/booksample_";
+    QString fname = (dic) ? "/i18n/qolibri/dictsample_"/ : "/i18n/qolibribooksample_";
 
 #else
     QString path = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-    QString fname = (dic) ? "/dictsample_" : "/booksample_";
+    QString fname = (dic) ? "/qolibri/dictsample_" : "/qolibri/booksample_";
 #endif
     QFile file(path + fname + QLocale::system().name());
     if (!file.exists()) {
@@ -87,9 +87,9 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
     QDialogButtonBox *bBox = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel |
         QDialogButtonBox::RestoreDefaults | QDialogButtonBox::Reset);
-    QPushButton *save = bBox->addButton(tr("Save"),
+    QPushButton *save = bBox->addButton(tr("Save to file..."),
                                         QDialogButtonBox::ActionRole);
-    QPushButton *load = bBox->addButton(tr("Load"),
+    QPushButton *load = bBox->addButton(tr("Load from file..."),
                                         QDialogButtonBox::ActionRole);
     QPushButton *aply = bBox->addButton(tr("Test"),
                                         QDialogButtonBox::ActionRole);
