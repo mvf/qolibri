@@ -55,7 +55,9 @@ macx {
         LIBS += -leb
     }
     i18n.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
+    i18n.extra = cp -rf src/i18n/*.qm $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
     i18n_s.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n/qolibri
+    i18n_s.extra = cp -rf src/i18n/qolibri/*sample* $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n/qolibri
     ICON = src/qolibri.icns
 }
 win32 {
@@ -79,16 +81,18 @@ win32 {
     #
     i18n.path = $$DESTDIR/i18n
     i18n_s.path = $$DESTDIR/i18n/qolibri
+    i18n.files = src/i18n/*.qm
+    i18n_s.files = src/i18n/qolibri/*sample*
     RC_FILE = src/qolibri.rc
 } 
 unix:!macx {
     i18n.path = $$[QT_INSTALL_TRANSLATIONS]
+    i18n.extra = cp -rf src/i18n/*.qm $$[QT_INSTALL_TRANSLATIONS]
     i18n_s.path = $$[QT_INSTALL_TRANSLATIONS]/qolibri
+    i18n_s.extra = cp -rf src/i18n/qolibri/*sample* $$[QT_INSTALL_TRANSLATIONS]/qolibri
     LIBS += -leb
 }
 
-i18n.files = src/i18n/*.qm
-i18n_s.files = src/i18n/qolibri/*sample*
 INSTALLS += i18n i18n_s
 
 TRANSLATIONS = src/qolibri_ja_JP.ts

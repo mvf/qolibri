@@ -50,9 +50,13 @@ macx {
     } else {
         LIBS += -leb
     }
-    i18n.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
-    i18n_s.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n/qolibri
+
     ICON = qolibri.icns
+
+    i18n.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
+    i18n.extra = cp -rf i18n/*.qm $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
+    i18n_s.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n/qolibri
+    i18n_s.extra = cp -rf i18n/qolibri/*sample* $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n/qolibri
 }
 win32 {
     INCLUDEPATH += "C:\Program Files\EB Library\include"
@@ -67,14 +71,22 @@ win32 {
     #    CONFIG += console
     #}
     LIBS += -leb
+    RC_FILE = qolibri.rc
+
     i18n.path = $$DESTDIR/i18n
     i18n_s.path = $$DESTDIR/i18n/qolibri
-    RC_FILE = qolibri.rc
+    i18n.files = src/i18n/*.qm
+    i18n_s.files = src/i18n/qolibri/*sample*
+
 } 
 unix:!macx {
-    i18n.path = $$[QT_INSTALL_TRANSLATIONS]
-    i18n_s.path = $$[QT_INSTALL_TRANSLATIONS]/qolibri
+
     LIBS += -leb
+
+    i18n.path = $$[QT_INSTALL_TRANSLATIONS]
+    i18n.extra = cp -rf i18n/*.qm $$[QT_INSTALL_TRANSLATIONS]
+    i18n_s.path = $$[QT_INSTALL_TRANSLATIONS]/qolibri
+    i18n_s.extra = cp -rf i18n/qolibri/*sample* $$[QT_INSTALL_TRANSLATIONS]/qolibri
 }
 
 INSTALLS += i18n i18n_s
