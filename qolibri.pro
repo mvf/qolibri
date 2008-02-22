@@ -56,7 +56,7 @@ macx {
     }
     i18n.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
     i18n.extra = cp -rf src/i18n/* $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
-    ICON = qolibri.icns
+    ICON = src/qolibri.icns
 }
 win32 {
     INCLUDEPATH += "C:\Program Files\EB Library\include"
