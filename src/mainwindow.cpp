@@ -924,7 +924,8 @@ void MainWindow::setBookFont(Book *book)
         QHash <QString, QString> *flist =  dlg.newAlternateFontList();
         foreach(Group * g, groupList) {
             foreach(Book * b, g->bookList()) {
-                if (b->path() != book->path()) continue;
+                if (b->path() != book->path() ||
+                    b->bookNo() != book->bookNo()) continue;
 
                 if (del_flag) {
                     b->removeFontList();
