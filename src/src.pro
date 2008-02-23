@@ -83,6 +83,9 @@ unix:!macx {
 
     LIBS += -leb
 
+    target.path = /usr/bin
+    target.files = bin/qolibri
+    INSTALLS += target
     i18n.path = $$[QT_INSTALL_TRANSLATIONS]
     i18n.extra = cp -rf i18n/*.qm $$[QT_INSTALL_TRANSLATIONS]
     i18n_s.path = $$[QT_INSTALL_TRANSLATIONS]/qolibri
