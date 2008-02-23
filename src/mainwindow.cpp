@@ -89,6 +89,10 @@ MainWindow::MainWindow()
     timerDock->start(500);
 #elif defined (Q_WS_WIN)
     showDock();
+#elif defined (Q_WS_MAC)
+    if (!toggleDockAct->isChecked()) {
+        groupDock->hide();
+    }
 #endif
 
     if (groupList[0]->bookList().count() == 0) {
