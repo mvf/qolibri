@@ -35,7 +35,7 @@ Q_IMPORT_PLUGIN(qjpcodecs)
 Q_IMPORT_PLUGIN(qjpeg)
 #endif
 
-#if defined (USE_PNG_FOR_FONT) && !defined (USE_PNG_FOR_FONT)
+#if defined (USE_STATIC_PLUGIN) && defined (USE_GIF_FOR_FONT)
 Q_IMPORT_PLUGIN(qgif)
 #endif
 
