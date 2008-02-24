@@ -121,6 +121,7 @@ private slots:
 #if defined (Q_WS_X11) || defined (Q_WS_WIN)
     void showDock();
 #endif
+    void aboutQolibri();
 
 
 private:

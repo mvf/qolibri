@@ -223,7 +223,8 @@ void MainWindow::createMenus()
     toggleRubyAct->setCheckable(true);
 
     QMenu *hmenu = menuBar()->addMenu(tr("&Help"));
-    hmenu->addAction(tr("about QT"), qApp, SLOT(aboutQt()));
+    hmenu->addAction(tr("about &QT"), qApp, SLOT(aboutQt()));
+    hmenu->addAction(tr("about Q&oribri"), this, SLOT(aboutQolibri()));
 }
 
 void MainWindow::createToolBars()
@@ -1433,4 +1434,18 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
     emit nowBusy(false);
 
     return eb.fontCashePath();
+}
+
+void MainWindow::aboutQolibri()
+{
+    QString msg = tr("<h2>qolibri</h2><br/><br/>"
+                  "EPWING Dictioanry/Book Viewer -- version 1.0.3<br/><br/>"
+                  "Home Page : <a href='http://qolibri.sourceforge.jp/'>"
+                  "http://qolibri.sourceforge.jp/</a><br/>"
+                  "Latest Version : <a href='http://sourceforge.jp/projects/qolibri/'>"
+                  "http://sourceforge.jp/projects/qolibri/</a><br/>");
+                 
+
+    QMessageBox::about(this, "qolibri", msg );
+
 }
