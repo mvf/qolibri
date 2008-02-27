@@ -218,7 +218,7 @@ QString ReferencePopup::browserText(Book *book, int page, int offset)
     EBook eb;
 
     eb.setBook(book->path(), book->bookNo());
-    eb.initSearch(16, book->fontList());
+    eb.initSearch(16, book->fontList(), CONF->indentOffset);
     bookBrowser->setSearchPaths(QStringList() << eb.cashePath);
     QString text = eb.text(page, offset);
     QString ttl = QString();
@@ -531,6 +531,10 @@ bool PageWidget::getText(EBook *eb, int index, QString *head_l, QString *head_v,
         h_l.replace("&lt;", "<");
         h_l.replace("&gt;", ">");
         h_l.replace("&amp;", "&");
+        if (h_l.contains('&')) {
+            QRegExp r("&.*;"); r.setMinimal(true);
+            h_l.replace(r, "?");
+        }
     }
     *head_l = h_l;
     *head_v = h_v;
@@ -594,7 +598,8 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
         retStatus = NO_BOOK;
         return;
     }
-    eb.initSearch(bookBrowser->fontSize(), book->fontList(), method.ruby);
+    eb.initSearch(bookBrowser->fontSize(), book->fontList(),
+                  CONF->indentOffset,  method.ruby);
 
     QString mstr = "<b>";
 
@@ -697,7 +702,7 @@ void MenuPage::fullMenuPage()
         retStatus = NO_BOOK;
     }
     eb.initSearch(bookBrowser->fontSize(), method_.bookReader->fontList(),
-                  method_.ruby);
+                  CONF->indentOffset, method_.ruby);
     int page;
     int offset;
     if (!eb.menu(&page, &offset)) {
@@ -742,7 +747,7 @@ void MenuPage::selectMenuPage(int index)
     EBook eb(HookMenu);
     eb.setBook(method_.bookReader->path(), method_.bookReader->bookNo());
     eb.initSearch(bookBrowser->fontSize(), method_.bookReader->fontList(),
-                  method_.ruby);
+                  CONF->indentOffset, method_.ruby);
     int page;
     int offset;
     eb.menu(&page, &offset);
@@ -912,7 +917,7 @@ RET_SEARCH WholePage::readPage(int page)
         return NO_BOOK;
     }
     eb.initSearch(bookBrowser->fontSize(), method_.bookReader->fontList(),
-                  method_.ruby);
+                  CONF->indentOffset, method_.ruby);
     bookBrowser->addBookList(method_.bookReader);
 
     QTreeWidgetItem *current_item = top_tree;
@@ -1075,7 +1080,8 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
 
         if ( eb.setBook(book->path(), book->bookNo(), book_count) < 0) continue;
 
-        eb.initSearch(bookBrowser->fontSize(), book->fontList(), method.ruby);
+        eb.initSearch(bookBrowser->fontSize(), book->fontList(),
+                      CONF->indentOffset, method.ruby);
 
         int hit_num = 0;
         if (method.direction == KeywordSearch) {
@@ -1222,7 +1228,8 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
             eb.unsetBook();
             continue;
         }
-        eb.initSearch(bookBrowser->fontSize(), book->fontList(), method.ruby);
+        eb.initSearch(bookBrowser->fontSize(), book->fontList(),
+                      CONF->indentOffset, method.ruby);
         bookBrowser->addBookList(book);
         book_count++;
 
