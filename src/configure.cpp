@@ -31,6 +31,7 @@ const int historyMax_Def = 500;
 const int limitImageNum_Def = 700;
 const int limitBrowserChar_Def = 1000000;
 const int limitMenuHit_Def = 1000;
+const int indentOffset_Def = 30;
 
 #if defined (Q_WS_MAC)
 const char* waveProcess_Def = "";
@@ -79,6 +80,7 @@ void Configure::load()
     limitImageNum = conf.value("limit_image", limitImageNum_Def).toInt();
     limitBrowserChar = conf.value("limit_char", limitBrowserChar_Def).toInt();
     limitMenuHit = conf.value("limit_menu", limitMenuHit_Def).toInt();
+    indentOffset = conf.value("indent_offset", indentOffset_Def).toInt();
     maxLimitBookHit = conf.value("limt_book", maxLimitBookHit_Def).toInt();
     maxLimitTotalHit = conf.value("limit_total", maxLimitTotalHit_Def).toInt();
     stepBookHitMax = conf.value("step_book", stepBookHitMax_Def).toInt();
@@ -112,6 +114,7 @@ void Configure::save()
     conf.setValue("limit_menu", limitMenuHit);
     conf.setValue("limt_book", maxLimitBookHit);
     conf.setValue("limit_total", maxLimitTotalHit);
+    conf.setValue("indent_offset", indentOffset);
     conf.setValue("step_book", stepBookHitMax);
     conf.setValue("step_total", stepTotalHitMax);
     conf.setValue("browser_font", browserFont);
@@ -137,6 +140,7 @@ void Configure::setDefault()
     limitImageNum = limitImageNum_Def;
     limitBrowserChar = limitBrowserChar_Def;
     limitMenuHit = limitMenuHit_Def;
+    indentOffset = indentOffset_Def;
     maxLimitBookHit = maxLimitBookHit_Def;
     maxLimitTotalHit = maxLimitTotalHit_Def;
     stepBookHitMax = stepBookHitMax_Def;

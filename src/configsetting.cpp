@@ -48,6 +48,13 @@ ConfigSetting::ConfigSetting(QWidget *parent)
             historyBox->setSingleStep(10);
             g->addWidget(historyBox, 0, 1);
         }
+        {
+            g->addWidget(new QLabel(tr("Indent left offset")), 1, 0);
+            indentOffsetBox = new QSpinBox();
+            indentOffsetBox->setRange(0, 100);
+            indentOffsetBox->setSingleStep(10);
+            g->addWidget(indentOffsetBox, 1, 1);
+        }
         vl->addLayout(g);
     } {
         QGridLayout *g = new QGridLayout;
@@ -205,6 +212,7 @@ void ConfigSetting::reset()
     highlightCheck->setChecked(d->highlightMatch);
     beepSoundCheck->setChecked(d->beepSound);
     historyBox->setValue(d->historyMax);
+    indentOffsetBox->setValue(d->indentOffset);
     waveProcEdit->setText(d->waveProcess);
     mpegProcEdit->setText(d->mpegProcess);
     browserProcEdit->setText(d->browserProcess);
@@ -227,6 +235,7 @@ void ConfigSetting::update()
     d->highlightMatch = highlightCheck->isChecked();
     d->beepSound = beepSoundCheck->isChecked();
     d->historyMax = historyBox->value();
+    d->indentOffset = indentOffsetBox->value();
     d->waveProcess = waveProcEdit->text();
     d->mpegProcess = mpegProcEdit->text();
     d->browserProcess = browserProcEdit->text();

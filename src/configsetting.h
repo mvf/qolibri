@@ -50,6 +50,7 @@ private:
     QSpinBox *limitMenuBox;
     QSpinBox *limitMaxBookBox;
     QSpinBox *limitMaxTotalBox;
+    QSpinBox *indentOffsetBox;
     QSpinBox *stepBookHitBox;
     QSpinBox *stepTotalHitBox;
     QLineEdit *waveProcEdit;

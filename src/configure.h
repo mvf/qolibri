@@ -45,6 +45,7 @@ public:
     int limitImageNum;
     int limitBrowserChar;
     int limitMenuHit;
+    int indentOffset;
     QString dictSheet;
     QString bookSheet;
     QString statusBarSheet;

@@ -37,7 +37,7 @@
 <context>
     <name>BookView</name>
     <message>
-        <location filename="bookview.cpp" line="1345"/>
+        <location filename="bookview.cpp" line="1352"/>
         <source>Close page</source>
         <translation>ページを閉じる</translation>
     </message>
@@ -45,7 +45,7 @@
 <context>
     <name>ConfigSetting</name>
     <message>
-        <location filename="configsetting.cpp" line="151"/>
+        <location filename="configsetting.cpp" line="158"/>
         <source>Preference Settings</source>
         <translation>オプション設定</translation>
     </message>
@@ -65,89 +65,94 @@
         <translation>検索履歴最大数</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="55"/>
+        <location filename="configsetting.cpp" line="62"/>
         <source>External Program</source>
         <translation>外部プログラム</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="57"/>
+        <location filename="configsetting.cpp" line="64"/>
         <source>Sound(wave)</source>
         <translation>音声(wave)</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="65"/>
+        <location filename="configsetting.cpp" line="72"/>
         <source>Movie(mpeg)</source>
         <translation>動画(mpeg)</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="73"/>
+        <location filename="configsetting.cpp" line="80"/>
         <source>WEB Browser</source>
         <translation>ウェブブラウザー</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="81"/>
+        <location filename="configsetting.cpp" line="88"/>
         <source>Google URL</source>
         <translation>Google URL</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="85"/>
+        <location filename="configsetting.cpp" line="92"/>
         <source>Wikipedia URL</source>
         <translation>ウィキペディア URL</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="89"/>
+        <location filename="configsetting.cpp" line="96"/>
         <source>User Define URL</source>
         <translation>ユーザ定義のURL</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="98"/>
+        <location filename="configsetting.cpp" line="105"/>
         <source>Limit of number of Image</source>
         <translation>表示可能な画像数の限度</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="104"/>
+        <location filename="configsetting.cpp" line="111"/>
         <source>Limit of characters</source>
         <translation>表示可能な文字数の限度</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="110"/>
+        <location filename="configsetting.cpp" line="117"/>
         <source>Limit of Menu Items</source>
         <translation>表示メニュー項目の限度数</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="116"/>
+        <location filename="configsetting.cpp" line="123"/>
         <source>Limit of Hit Max per Book</source>
         <translation>最大検索数の限度(辞書)</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="122"/>
+        <location filename="configsetting.cpp" line="129"/>
         <source>Limit of Total Hit Max</source>
         <translation>最大検索数の限度 (全体)</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="128"/>
+        <location filename="configsetting.cpp" line="135"/>
         <source>Step of Hit Max per Book</source>
         <translation>最大検索数(辞書)のステップ数</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="134"/>
+        <location filename="configsetting.cpp" line="141"/>
         <source>Step of Total Hit Max</source>
         <translation>最大検索数(全体)のステップ数</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="140"/>
+        <location filename="configsetting.cpp" line="147"/>
         <source>Change Carefully these parameter</source>
         <translation>設定の変更には注意が必要です</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="159"/>
+        <location filename="configsetting.cpp" line="166"/>
         <source>Reset</source>
         <translation>リセット</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="178"/>
+        <location filename="configsetting.cpp" line="185"/>
         <source>Set Wave Player</source>
         <translation>ミュージック(音声)プレイヤー</translation>
+    </message>
+    <message>
+        <location filename="configsetting.cpp" line="52"/>
+        <source>Indent left offset</source>
+        <translation>本文のインデント・オフセット</translation>
     </message>
 </context>
 <context>
@@ -273,7 +278,7 @@
 <context>
     <name>InfoPage</name>
     <message>
-        <location filename="bookview.cpp" line="614"/>
+        <location filename="bookview.cpp" line="619"/>
         <source>Title: &lt;b&gt;%1&lt;/b&gt;
 Search Method: %2</source>
         <translation>タイトル:&lt;b&gt;%1&lt;/b&gt;
@@ -676,7 +681,7 @@ Search Method: %2</source>
         <translation>検索入力エリアにコピー</translation>
     </message>
     <message>
-        <location filename="bookview.cpp" line="602"/>
+        <location filename="bookview.cpp" line="607"/>
         <source>Text</source>
         <translation>テキスト</translation>
     </message>
