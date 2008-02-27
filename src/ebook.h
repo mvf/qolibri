@@ -42,14 +42,14 @@ public:
         eb_unset_subbook(&book);
         //eb_finalize_book(&book);
     }
-    void initSearch(int fsize, QHash<QString, QString> *flist, bool ruby = true)
+    void initSearch(int fsize, QHash<QString, QString> *flist, 
+                    int indent_offset = 50, bool ruby = true)
     {   
         fontSize_ = fsize;                                                
         fontList_ = flist;
+        indentOffset_ = indent_offset;
         ruby_ = ruby;
     }
-
-
 
     QString path();
     QString copyright();
@@ -113,6 +113,7 @@ public:
 
     QByteArray begin_decoration(int deco_code);
     QByteArray end_decoration();
+    QByteArray set_indent(int val);
     QByteArray begin_reference();
     QByteArray end_reference(int page, int offset);
     QByteArray begin_candidate();
@@ -216,7 +217,9 @@ private:
     int imageCount_;
     int fontSize_;
     int refPosition_;
+    int indentOffset_;
     bool ruby_;
+    bool indented_;
 
     int subAppendixCount;
     EB_Position seekPosition;

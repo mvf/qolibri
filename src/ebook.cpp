@@ -41,7 +41,8 @@ QString EBook::cashePath = QDir::homePath() + "/.ebcashe";
 QTextCodec * EBook::codecEuc;
 
 EBook::EBook(HookMode hmode)
-    : QObject(), fontList_(NULL), imageCount_(0), fontSize_(16)
+    : QObject(), fontList_(NULL), imageCount_(0), fontSize_(16),
+      indentOffset_(0), indented_(false)
 {
     eb_initialize_book(&book);
     eb_initialize_appendix(&appendix);
@@ -600,6 +601,23 @@ QByteArray EBook::end_decoration()
             //qWarning() << "Unrecognized decoration code" << deco_code;
     }
     return "</i>";
+}
+
+QByteArray EBook::set_indent(int val)
+{
+    QByteArray ret = QByteArray();
+    if (val > 2){
+        int mleft = indentOffset_ + (val * fontSize_);
+        ret += "</pre><pre style=\"margin-left: " +
+               QByteArray().setNum(mleft) + "px; \">";
+        indented_ = true;
+    } else {
+        if (indented_) {
+            ret = "</pre><pre>";
+            indented_ = false;
+        }
+    }
+    return ret;
 }
 
 QByteArray EBook::narrow_font(int code)

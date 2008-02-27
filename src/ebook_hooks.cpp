@@ -23,8 +23,6 @@
 #include "ebook_hooks.h"
 #include <eb/eb.h>
 
-static bool indented = false;
-
 /*
    EB_Error_Code hook_newline(EB_Book *book, EB_Appendix*, void*,
                            EB_Hook_Code, int, const unsigned int*)
@@ -97,23 +95,12 @@ EB_Error_Code hook_wide_jisx0208(EB_Book *book, EB_Appendix*, void*,
    }
  */
 
-EB_Error_Code hook_set_indent(EB_Book *book, EB_Appendix*, void *,
+EB_Error_Code hook_set_indent(EB_Book *book, EB_Appendix*, void *container,
                                    EB_Hook_Code, int, const unsigned int *argv)
 {
+    EBook *eb = static_cast<EBook*>(container);
 
-    if (indented) {
-        eb_write_text_string(book, "</span>");
-        qDebug() << "</span>";
-        indented = false;
-    }
-    if (argv[1] > 1) {
-        QByteArray pre = "<span style=\"text-indent: " + QByteArray().setNum((argv[1])*16) + "px;\">";
-        eb_write_text_string(book, pre);
-        qDebug() << pre;
-        indented = true;
-    }
-    QByteArray p = "(" + QByteArray().setNum(argv[1]) + ")";
-    eb_write_text_string(book, p);
+    eb_write_text_string(book, eb->set_indent(argv[1]));
     return 0;
 }
 
