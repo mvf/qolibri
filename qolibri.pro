@@ -45,13 +45,13 @@ DESTDIR = ./bin
 #DEFINES += USE_GIF_FOR_FONT
 
 macx {
-    !exists($$[QT_INSTALL_LIBS]/QtCore.framework) {
+    !exists($$[QT_INSTALL_LIBS]/QtCore.framework){
         CONFIG += static
         QTPLUGIN += qjpcodecs qjpeg
         DEFINES += USE_STATIC_PLUGIN
         LIBS += /usr/lib/libeb.a
         LIBS += -dead_strip
-    } else {
+    }    else {
         LIBS += -leb
     }
     i18n.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
@@ -63,7 +63,7 @@ macx {
 win32 {
     INCLUDEPATH += "C:\Program Files\EB Library\include"
     LIBS += -L"C:\Program Files\EB Library\lib"
-    !exists($$[QT_INSTALL_LIBS]/QtCore4.dll) {
+    !exists($$[QT_INSTALL_LIBS]/QtCore4.dll){
         CONFIG += static
         QTPLUGIN += qjpcodecs qjpeg
         DEFINES += USE_STATIC_PLUGIN
@@ -84,17 +84,17 @@ win32 {
     i18n.files = src/i18n/*.qm
     i18n_s.files = src/i18n/qolibri/*sample*
     RC_FILE = src/qolibri.rc
-} 
-unix:!macx {
-    target.path = /usr/bin
-    target.files = bin/qolibri
-    INSTALLS += target
-    i18n.path = $$[QT_INSTALL_TRANSLATIONS]
-    i18n.extra = cp -rf src/i18n/*.qm $$[QT_INSTALL_TRANSLATIONS]
-    i18n_s.path = $$[QT_INSTALL_TRANSLATIONS]/qolibri
-    i18n_s.extra = cp -rf src/i18n/qolibri/*sample* $$[QT_INSTALL_TRANSLATIONS]/qolibri
-    LIBS += -leb
 }
+unix : !macx {
+        target.path = /usr/bin
+        target.files = bin/qolibri
+        INSTALLS += target
+        i18n.path = $$[QT_INSTALL_TRANSLATIONS]
+        i18n.extra = cp -rf src/i18n/*.qm $$[QT_INSTALL_TRANSLATIONS]
+        i18n_s.path = $$[QT_INSTALL_TRANSLATIONS]/qolibri
+        i18n_s.extra = cp -rf src/i18n/qolibri/*sample* $$[QT_INSTALL_TRANSLATIONS]/qolibri
+        LIBS += -leb
+    }
 
 INSTALLS += i18n i18n_s
 
@@ -103,7 +103,7 @@ TRANSLATIONS = src/qolibri_ja_JP.ts
 message(Version = $$QT_VERSION)
 macx {
     message(Translations = ./src/bin/qolibri.app/Contents/MacOS/i18n)
-} else {
+}else {
     message(Translations = $$[QT_INSTALL_TRANSLATIONS])
 }
 message(Config = $$CONFIG)
@@ -113,3 +113,5 @@ message(Libs = $$LIBS)
 message(Include Path = $$INCLUDEPATH)
 message(Installs = $$INSTALLS)
 message(Target  = $$TARGET)
+DISTFILES += README.txt
+
