@@ -1,15 +1,17 @@
 qolibri - EPWING Dictionary/Book Viewer
 ---------------------------------------
 
-qolibri is a viewer application of EPWING Dictionary/Book 
+qolibri is a viewer application of EPWING-Formatted Dictionary/Book.
+EPWING is a format of Dictionary that regulated by JIS(Japanese Industrial
+Standard).
 
-EPWING is a format of Dictionary that regulated by JIS(Japanese Industrlal Standard).
 This application written in C++ around the Qt4 toolkit and using the library of
-dictionary processing - eblib. These development environment allows to deploy application for several platforms which are available Qt toolkit, such as Linux, Windows, MacOS X
+epwing dictionary processing - eblib.
+This development environment allows to deploy application for several platforms
+which are available Qt toolkit, such as Linux, Windows, MacOS X
 
 Home Page :  http://sourceforge.jp/projects/qolibri/
-
-License : GNU Public License (GPL)
+License   : GNU Public License (GPL)
 
 
 
@@ -17,13 +19,12 @@ License : GNU Public License (GPL)
 
 This software requires following libraries for building and runnning.
 
-Qt4 - C++ class library and tools for crossplatform development and
-      internationalization
-      http://www.trolltech.org/products/qt/
+Qt4   - C++ class library and tools for crossplatform development and
+        internationalization
+        http://www.trolltech.org/products/qt/
 
-eblib - Library for EPWIND formatted dictionary.
+eblib - Library for EPWING formatted dictionary.
         http://www.sra.co.jp/people/m-kasahr/
-
 
 
 
@@ -32,21 +33,23 @@ eblib - Library for EPWIND formatted dictionary.
 Linux : 
   qmake
   make
-  make install     | this requires root privilage
-                   | currently binary file will be copied to /usr/bin and
-                   | translation files to applopriate path that Qt4 settled.
+  make install     | This requires root privilage.
+                   | Currently, binary file will be copied to "/usr/bin" and
+                   | translation files will be copied to applopriate path that
+                   | Qt4 had settled.
 
 MacOS X :
   qmake
   make
-  make install      | this doesn't require root privilage 
-                    | simply translation files(./src/i18n/) copied to
-                    | following directory
-                    | ./bin/qolibri.app/Contents/MaxOSX.
+  make install      | This doesn't require root privilage.
+                    | Simply, translation files(./src/i18n/) will be copied to
+                    | following directory.
+                    | "./bin/qolibri.app/Contents/MaxOSX."
 
 Windows :
   qmake 
   mingw32-make
-  # please copy these directory to ./bin manually 
-  # ./src/i18n
-  # then ./bin directory contains qolibri.exe i18n/
+  # please copy following directory to "./bin" manually.
+  #    ./src/i18n
+  # then "./bin" directory contains "qolibri.exe",  "i18n/"
+
