@@ -202,9 +202,18 @@ signals:
     void statusRequested(const QString &str);
     void selectionRequested(const QString& str);
 
+private:
+    void scrollTo(QTreeWidgetItem *to);
 
 private slots:
-    void scrollTo(QTreeWidgetItem *to, QTreeWidgetItem *);
+    void scrollTo(QTreeWidgetItem *to, int)
+    {
+        scrollTo(to);
+    }
+    void scrollTo(QTreeWidgetItem *to, QTreeWidgetItem*)
+    {
+        scrollTo(to);
+    }
     void changeFont(const QFont &font);
     void popupSlide(const QPoint &pos);
 };

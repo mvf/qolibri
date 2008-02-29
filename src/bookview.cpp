@@ -363,6 +363,9 @@ PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
     connect(bookTree,
             SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
             this, SLOT(scrollTo(QTreeWidgetItem*,QTreeWidgetItem*)));
+    connect(bookTree,
+            SIGNAL(itemPressed(QTreeWidgetItem*,int)),
+            this, SLOT(scrollTo(QTreeWidgetItem*,int)));
     connect(bookTree, SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(popupSlide(QPoint)));
 
@@ -378,7 +381,7 @@ bool PageWidget::checkStop()
     return stopFlag;
 }
 
-void PageWidget::scrollTo(QTreeWidgetItem *to, QTreeWidgetItem *)
+void PageWidget::scrollTo(QTreeWidgetItem *to)
 {
     if (to && to->text(1).left(4) != "PAGE" ) {
         bookBrowser->scrollToAnchor(to->text(1));
