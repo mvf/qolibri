@@ -113,9 +113,7 @@ private slots:
     void execError(QProcess::ProcessError);
     void checkSound();
     void stopSound();
-#if !defined (Q_WS_WIN)
     void clearCashe();
-#endif
     void closedDock();
 
 #if defined (Q_WS_X11) || defined (Q_WS_WIN)
