@@ -213,10 +213,8 @@ void MainWindow::createMenus()
             this, SLOT(changeOptDirection(QAction*)));
 
 
-#if !defined (Q_WS_WIN)
     smenu->addAction(QIcon(":/images/delete.png"), tr("&Clear Cashe"),
                      this, SLOT(clearCashe()));
-#endif
     toggleRubyAct = smenu->addAction(QIcon(":/images/ruby.png"),
                                      tr("&Suppress Subscription"), this,
                                      SLOT(toggleRuby()));
@@ -1353,7 +1351,6 @@ void MainWindow::setAppFont()
     }
 }
 
-#if !defined (Q_WS_WIN)
 void MainWindow::clearCashe()
 {
     int ret = QMessageBox::question(this, Program,
@@ -1363,14 +1360,14 @@ void MainWindow::clearCashe()
                                     QMessageBox::Yes | QMessageBox::No);
 
     if (ret == QMessageBox::Yes) {
-//#ifdef Q_WS_WIN
-//        execProcess("del /F /Q\ " + EBook::cashePath);
-//#else
-        execProcess("rm -rf " + EBook::cashePath);
-//#endif
+#ifdef Q_WS_WIN
+        execProcess("cmd.exe /c rmdir /s /q \"" +
+		    EBook::cashePath.toLocal8Bit() + "\"" );
+#else
+        execProcess("rm -rf " + EBook::cashePath.toLocal8Bit());
+#endif
     }
 }
-#endif
 
 void MainWindow::setConfig()
 {
