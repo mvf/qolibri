@@ -222,7 +222,7 @@ void MainWindow::createMenus()
 
     QMenu *hmenu = menuBar()->addMenu(tr("&Help"));
     hmenu->addAction(tr("about &QT"), qApp, SLOT(aboutQt()));
-    hmenu->addAction(tr("about Q&oribri"), this, SLOT(aboutQolibri()));
+    hmenu->addAction(tr("about q&oribri"), this, SLOT(aboutQolibri()));
 }
 
 void MainWindow::createToolBars()
