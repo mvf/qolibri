@@ -581,8 +581,8 @@ Search Method: %2</source>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="227"/>
-        <source>about Q&amp;oribri</source>
-        <translation>Q&amp;oribriについて</translation>
+        <source>about q&amp;oribri</source>
+        <translation>q&amp;oribriについて</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1446"/>
