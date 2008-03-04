@@ -410,10 +410,11 @@ void PageWidget::popupSlide(const QPoint &pos)
 
 QString PageWidget::emphasize(const QString &str, const QString &word)
 {
+    enum SkipMode { NO_SKIP=0, SKIP_TAG=0x01, SKIP_ENT=0x02 };
     QString ret = QString();
     int slen = str.length();
     int wlen = word.length();
-    bool skip = false;
+    unsigned int skip = NO_SKIP;
 
     for (int i = 0; i < slen; i++) {
         QChar a = str[i];
@@ -422,13 +423,20 @@ QString PageWidget::emphasize(const QString &str, const QString &word)
             continue;
         }
         if (a == '<') {
-            skip = true;
+            skip |= SKIP_TAG;
+            ret += a;
+            continue;
+        }
+        if (a == '&') {
+            skip |= SKIP_ENT;
             ret += a;
             continue;
         }
         if (skip) {
             if (a == '>')
-                skip = false;
+                skip &= ~SKIP_TAG;
+	    else if (a == ';')
+		skip &= ~SKIP_ENT;
             ret += a;
             continue;
         }

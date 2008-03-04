@@ -484,7 +484,13 @@ QString EBook::text(int page, int offset, bool hflag)
             int sp;
             while((sp = ret.indexOf("<sub>")) > 0) {
                 int ep = ret.indexOf("</sub>");
-                if (ep < 0) break;
+                if (ep < 0 || ep <= sp) {
+                    qWarning() << "Data Error : not match <sub></sub>"
+			       << sp << ep;
+                    if (ep < 0)
+                        break;
+                    sp = ep;
+                }
                 ret.remove(sp, ep-sp+6);
             }
         }
@@ -584,8 +590,8 @@ QByteArray EBook::begin_decoration(int deco_code)
         return "<i>";
     else if (deco_code == 3)
         return "<b>";
-    else
-        qWarning() << "Unrecognized decoration code" << deco_code;
+    //else
+    //    qWarning() << "Unrecognized decoration code" << deco_code;
     return "<i>";
 }
 
