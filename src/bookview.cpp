@@ -410,7 +410,7 @@ void PageWidget::popupSlide(const QPoint &pos)
 
 QString PageWidget::emphasize(const QString &str, const QString &word)
 {
-    enum SkipMode { NO_SKIP=0, SKIP_TAG=0x01, SKIP_ENT=0x02 };
+    enum { NO_SKIP=0, SKIP_TAG=0x01, SKIP_ENT=0x02 };
     QString ret = QString();
     int slen = str.length();
     int wlen = word.length();
