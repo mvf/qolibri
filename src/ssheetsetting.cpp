@@ -47,7 +47,7 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
 #ifdef Q_WS_MAC
     setWindowFlags(Qt::Sheet);
 #else
-    setWindowTitle(tr("Browser StyleSheet Setting"));
+    setWindowTitle(tr("Browser style sheet setting"));
 #endif
 
 #if defined (Q_WS_MAC) || defined (Q_WS_WIN)
@@ -70,7 +70,7 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
     }
     QVBoxLayout *v = new QVBoxLayout;
 #ifdef Q_WS_MAC
-    TitleLabel *l = new TitleLabel(tr("Browser StyleSheet Setting"));
+    TitleLabel *l = new TitleLabel(tr("Browser style sheet setting"));
     v->addWidget(l);
 #endif
     QSplitter *splitter = new QSplitter(this);
@@ -113,8 +113,7 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
 void SSheetSetting::save()
 {
     QString file = QFileDialog::getSaveFileName(this,
-                                                tr(
-                                                    "Save Style Sheet"),
+                                                tr("Save style sheet"),
                                                 QDir::homePath());
 
     if (file.isEmpty()) {
@@ -131,8 +130,7 @@ void SSheetSetting::save()
 void SSheetSetting::load()
 {
     QString file = QFileDialog::getOpenFileName(this,
-                                                tr(
-                                                    "Load Style Sheet"),
+                                                tr("Load style sheet"),
                                                 QDir::homePath());
 
     if (file.isEmpty()) {
@@ -161,12 +159,12 @@ SSheetOptSetting::SSheetOptSetting(const QString &current,
 #ifndef Q_WS_MAC
     setWindowFlags(Qt::Sheet);
 #else
-    setWindowTitle(tr("StyleSheet Setting"));
+    setWindowTitle(tr("Style sheet setting"));
 #endif
 
     QVBoxLayout *v = new QVBoxLayout;
 #ifdef Q_WS_MAC
-    TitleLabel *l = new TitleLabel(tr("StyleSheet Setting"));
+    TitleLabel *l = new TitleLabel(tr("Style sheet setting"));
     v->addWidget(l);
 #endif
     edit = new QTextEdit();

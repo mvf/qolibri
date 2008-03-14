@@ -38,7 +38,7 @@ BookBrowser::BookBrowser(QWidget *parent)
     : QTextBrowser(parent)
 {
     setOpenExternalLinks(false);
-    setSearchPaths(QStringList() << EBook::cashePath);
+    setSearchPaths(QStringList() << EBook::cachePath);
     document()->setDefaultFont(CONF->browserFont);
 
     connect(this, SIGNAL(statusRequested(QString)),
@@ -114,24 +114,24 @@ void BookBrowser::contextMenuEvent(QContextMenuEvent* event)
     QList <SearchDirection> dlist;
     if (textCursor().hasSelection()) {
         menu->addSeparator();
-        alist << menu->addAction(QObject::tr("&Exact Word Search"));
+        alist << menu->addAction(QObject::tr("&Exact word search"));
         dlist << ExactWordSearch;
-        alist << menu->addAction(QObject::tr("&Forward Search"));
+        alist << menu->addAction(QObject::tr("&Forward search"));
         dlist << ForwardSearch;
-        alist << menu->addAction(QObject::tr("&Keyword Search"));
+        alist << menu->addAction(QObject::tr("&Keyword search"));
         dlist << KeywordSearch;
-        alist << menu->addAction(QObject::tr("&Cross Search"));
+        alist << menu->addAction(QObject::tr("&Cross search"));
         dlist << CrossSearch;
         menu->addSeparator();
-        alist << menu->addAction(QObject::tr("&Google Search"));
+        alist << menu->addAction(QObject::tr("&Google search"));
         dlist << GoogleSearch;
-        alist << menu->addAction(QObject::tr("&WikiPedia Search"));
+        alist << menu->addAction(QObject::tr("&WikiPedia search"));
         dlist << WikipediaSearch;
-        alist << menu->addAction(QObject::tr("&User Defined URL Search"));
+        alist << menu->addAction(QObject::tr("&User defined URL search"));
         dlist << Option1Search;
         menu->addSeparator();
-        menu->addAction(QObject::tr("Copy to Search Edit"), this,
-                        SLOT(pasteSearchText()));
+        menu->addAction(QObject::tr("&Paste selected string to edit line"),
+		        this, SLOT(pasteSearchText()));
     }
     QAction *a = menu->exec(event->globalPos());
     if (a && alist.indexOf(a) >= 0) {
@@ -219,7 +219,7 @@ QString ReferencePopup::browserText(Book *book, int page, int offset)
 
     eb.setBook(book->path(), book->bookNo());
     eb.initSearch(16, book->fontList(), CONF->indentOffset);
-    bookBrowser->setSearchPaths(QStringList() << eb.cashePath);
+    bookBrowser->setSearchPaths(QStringList() << eb.cachePath);
     QString text = eb.text(page, offset);
     QString ttl = QString();
     if (!menuFlag) {
@@ -617,13 +617,13 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     if (eb.isHaveText())
         mstr += QObject::tr("Text") + " ";
     if (eb.isHaveWordSearch())
-        mstr += QObject::tr("Forward Search") + " ";
+        mstr += QObject::tr("Forward search") + " ";
     if (eb.isHaveEndwordSearch())
-        mstr += QObject::tr("Backward Search") + " ";
+        mstr += QObject::tr("Backward search") + " ";
     if (eb.isHaveKeywordSearch())
-        mstr += QObject::tr("Keyword Search") + " ";
+        mstr += QObject::tr("Keyword search") + " ";
     if (eb.isHaveCrossSearch())
-        mstr += QObject::tr("Cross Search") + " ";
+        mstr += QObject::tr("Cross search") + " ";
 
     mstr += "</b>";
 
@@ -672,7 +672,7 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     txt += composeTrail();
     //qDebug() << txt;
     bookBrowser->setBrowser(txt);
-    QStringList sl = QStringList() << book->path() << eb.cashePath;
+    QStringList sl = QStringList() << book->path() << eb.cachePath;
     bookBrowser->setSearchPaths(sl);
     bookTree->insertTopLevelItems(0, items);
     top_tree->setExpanded(true);

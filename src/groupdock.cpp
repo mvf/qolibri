@@ -48,13 +48,13 @@ SearchItem::SearchItem(const QString &str, const SearchMethod &method)
             s_method = QObject::tr("Cross");
             break;
         case WholeRead:
-            s_method = QObject::tr("Read Book");
+            s_method = QObject::tr("Read book");
             break;
         case MenuRead:
-            s_method = QObject::tr("Read Menu");
+            s_method = QObject::tr("Read menu");
             break;
         case BookInfo:
-            s_method = QObject::tr("Book Information");
+            s_method = QObject::tr("Book information");
             break;
         default:
             s_method = QObject::tr("-----");
@@ -169,13 +169,13 @@ void GroupTab::popupMenu(const QPoint &pos)
 
     QMenu menu;
     QAction *iAct = menu.addAction(QIcon(":images/find_l.png"),
-                                   tr("Show Book &Information"));
+                                   tr("Show book &Information"));
     QAction *rAct = menu.addAction(QIcon(":images/bookopen.png"),
-                                   tr("&Read Book"));
+                                   tr("&Read book"));
     QAction *aAct = menu.addAction(QIcon(":images/bookopen.png"),
-                                   tr("Read &All Data"));
+                                   tr("Read &All cata"));
     QAction *fAct = menu.addAction(QIcon(":images/font3.png"),
-                                   tr("&Font Setting"));
+                                   tr("&Font setting"));
     QAction *a = menu.exec(widget->viewport()->mapToGlobal(pos));
     if (a == iAct) {
         emit bookViewRequested(bookWidget_->currentBook());
@@ -342,7 +342,7 @@ void MarkTab::popupMenu(const QPoint &pos)
     menu.addAction(QIcon(":images/bookopen.png"), tr("&Execute"),
                    this, SLOT(viewCurrent()));
     menu.addAction(QIcon(":images/copy.png"),
-                   tr("&Copy to Current Search Condition"),
+                   tr("&Set to current search condition"),
                    this, SLOT(pasteCurrent()));
     menu.addAction(QIcon(":images/delete.png"), tr("&Delete"),
                    this, SLOT(deleteCurrnt()));
@@ -458,7 +458,7 @@ void HistoryTab::popupMenu(const QPoint &pos)
     menu.addAction(QIcon(":images/bookopen.png"), tr("&Execute"),
                    this, SLOT(viewCurrent()));
     menu.addAction(QIcon(":images/copy.png"),
-                   tr("&Copy to Current Search Condition"),
+                   tr("&Copy to current search condition"),
                    this, SLOT(pasteCurrent()));
     menu.addAction(QIcon(":images/delete.png"), tr("&Delete"),
                    this, SLOT(delCurrent()));

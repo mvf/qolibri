@@ -34,7 +34,7 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
 #ifdef Q_WS_MAC
     setWindowFlags(Qt::Sheet);
 #else
-    setWindowTitle(tr("Book and Group Settings"));
+    setWindowTitle(tr("Book and group settings"));
 #endif
     foreach(Group * g, grp) {
         groupList_ << new Group(*g);
@@ -43,7 +43,7 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
     {
         QHBoxLayout *h1 = new QHBoxLayout();
         {
-            QLabel *l = new QLabel(tr("Search Directory"));
+            QLabel *l = new QLabel(tr("Search directory"));
             searchPath = new QLineEdit(QDir::homePath(), this);
             connect(searchPath, SIGNAL(textChanged(QString)),
                     this, SLOT(searchPathChanged(QString)));
@@ -57,7 +57,7 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
         QHBoxLayout *h2 = new QHBoxLayout();
         {
             searchButton = new QPushButton(QIcon(":images/downarrow.png"),
-                                           tr("Search Start"), this);
+                                           tr("Start search"), this);
             connect(searchButton, SIGNAL(clicked()), this, SLOT(searchBook()));
             cancelButton = new QPushButton(tr("Cancel"), this);
             cancelButton->setEnabled(false);
@@ -120,7 +120,7 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
     QVBoxLayout *v = new QVBoxLayout;
 #ifdef Q_WS_MAC
-    TitleLabel *l = new TitleLabel(tr("Book and Group Settings"));
+    TitleLabel *l = new TitleLabel(tr("Book and group settings"));
     v->addWidget(l);
 #endif
     v->addLayout(g);

@@ -49,7 +49,7 @@ private:
     QTreeWidget *fontTreeWidget;
     QLineEdit *fontCodeEdit;
     QLabel *fontLabel;
-    QString casheDir;
+    QString cacheDir;
     Book *book;
 };
 

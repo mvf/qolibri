@@ -112,12 +112,12 @@ void MainWindow::createMenus()
                                 this, SLOT(viewSearch()), tr("Ctrl+F"));
     CONNECT_BUSY(enterAct);
     openBookAct = fmenu->addAction(QIcon(":/images/bookopen.png"),
-                                   tr("&Open Book"),
+                                   tr("&Open book"),
                                    this, SLOT(viewMenu()), tr("Ctrl+O"));
     CONNECT_BUSY(openBookAct);
 
     viewAllAct = fmenu->addAction(QIcon(":/images/find.png"),
-                                  tr("&View All Data"),
+                                  tr("&View all data"),
                                   this, SLOT(viewFull()), tr("Ctrl+D"));
     CONNECT_BUSY(viewAllAct);
 
@@ -130,22 +130,22 @@ void MainWindow::createMenus()
 
     QMenu *emenu = menuBar()->addMenu(tr("&Edit"));
     clearEditAct = emenu->addAction(QIcon(":/images/clear.png"),
-                                    tr("clear search text"));
+                                    tr("Clear search text"));
 
 
     QMenu *vmenu = menuBar()->addMenu(tr("&View"));
     toggleDockAct = new QAction(QIcon(":/images/dock_mac.png"),
-                                tr("Dock On/Off"), this);
+                                tr("Dock on/off"), this);
     toggleDockAct->setCheckable(true);
     connect(toggleDockAct, SIGNAL(triggered(bool)),
             this, SLOT(toggleDock(bool)));
     vmenu->addAction(toggleDockAct);
     toggleBarAct = vmenu->addAction(QIcon(":/images/find_l.png"),
-                                    tr("search/read book"),
+                                    tr("Search/read book"),
                                     this, SLOT(toggleBar()));
-    zoomInAct = vmenu->addAction(QIcon(":/images/zoomin.png"), tr("zoom &out"),
+    zoomInAct = vmenu->addAction(QIcon(":/images/zoomin.png"), tr("Zoom &out"),
                                  bookView, SLOT(zoomIn()), QString("Ctrl+-"));
-    zoomOutAct = vmenu->addAction(QIcon(":/images/zoomout.png"), tr("zoom &in"),
+    zoomOutAct = vmenu->addAction(QIcon(":/images/zoomout.png"), tr("Zoom &in"),
                                   bookView, SLOT(zoomOut()), QString("Ctrl++"));
 
 
@@ -157,53 +157,53 @@ void MainWindow::createMenus()
                                  tr("Option setting"), this, SLOT(setConfig()));
     CONNECT_BUSY(configAct);
     addMarkAct = smenu->addAction(QIcon(":/images/bookmark.png"),
-                                  tr("Book Mark"),
+                                  tr("Book mark"),
                                   this, SLOT(addMark()));
     CONNECT_BUSY(addMarkAct);
     toggleTabsAct = smenu->addAction(QIcon(":/images/tabs.png"),
-                                     tr("tab on/off"));
+                                     tr("Tab on/off"));
     toggleTabsAct->setCheckable(true);
     CONNECT_BUSY(toggleTabsAct);
-    QMenu *mf = smenu->addMenu(QIcon(":/images/font1.png"), tr("Font Set"));
+    QMenu *mf = smenu->addMenu(QIcon(":/images/font1.png"), tr("Font set"));
     fontAct = mf->menuAction();
-    mf->addAction(QIcon(":/images/font1.png"), tr("Browser Font"),
+    mf->addAction(QIcon(":/images/font1.png"), tr("Browser font"),
                   this, SLOT(setViewFont()));
-    mf->addAction(QIcon(":/images/font2.png"), tr("Application Font"),
+    mf->addAction(QIcon(":/images/font2.png"), tr("Application font"),
                   this, SLOT(setAppFont()));
 
     QMenu *ms = smenu->addMenu(QIcon(":/images/stylesheet.png"),
-                               tr("Style Sheet"));
+                               tr("Style sheet"));
     sSheetAct = ms->menuAction();
     ms->addAction(QIcon(":/images/stylesheet.png"),
-                  tr("Dictionary Style Sheet"), this, SLOT(setDictSheet()));
+                  tr("Dictionary style sheet"), this, SLOT(setDictSheet()));
     ms->addAction(QIcon(":/images/stylesheet2.png"),
-                  tr("Book Style Sheet"), this, SLOT(setBookSheet()));
+                  tr("Book style sheet"), this, SLOT(setBookSheet()));
     ms->addAction(QIcon(":/images/stylesheet3.png"),
-                  tr("Internal Style Sheet 1"), this, SLOT(setStatusBarSheet()));
+                  tr("Internal style sheet 1"), this, SLOT(setStatusBarSheet()));
     optDirectionMenu = smenu->addMenu(QIcon(":/images/find_l.png"),
-                                   tr("Option Search"));
+                                   tr("Option search"));
     optDirectionGroup = new QActionGroup(this);
     QAction *act;
-    act = optDirectionMenu->addAction(QObject::tr("&Exact Word Search"));
+    act = optDirectionMenu->addAction(QObject::tr("&Exact word search"));
     act->setData(ExactWordSearch);
     optDirectionGroup->addAction(act);
-    act = optDirectionMenu->addAction(QObject::tr("&Forward Search"));
+    act = optDirectionMenu->addAction(QObject::tr("&Forward search"));
     act->setData(ForwardSearch);
     optDirectionGroup->addAction(act);
-    act = optDirectionMenu->addAction(QObject::tr("&Keyword Search"));
+    act = optDirectionMenu->addAction(QObject::tr("&Keyword search"));
     act->setData(KeywordSearch);
     optDirectionGroup->addAction(act);
-    act = optDirectionMenu->addAction(QObject::tr("&Cross Search"));
+    act = optDirectionMenu->addAction(QObject::tr("&Cross search"));
     act->setData(CrossSearch);
     optDirectionGroup->addAction(act);
     optDirectionMenu->addSeparator();
-    act = optDirectionMenu->addAction(QObject::tr("&Google Search"));
+    act = optDirectionMenu->addAction(QObject::tr("&Google search"));
     act->setData(GoogleSearch);
     optDirectionGroup->addAction(act);
-    act = optDirectionMenu->addAction(QObject::tr("&WikiPedia Search"));
+    act = optDirectionMenu->addAction(QObject::tr("&WikiPedia search"));
     act->setData(WikipediaSearch);
     optDirectionGroup->addAction(act);
-    act = optDirectionMenu->addAction(QObject::tr("&User Defined URL Search"));
+    act = optDirectionMenu->addAction(QObject::tr("&User defined URL search"));
     act->setData(Option1Search);
     optDirectionGroup->addAction(act);
     foreach(QAction * a, optDirectionMenu->actions()) {
@@ -213,10 +213,10 @@ void MainWindow::createMenus()
             this, SLOT(changeOptDirection(QAction*)));
 
 
-    smenu->addAction(QIcon(":/images/delete.png"), tr("&Clear Cashe"),
-                     this, SLOT(clearCashe()));
+    smenu->addAction(QIcon(":/images/delete.png"), tr("&Clear cache"),
+                     this, SLOT(clearCache()));
     toggleRubyAct = smenu->addAction(QIcon(":/images/ruby.png"),
-                                     tr("&Suppress Subscription"), this,
+                                     tr("&Suppress subscription"), this,
                                      SLOT(toggleRuby()));
     toggleRubyAct->setCheckable(true);
 
@@ -282,18 +282,18 @@ void MainWindow::createToolBars()
     bar2->addAction(toggleTabsAct);
 
     addToolBarBreak();
-    methodBar = addToolBar(tr("Search Methods"));
+    methodBar = addToolBar(tr("Search methods"));
     methodBar->setMovable(false);
     //methodBar->addWidget(new QLabel("  "));
 
     methodCombo = new QComboBox(this);
     methodCombo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    methodCombo->addItem(QObject::tr("Exact Word Search"));
-    methodCombo->addItem(QObject::tr("Forward Search"));
-    methodCombo->addItem(QObject::tr("Backward Search"));
-    methodCombo->addItem(QObject::tr("Keyword Search"));
-    methodCombo->addItem(QObject::tr("Cross Search"));
-    methodCombo->addItem(QObject::tr("Full Text Search"));
+    methodCombo->addItem(QObject::tr("Exact word search"));
+    methodCombo->addItem(QObject::tr("Forward search"));
+    methodCombo->addItem(QObject::tr("Backward search"));
+    methodCombo->addItem(QObject::tr("Keyword search"));
+    methodCombo->addItem(QObject::tr("Cross search"));
+    methodCombo->addItem(QObject::tr("Full text search"));
     methodCombo->setCurrentIndex(-1);
     connect(methodCombo, SIGNAL(currentIndexChanged(int)),
             this, SLOT(changeDirection(int)));
@@ -308,7 +308,7 @@ void MainWindow::createToolBars()
             this, SLOT(changeLogic(int)));
     methodBar->addWidget(logicCombo);
 
-    methodBar->addWidget(new QLabel(tr(" Hit Limit (Book/Total):")));
+    methodBar->addWidget(new QLabel(tr(" Hit limit (book/total):")));
     limitBookSpin = new QSpinBox();
     limitBookSpin->setRange(CONF->stepBookHitMax, CONF->maxLimitBookHit);
     limitBookSpin->setSingleStep(CONF->stepBookHitMax);
@@ -328,7 +328,7 @@ void MainWindow::createToolBars()
     methodBar->addAction(fontAct);
 
     toggleMethodBarAct = methodBar->toggleViewAction();
-    toggleMethodBarAct->setText(tr("option bar On/Off"));
+    toggleMethodBarAct->setText(tr("Option bar on/off"));
     toggleMethodBarAct->setIcon(QIcon(":/images/configure.png"));
 
     bar2->addAction(toggleMethodBarAct);
@@ -432,7 +432,7 @@ void MainWindow::readSettings()
     }
     groups.endArray();
     if (groupList.count() == 0) {
-        groupList << new Group(tr("All Books"));
+        groupList << new Group(tr("All books"));
     }
 
     method = readMethodSetting(settings);
@@ -689,10 +689,10 @@ void MainWindow::showStatus(const QString &str)
     if (!str.isEmpty()) msg = " :";
     if (!stopAct->isEnabled()) {
         if (groupList.count() > 0 && groupList[0]->bookList().count() == 0) {
-            msg += tr(" No Search Book");
+            msg += tr(" No search book");
         } else if (bookMode == ModeDictionary &&
                    searchTextEdit->text().isEmpty()) {
-            //msg += tr(" Input Search Text");
+            //msg += tr(" Input search text");
         } else {
             msg += tr(" ready");
         }
@@ -911,11 +911,11 @@ void MainWindow::viewInfo(Book *book)
 
 void MainWindow::setBookFont(Book *book)
 {
-    QString cashe_path = loadAllExternalFont(book);
+    QString cache_path = loadAllExternalFont(book);
     FontSetting dlg(book, this);
-    if (dlg.setupTreeWidget(cashe_path) < 1) {
-        QMessageBox::information(this, "Font Setting", tr("No External Font"));
-        showStatus(tr("No External Font"));
+    if (dlg.setupTreeWidget(cache_path) < 1) {
+        QMessageBox::information(this, "Font Setting", tr("No external font"));
+        showStatus(tr("No external font"));
         return;
     }
     int w = dlg.size().width();
@@ -1095,7 +1095,7 @@ void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
                 msg += msg_b;
                 break;
             case NO_BOOK:
-                msg_b = tr("Can't open the book.");
+                msg_b = tr("Cannot open the book.");
                 msg += msg_b;
                 break;
             case NOT_HIT_INTERRUPTED:
@@ -1322,7 +1322,7 @@ void MainWindow::setViewFont()
 {
     bool ok;
     QFont font = QFontDialog::getFont(&ok, CONF->browserFont, this,
-                                      tr("Set Browser Font"));
+                                      tr("Set browser font"));
 
     if (ok) {
         CONF->browserFont = font;
@@ -1341,7 +1341,7 @@ void MainWindow::setAppFont()
 {
     bool ok;
     QFont font = QFontDialog::getFont(&ok, qApp->font(),
-                                      this, tr("Set Application Font"));
+                                      this, tr("Set application font"));
 
     if (ok) {
         qApp->setFont(font);
@@ -1351,20 +1351,20 @@ void MainWindow::setAppFont()
     }
 }
 
-void MainWindow::clearCashe()
+void MainWindow::clearCache()
 {
     int ret = QMessageBox::question(this, Program,
-                                    tr("Do you want to remove all cashe?\n\"")
+                                    tr("Are you sure you want to remove all cache data?\n\"")
                                     +
-                                    EBook::cashePath + "/*\"",
+                                    EBook::cachePath + "/*\"",
                                     QMessageBox::Yes | QMessageBox::No);
 
     if (ret == QMessageBox::Yes) {
 #ifdef Q_WS_WIN
         execProcess("cmd.exe /c rmdir /s /q \"" +
-		    EBook::cashePath.toLocal8Bit() + "\"" );
+		    EBook::cachePath.toLocal8Bit() + "\"" );
 #else
-        execProcess("rm -rf " + EBook::cashePath.toLocal8Bit());
+        execProcess("rm -rf " + EBook::cachePath.toLocal8Bit());
 #endif
     }
 }
@@ -1400,12 +1400,12 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
 {
     EBook eb(HookFont);
     if (eb.setBook(pbook->path(), pbook->bookNo()) < 0) {
-        QMessageBox::warning(this, Program, tr("Can't open the book.") );
+        QMessageBox::warning(this, Program, tr("Cannot open the book.") );
     }
     eb.initSearch(16, NULL);
-    QFile loadf(eb.fontCashePath() + "/loaded");
+    QFile loadf(eb.fontCachePath() + "/loaded");
     if (loadf.exists()) {
-        return eb.fontCashePath();
+        return eb.fontCachePath();
     }
     emit nowBusy(true);
     //stopAct->setEnabled(true);
@@ -1430,7 +1430,7 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
     out << "All font loaded";
     emit nowBusy(false);
 
-    return eb.fontCashePath();
+    return eb.fontCachePath();
 }
 
 void MainWindow::aboutQolibri()

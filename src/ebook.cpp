@@ -37,7 +37,7 @@ const int HitsBufferSize = 10000;
 const int TextBufferSize = 4000;
 const int TextSizeLimit = 2800000;
 
-QString EBook::cashePath = QDir::homePath() + "/.ebcashe";
+QString EBook::cachePath = QDir::homePath() + "/.ebcache";
 QTextCodec * EBook::codecEuc;
 
 EBook::EBook(HookMode hmode)
@@ -159,7 +159,7 @@ int EBook::setSubBook(int index, int ref_pos)
         }
     }
 
-    setCashe(title());
+    setCache(title());
     refPosition_ = ref_pos;
     firstSeek = true;
 
@@ -549,27 +549,27 @@ QString EBook::heading(int page, int offset, bool hflag)
     return ret.trimmed();
 }
 
-void EBook::setCashe(const QString &name)
+void EBook::setCache(const QString &name)
 {
-    QString bookCashePath = cashePath + "/" + name;
-    QDir rootDir(bookCashePath);
+    QString bookCachePath = cachePath + "/" + name;
+    QDir rootDir(bookCachePath);
 
     if (!rootDir.exists()) {
-        QDir().mkpath(bookCashePath);
+        QDir().mkpath(bookCachePath);
         rootDir.mkdir("font");
         rootDir.mkdir("image");
         rootDir.mkdir("wave");
         rootDir.mkdir("mpeg");
     }
-    fontCashePath_ = bookCashePath + "/font";
-    fontCasheRel = name + "/font/";
-    imageCashePath = bookCashePath + "/image";
-    imageCasheRel = name + "/image/";
-    waveCashePath = bookCashePath + "/wave";
-    mpegCashePath = bookCashePath + "/mpeg";
-    fontCasheList = QDir(fontCashePath_).entryList(QDir::Files);
-    imageCasheList = QDir(imageCashePath).entryList(QDir::Files);
-    waveCasheList = QDir(waveCashePath).entryList(QDir::Files);
+    fontCachePath_ = bookCachePath + "/font";
+    fontCacheRel = name + "/font/";
+    imageCachePath = bookCachePath + "/image";
+    imageCacheRel = name + "/image/";
+    waveCachePath = bookCachePath + "/wave";
+    mpegCachePath = bookCachePath + "/mpeg";
+    fontCacheList = QDir(fontCachePath_).entryList(QDir::Files);
+    imageCacheList = QDir(imageCachePath).entryList(QDir::Files);
+    waveCacheList = QDir(waveCachePath).entryList(QDir::Files);
 }
 
 void EBook::ebError(const QString &func, EB_Error_Code code)
@@ -646,7 +646,7 @@ QByteArray EBook::narrow_font(int code)
     QByteArray fname = utfToEuc(fcode) + ".png";
 #endif
 
-    QByteArray out = "<img src=\"" + utfToEuc(fontCasheRel) +
+    QByteArray out = "<img src=\"" + utfToEuc(fontCacheRel) +
                      fname  + "\"";
     int h = fontSize();
     if (h > 17) {
@@ -655,7 +655,7 @@ QByteArray EBook::narrow_font(int code)
     }
     out += " />";
 
-    if (fontCasheList.contains(fname))
+    if (fontCacheList.contains(fname))
         return out;
 
     char bitmap[EB_SIZE_NARROW_FONT_16];
@@ -681,12 +681,12 @@ QByteArray EBook::narrow_font(int code)
 #endif
 
 
-    QFile f(fontCashePath_ +  '/' + fname);
+    QFile f(fontCachePath_ +  '/' + fname);
     f.open(QIODevice::WriteOnly);
     f.write(buff, wlen);
     f.close();
     //qDebug() << "Output narrow_font" << fname;
-    fontCasheList << fname;
+    fontCacheList << fname;
 
     return out;
 }
@@ -715,10 +715,10 @@ QByteArray EBook::begin_color_jpeg(int page, int offset)
     imageCount_++;
 
     QByteArray jpgFile = makeFname("jpeg", page, offset);
-    QByteArray out = "<img src=\"" + utfToEuc(imageCasheRel) +
+    QByteArray out = "<img src=\"" + utfToEuc(imageCacheRel) +
                      jpgFile + "\"><span class=img>";
 
-    if (imageCasheList.contains(jpgFile)) {
+    if (imageCacheList.contains(jpgFile)) {
         return out;
     }
 
@@ -737,7 +737,7 @@ QByteArray EBook::begin_color_jpeg(int page, int offset)
     char bitmap[ImageBufferSize];
     Q_CHECK_PTR(bitmap);
     ssize_t bitmap_length;
-    QFile f(imageCashePath + '/' + jpgFile);
+    QFile f(imageCachePath + '/' + jpgFile);
     f.open(QIODevice::WriteOnly);
     int flg = 0;
 
@@ -755,7 +755,7 @@ QByteArray EBook::begin_color_jpeg(int page, int offset)
     }
     f.close();
     //qDebug() << "Image Size :" << ImageBufferSize * flg;
-    imageCasheList << jpgFile;
+    imageCacheList << jpgFile;
 
     return out;
 }
@@ -767,10 +767,10 @@ QByteArray EBook::begin_color_bmp(int page, int offset)
     imageCount_++;
 
     QByteArray bmpFile = makeFname("bmp", page, offset);
-    QByteArray out = "<img src=\"" + utfToEuc(imageCasheRel) +
+    QByteArray out = "<img src=\"" + utfToEuc(imageCacheRel) +
                      bmpFile + "\" /><span class=img>";
 
-    if (imageCasheList.contains(bmpFile))
+    if (imageCacheList.contains(bmpFile))
         return out;
 
     //qDebug() << "Output Image " << bmpFile;
@@ -787,7 +787,7 @@ QByteArray EBook::begin_color_bmp(int page, int offset)
     char bitmap[ImageBufferSize];
     Q_CHECK_PTR(bitmap);
     ssize_t bitmap_length;
-    QFile f(imageCashePath + '/' + bmpFile);
+    QFile f(imageCachePath + '/' + bmpFile);
     f.open(QIODevice::WriteOnly);
     int flg = 0;
 
@@ -805,7 +805,7 @@ QByteArray EBook::begin_color_bmp(int page, int offset)
     }
     f.close();
     //qDebug() << "Image Size :" << ImageBufferSize * flg;
-    imageCasheList << bmpFile;
+    imageCacheList << bmpFile;
 
     return out;
 }
@@ -854,7 +854,7 @@ void EBook::end_mpeg(const unsigned int *p)
         return ;
     }
     QString fname = QFileInfo(file).fileName() + ".mpeg";
-    QString link_file = mpegCashePath + "/" + fname;
+    QString link_file = mpegCachePath + "/" + fname;
     if (!QFile(link_file).exists())
         QFile().copy(file, link_file);
     mpegList << "mpeg|" + utfToEuc(link_file);
@@ -883,7 +883,7 @@ QByteArray EBook::wide_font(int code)
     QByteArray fname = utfToEuc(fcode) + ".png";
 #endif
 
-    QByteArray out = "<img src=\"" + utfToEuc(fontCasheRel) +
+    QByteArray out = "<img src=\"" + utfToEuc(fontCacheRel) +
                      fname  + "\"";
     int h = fontSize();
     if (h > 17)
@@ -892,7 +892,7 @@ QByteArray EBook::wide_font(int code)
     out += " />";
 
 
-    if (fontCasheList.contains(fname)) {
+    if (fontCacheList.contains(fname)) {
         return out;
     }
 
@@ -918,11 +918,11 @@ QByteArray EBook::wide_font(int code)
     }
 #endif
 
-    QFile f(fontCashePath_ + '/' + fname);
+    QFile f(fontCachePath_ + '/' + fname);
     f.open(QIODevice::WriteOnly);
     f.write(buff, wlen);
     f.close();
-    fontCasheList << fname;
+    fontCacheList << fname;
     //qDebug() << "Output wide_font" << xpmFile;
     return out;
 }
@@ -933,10 +933,10 @@ QByteArray EBook::end_mono_graphic(int page, int offset)
 
     QByteArray bmpFile = makeFname("bmp", page, offset);
 
-    QByteArray out = "<img src=\"" + utfToEuc(imageCasheRel) +
+    QByteArray out = "<img src=\"" + utfToEuc(imageCacheRel) +
                      bmpFile + "\" />\n";
 
-    if (imageCasheList.contains(bmpFile)) {
+    if (imageCacheList.contains(bmpFile)) {
         return out;
     }
 
@@ -954,7 +954,7 @@ QByteArray EBook::end_mono_graphic(int page, int offset)
     char bitmap[ImageBufferSize];
     Q_CHECK_PTR(bitmap);
     ssize_t bitmap_length;
-    QFile f(imageCashePath + '/' + bmpFile);
+    QFile f(imageCachePath + '/' + bmpFile);
     f.open(QIODevice::WriteOnly);
 
     int flg = 0;
@@ -969,7 +969,7 @@ QByteArray EBook::end_mono_graphic(int page, int offset)
         if (bitmap_length < ImageBufferSize) break;
     }
     f.close();
-    imageCasheList << bmpFile;
+    imageCacheList << bmpFile;
 
     return out;
 }
@@ -980,10 +980,10 @@ QByteArray EBook::begin_wave(int start_page, int start_offset, int end_page,
     EB_Error_Code ecode;
 
     QString wavFile = QString("%1x%2.wav").arg(start_page).arg(start_offset);
-    QString fname = waveCashePath + "/" + wavFile;
+    QString fname = waveCachePath + "/" + wavFile;
     QString out =  QString("<a class=snd href=\"sound|%1\">").arg(fname);
 
-    if (waveCasheList.contains(wavFile))
+    if (waveCacheList.contains(wavFile))
         return utfToEuc(out);
 
     EB_Position spos, epos;
@@ -1012,7 +1012,7 @@ QByteArray EBook::begin_wave(int start_page, int start_offset, int end_page,
         if (data_length < ImageBufferSize) break;
     }
     f.close();
-    waveCasheList << wavFile;
+    waveCacheList << wavFile;
     //qDebug() << "Output wave" << fname;
     return utfToEuc(out);
 }

@@ -31,14 +31,14 @@ FontSetting::FontSetting(Book *pbook, QWidget *parent)
     : QDialog(parent), book(pbook)
 #endif
 {
-    setWindowTitle(tr("Internal Book Font Setting"));
+    setWindowTitle(tr("Alternate font setting"));
 
     QHBoxLayout *h = new QHBoxLayout();
     {
         fontTreeWidget = new QTreeWidget(this);
         fontTreeWidget->setColumnCount(3);
         QStringList hlabels;
-        hlabels << tr("Font") << tr("Code") << tr("Alternate Font");
+        hlabels << tr("Font") << tr("Code") << tr("Alternate font");
         fontTreeWidget->setHeaderLabels(hlabels);
         h->addWidget(fontTreeWidget);
         h->setStretchFactor(fontTreeWidget, 2);
@@ -61,7 +61,7 @@ FontSetting::FontSetting(Book *pbook, QWidget *parent)
             }
             v->addLayout(h2);
         } {
-            QLabel *l = new QLabel(tr("Alternate Font Code"));
+            QLabel *l = new QLabel(tr("Alternate font code"));
             v->addWidget(l);
         } {
             fontCodeEdit = new QLineEdit(this);
@@ -114,7 +114,7 @@ int FontSetting::setupTreeWidget(const QString &font_path)
     QStringList flist = QDir(font_path).entryList(QStringList() << "*.png",
                                                   QDir::Files, QDir::Name);
 #endif
-    casheDir = font_path;
+    cacheDir = font_path;
     if (flist.count() < 1) {
         return 0;
     }
@@ -144,9 +144,9 @@ void FontSetting::selectFont(QTreeWidgetItem *current, QTreeWidgetItem*)
         return;
     }
 #ifdef USE_GIF_FOR_FONT
-    QString fname = casheDir + "/" + current->text(1) + ".gif";
+    QString fname = cacheDir + "/" + current->text(1) + ".gif";
 #else
-    QString fname = casheDir + "/" + current->text(1) + ".png";
+    QString fname = cacheDir + "/" + current->text(1) + ".png";
 #endif
     fontButton->setIcon(QIcon(fname));
     fontCodeLabel->setText(current->text(1));
@@ -179,7 +179,7 @@ QHash <QString, QString> *FontSetting::newAlternateFontList()
 void FontSetting::save()
 {
     QString fname = QFileDialog::getSaveFileName(this,
-                                                tr("Save Current Definition"),
+                                                tr("Save current font setting"),
                                                 QDir::homePath() );
 
     if (fname.isEmpty()) {
@@ -204,7 +204,7 @@ void FontSetting::save()
 void FontSetting::load()
 {
     QString fname = QFileDialog::getOpenFileName(this,
-                                                tr("Load Font Definition File"),
+                                                tr("Load font setting"),
                                                 QDir::homePath() );
 
     if (fname.isEmpty())

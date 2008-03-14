@@ -152,9 +152,9 @@ public:
     {
         return fontList_;
     }
-    QString fontCashePath()
+    QString fontCachePath()
     {
-        return fontCashePath_;
+        return fontCachePath_;
     }
 
     //QString loadAllFonts();
@@ -168,12 +168,12 @@ public:
     {
         eb_finalize_library();
     }
-    static QString cashePath;
+    static QString cachePath;
     static QTextCodec *codecEuc;
 
 private:
     void ebError(const QString &func, EB_Error_Code code);
-    void setCashe(const QString &name);
+    void setCache(const QString &name);
     static QString eucToUtf(const QByteArray &a)
     {
         return codecEuc->toUnicode(a);
@@ -198,17 +198,17 @@ private:
     QHash <QString, QString> *fontList_;
     QStack <int> decoStack;
 
-    QString fontCashePath_;
-    QString imageCashePath;
-    QString waveCashePath;
-    QString mpegCashePath;
-    QString fontCasheRel;
-    QString imageCasheRel;
+    QString fontCachePath_;
+    QString imageCachePath;
+    QString waveCachePath;
+    QString mpegCachePath;
+    QString fontCacheRel;
+    QString imageCacheRel;
 
     QStringList candList;
-    QStringList waveCasheList;
-    QStringList fontCasheList;
-    QStringList imageCasheList;
+    QStringList waveCacheList;
+    QStringList fontCacheList;
+    QStringList imageCacheList;
     QList <QByteArray> mpegList;
     QList <QByteArray> refList;
 
