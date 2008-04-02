@@ -132,6 +132,14 @@ public:
     {
         return "<em class=err>" + error_string + "</em>";
     }
+    QByteArray begin_subscript()
+    {
+	return (ruby_) ? "<sub>" : QByteArray();
+    }
+    QByteArray end_subscript()
+    {
+	return (ruby_) ? "</sub>" : QByteArray();
+    }
     void end_mpeg(const unsigned int *p);
     inline void begin_mono_graphic(int height, int width)
     {
@@ -202,8 +210,8 @@ private:
     QString imageCachePath;
     QString waveCachePath;
     QString mpegCachePath;
-    QString fontCacheRel;
-    QString imageCacheRel;
+    QByteArray fontCacheRel;
+    QByteArray imageCacheRel;
 
     QStringList candList;
     QStringList waveCacheList;
