@@ -104,17 +104,23 @@ EB_Error_Code hook_set_indent(EB_Book *book, EB_Appendix*, void *container,
     return 0;
 }
 
-EB_Error_Code hook_begin_subscript(EB_Book *book, EB_Appendix*, void *,
+EB_Error_Code hook_begin_subscript(EB_Book *book, EB_Appendix*, void *container,
                                    EB_Hook_Code, int, const unsigned int*)
 {
-    eb_write_text_string(book, "<sub>");
+    EBook *eb = static_cast<EBook*>(container);
+
+    //eb_write_text_string(book, "<sub>");
+    eb_write_text_string(book, eb->begin_subscript());
     return 0;
 }
 
-EB_Error_Code hook_end_subscript(EB_Book *book, EB_Appendix*, void*,
+EB_Error_Code hook_end_subscript(EB_Book *book, EB_Appendix*, void *container,
                                  EB_Hook_Code, int, const unsigned int*)
 {
-    eb_write_text_string(book, "</sub>");
+    EBook *eb = static_cast<EBook*>(container);
+
+    //eb_write_text_string(book, "</sub>");
+    eb_write_text_string(book, eb->end_subscript());
     return 0;
 }
 

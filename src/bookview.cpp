@@ -153,7 +153,7 @@ void BookBrowser::contextMenuEvent(QContextMenuEvent* event)
                 return;
             }
             foreach(const char c, textCursor().selectedText().toUtf8()) {
-                addr += "%" + QString().setNum((ushort)((uchar)c), 16);
+                addr += "%" + QString::number((ushort)((uchar)c), 16);
             }
             emit processRequested(CONF->browserProcess + ' ' + addr);
         }
@@ -532,21 +532,30 @@ bool PageWidget::getText(EBook *eb, int index, QString *head_l, QString *head_v,
         t_v = t_v.mid(p+1);
     }
     QString h_l = h_v;
+
     if (h_l.contains('<')) {
-        QRegExp r1("<img.*>"); r1.setMinimal(true);
-        h_l.replace(r1, "?");
-        QRegExp r2("<.+>"); r2.setMinimal(true);
-        h_l.replace(r2, " ");
+        h_l.replace(QRegExp("<img[^>]*>"), "?");
+        if (h_l.contains('<')) {
+            h_l.replace(QRegExp("<[^>]*>"), " ");
+	}
     }
-    if (h_l.contains('&')) {
-        h_l.replace("&lt;", "<");
-        h_l.replace("&gt;", ">");
-        h_l.replace("&amp;", "&");
-        if (h_l.contains('&')) {
-            QRegExp r("&.*;"); r.setMinimal(true);
-            h_l.replace(r, "?");
+
+    int sp = 0;
+    while((sp = h_l.indexOf('&', sp)) >= 0) {
+	if (h_l.mid(sp+1, 3) == "lt;") 
+            h_l.replace(sp, 4, '<');
+        else if (h_l.mid(sp+1, 3) == "gt;")
+            h_l.replace(sp, 4, '>');
+        else if(h_l.mid(sp+1, 4) == "amp;")
+            h_l.replace(sp, 5, '&');
+        else {
+            int ep = h_l.indexOf(';', sp+1);
+            if (ep < 0) break;
+            h_l.replace(sp, ep-sp+1, '?');
         }
+        sp++;
     }
+
     *head_l = h_l;
     *head_v = h_v;
     *text = t_v;
@@ -655,9 +664,9 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
         QByteArray data = file.readAll();
         QString str = SJIStoUTF(data);
         str.remove("\r");
-        if (fname.right(4).toLower() == ".htm" ||
-            fname.right(5).toLower() == ".html") {
-            QRegExp reg("(<body,*>|</body>)", Qt::CaseInsensitive);
+        if (!fname.right(4).compare(".htm", Qt::CaseInsensitive) ||
+            !fname.right(5).compare(".html", Qt::CaseInsensitive)) {
+            QRegExp reg("(<body[^>]*>|</body>)", Qt::CaseInsensitive);
             QStringList list = str.split(reg);
             if (list.count() < 3) continue;
 
@@ -918,7 +927,7 @@ RET_SEARCH WholePage::readPage(int page)
         txt += composeHLine('1', anchor, name, QString());
     } else {
         name =  method_.bookReader->name() + '(' +
-                QString().setNum(seqHits.count()) + ')';
+                QString::number(seqHits.count()) + ')';
     }
     QTreeWidgetItem *top_tree = new QTreeWidgetItem((QTreeWidget*)0,
                                                     treeItem(anchor, name));
@@ -942,8 +951,8 @@ RET_SEARCH WholePage::readPage(int page)
             if (seqHits.count() > 1) {
                 QString anchor = toAnchor("HIT", i);
                 QString name = method_.bookReader->name() + '(' +
-                               QString().setNum(i * limit + 1) + '-' +
-                               QString().setNum(i * limit + hit_num) + ')';
+                               QString::number(i * limit + 1) + '-' +
+                               QString::number(i * limit + hit_num) + ')';
                 txt += composeHLine('1', anchor, name, QString());
                 page_tree = new QTreeWidgetItem(top_tree,
                                                 treeItem(anchor, name));
@@ -953,7 +962,7 @@ RET_SEARCH WholePage::readPage(int page)
             for (int j = 0; j < hit_num; j++) {
                 if ((j % 100) == 0) {
                     emit statusRequested(method_.bookReader->name() + '(' +
-                                         QString().setNum(j) + "page)");
+                                         QString::number(j) + "page)");
                     if (checkStop()) break;
                 }
                 QString head_l;
@@ -986,7 +995,7 @@ RET_SEARCH WholePage::readPage(int page)
                                 seqHits[i].offset, false);
             QString head_i = t.left(t.indexOf('\n'));
             QString anchor = toAnchor("PAGE", i);
-            QString name = "(" + QString().setNum(i * limit + 1) + "-) " +
+            QString name = "(" + QString::number(i * limit + 1) + "-) " +
                            head_i;
             page_tree = new QTreeWidgetItem(top_tree,
                                             treeItem(anchor, name));
@@ -1059,11 +1068,10 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
 {
 
     QStringList search_list;
-    if ((method.direction != KeywordSearch &&
-         method.direction != CrossSearch ) && slist.count() > 1) {
-        for(int i=1; i<slist.count(); i++){
-            search_list << slist[i];
-        }
+    if (method.direction != KeywordSearch &&
+        method.direction != CrossSearch ) {
+        search_list = slist;
+        search_list.removeFirst();
     }
 
     QList<QTreeWidgetItem *> items;
@@ -1086,7 +1094,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
         if (book->checkState() != Qt::Checked) continue;
 
         emit statusRequested(book->name() + ":(" +
-                             QString().setNum(totalCount) + ")");
+                             QString::number(totalCount) + ")");
         if (checkStop() || break_flag) break;
 
         if ( eb.setBook(book->path(), book->bookNo(), book_count) < 0) continue;
@@ -1102,14 +1110,11 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
             if (eb.isHaveCrossSearch())
                 hit_num = eb.hitMultiWord(req_cnt, slist, SearchCrossWord);
         } else if (method.direction == ExactWordSearch) {
-            if (eb.isHaveWordSearch())
-                hit_num = eb.hitWord(req_cnt, slist[0], SearchExactWord);
+            hit_num = eb.hitWord(req_cnt, slist[0], SearchExactWord);
         } else if (method.direction == ForwardSearch) {
-            if (eb.isHaveWordSearch())
-                hit_num = eb.hitWord(req_cnt, slist[0], SearchWord);
+            hit_num = eb.hitWord(req_cnt, slist[0], SearchWord);
         } else if (method.direction == BackwardSearch) {
-            if (eb.isHaveEndwordSearch())
-                hit_num = eb.hitWord(req_cnt, slist[0], SearchEndWord);
+            hit_num = eb.hitWord(req_cnt, slist[0], SearchEndWord);
         } else {
             qWarning() << "Invalid Search Method" << method.direction;
         }
@@ -1167,7 +1172,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
             continue;
         }
         book_tree->setText(0, book->name() + '(' +
-                              QString().setNum(matchCount)  + ')');
+                              QString::number(matchCount)  + ')');
 
         eb.unsetBook();
     }
@@ -1249,10 +1254,10 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
         int search_count = 0;
         for (;;) {
             emit statusRequested(book->name() + ":(" +
-                                 QString().setNum(matchCount) + '/' +
-                                 QString().setNum(search_count) + ") Total:(" +
-                                 QString().setNum(totalCount) + '/' +
-                                 QString().setNum(search_total) + ')');
+                                 QString::number(matchCount) + '/' +
+                                 QString::number(search_count) + ") Total:(" +
+                                 QString::number(totalCount) + '/' +
+                                 QString::number(search_total) + ')');
             
             if (checkStop() || break_flag) break;
 

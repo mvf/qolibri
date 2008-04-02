@@ -28,7 +28,7 @@ void Book::loadAlterFont()
         delete fontList_;
         fontList_ = NULL;
     }
-    QString fname = path_ + "/" + FontFile + QString().setNum(bookNo_);
+    QString fname = path_ + "/" + FontFile + QString::number(bookNo_);
     QFile file(fname);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         //qWarning() << "Cannot open for read" << fname;
@@ -50,7 +50,7 @@ void Book::loadAlterFont()
 
 void Book::saveAlterFont()
 {
-    QString fname = path_ + "/" + FontFile + QString().setNum(bookNo_);
+    QString fname = path_ + "/" + FontFile + QString::number(bookNo_);
     QFile file(fname);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qWarning() << "Cannot open for write" << fname;

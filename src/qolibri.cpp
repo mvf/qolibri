@@ -47,15 +47,19 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    QTranslator trans;
     QString locale = QLocale::system().name();
 #if defined (Q_WS_MAC) || defined (Q_WS_WIN)
     QString path = QCoreApplication::applicationDirPath() + "/i18n";
 #else
     QString path = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
 #endif
+    QTranslator trans;
     trans.load(QString("qolibri_") + locale, path);
     app.installTranslator(&trans);
+
+    //QTranslator transQt;
+    //trans.load(QString("qt_") + locale, path);
+    //app.installTranslator(&transQt);
 
     MainWindow mainWin;
 

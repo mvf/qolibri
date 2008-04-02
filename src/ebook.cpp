@@ -239,12 +239,12 @@ QString EBook::title()
 int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
 {
     int word_num = words.count();
-    char *word_list[word_num + 1];
 
+    char** word_list = new char*[word_num + 1];
+    QList <QByteArray> bword_list;
     for (int i = 0; i < word_num; i++ ) {
-        QByteArray bw = utfToEuc(words[i]);
-        word_list[i] = new char[bw.length() + 1];
-        strcpy(word_list[i], bw);
+	bword_list << utfToEuc(words[i]);
+	word_list[i] = bword_list[i].data();
     }
     word_list[word_num] = NULL;
 
@@ -289,10 +289,7 @@ int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
 
         break;
     }
-
-    for (int i = 0; i < word_num; i++ ) {
-        delete word_list[i];
-    }
+    delete word_list;
 
     return count;
 }
@@ -303,18 +300,24 @@ int EBook::hitWord(int maxcnt, const QString &word, SearchType type)
     EB_Error_Code ecode;
     QByteArray bword = utfToEuc(word);
     if (type == SearchWord) {
+	if (!isHaveWordSearch())
+	    return 0;
         ecode = eb_search_word(&book, bword);
         if (ecode != EB_SUCCESS) {
             ebError("eb_search_word", ecode);
             return -1;
         }
     } else if (type == SearchEndWord) {
+	if (!isHaveEndwordSearch())
+	    return 0;
         ecode = eb_search_endword(&book, bword);
         if (ecode != EB_SUCCESS) {
             ebError("eb_search_endword", ecode);
             return -1;
         }
     } else {
+	if (!isHaveWordSearch())
+	    return 0;
         ecode = eb_search_exactword(&book, bword);
         if (ecode != EB_SUCCESS) {
             ebError("eb_search_exactword", ecode);
@@ -466,7 +469,7 @@ QString EBook::text(int page, int offset, bool hflag)
 
     if (hflag) {
         for (int i = 0; i < refList.count(); i++) {
-            QByteArray f = "<R" + QByteArray().setNum(i) + "R>";
+            QByteArray f = "<R" + QByteArray::number(i) + "R>";
             ret.replace(f, refList[i]);
         }
         //for (int i = 0; i < candList.count(); i++) {
@@ -477,23 +480,23 @@ QString EBook::text(int page, int offset, bool hflag)
         //    }
         //}
         for (int i = 0; i < mpegList.count(); i++) {
-            QByteArray f = "<M" + QByteArray().setNum(i) + "M>";
+            QByteArray f = "<M" + QByteArray::number(i) + "M>";
             ret.replace(f, mpegList[i]);
         }
-        if (!ruby_) {
-            int sp;
-            while((sp = ret.indexOf("<sub>")) > 0) {
-                int ep = ret.indexOf("</sub>");
-                if (ep < 0 || ep <= sp) {
-                    qWarning() << "Data Error : not match <sub></sub>"
-			       << sp << ep;
-                    if (ep < 0)
-                        break;
-                    sp = ep;
-                }
-                ret.remove(sp, ep-sp+6);
-            }
-        }
+        //if (!ruby_) {
+        //    int sp;
+        //    while((sp = ret.indexOf("<sub>")) > 0) {
+        //        int ep = ret.indexOf("</sub>");
+        //        if (ep < 0 || ep <= sp) {
+        //            qWarning() << "Data Error : not match <sub></sub>"
+        //                       << sp << ep;
+        //            if (ep < 0)
+        //                break;
+        //            sp = ep;
+        //        }
+        //        ret.remove(sp, ep-sp+6);
+        //    }
+        //}
     }
     //QString sret = eucToUtf(ret);
     //if (sret[sret.length()-1].isSpace()) {
@@ -541,7 +544,7 @@ QString EBook::heading(int page, int offset, bool hflag)
     QString ret = eucToUtf(head_text);
     if (hflag) {
         for (int i = 0; i < refList.count(); i++) {
-            QByteArray f = "<R" + QByteArray().setNum(i) + "R>";
+            QByteArray f = "<R" + QByteArray::number(i) + "R>";
             ret.replace(f, refList[i]);
         }
     }
@@ -562,9 +565,9 @@ void EBook::setCache(const QString &name)
         rootDir.mkdir("mpeg");
     }
     fontCachePath_ = bookCachePath + "/font";
-    fontCacheRel = name + "/font/";
+    fontCacheRel = utfToEuc(name) + "/font/";
     imageCachePath = bookCachePath + "/image";
-    imageCacheRel = name + "/image/";
+    imageCacheRel = utfToEuc(name) + "/image/";
     waveCachePath = bookCachePath + "/wave";
     mpegCachePath = bookCachePath + "/mpeg";
     fontCacheList = QDir(fontCachePath_).entryList(QDir::Files);
@@ -615,7 +618,7 @@ QByteArray EBook::set_indent(int val)
     if (val > 2){
         int mleft = indentOffset_ + (val * fontSize_);
         ret += "</pre><pre style=\"margin-left: " +
-               QByteArray().setNum(mleft) + "px; \">";
+               QByteArray::number(mleft) + "px; \">";
         indented_ = true;
     } else {
         if (indented_) {
@@ -634,24 +637,23 @@ QByteArray EBook::narrow_font(int code)
     }
 
     EB_Error_Code ecode;
-    QString fcode = "n" + QString().setNum(code, 16);
+    QString fcode = "n" + QString::number(code, 16);
     if (fontList_) {
         QString afont = fontList_->value(fcode);
         if (!afont.isEmpty())
-            return utfToEuc(afont);
+            return afont.toAscii();
     }
 #ifdef USE_GIF_FOR_FONT
-    QByteArray fname = utfToEuc(fcode) + ".gif";
+    QByteArray fname = fcode.toAscii() + ".gif";
 #else
-    QByteArray fname = utfToEuc(fcode) + ".png";
+    QByteArray fname = fcode.toAscii() + ".png";
 #endif
 
-    QByteArray out = "<img src=\"" + utfToEuc(fontCacheRel) +
-                     fname  + "\"";
+    QByteArray out = "<img src=\"" + fontCacheRel + fname  + "\"";
     int h = fontSize();
     if (h > 17) {
-        out += " height=" + QByteArray().setNum(h) +
-               " width=" + QByteArray().setNum(h / 2);
+        out += " height=" + QByteArray::number(h) +
+               " width=" + QByteArray::number(h / 2);
     }
     out += " />";
 
@@ -694,7 +696,7 @@ QByteArray EBook::narrow_font(int code)
 QByteArray EBook::begin_candidate()
 {
     return "<a class=cnd href=\"<R" +
-           QByteArray().setNum(refList.count()) +
+           QByteArray::number(refList.count()) +
            "R>\">";
 }
 
@@ -707,7 +709,7 @@ QByteArray EBook::begin_candidate_menu()
 QByteArray EBook::begin_reference()
 {
     return "<a class=ref href=\"<R" +
-           QByteArray().setNum(refList.count()) +
+           QByteArray::number(refList.count()) +
            "R>\">";
 }
 QByteArray EBook::begin_color_jpeg(int page, int offset)
@@ -715,7 +717,7 @@ QByteArray EBook::begin_color_jpeg(int page, int offset)
     imageCount_++;
 
     QByteArray jpgFile = makeFname("jpeg", page, offset);
-    QByteArray out = "<img src=\"" + utfToEuc(imageCacheRel) +
+    QByteArray out = "<img src=\"" + imageCacheRel +
                      jpgFile + "\"><span class=img>";
 
     if (imageCacheList.contains(jpgFile)) {
@@ -767,7 +769,7 @@ QByteArray EBook::begin_color_bmp(int page, int offset)
     imageCount_++;
 
     QByteArray bmpFile = makeFname("bmp", page, offset);
-    QByteArray out = "<img src=\"" + utfToEuc(imageCacheRel) +
+    QByteArray out = "<img src=\"" + imageCacheRel +
                      bmpFile + "\" /><span class=img>";
 
     if (imageCacheList.contains(bmpFile))
@@ -812,18 +814,19 @@ QByteArray EBook::begin_color_bmp(int page, int offset)
 
 QByteArray EBook::end_reference(int page, int offset)
 {
-    QByteArray ref = "book|" + QByteArray().setNum(refPosition_) + '|' +
-                     QByteArray().setNum(page) + '|' +
-                     QByteArray().setNum(offset);
+    QByteArray ref = "book|" + QByteArray::number(refPosition_) + '|' +
+                     QByteArray::number(page) + '|' +
+                     QByteArray::number(offset);
 
     refList << ref;
     return "</a>";
 }
+
 QByteArray EBook::end_candidate_group(int page, int offset)
 {
-    QByteArray cnd = "menu|" + QByteArray().setNum(refPosition_) + '|' +
-                     QByteArray().setNum(page) + '|' +
-                     QByteArray().setNum(offset);
+    QByteArray cnd = "menu|" + QByteArray::number(refPosition_) + '|' +
+                     QByteArray::number(page) + '|' +
+                     QByteArray::number(offset);
 
     refList << cnd;
     return "</a>";
@@ -832,7 +835,7 @@ QByteArray EBook::end_candidate_group(int page, int offset)
 QByteArray EBook::end_candidate_group_menu(int page, int offset)
 {
     QString str = eucToUtf(eb_current_candidate(&book)) + "&|" +
-                  QString().setNum(page) + "&|" +  QString().setNum(offset);
+                  QString::number(page) + "&|" +  QString::number(offset);
 
     candList << str;
     return "C>";
@@ -840,24 +843,23 @@ QByteArray EBook::end_candidate_group_menu(int page, int offset)
 
 QByteArray EBook::begin_mpeg()
 {
-    return "<a class=mpg href=\"<M" + QByteArray().setNum(mpegList.count()) +
+    return "<a class=mpg href=\"<M" + QByteArray::number(mpegList.count()) +
            "M>\">";
 }
 
 void EBook::end_mpeg(const unsigned int *p)
 {
     EB_Error_Code ecode;
-    char file[EB_MAX_PATH_LENGTH + 1];
+    char sfile[EB_MAX_PATH_LENGTH + 1];
 
-    if ((ecode = eb_compose_movie_path_name(&book, p, file)) != EB_SUCCESS) {
+    if ((ecode = eb_compose_movie_path_name(&book, p, sfile)) != EB_SUCCESS) {
         ebError("eb_compose_movie_path_name", ecode);
         return ;
     }
-    QString fname = QFileInfo(file).fileName() + ".mpeg";
-    QString link_file = mpegCachePath + "/" + fname;
-    if (!QFile(link_file).exists())
-        QFile().copy(file, link_file);
-    mpegList << "mpeg|" + utfToEuc(link_file);
+    QString dfile = mpegCachePath + "/" + QFileInfo(sfile).fileName() + ".mpeg";
+    if (!QFile(dfile).exists())
+        QFile().copy(sfile, dfile);
+    mpegList << "mpeg|" + utfToEuc(dfile);
 }
 
 QByteArray EBook::wide_font(int code)
@@ -869,26 +871,25 @@ QByteArray EBook::wide_font(int code)
         return errorString("wide font error");
     }
 
-    QString fcode = "w" + QString().setNum(code, 16);
+    QString fcode = "w" + QString::number(code, 16);
 
     if (fontList_) {
         QString afont = fontList_->value(fcode);
         if (!afont.isEmpty())
-            return utfToEuc(afont);
+            return afont.toAscii();
     }
 
 #ifdef USE_GIF_FOR_FONT
-    QByteArray fname = utfToEuc(fcode) + ".gif";
+    QByteArray fname = fcode.toAscii() + ".gif";
 #else
-    QByteArray fname = utfToEuc(fcode) + ".png";
+    QByteArray fname = fcode.toAscii() + ".png";
 #endif
 
-    QByteArray out = "<img src=\"" + utfToEuc(fontCacheRel) +
-                     fname  + "\"";
+    QByteArray out = "<img src=\"" + fontCacheRel + fname  + "\"";
     int h = fontSize();
     if (h > 17)
-        out += " height=" + QByteArray().setNum(h) +
-               " width=" + QByteArray().setNum(h);
+        out += " height=" + QByteArray::number(h) +
+               " width=" + QByteArray::number(h);
     out += " />";
 
 
@@ -933,8 +934,7 @@ QByteArray EBook::end_mono_graphic(int page, int offset)
 
     QByteArray bmpFile = makeFname("bmp", page, offset);
 
-    QByteArray out = "<img src=\"" + utfToEuc(imageCacheRel) +
-                     bmpFile + "\" />\n";
+    QByteArray out = "<img src=\"" + imageCacheRel + bmpFile + "\" />\n";
 
     if (imageCacheList.contains(bmpFile)) {
         return out;

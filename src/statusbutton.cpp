@@ -93,7 +93,7 @@ void StatusButton::popupMenuSpin()
         }
     }
     for (int i = 0; i < 11; i++) {
-        a = menu.addAction(QString().setNum(sp));
+        a = menu.addAction(QString::number(sp));
         grp.addAction(a);
         a->setCheckable(true);
         if (sp == w->value())
@@ -141,7 +141,7 @@ void StatusButton::popupMenuMenu()
 
 void StatusButton::changeValueSpin(int value)
 {
-    QString str = QString().setNum(value);
+    QString str = QString::number(value);
 
     setText(str);
 }

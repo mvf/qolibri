@@ -886,7 +886,7 @@ void MainWindow::changeBook(int index)
 
 void MainWindow::changeOptSearchButtonText(const QString &str)
 {
-    QStringList list = str.split(QRegExp("\\W+"), QString::SkipEmptyParts);
+    QStringList list = str.split(QRegExp("\\s+"), QString::SkipEmptyParts);
 
     if (list.count() > 0) {
         optSearchButton->setText(list[0]);
@@ -981,8 +981,8 @@ void MainWindow::setBooks()
         method.bookReader = book;
         changeBook(book_idx);
         QString msg;
-        msg = "Group=" + QString().setNum(groupList.count()) +
-              ", Book=" + QString().setNum(groupList[0]->bookList().count());
+        msg = "Group=" + QString::number(groupList.count()) +
+              ", Book=" + QString::number(groupList[0]->bookList().count());
 
         showStatus(msg);
     } else {
@@ -1061,7 +1061,7 @@ void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
         mthd.direction == MenuRead ) {
        list << name;
     } else {
-        list = name.split(QRegExp("\\W+"), QString::SkipEmptyParts);
+        list = name.split(QRegExp("\\s+"), QString::SkipEmptyParts);
         if (list.count() == 0) {
             showStatus("<b><font color=#993333>Input search word</font></b>");
             return;
@@ -1105,15 +1105,15 @@ void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
                 break;
             case LIMIT_CHAR:
                 msg += tr("Stopped (Character size limit[") +
-                       QString().setNum(CONF->limitBrowserChar) + "])";
+                       QString::number(CONF->limitBrowserChar) + "])";
                 break;
             case LIMIT_IMAGE:
                 msg += tr("Stopped (Image limit[") +
-                       QString().setNum(CONF->limitImageNum) + "])";
+                       QString::number(CONF->limitImageNum) + "])";
                 break;
             case LIMIT_TOTAL:
                 msg += tr("Stopped (Item iimit[") +
-                       QString().setNum(mthd.limitTotal) + "])";
+                       QString::number(mthd.limitTotal) + "])";
                 break;
             default:
                 msg += "Error";
@@ -1126,7 +1126,7 @@ void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
         qApp->beep();
     }
     int etime = pTime.elapsed();
-    msg += QString().setNum((double)etime / 1000.0, 'f', 2);
+    msg += QString::number((double)etime / 1000.0, 'f', 2);
     showStatus(msg);
     if (!msg_b.isEmpty()) {
         QMessageBox::warning(this, Program, msg_b);
@@ -1155,7 +1155,7 @@ void MainWindow::pasteMethod(const QString &str, const SearchMethod &m)
         limitTotalSpin->setValue(m.limitTotal);
         changeLimitTotal(m.limitTotal);
         changeGroup(groupList.indexOf(m.group));
-        QStringList list = str.split(QRegExp("\\W+"), QString::SkipEmptyParts);
+        QStringList list = str.split(QRegExp("\\s+"), QString::SkipEmptyParts);
         searchTextEdit->setText(list.join(" "));
     }
 }
@@ -1179,7 +1179,7 @@ void MainWindow::doSearch()
             addr = CONF->userDefUrl;
         }
         foreach(const char c, str.toUtf8()) {
-            addr += "%" + QString().setNum((ushort)((uchar)c), 16);
+            addr += "%" + QString::number((ushort)((uchar)c), 16);
         }
         execProcess(CONF->browserProcess + ' ' + addr);
     }
@@ -1327,7 +1327,7 @@ void MainWindow::setViewFont()
     if (ok) {
         CONF->browserFont = font;
         QString str = "font-family=" + font.family() +
-                      " font-size=" + QString().setNum(font.pointSize());
+                      " font-size=" + QString::number(font.pointSize());
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
         emit viewFontChanged(font);
         QApplication::restoreOverrideCursor();
@@ -1346,7 +1346,7 @@ void MainWindow::setAppFont()
     if (ok) {
         qApp->setFont(font);
         QString str = "font-family=" + font.family() +
-                      " font-size=" + QString().setNum(font.pointSize());
+                      " font-size=" + QString::number(font.pointSize());
         showStatus(str);
     }
 }
