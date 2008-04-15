@@ -21,7 +21,7 @@
 #define SSHEETSETTING_H
 
 #include <QDialog>
-#include <QTextBrowser>
+#include <QTextEdit>
 
 
 class SSheetSetting : public QDialog
@@ -58,7 +58,7 @@ private:
     QString setViewText();
 
     QTextEdit *edit;
-    QTextBrowser *view;
+    QTextEdit *view;
     QString initialSheet;
     QString defaultSheet;
     QString testText;

@@ -76,7 +76,8 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
     QSplitter *splitter = new QSplitter(this);
     edit = new QTextEdit();
     edit->setPlainText(current);
-    view = new QTextBrowser();
+    view = new QTextEdit();
+    view->setReadOnly(true);
     view->setHtml(setViewText());
     splitter->addWidget(edit);
     splitter->addWidget(view);
