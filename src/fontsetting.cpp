@@ -37,9 +37,8 @@ FontSetting::FontSetting(Book *pbook, QWidget *parent)
     {
         fontTreeWidget = new QTreeWidget(this);
         fontTreeWidget->setColumnCount(3);
-        QStringList hlabels;
-        hlabels << tr("Font") << tr("Code") << tr("Alternate font");
-        fontTreeWidget->setHeaderLabels(hlabels);
+        fontTreeWidget->setHeaderLabels(QStringList() << tr("Font") <<
+		                        tr("Code") << tr("Alternate font"));
         h->addWidget(fontTreeWidget);
         h->setStretchFactor(fontTreeWidget, 2);
         connect(fontTreeWidget,
