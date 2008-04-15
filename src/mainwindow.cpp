@@ -166,6 +166,8 @@ void MainWindow::createMenus()
     CONNECT_BUSY(toggleTabsAct);
     QMenu *mf = smenu->addMenu(QIcon(":/images/font1.png"), tr("Font set"));
     fontAct = mf->menuAction();
+    connect(fontAct, SIGNAL(triggered(bool)), this, SLOT(setViewFont()));
+    
     mf->addAction(QIcon(":/images/font1.png"), tr("Browser font"),
                   this, SLOT(setViewFont()));
     mf->addAction(QIcon(":/images/font2.png"), tr("Application font"),
@@ -174,6 +176,7 @@ void MainWindow::createMenus()
     QMenu *ms = smenu->addMenu(QIcon(":/images/stylesheet.png"),
                                tr("Style sheet"));
     sSheetAct = ms->menuAction();
+    connect(sSheetAct, SIGNAL(triggered(bool)), this, SLOT(setDictSheet()));
     ms->addAction(QIcon(":/images/stylesheet.png"),
                   tr("Dictionary style sheet"), this, SLOT(setDictSheet()));
     ms->addAction(QIcon(":/images/stylesheet2.png"),
