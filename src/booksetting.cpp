@@ -194,8 +194,8 @@ void BookSetting::findCategory(const QString &name)
     findPaths->setText("Searching ..." + name.right(28));
 
     QDir dir(name);
-    QStringList clist = QStringList() << "CATALOG" << "CATALOGS";
-    if (dir.entryList(clist, QDir::Files).size() > 0) {
+    if (dir.entryList(QStringList() << "CATALOG" << "CATALOGS", 
+                      QDir::Files).size() > 0) {
         bookDirs << dir.absoluteFilePath(name);
     } else {
         QStringList flist = dir.entryList(QStringList() << "*",
