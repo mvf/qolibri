@@ -20,7 +20,7 @@
 
 #include "statusbutton.h"
 
-const char downArrow_utf8[] = { 0x00E2, 0x0096, 0x00BC, 0x0000 };
+static const char downArrow_utf8[] = { 0xe2, 0x96, 0xbC, 0x00 };
 
 StatusButton::StatusButton(QWidget *enter, const QString &name,
                            QWidget *parent, bool deco )
@@ -151,7 +151,7 @@ void StatusButton::changeTextCombo(const QString &text)
     QString str = text;
 
     if (decolation)
-        str +=  QString::fromUtf8(downArrow_utf8, 3);
+        str += " " + QString::fromUtf8(downArrow_utf8);
     setText(str);
 }
 
@@ -168,7 +168,8 @@ void StatusButton::changeTextList(int row)
         }
         QString str = item->text();
         if (decolation)
-            str +=  " " + QString::fromUtf8(downArrow_utf8, 3);
+            str += " " + QString::fromUtf8(downArrow_utf8);
+	    //str += " " + QString(downArrow_utf8, 3);
         setText(str);
     }
 }
