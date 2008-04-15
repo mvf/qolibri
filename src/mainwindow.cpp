@@ -889,7 +889,7 @@ void MainWindow::changeBook(int index)
 
 void MainWindow::changeOptSearchButtonText(const QString &str)
 {
-    QStringList list = str.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    QStringList list = str.split(QRegExp("\\W+"), QString::SkipEmptyParts);
 
     if (list.count() > 0) {
         optSearchButton->setText(list[0]);
