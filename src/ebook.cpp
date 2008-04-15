@@ -238,6 +238,10 @@ QString EBook::title()
 
 int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
 {
+    if ((stype == SearchKeyWord && !isHaveWordSearch()) ||
+        (stype == SearchCrossWord && !isHaveCrossSearch()) )
+        return 0;
+
     int word_num = words.count();
 
     char** word_list = new char*[word_num + 1];
@@ -858,7 +862,7 @@ void EBook::end_mpeg(const unsigned int *p)
     }
     QString dfile = mpegCachePath + "/" + QFileInfo(sfile).fileName() + ".mpeg";
     if (!QFile(dfile).exists())
-        QFile().copy(sfile, dfile);
+        QFile::copy(sfile, dfile);
     mpegList << "mpeg|" + utfToEuc(dfile);
 }
 
