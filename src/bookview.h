@@ -153,6 +153,39 @@ private:
     QTreeWidgetItem *topItem;
 };
 
+class PageItems : public QObject
+{
+
+public:
+    PageItems(const QString &ssheet);
+
+    void composeHeader(const QString &ssheet);
+    void composeError(const QString &anchor, const QString &text);
+    void composeHLine(int num, const QString &anchor, const QString &title_l,
+                      const QString &title_t, const QString &text);
+    void composeHLine(int num, const QString &anchor, const QString &title,
+                      const QString &text);
+    void composeTrail();
+    void setTopItem(const QString &anchor, const QString &title);
+    void addHItem(int num, const QString &anchor, const QString &title);
+    void addHtmlStr(const QString &html) { text_ += html; }
+    void addTextStr(const QString &str) { text_ += str; }
+    QTreeWidgetItem* curItem() { return curItem_; }
+    QTreeWidgetItem* topItem() { return itemP_[0]; } 
+
+    QString text() { return text_; }
+    QList <QTreeWidgetItem*> items() { return items_; }
+    int textLength() { return textLength_; }
+
+private:
+    QString text_;
+    QList <QTreeWidgetItem*> items_;
+    QTreeWidgetItem* itemP_[7];
+    QTreeWidgetItem* curItem_;
+    int textLength_;
+
+};
+
 class PageWidget : public QSplitter
 {
     Q_OBJECT
@@ -168,11 +201,6 @@ public:
     bool getText(EBook *eb, int lndex, QString *head_l, QString *head_v,
                  QString *text);
     QString emphasize(const QString &str, const QString &word);
-    QString composeHeader(const QString &ssheet) const;
-    QString composeError(const QString &anchor, const QString &text) const;
-    QString composeHLine(const QChar &num, const QString &anchor,
-                         const QString &title, const QString &text);
-    QString composeTrail() const;
 
     inline SearchMethod method() const
     {
@@ -181,20 +209,15 @@ public:
     RET_SEARCH retStatus;
 
 protected:
-    inline QStringList treeItem(const QString &anchor, const QString &name)
-    {
-        return QStringList() << name << anchor;
-    }
     inline QString toAnchor(const QString &str, int num) const
     {
         return str + QString().setNum(num);
     }
-    RET_SEARCH checkLimit( int image_cnt);
+    RET_SEARCH checkLimit(int image_cnt, int text_length);
 
     QTreeWidget *bookTree;
     BookBrowser *bookBrowser;
     SearchMethod method_;
-    int textLength;
     int totalCount;
     int matchCount;
 
@@ -240,10 +263,9 @@ private slots:
 private:
     void fullMenuPage();
     void selectMenuPage(int index);
-    void getMenus(EBook *eb, int page, int offset, QString *text,
-                  QTreeWidgetItem *tree, int count);
+    void getMenus(EBook *eb, int page, int offset, PageItems *items,
+                  int count);
     void getTopMenu(EBook *eb, int page, int offset);
-    QList <QTreeWidgetItem*> treeItems;
     QList <EB_Position> topMenus;
     QStringList topTitles;
     int menuCount;
