@@ -26,7 +26,6 @@
 #include "method.h"
 
 class QAction;
-class QActionGroup;
 class QComboBox;
 class QLineEdit;
 class QLabel;
@@ -151,7 +150,6 @@ private:
     BookView *bookView;
 
     QMenu   *optDirectionMenu;
-    QActionGroup *optDirectionGroup;
     QAction *addMarkAct;
     QAction *exitAct;
     QAction *enterAct;
