@@ -618,7 +618,7 @@ QByteArray EBook::end_decoration()
 
 QByteArray EBook::set_indent(int val)
 {
-    QByteArray ret = QByteArray();
+    QByteArray ret;
     if (val > 2){
         int mleft = indentOffset_ + (val * fontSize_);
         ret += "</pre><pre style=\"margin-left: " +
