@@ -18,14 +18,13 @@
 ***************************************************************************/
 #include <QtGui>
 
-#include "mainwindow.h"
 #include "book.h"
 #include "bookview.h"
 #include "ebook.h"
 #include "configure.h"
 
 static bool stopFlag = false;
-static MainWindow *mainWin = 0;
+static QWidget *mainWin = 0;
 
 const char* CutString = "----- cut -----";
 const char* IntString = "----- interrupted -----";
@@ -118,35 +117,19 @@ void BookBrowser::contextMenuEvent(QContextMenuEvent* event)
 {
     QMenu *menu = createStandardContextMenu();
 
-    QList <QAction*> alist;
-    QList <SearchDirection> dlist;
     if (textCursor().hasSelection()) {
         menu->addSeparator();
-        alist << menu->addAction(QObject::tr("&Exact word search"));
-        dlist << ExactWordSearch;
-        alist << menu->addAction(QObject::tr("&Forward search"));
-        dlist << ForwardSearch;
-        alist << menu->addAction(QObject::tr("&Keyword search"));
-        dlist << KeywordSearch;
-        alist << menu->addAction(QObject::tr("&Cross search"));
-        dlist << CrossSearch;
-        menu->addSeparator();
-        alist << menu->addAction(QObject::tr("&Google search"));
-        dlist << GoogleSearch;
-        alist << menu->addAction(QObject::tr("&WikiPedia search"));
-        dlist << WikipediaSearch;
-        alist << menu->addAction(QObject::tr("&User defined URL search"));
-        dlist << Option1Search;
+        addDirectionMenu(menu);
         menu->addSeparator();
         menu->addAction(QObject::tr("&Paste selected string to edit line"),
 		        this, SLOT(pasteSearchText()));
     }
     QAction *a = menu->exec(event->globalPos());
-    if (a && alist.indexOf(a) >= 0) {
-        int i = alist.indexOf(a);
-        SearchDirection d = (SearchDirection)dlist[i];
+    if (a && a->data().isValid()){
+       // qDebug() << a->data().typeName();
+        SearchDirection d = (SearchDirection)a->data().toInt();
         if (d <= MenuRead) {
-            emit searchRequested(dlist[i], textCursor().selectedText());
+            emit searchRequested(d, textCursor().selectedText());
         } else {
             QString addr;
             if (d == GoogleSearch) {
@@ -1330,7 +1313,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
 BookView::BookView(QWidget *parent)
     : QTabWidget(parent)
 {
-    mainWin = (MainWindow *)parent;
+    mainWin = parent;
     QToolButton *close_button = new QToolButton(this);
     setCornerWidget(close_button, Qt::TopRightCorner);
     close_button->setCursor(Qt::ArrowCursor);
@@ -1340,7 +1323,7 @@ BookView::BookView(QWidget *parent)
     close_button->setEnabled(true);
     connect(close_button, SIGNAL(clicked()), this, SLOT(closeTab()));
     connect(this, SIGNAL(tabChanged(int)),
-            mainWin, SLOT(changeViewTabCount(int)));
+            parent, SLOT(changeViewTabCount(int)));
 }
 
 

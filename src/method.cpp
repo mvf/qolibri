@@ -17,6 +17,7 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 #include <QtCore>
+#include <QMenu>
 
 #include "method.h"
 
@@ -60,3 +61,21 @@ QString toLogicString(const QStringList &list, const SearchMethod &method,
     return str;
 }
 
+void addDirectionAct(QMenu *menu, QString title, SearchDirection direc)
+{
+    QAction *act =  menu->addAction(title);
+    act->setData(direc);
+}
+
+void addDirectionMenu(QMenu *menu)
+{
+    addDirectionAct(menu, QObject::tr("&Exact word search"), ExactWordSearch);
+    addDirectionAct(menu, QObject::tr("&Forward search"), ForwardSearch);
+    addDirectionAct(menu, QObject::tr("&Keyword search"), KeywordSearch);
+    addDirectionAct(menu, QObject::tr("&Cross search"), CrossSearch);
+    menu->addSeparator();
+    addDirectionAct(menu, QObject::tr("&Google search"), GoogleSearch);
+    addDirectionAct(menu, QObject::tr("&WikiPedia search"), WikipediaSearch);
+    addDirectionAct(menu, QObject::tr("&User defined URL search"),
+                    Option1Search);
+}

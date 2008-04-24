@@ -185,36 +185,14 @@ void MainWindow::createMenus()
                   tr("Internal style sheet 1"), this, SLOT(setStatusBarSheet()));
     optDirectionMenu = smenu->addMenu(QIcon(":/images/find_l.png"),
                                    tr("Option search"));
-    optDirectionGroup = new QActionGroup(this);
-    QAction *act;
-    act = optDirectionMenu->addAction(QObject::tr("&Exact word search"));
-    act->setData(ExactWordSearch);
-    optDirectionGroup->addAction(act);
-    act = optDirectionMenu->addAction(QObject::tr("&Forward search"));
-    act->setData(ForwardSearch);
-    optDirectionGroup->addAction(act);
-    act = optDirectionMenu->addAction(QObject::tr("&Keyword search"));
-    act->setData(KeywordSearch);
-    optDirectionGroup->addAction(act);
-    act = optDirectionMenu->addAction(QObject::tr("&Cross search"));
-    act->setData(CrossSearch);
-    optDirectionGroup->addAction(act);
-    optDirectionMenu->addSeparator();
-    act = optDirectionMenu->addAction(QObject::tr("&Google search"));
-    act->setData(GoogleSearch);
-    optDirectionGroup->addAction(act);
-    act = optDirectionMenu->addAction(QObject::tr("&WikiPedia search"));
-    act->setData(WikipediaSearch);
-    optDirectionGroup->addAction(act);
-    act = optDirectionMenu->addAction(QObject::tr("&User defined URL search"));
-    act->setData(Option1Search);
-    optDirectionGroup->addAction(act);
+    addDirectionMenu(optDirectionMenu);
+    QActionGroup *actg = new QActionGroup(this);
     foreach(QAction * a, optDirectionMenu->actions()) {
+        actg->addAction(a);
         a->setCheckable(true);
     }
-    connect(optDirectionGroup, SIGNAL(triggered(QAction*)),
+    connect(optDirectionMenu, SIGNAL(triggered(QAction*)),
             this, SLOT(changeOptDirection(QAction*)));
-
 
     smenu->addAction(QIcon(":/images/delete.png"), tr("&Clear cache"),
                      this, SLOT(clearCache()));
@@ -402,7 +380,7 @@ void MainWindow::readSettings()
     toggleTabsAct->setChecked(tab);
     int searchsel = settings.value("searchsel", (int)WikipediaSearch).toInt();
     optDirection = (SearchDirection)searchsel;
-    foreach(QAction * act, optDirectionGroup->actions()) {
+    foreach(QAction * act, optDirectionMenu->actions()) {
         if (act->data().toInt() == searchsel) {
             //act->setChecked(true);
             act->trigger();

@@ -30,6 +30,7 @@ enum NarrowingLogic { LogicAND = 0, LogicOR };
 
 class Group;
 class Book;
+class QMenu;
 
 struct SearchMethod {
     Group *         group;
@@ -45,6 +46,8 @@ struct SearchMethod {
 
 QString toLogicString(const QStringList& list, const SearchMethod &method,
                       bool and_flg = true);
+
+void addDirectionMenu(QMenu *menu);
 
 #define IGNORE_SEEK_HEADING
 
