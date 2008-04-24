@@ -73,7 +73,6 @@ public:
         QApplication::restoreOverrideCursor();
     }
 
-
 protected:
     QList <Book*> bookList_;
     void contextMenuEvent(QContextMenuEvent* event);
@@ -164,13 +163,14 @@ public:
     void composeHLine(int num, const QString &anchor, const QString &title_l,
                       const QString &title_t, const QString &text);
     void composeHLine(int num, const QString &anchor, const QString &title,
-                      const QString &text);
+                      const QString &text = QString());
     void composeTrail();
-    void setTopItem(const QString &anchor, const QString &title);
     void addHItem(int num, const QString &anchor, const QString &title);
     void addHtmlStr(const QString &html) { text_ += html; }
     void addTextStr(const QString &str) { text_ += str; }
+    void expand(int level);
     QTreeWidgetItem* curItem() { return curItem_; }
+    QTreeWidgetItem* item(int level) { return itemP_[level]; } 
     QTreeWidgetItem* topItem() { return itemP_[0]; } 
 
     QString text() { return text_; }
@@ -192,7 +192,6 @@ class PageWidget : public QSplitter
 public:
     PageWidget(QWidget *parent, const SearchMethod&);
 
-    bool checkStop();
     bool isMatch(const QString &str, const QStringList &list,
                  NarrowingLogic logic);
     bool getMatch(EBook *eb, int index, const QStringList &list,
@@ -211,7 +210,7 @@ public:
 protected:
     inline QString toAnchor(const QString &str, int num) const
     {
-        return str + QString().setNum(num);
+        return str + QString::number(num);
     }
     RET_SEARCH checkLimit(int image_cnt, int text_length);
 
