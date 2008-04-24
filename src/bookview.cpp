@@ -35,6 +35,13 @@ const char* IntString = "----- interrupted -----";
 
 #define FONT_RESTORE_DURING_ZOOM
 
+bool checkStop()
+{
+    QEventLoop().processEvents();
+    return stopFlag;
+}
+
+
 BookBrowser::BookBrowser(QWidget *parent)
     : QTextBrowser(parent)
 {
@@ -222,7 +229,7 @@ QString ReferencePopup::browserText(Book *book, int page, int offset)
     eb.initSearch(16, book->fontList(), CONF->indentOffset);
     bookBrowser->setSearchPaths(QStringList() << eb.cachePath);
     QString text = eb.text(page, offset);
-    QString ttl = QString();
+    QString ttl;
     if (!menuFlag) {
         QString heading = text.left(text.indexOf('\n'));
 
@@ -346,15 +353,6 @@ PageItems::PageItems(const QString &ssheet)
     itemP_[5] = itemP_[6]  = 0;
 }
 
-void PageItems::setTopItem(const QString &anchor, const QString &title)
-{
-    curItem_  = new QTreeWidgetItem((QTreeWidget*)0,
-                                    QStringList() << title << anchor);
-    items_ << curItem_;
-    itemP_[0] = curItem_;
-
-}
-
 void PageItems::composeHeader(const QString &ssheet)
 {
     text_ = "<html>\n"
@@ -427,8 +425,9 @@ void PageItems::composeError(const QString &anchor,
 void PageItems::addHItem(int num, const QString &anchor, const QString &title)
 {
 
-    curItem_ = new QTreeWidgetItem(itemP_[num-1],
-	                              QStringList() << title << anchor);
+    QTreeWidgetItem *parent = (num > 0) ? itemP_[num-1] : 0;
+    curItem_ = new QTreeWidgetItem(parent, QStringList() << title << anchor);
+
     items_ << curItem_;
     itemP_[num] = curItem_;
 }
@@ -437,6 +436,28 @@ void PageItems::composeTrail()
 {
     textLength_ += 18;
     text_ += "\n</body></html>\n";
+}
+
+void PageItems::expand(int level)
+{
+    /*
+       level = 0 : expand top only
+       level = 1 : expand top and first children
+       level = 2 : expand all
+    */
+    if (level == 2) {
+        foreach(QTreeWidgetItem * i, items_) {
+            i->setExpanded(true);
+        }
+    } else {
+        QTreeWidgetItem *ip = items_[0];
+        ip->setExpanded(true);
+        if (level == 1) {
+            for (int i = 0; i < ip->childCount(); i++) {
+                ip->child(i)->setExpanded(true);
+            }
+        }
+    }
 }
 
 
@@ -477,15 +498,9 @@ PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
 
 }
 
-bool PageWidget::checkStop()
-{
-    QEventLoop().processEvents();
-    return stopFlag;
-}
-
 void PageWidget::scrollTo(QTreeWidgetItem *to)
 {
-    if (to && to->text(1).left(4) != "PAGE" ) {
+    if (to && to->text(1).at(0) != 'P' ) {
         bookBrowser->scrollToAnchor(to->text(1));
         emit selectionRequested(to->text(0));
     }
@@ -513,7 +528,7 @@ void PageWidget::popupSlide(const QPoint &pos)
 QString PageWidget::emphasize(const QString &str, const QString &word)
 {
     enum { NO_SKIP=0, SKIP_TAG=0x01, SKIP_ENT=0x02 };
-    QString ret = QString();
+    QString ret;
     int slen = str.length();
     int wlen = word.length();
     unsigned int skip = NO_SKIP;
@@ -577,6 +592,9 @@ bool PageWidget::isMatch( const QString &str, const QStringList &list,
     return (logic == LogicAND);
 }
 
+//QRegExp regRep1("<img[^>]+>");
+//QRegExp regRep2("<[^>]+>");
+
 bool PageWidget::getText(EBook *eb, int index, QString *head_l, QString *head_v,
                          QString *text)
 {
@@ -593,9 +611,11 @@ bool PageWidget::getText(EBook *eb, int index, QString *head_l, QString *head_v,
     QString h_l = h_v;
 
     if (h_l.contains('<')) {
-        h_l.replace(QRegExp("<img[^>]*>"), "?");
+        h_l.replace(QRegExp("<img[^>]+>"), "?");
+        //h_l.replace(regRep1, "?");
         if (h_l.contains('<')) {
-            h_l.replace(QRegExp("<[^>]*>"), " ");
+            h_l.replace(QRegExp("<[^>]+>"), "");
+            //h_l.replace(regRep2, "");
 	}
     }
 
@@ -663,7 +683,7 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
 
     PageItems items(CONF->dictSheet);
 
-    items.composeHLine(1, "TOP", book->name(), QString());
+    items.composeHLine(1, "TOP", book->name());
 
     bookBrowser->addBookList(book);
     EBook eb;
@@ -707,22 +727,20 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     QStringList resultFiles = QDir(book->path()).entryList(sfile, QDir::Files);
     for(int i=0; i<resultFiles.count(); i++) {
         QString fname = resultFiles[i];
-        QString anchor = toAnchor("FILE", i);
         QFile file(book->path() + "/" + fname);
         file.open(QIODevice::ReadOnly);
-        QByteArray data = file.readAll();
-        QString str = SJIStoUTF(data);
+        QString str = SJIStoUTF(file.readAll());
         str.remove("\r");
         if (!fname.right(4).compare(".htm", Qt::CaseInsensitive) ||
             !fname.right(5).compare(".html", Qt::CaseInsensitive)) {
             QRegExp reg("(<body[^>]*>|</body>)", Qt::CaseInsensitive);
             QStringList list = str.split(reg);
             if (list.count() < 3) continue;
-            items.composeHLine(2, anchor, fname, QString());
+            items.composeHLine(2, toAnchor("F", i), fname);
 	    items.addHtmlStr(list[1]);
         } else {
             str = convSpecialChar(str);
-            items.composeHLine(2, anchor, fname, str);
+            items.composeHLine(2, toAnchor("F", i), fname, str);
         }
     }
     items.composeTrail();
@@ -730,7 +748,6 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     bookBrowser->setBrowser(items.text());
     bookBrowser->setSearchPaths(QStringList() << book->path() << eb.cachePath);
     bookTree->insertTopLevelItems(0, items.items());
-    items.items()[0]->setExpanded(true);
     bookTree->setCurrentItem(items.items()[0]);
 
     return;
@@ -778,8 +795,7 @@ void MenuPage::fullMenuPage()
 
     PageItems items(CONF->bookSheet);
 
-    QString anchor = toAnchor("BOOK", 0);
-    items.setTopItem(anchor, method_.bookReader->name());
+    items.addHItem(0, toAnchor("B", 0), method_.bookReader->name());
     menuCount = 0;
 
     getMenus(&eb, page, offset, &items, 0);
@@ -791,9 +807,7 @@ void MenuPage::fullMenuPage()
 
     items.composeTrail();
     bookTree->insertTopLevelItems(0, items.items());
-    foreach(QTreeWidgetItem * i, items.items()) {
-        i->setExpanded(true);
-    }
+    items.expand(2);
 
     bookTree->setCurrentItem(items.topItem());
 
@@ -821,22 +835,18 @@ void MenuPage::selectMenuPage(int index)
    
     PageItems items(CONF->bookSheet);
 
-    QString anchor = toAnchor("BOOK", 0);
     QString name = method_.bookReader->name();
-    items.setTopItem(anchor, name);
-    QTreeWidgetItem *top_tree = items.curItem();
+    items.addHItem(0, toAnchor("B", 0), name);
     menuCount = 0;
     QTreeWidgetItem *next = 0;
 
     for (int i = 0; i < topMenus.count(); i++) {
         if (i == index) {
-            QString anchor = toAnchor("H", menuCount);
-            items.composeHLine(1, anchor, topTitles[i], QString());
+            items.composeHLine(1, toAnchor("H", menuCount), topTitles[i]);
 	    next = items.curItem();
             getMenus(&eb, topMenus[i].page, topMenus[i].offset, &items, 1);
         } else {
-            QString anchor = toAnchor("PAGE", i);
-	    items.addHItem(1, anchor, topTitles[i]);
+	    items.addHItem(1, toAnchor("P", i), topTitles[i]);
 	    items.curItem()->setForeground(0, QColor("#666688"));
         }
     }
@@ -844,10 +854,7 @@ void MenuPage::selectMenuPage(int index)
     items.composeTrail();
     bookTree->clear();
     bookTree->insertTopLevelItems(0, items.items());
-    bookTree->expandItem(top_tree);
-    for (int i = 0; i < top_tree->childCount(); i++) {
-        top_tree->child(i)->setExpanded(true);
-    }
+    items.expand(1);
 
     if (next) {
         bookTree->scrollToItem(next);
@@ -862,8 +869,8 @@ void MenuPage::changePage(QTreeWidgetItem *item, int)
 {
     QString anc = item->text(1);
 
-    if (anc.left(4) == "PAGE") {
-        int page = anc.mid(4).toInt();
+    if (anc.at(0) == 'P') {
+        int page = anc.mid(1).toInt();
         bookTree->setCurrentItem(NULL);
         selectMenuPage(page);
     }
@@ -871,7 +878,7 @@ void MenuPage::changePage(QTreeWidgetItem *item, int)
 
 void MenuPage::getTopMenu(EBook *eb, int page, int offset)
 {
-    QString t = QString();
+    QString t;
     QStringList list = eb->candidate(page, offset, &t);
 
     foreach(QString s, list) {
@@ -906,11 +913,9 @@ void MenuPage::getMenus(EBook *eb, int page, int offset, PageItems *items,
                 retStatus = LIMIT_MENU;
                 break;
             }
-            QString anchor = toAnchor("H", menuCount);
-            //qDebug() << anchor;
             int next_page = cand[1].toInt();
             int next_offset = cand[2].toInt();
-            items->composeHLine(count, anchor, cand[0], QString());
+            items->composeHLine(count, toAnchor("H", menuCount), cand[0]);
             getMenus(eb, next_page, next_offset, items, count);
         }
     } else {
@@ -950,12 +955,11 @@ RET_SEARCH WholePage::readPage(int page)
 
     int seq_hits = seqHits.count();
     if (seq_hits == 1) {
-        QString anchor = toAnchor("BOOK", 0);
-        item.composeHLine(1, anchor, method_.bookReader->name(), QString());
+        item.composeHLine(1, toAnchor("B", 0), method_.bookReader->name());
     } else {
         QString str =  method_.bookReader->name() + '(' +
                 QString::number(seqHits.count()) + ')';
-	item.setTopItem("TOP", str);
+	item.addHItem(0, "TOP", str);
     }
     QTreeWidgetItem *top_tree = item.curItem();
 
@@ -977,11 +981,10 @@ RET_SEARCH WholePage::readPage(int page)
             eb.setStartHit(seqHits[i]);
             int hit_num = eb.hitFull(limit);
             if (seqHits.count() > 1) {
-                QString anchor = toAnchor("HIT", i);
                 QString name = method_.bookReader->name() + '(' +
                                QString::number(i * limit + 1) + '-' +
                                QString::number(i * limit + hit_num) + ')';
-                item.composeHLine(1, anchor, name, QString());
+                item.composeHLine(1, toAnchor("HIT", i), name);
 		current_item = page_tree = item.curItem();
             }
             for (int j = 0; j < hit_num; j++) {
@@ -994,12 +997,10 @@ RET_SEARCH WholePage::readPage(int page)
                 QString head_v;
                 QString text_v;
                 getText(&eb, j, &head_l, &head_v, &text_v);
-                QString anchor = toAnchor("H", j);
-                item.composeHLine(2, anchor, head_l, head_v, text_v);
+                item.composeHLine(2, toAnchor("H", j), head_l, head_v, text_v);
                 if (item.textLength() > CONF->limitBrowserChar ||
                     eb.imageCount() > CONF->limitImageNum) {
-                    QString anchor = toAnchor("CUT", 1);
-                    item.composeError(anchor, CutString);
+                    item.composeError(toAnchor("CUT", 1), CutString);
                     ret = (eb.imageCount() > CONF->limitImageNum) ? 
                         LIMIT_IMAGE : LIMIT_CHAR;
                     break;
@@ -1009,10 +1010,9 @@ RET_SEARCH WholePage::readPage(int page)
             QString t = eb.text(seqHits[i].page,
                                 seqHits[i].offset, false);
             QString head_i = t.left(t.indexOf('\n'));
-            QString anchor = toAnchor("PAGE", i);
             QString name = "(" + QString::number(i * limit + 1) + "-) " +
                            head_i;
-            item.addHItem(1, anchor, name);
+            item.addHItem(1, toAnchor("P", i), name);
 	    page_tree = item.curItem();
             page_tree->setForeground(0, QColor(50, 50, 150));
         }
@@ -1026,10 +1026,7 @@ RET_SEARCH WholePage::readPage(int page)
 
     bookTree->clear();
     bookTree->insertTopLevelItems(0, item.items());
-    bookTree->expandItem(top_tree);
-    for (int i = 0; i < top_tree->childCount(); i++) {
-        top_tree->child(i)->setExpanded(true);
-    }
+    item.expand(1);
 
     bookTree->setCurrentItem(current_item);
 
@@ -1041,8 +1038,8 @@ void WholePage::changePage(QTreeWidgetItem *item, int)
 {
     QString anc = item->text(1);
 
-    if (anc.left(4) == "PAGE") {
-        int page = anc.mid(4).toInt();
+    if (anc.at(0) == 'P') {
+        int page = anc.mid(1).toInt();
         readPage(page);
     }
 }
@@ -1085,7 +1082,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
     }
 
     PageItems items(CONF->dictSheet);
-    items.setTopItem("TOP", "tmp");
+    items.addHItem(0, "TOP", "tmp");
 
     EBook eb;
     int book_count = 0;
@@ -1126,7 +1123,6 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
             continue;
         }
 
-	QTreeWidgetItem *book_item = 0;
         matchCount = 0;
         for (int i = 0; i < hit_num; i++) {
             if (checkStop()) break;
@@ -1140,9 +1136,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
             if (matchCount == 1) {
                 bookBrowser->addBookList(book);
                 book_count++;
-                QString anchor_book = toAnchor("BOOK", book_count);
-                items.composeHLine(1, anchor_book, book->name(), QString());
-		book_item = items.curItem();
+                items.composeHLine(1, toAnchor("B", book_count), book->name());
             }
             if (CONF->highlightMatch) {
                 foreach(QString s, slist) {
@@ -1150,13 +1144,11 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
                     text_v = emphasize(text_v, s);
                 }
             }
-            QString anchor = toAnchor("H", totalCount);
-            items.composeHLine(2, anchor, head_i, head_v, text_v);
+            items.composeHLine(2, toAnchor("H", totalCount), head_i, head_v, text_v);
 
             RET_SEARCH chk = checkLimit(eb.imageCount(), items.textLength());
             if (chk != NORMAL) {
-                //QString anchor = toAnchor("CUT", totalCount);
-                items.composeError(anchor, CutString);
+                items.composeError(toAnchor("CUT", totalCount), CutString);
                 if (chk != LIMIT_BOOK) {
                     break_flag = true;
                     retStatus = chk;
@@ -1168,7 +1160,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
             eb.unsetBook();
             continue;
         }
-	book_item->setText(0, book->name() + " (" +
+	items.item(1)->setText(0, book->name() + " (" +
                                   QString::number(matchCount)  + ')');
 
         eb.unsetBook();
@@ -1186,15 +1178,15 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
     emit statusRequested(QString("List (%1 items)").arg(totalCount));
     checkStop();
 
-    bookTree->insertTopLevelItems(0, items.items());
-    QString top_title = toLogicString(slist, method);
     QTreeWidgetItem *top_item = items.topItem();
+    QString top_title = toLogicString(slist, method);
     top_item->setText(0, QString("%1(%2)").arg(top_title).arg(totalCount));
-    bookTree->expandItem(top_item);
+
+    bookTree->insertTopLevelItems(0, items.items());
     if (totalCount <= 100 || top_item->childCount() == 1) {
-        for (int i = 0; i < top_item->childCount(); i++) {
-            top_item->child(i)->setExpanded(true);
-        }
+        items.expand(1);
+    } else {
+        items.expand(0);
     }
     bookTree->setCurrentItem(top_item);
     emit statusRequested(QString("Browser (%1 character)")
@@ -1216,7 +1208,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
     int book_count = 0;
 
     PageItems item(CONF->dictSheet);
-    item.setTopItem("TOP", "tmp");
+    item.addHItem(0, "TOP", "tmp");
 
     bool break_flag = false;
     RET_SEARCH break_check = NORMAL;
@@ -1241,8 +1233,6 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
         bookBrowser->addBookList(book);
         book_count++;
 
-        QTreeWidgetItem *book_tree = 0;
-
         int search_count = 0;
         for (;;) {
             emit statusRequested(book->name() + ":(" +
@@ -1265,10 +1255,9 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
                                  &head_i, &head_v, &text_v)) continue;
 
                 if (matchCount == 1) {
-                    QString anchor = toAnchor("BOOK", book_count);
 
-                    item.composeHLine(1, anchor, book->name(), QString());
-		    book_tree =item.curItem();
+                    item.composeHLine(1, toAnchor("B", book_count),
+                                      book->name());
                 }
                 if (CONF->highlightMatch) {
                     foreach(QString s, slist) {
@@ -1276,12 +1265,11 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
                         text_v = emphasize(text_v, s);
                     }
                 }
-                QString anchor = toAnchor("H", totalCount);
-                item.composeHLine(2, anchor, head_i, head_v, text_v);
+                item.composeHLine(2, toAnchor("H", totalCount), head_i,
+                                  head_v, text_v);
                 break_check = checkLimit(eb.imageCount(), item.textLength());
                 if (break_check != NORMAL) {
-                    QString anchor = toAnchor("CUT", totalCount);
-                    item.composeError(anchor, CutString);
+                    item.composeError(toAnchor("C", totalCount), CutString);
                     break;
                 }
             }
@@ -1300,8 +1288,8 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
         eb.unsetBook();
         if (matchCount == 0) continue;
 
-        book_tree->setText(0, QString("%1(%2)")
-                           .arg(book_tree->text(0)).arg(matchCount));
+	item.item(1)->setText(0, QString("%1(%2)")
+                                 .arg(book->name()).arg(matchCount));
     }
     if (totalCount == 0) {
         delete item.topItem();
@@ -1321,11 +1309,10 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
     QString top_title = toLogicString(slist, method);
     QTreeWidgetItem *top_tree = item.topItem();
     top_tree->setText(0, QString("%1(%2)").arg(top_title).arg(totalCount));
-    bookTree->expandItem(top_tree);
     if (totalCount <= 100 || top_tree->childCount() == 1) {
-        for (int i = 0; i < top_tree->childCount(); i++) {
-            top_tree->child(i)->setExpanded(true);
-        }
+        item.expand(1);
+    } else {
+        item.expand(0);
     }
 
     bookTree->setCurrentItem(top_tree);
