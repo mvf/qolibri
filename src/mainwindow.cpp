@@ -729,9 +729,13 @@ void MainWindow::closedDock()
 
 
 #if defined (Q_WS_X11) || defined (Q_WS_WIN)
+//static int screenWidth = QDesktopWidget().screenGeometry().width();
+
 void MainWindow::setDockPosition()
 {
     int left = mapToGlobal(QPoint(0, 0)).x();
+    //int right = screenWidth - width() - left - 2;
+
     int right = QDesktopWidget().screenGeometry(1).width() - width() -
                 left - 2;
 
@@ -1083,7 +1087,7 @@ void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
     emit nowBusy(false);
     stopAct->setEnabled(false);
     QString msg;
-    QString msg_b = QString();
+    QString msg_b;
     if (ret == NORMAL) {
         msg = "OK : ";
     } else {
