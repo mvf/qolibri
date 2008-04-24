@@ -193,7 +193,7 @@ private:
     }
     inline QByteArray makeFname(const QByteArray &type, int p1, int p2)
     {
-        return QByteArray().setNum(p1) + 'x' + QByteArray().setNum(p2) +
+        return QByteArray::number(p1) + 'x' + QByteArray::number(p2) +
                '.' + type;
     }
 
