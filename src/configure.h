@@ -27,9 +27,7 @@
 class Configure
 {
 public:
-    Configure()
-    {
-    }
+    Configure();
     static Configure *configure();
     void load();
     void save();
@@ -55,6 +53,7 @@ public:
     QString googleUrl;
     QString wikipediaUrl;
     QString userDefUrl;
+    QString settingOrg;
     QFont browserFont;
 };
 

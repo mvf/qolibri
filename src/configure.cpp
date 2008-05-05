@@ -56,8 +56,14 @@ const char* googleUrl_Def =
     "http://www.google.com/search?rls=ja-jp&ie=UTF-8&oe=UTF-8&q=";
 const char* wikipediaUrl_Def = "http://ja.wikipedia.org/wiki/";
 const char* userDefUrl_Def = "http://en.wikipedia.org/wiki/";
+const char* settingOrg_Def = "QOLIBRI_1_0";
 
 static Configure *configure_s = new Configure();
+
+Configure::Configure()
+{
+    settingOrg = settingOrg_Def;
+}
 
 Configure *Configure::configure()
 {
@@ -66,7 +72,7 @@ Configure *Configure::configure()
 
 void Configure::load()
 {
-    QSettings conf("QOLIBRI_1_0", "EpwingConfigure");
+    QSettings conf(CONF->settingOrg, "EpwingConfigure");
 
     highlightMatch = conf.value("highlight_match", highlightMatch_Def).toBool();
     beepSound = conf.value("beep_sound", beepSound_Def).toBool();
@@ -90,7 +96,7 @@ void Configure::load()
     QVariant afont = conf.value("application_font", qApp->font());
     qApp->setFont(afont.value<QFont>());
 
-    QSettings ssheets("QOLIBRI_1_0", "EpwingStyleSheet");
+    QSettings ssheets(CONF->settingOrg, "EpwingStyleSheet");
     dictSheet = ssheets.value("dictionary", dictStyleSheet).toString();
     bookSheet = ssheets.value("book", bookStyleSheet).toString();
     statusBarSheet = ssheets.value("widgets1", statusBarStyleSheet).toString();
@@ -98,7 +104,7 @@ void Configure::load()
 
 void Configure::save()
 {
-    QSettings conf("QOLIBRI_1_0", "EpwingConfigure");
+    QSettings conf(CONF->settingOrg, "EpwingConfigure");
 
     conf.setValue("hightlight_match", highlightMatch);
     conf.setValue("beep_sound", beepSound);
@@ -120,7 +126,7 @@ void Configure::save()
     conf.setValue("browser_font", browserFont);
     conf.setValue("application_font", qApp->font());
 
-    QSettings ssheets("QOLIBRI_1_0", "EpwingStyleSheet");
+    QSettings ssheets(settingOrg, "EpwingStyleSheet");
     ssheets.setValue("dictionary", dictSheet);
     ssheets.setValue("book", bookSheet);
     ssheets.setValue("widgets1", statusBarSheet );
