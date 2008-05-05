@@ -33,6 +33,7 @@ SOURCES += qolibri.cpp \
            configsetting.cpp \
            statusbutton.cpp
 
+QT += network
 RESOURCES += qolibri.qrc
 
 TARGET = qolibri
