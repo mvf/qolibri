@@ -26,6 +26,7 @@
 #include <QTranslator>
 #include <QLocale>
 #include <QLibraryInfo>
+//#include <QtCore>
 #ifdef USE_STATIC_PLUGIN
 #include <QtPlugin>
 #endif
@@ -40,12 +41,31 @@ Q_IMPORT_PLUGIN(qgif)
 #endif
 
 #include "mainwindow.h"
+#include "configure.h"
+#include "method.h"
 
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(qolibri);
 
     QApplication app(argc, argv);
+    QString searchText;
+    int port = -1;
+
+    if (argc > 1) {
+	for(int i=1; i<argc; i++){
+	    QString arg = QString::fromLocal8Bit(argv[i]);
+	    if (arg == "-c" && (i+1) < argc) {
+                CONF->settingOrg = QString::fromLocal8Bit(argv[i+1]);
+		i++;
+            } else if (arg == "-p" && (i+1) < argc) {
+                port = QString::fromLocal8Bit(argv[i+1]).toInt();
+                i++;
+            } else {
+		searchText += arg + " ";
+	    }
+	}
+    }
 
     QString locale = QLocale::system().name();
 #if defined (Q_WS_MAC) || defined (Q_WS_WIN)
@@ -61,7 +81,7 @@ int main(int argc, char *argv[])
     //trans.load(QString("qt_") + locale, path);
     //app.installTranslator(&transQt);
 
-    MainWindow mainWin;
+    MainWindow mainWin(searchText, port);
 
     mainWin.show();
 
