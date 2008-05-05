@@ -18,6 +18,9 @@
 ***************************************************************************/
 
 #include <QtGui>
+#include <QtNetwork>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "mainwindow.h"
 #include "ssheet.h"
@@ -37,7 +40,7 @@ const char *Program = { "qolibri" };
 #define CONNECT_BUSY(widget) \
     connect(this, SIGNAL(nowBusy(bool)), widget, SLOT(setDisabled(bool)))
 
-MainWindow::MainWindow()
+MainWindow::MainWindow(const QString &stext, int port)
 {
 #ifdef Q_WS_MAC
     //setUnifiedTitleAndToolBarOnMac(true);
@@ -102,6 +105,31 @@ MainWindow::MainWindow()
         timer->start(300);
     }
     statusBar()->setStyleSheet(CONF->statusBarSheet);
+
+    if (!stext.isEmpty()) {
+        pasteSearchText(stext);
+    }
+
+    server = 0;
+    if (port >= 0) {
+        server = new QTcpServer(this);
+        if(!server->listen(QHostAddress::Any, port)) {
+            qDebug() << "Server Listen Error";
+            showStatus("Server Listen Error");
+            return;
+        }
+        if (port == 0) {
+            port = server->serverPort();
+        }
+        connect(server, SIGNAL(newConnection()),
+                this, SLOT(getClientText()));
+        showStatus(QString("Server Mode(port=%1)").arg(port));
+        printf( "%d\n", port);
+        fflush(stdout);
+        connect(this, SIGNAL(searchFinished()),
+                this, SLOT(searchClientText()));
+    }
+
 }
 
 void MainWindow::createMenus()
@@ -356,7 +384,7 @@ void MainWindow::createStatusBar()
 
 void MainWindow::readSettings()
 {
-    QSettings settings("QOLIBRI_1_0", "EpwingViewer");
+    QSettings settings(CONF->settingOrg, "EpwingViewer");
     QSize size = settings.value("size", QSize(800, 600)).toSize();
 
     resize(size);
@@ -387,7 +415,7 @@ void MainWindow::readSettings()
         }
     }
 
-    QSettings groups("QOLIBRI_1_0", "EpwingGroups");
+    QSettings groups(CONF->settingOrg, "EpwingGroups");
     int gcnt = groups.beginReadArray("DictionaryGroups");
     for (int i = 0; i < gcnt; i++) {
         groups.setArrayIndex(i);
@@ -428,7 +456,7 @@ void MainWindow::readSettings()
     changeLimitTotal(method.limitTotal);
     toggleRubyAct->setChecked(!method.ruby);
 
-    QSettings hist("QOLIBRI_1_0", "EpwingHistory");
+    QSettings hist(CONF->settingOrg, "EpwingHistory");
     int hcnt = hist.beginReadArray("History");
     for (int i = 0; i < hcnt && i < CONF->historyMax; i++) {
         hist.setArrayIndex(i);
@@ -440,7 +468,7 @@ void MainWindow::readSettings()
     }
     hist.endArray();
 
-    QSettings mark("QOLIBRI_1_0", "EpwingBookmark");
+    QSettings mark(CONF->settingOrg, "EpwingBookmark");
     int mcnt = mark.beginReadArray("Bookmark");
     for (int i = 0; i < mcnt; i++) {
         mark.setArrayIndex(i);
@@ -455,7 +483,7 @@ void MainWindow::readSettings()
 
 void MainWindow::writeSettings()
 {
-    QSettings settings("QOLIBRI_1_0", "EpwingViewer");
+    QSettings settings(CONF->settingOrg, "EpwingViewer");
 
     settings.setValue("size", size());
     settings.setValue("dock", toggleDockAct->isChecked());
@@ -466,7 +494,7 @@ void MainWindow::writeSettings()
     settings.setValue("searchsel", optDirection);
     writeMethodSetting(method, &settings);
 
-    QSettings groups("QOLIBRI_1_0", "EpwingGroups");
+    QSettings groups(CONF->settingOrg, "EpwingGroups");
     groups.beginWriteArray("DictionaryGroups");
     for (int i = 0; i < groupList.count(); i++) {
         Group *g = groupList[i];
@@ -494,7 +522,7 @@ void MainWindow::writeSettings()
     }
     groups.endArray();
 
-    QSettings history("QOLIBRI_1_0", "EpwingHistory");
+    QSettings history(CONF->settingOrg, "EpwingHistory");
     history.beginWriteArray("History");
     QListWidget *hlist = groupDock->historyListWidget();
     for (int i = 0; i < hlist->count(); i++) {
@@ -506,7 +534,7 @@ void MainWindow::writeSettings()
     }
     history.endArray();
 
-    QSettings mark("QOLIBRI_1_0", "EpwingBookmark");
+    QSettings mark(CONF->settingOrg, "EpwingBookmark");
     mark.beginWriteArray("Bookmark");
     QListWidget *mlist = groupDock->markListWidget();
     for (int i = 0; i < mlist->count(); i++) {
@@ -1418,6 +1446,38 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
     return eb.fontCachePath();
 }
 
+void MainWindow::getClientText()
+{
+    qDebug() << "getClientText 1";
+    QTcpSocket *cl = server->nextPendingConnection();
+    connect(cl, SIGNAL(disconnected()), cl, SLOT(deleteLater()));
+    qDebug() << "getClientText 2";
+    cl->waitForReadyRead();
+    QString txt;
+    txt = cl->read(1000);
+
+    clientText << txt;
+    if (!stopAct->isEnabled()) {
+        searchClientText();
+    }
+    qDebug() << "getClientText 4";
+}
+
+void MainWindow::searchClientText()
+{
+    qDebug() << "searchClientText 1" << clientText.count();
+    if (!clientText.count()) 
+        return;
+
+    //pasteSearchText(clientText[0]);
+    QString txt = clientText[0];
+    clientText.removeAt(0);
+    pasteSearchText(txt);
+    qDebug() << "searchClientText 2" << txt;
+    viewSearch();
+    qDebug() << "searchClientText 3" << clientText.count();
+}
+
 void MainWindow::aboutQolibri()
 {
     QString msg = tr("<h2>qolibri</h2><br/><br/>"
@@ -1431,3 +1491,4 @@ void MainWindow::aboutQolibri()
     QMessageBox::about(this, "qolibri", msg );
 
 }
+
