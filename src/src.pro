@@ -14,7 +14,8 @@ HEADERS += mainwindow.h \
            configsetting.h \
            ssheet.h \
            titlelabel.h \
-           statusbutton.h
+           statusbutton.h \
+           server.h
 
 SOURCES += qolibri.cpp \
            mainwindow.cpp \
@@ -31,7 +32,8 @@ SOURCES += qolibri.cpp \
            fontsetting.cpp \
            ssheetsetting.cpp \
            configsetting.cpp \
-           statusbutton.cpp
+           statusbutton.cpp \
+           server.cpp
 
 QT += network
 RESOURCES += qolibri.qrc

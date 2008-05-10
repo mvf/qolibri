@@ -17,7 +17,6 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -43,6 +42,9 @@ Q_IMPORT_PLUGIN(qgif)
 #include "mainwindow.h"
 #include "configure.h"
 #include "method.h"
+#include "server.h"
+
+QoServer *server;
 
 int main(int argc, char *argv[])
 {
@@ -81,9 +83,13 @@ int main(int argc, char *argv[])
     //trans.load(QString("qt_") + locale, path);
     //app.installTranslator(&transQt);
 
-    MainWindow mainWin(searchText, port);
+    MainWindow mainWin;
 
     mainWin.show();
+
+    if (port >= 0) {
+        server = new QoServer(&mainWin, port);
+    }
 
     return app.exec();
 }

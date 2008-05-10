@@ -18,7 +18,6 @@
 ***************************************************************************/
 
 #include <QtGui>
-#include <QtNetwork>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -40,7 +39,7 @@ const char *Program = { "qolibri" };
 #define CONNECT_BUSY(widget) \
     connect(this, SIGNAL(nowBusy(bool)), widget, SLOT(setDisabled(bool)))
 
-MainWindow::MainWindow(const QString &stext, int port)
+MainWindow::MainWindow()
 {
 #ifdef Q_WS_MAC
     //setUnifiedTitleAndToolBarOnMac(true);
@@ -106,29 +105,7 @@ MainWindow::MainWindow(const QString &stext, int port)
     }
     statusBar()->setStyleSheet(CONF->statusBarSheet);
 
-    if (!stext.isEmpty()) {
-        pasteSearchText(stext);
-    }
-
-    server = 0;
-    if (port >= 0) {
-        server = new QTcpServer(this);
-        if(!server->listen(QHostAddress::Any, port)) {
-            qDebug() << "Server Listen Error";
-            showStatus("Server Listen Error");
-            return;
-        }
-        if (port == 0) {
-            port = server->serverPort();
-        }
-        connect(server, SIGNAL(newConnection()),
-                this, SLOT(getClientText()));
-        showStatus(QString("Server Mode(port=%1)").arg(port));
-        printf( "%d\n", port);
-        fflush(stdout);
-        connect(this, SIGNAL(searchFinished()),
-                this, SLOT(searchClientText()));
-    }
+    connect(this, SIGNAL(searchFinished()), this, SLOT(checkNextSearch()));
 
 }
 
@@ -1446,36 +1423,26 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
     return eb.fontCachePath();
 }
 
-void MainWindow::getClientText()
+void MainWindow::checkNextSearch()
 {
-    qDebug() << "getClientText 1";
-    QTcpSocket *cl = server->nextPendingConnection();
-    connect(cl, SIGNAL(disconnected()), cl, SLOT(deleteLater()));
-    qDebug() << "getClientText 2";
-    cl->waitForReadyRead();
-    QString txt;
-    txt = cl->read(1000);
+    if (!clientText.count())
+        return;
+    QString str = clientText[0];
+    clientText.removeAt(0);
 
-    clientText << txt;
-    if (!stopAct->isEnabled()) {
-        searchClientText();
-    }
-    qDebug() << "getClientText 4";
+    searchClientText(str);
+
 }
 
-void MainWindow::searchClientText()
+void MainWindow::searchClientText(const QString &str)
 {
-    qDebug() << "searchClientText 1" << clientText.count();
-    if (!clientText.count()) 
+    if (stopAct->isEnabled()) {
+        clientText << str;
         return;
-
-    //pasteSearchText(clientText[0]);
-    QString txt = clientText[0];
-    clientText.removeAt(0);
-    pasteSearchText(txt);
-    qDebug() << "searchClientText 2" << txt;
+    }
+    showStatus("written");
+    pasteSearchText(str);
     viewSearch();
-    qDebug() << "searchClientText 3" << clientText.count();
 }
 
 void MainWindow::aboutQolibri()

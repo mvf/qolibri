@@ -35,8 +35,6 @@ class QSound;
 class QTimer;
 class QPushButton;
 class QMenu;
-class QTcpSocket;
-class QTcpServer;
 
 class GroupDock;
 class BookView;
@@ -49,7 +47,7 @@ public:
     enum BookMode { ModeDictionary, ModeBook };
     enum DockPosition { DockLeft, DockRight };
 
-    MainWindow(const QString &stext, int port=-1);
+    MainWindow();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -120,8 +118,9 @@ private slots:
 #if defined (Q_WS_X11) || defined (Q_WS_WIN)
     void showDock();
 #endif
-    void getClientText();
-    void searchClientText();
+    void checkNextSearch();
+    void searchClientText(const QString &str);
+
     void aboutQolibri();
 
 
@@ -195,7 +194,6 @@ private:
 #if defined (Q_WS_X11)
     QTimer *timerDock;
 #endif
-    QTcpServer *server;
     QStringList  clientText;
 
 #if defined (Q_WS_X11) || defined (Q_WS_WIN)
