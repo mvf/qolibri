@@ -38,6 +38,11 @@ QoServer::QoServer(int port)
     connect(this, SIGNAL(newConnection()), this, SLOT(getClientText()));
     return;
 }
+
+//QoServer::~QoServer()
+//{
+//
+//}
 void QoServer::getClientText()
 {
     QTcpSocket *c = nextPendingConnection();

@@ -27,6 +27,7 @@ class QoServer : public QTcpServer
    Q_OBJECT
 public:
     QoServer(int port);
+    ~QoServer() {};
 
     void slotShowStatus(const QObject *receiver, const char *member);
     void slotSearchText(const QObject *receiver, const char *member);
