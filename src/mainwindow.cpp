@@ -39,7 +39,7 @@ const char *Program = { "qolibri" };
 #define CONNECT_BUSY(widget) \
     connect(this, SIGNAL(nowBusy(bool)), widget, SLOT(setDisabled(bool)))
 
-MainWindow::MainWindow()
+MainWindow::MainWindow(const QString &s_text)
 {
 #ifdef Q_WS_MAC
     //setUnifiedTitleAndToolBarOnMac(true);
@@ -80,8 +80,6 @@ MainWindow::MainWindow()
 
     changeViewTabCount(0);
 
-    sound = NULL;
-    timer = NULL;
 
 #if defined (Q_WS_X11)
     timerDock = NULL;
@@ -97,10 +95,18 @@ MainWindow::MainWindow()
     }
 #endif
 
+    sound = NULL;
+    timer = NULL;
     if (groupList[0]->bookList().count() == 0) {
         timer = new QTimer(this);
         timer->setSingleShot(true);
         connect(timer, SIGNAL(timeout()), this, SLOT(setBooks()));
+        timer->start(300);
+    } else if (!s_text.isEmpty()) {
+        clientText << s_text;
+        timer = new QTimer(this);
+        timer->setSingleShot(true);
+        connect(timer, SIGNAL(timeout()), this, SLOT(checkNextSearch()));
         timer->start(300);
     }
     statusBar()->setStyleSheet(CONF->statusBarSheet);
@@ -543,6 +549,7 @@ void MainWindow::setTitle()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (stopAct->isEnabled()) {
+        clientText.clear();
         connect(this, SIGNAL(searchFinished()), this, SLOT(close()));
         stopAct->trigger();
         event->ignore();
@@ -1215,8 +1222,8 @@ void MainWindow::execError(QProcess::ProcessError e)
         msg = QString(tr("Error occured during staring process(code=%1)."))
                       .arg((int)e);
     }
-    QMessageBox::warning(this, Program, msg );
     showStatus(msg);
+    QMessageBox::warning(this, Program, msg );
 }
 
 void MainWindow::execSound(const QString &fname)
@@ -1410,8 +1417,7 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
             eb.text(i);
         }
 
-        QEventLoop event;
-        event.processEvents();
+        QEventLoop().processEvents();
 
         if (hit_num < 1000) break;
     }
@@ -1444,7 +1450,7 @@ void MainWindow::searchClientText(const QString &str)
         clientText << str;
         return;
     }
-    showStatus("written");
+    //showStatus("written");
     pasteSearchText(str);
     viewSearch();
 }

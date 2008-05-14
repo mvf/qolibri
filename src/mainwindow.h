@@ -47,7 +47,7 @@ public:
     enum BookMode { ModeDictionary, ModeBook };
     enum DockPosition { DockLeft, DockRight };
 
-    MainWindow();
+    MainWindow(const QString &s_text);
 
 protected:
     void closeEvent(QCloseEvent *event);
