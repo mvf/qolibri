@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
     //trans.load(QString("qt_") + locale, path);
     //app.installTranslator(&transQt);
 
-    MainWindow mainWin;
+    MainWindow mainWin(searchText);
 
     mainWin.show();
 
@@ -109,10 +109,15 @@ int main(int argc, char *argv[])
         server->showStatus(QString("Start as server (port = %1)")
                                   .arg(server->serverPort()));
     }
-    if (!searchText.isEmpty()) {
-        mainWin.searchClientText(searchText);
-    }
+    //if (!searchText.isEmpty()) {
+    //    emit mainWin.searchClientText(searchText);
+    //}
 
-    return app.exec();
+
+    int ret = app.exec();
+
+    delete server;
+
+    return ret;
 }
 
