@@ -22,13 +22,15 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
-class MainWindow;
-
 class QoServer : public QTcpServer
 {
    Q_OBJECT
 public:
-    QoServer(MainWindow* mainw, int port);
+    QoServer(int port);
+
+    void slotShowStatus(const QObject *receiver, const char *member);
+    void slotSearchText(const QObject *receiver, const char *member);
+    void showStatus(const QString &str);
     
 signals:
     void searchRequested(const QString &str);

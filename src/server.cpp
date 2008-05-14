@@ -17,30 +17,25 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <QtGui>
+#include <QtCore>
 #include <QtNetwork>
 
-#include "mainwindow.h"
 #include "server.h"
 
-QoServer::QoServer(MainWindow *mainw, int port)
+const int DEFAUL_PORT = 5626;
+
+QoServer::QoServer(int port)
     : QTcpServer(0)
 {
+    if (port == 0)
+        port = DEFAUL_PORT;
+
     if (!listen(QHostAddress::Any, port)) {
         qDebug() << "Server Listen Error";
         return;
     }
-    if (port == 0){
-        port = serverPort();
-        qDebug() << "Server Port No =" << port;
-    }
+
     connect(this, SIGNAL(newConnection()), this, SLOT(getClientText()));
-    connect(this, SIGNAL(searchRequested(const QString&)),
-            mainw, SLOT(searchClientText(const QString&))); 
-    connect(this, SIGNAL(statusRequested(const QString&)),
-            mainw, SLOT(showStatus(const QString&))); 
-    QString msg = "Server Port No = " + QString::number(port);
-    emit statusRequested(msg);
     return;
 }
 void QoServer::getClientText()
@@ -51,4 +46,19 @@ void QoServer::getClientText()
     QString str;
     str = c->read(1000);
     emit searchRequested(str);
+}
+
+void QoServer::slotShowStatus(const QObject *receiver, const char *member)
+{
+    connect(this, SIGNAL(statusRequested(const QString&)), receiver, member); 
+}
+
+void QoServer::slotSearchText(const QObject *receiver, const char *member)
+{
+    connect(this, SIGNAL(searchRequested(const QString&)), receiver, member); 
+}
+
+void QoServer::showStatus(const QString &msg)
+{
+    emit statusRequested(msg);
 }
