@@ -43,6 +43,7 @@ Q_IMPORT_PLUGIN(qgif)
 #include "configure.h"
 #include "method.h"
 #include "server.h"
+#include "client.h"
 
 QoServer *server;
 
@@ -53,20 +54,32 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QString searchText;
     int port = -1;
+    bool qserv = false;
 
-    if (argc > 1) {
-	for(int i=1; i<argc; i++){
-	    QString arg = QString::fromLocal8Bit(argv[i]);
-	    if (arg == "-c" && (i+1) < argc) {
-                CONF->settingOrg = QString::fromLocal8Bit(argv[i+1]);
-		i++;
-            } else if (arg == "-p" && (i+1) < argc) {
-                port = QString::fromLocal8Bit(argv[i+1]).toInt();
-                i++;
-            } else {
-		searchText += arg + " ";
-	    }
-	}
+    for(int i=1; i<argc; i++){
+        QString str = QString::fromLocal8Bit(argv[i]).toLower();
+        if (str.toLower() == "-c" && (i+1) < argc) {
+            CONF->settingOrg = QString::fromLocal8Bit(argv[i+1]);
+            i++;
+       
+        } else if (str.toLower() == "-p" && (i+1) < argc) {
+            port = QString::fromLocal8Bit(argv[i+1]).toInt();
+            i++;
+        } else if (str.toLower() == "-s") {
+            qserv = true;
+            if (port < 0) port = 0;
+        } else {
+            searchText += str;
+            if ( (i+1) < argc) searchText += " ";
+        }
+    }
+
+    if (qserv) {
+        QoClient client("localhost", port);
+        if (client.connectHost()) {
+            client.sendText(searchText.toLocal8Bit());
+            return 1;
+        }
     }
 
     QString locale = QLocale::system().name();
@@ -87,8 +100,17 @@ int main(int argc, char *argv[])
 
     mainWin.show();
 
-    if (port >= 0) {
-        server = new QoServer(&mainWin, port);
+    if (qserv) {
+        server = new QoServer(port);
+        server->slotSearchText(&mainWin,
+                               SLOT(searchClientText(const QString&)));
+        server->slotShowStatus(&mainWin,
+                               SLOT(showStatus(const QString&)));
+        server->showStatus(QString("Start as server (port = %1)")
+                                  .arg(server->serverPort()));
+    }
+    if (!searchText.isEmpty()) {
+        mainWin.searchClientText(searchText);
     }
 
     return app.exec();
