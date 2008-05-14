@@ -15,7 +15,8 @@ HEADERS += mainwindow.h \
            ssheet.h \
            titlelabel.h \
            statusbutton.h \
-           server.h
+           server.h \
+           client.h
 
 SOURCES += qolibri.cpp \
            mainwindow.cpp \
