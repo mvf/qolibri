@@ -22,10 +22,10 @@
 
 #include <QMainWindow>
 #include <QProcess>
+#include <QAction>
 
 #include "method.h"
 
-class QAction;
 class QComboBox;
 class QLineEdit;
 class QLabel;
@@ -134,6 +134,11 @@ private:
     void writeSettings();
 
     void setTitle();
+
+    bool isBusy()
+    {
+        return stopAct->isEnabled();
+    }
 
     Group *groupFromName(const QString &name);
     Book *bookFromName(Group* group, const QString &name);

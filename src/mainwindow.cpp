@@ -548,7 +548,7 @@ void MainWindow::setTitle()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (stopAct->isEnabled()) {
+    if (isBusy()) {
         clientText.clear();
         connect(this, SIGNAL(searchFinished()), this, SLOT(close()));
         stopAct->trigger();
@@ -680,7 +680,7 @@ void MainWindow::showStatus(const QString &str)
     QString msg;
 
     if (!str.isEmpty()) msg = " :";
-    if (!stopAct->isEnabled()) {
+    if (!isBusy()) {
         if (groupList.count() > 0 && groupList[0]->bookList().count() == 0) {
             msg += tr(" No search book");
         } else if (bookMode == ModeDictionary &&
@@ -1446,7 +1446,7 @@ void MainWindow::searchClientText(const QString &str)
     if (str.isEmpty()) {
         return;
     }
-    if (stopAct->isEnabled()) {
+    if (isBusy()) {
         clientText << str;
         return;
     }
