@@ -18,8 +18,8 @@
 ***************************************************************************/
 
 #include <QtGui>
-#include <stdlib.h>
-#include <stdio.h>
+//#include <stdlib.h>
+//#include <stdio.h>
 
 #include "mainwindow.h"
 #include "ssheet.h"
@@ -1436,6 +1436,10 @@ void MainWindow::checkNextSearch()
 
 void MainWindow::searchClientText(const QString &str)
 {
+    raise();
+    if (str.isEmpty()) {
+        return;
+    }
     if (stopAct->isEnabled()) {
         clientText << str;
         return;
