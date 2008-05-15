@@ -86,7 +86,7 @@ MainWindow::MainWindow(const QString &s_text)
     timerDock = new QTimer(this);
     timerDock->setSingleShot(true);
     connect(timerDock, SIGNAL(timeout()), this, SLOT(showDock()));
-    timerDock->start(500);
+    timerDock->start(0);
 #elif defined (Q_WS_WIN)
     showDock();
 #elif defined (Q_WS_MAC)
@@ -101,13 +101,13 @@ MainWindow::MainWindow(const QString &s_text)
         timer = new QTimer(this);
         timer->setSingleShot(true);
         connect(timer, SIGNAL(timeout()), this, SLOT(setBooks()));
-        timer->start(300);
+        timer->start(0);
     } else if (!s_text.isEmpty()) {
         clientText << s_text;
         timer = new QTimer(this);
         timer->setSingleShot(true);
         connect(timer, SIGNAL(timeout()), this, SLOT(checkNextSearch()));
-        timer->start(300);
+        timer->start(0);
     }
     statusBar()->setStyleSheet(CONF->statusBarSheet);
 
