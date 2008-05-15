@@ -45,6 +45,22 @@ Q_IMPORT_PLUGIN(qgif)
 #include "server.h"
 #include "client.h"
 
+const char *usage =
+    "qolibri - EPWING Dictionary/Book Viewer 1.0.3\n"
+    "\n"
+    "Usage:\n"
+    "   qolibri [argument] [search text...] \n"
+    "\n"
+    "Arguments:\n"
+    "   -s                Client/Server mode\n"
+    "   -p <port-no>      Server Port no (default:5626)\n"
+    "   -c <session name> Configuration session name\n"
+    "   -h  or  --help    Print Help (this message) and exit\n" 
+    "   --version         Print version information and exit";
+
+const char *version =
+    "qolibri - EPWING Dictionary/Book Viewer 1.0.3";
+
 QoServer *server;
 
 int main(int argc, char *argv[])
@@ -53,7 +69,7 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
     QString searchText;
-    int port = -1;
+    qint16 port = -1;
     bool qserv = false;
 
     for(int i=1; i<argc; i++){
@@ -63,11 +79,22 @@ int main(int argc, char *argv[])
             i++;
        
         } else if (str.toLower() == "-p" && (i+1) < argc) {
-            port = QString::fromLocal8Bit(argv[i+1]).toInt();
-            i++;
+            bool ok;
+            port = QString::fromLocal8Bit(argv[i+1]).toInt(&ok);
+            if (ok) {
+                i++;
+            } else {
+                qWarning() << "can't convert port no (" << argv[i+1] << ")";
+            }
         } else if (str.toLower() == "-s") {
             qserv = true;
             if (port < 0) port = 0;
+        } else if (str.toLower() == "-h" || str.toLower() == "--help") {
+            qDebug() << usage;
+            return 1;
+        } else if (str.toLower() == "--version") {
+            qDebug() << version;
+            return 1;
         } else {
             searchText += str;
             if ( (i+1) < argc) searchText += " ";
@@ -78,6 +105,7 @@ int main(int argc, char *argv[])
         QoClient client("localhost", port);
         if (client.connectHost()) {
             client.sendText(searchText.toLocal8Bit());
+            //client.disconnectFromHost();
             return 1;
         }
     }

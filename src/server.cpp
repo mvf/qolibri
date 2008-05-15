@@ -22,16 +22,16 @@
 
 #include "server.h"
 
-const int DEFAUL_PORT = 5626;
+const qint16 DEFAUL_PORT = 5626;
 
-QoServer::QoServer(int port)
+QoServer::QoServer(qint16 port)
     : QTcpServer(0)
 {
     if (port == 0)
         port = DEFAUL_PORT;
 
     if (!listen(QHostAddress::Any, port)) {
-        qDebug() << "Server Listen Error";
+        qWarning() << "Server Listen Error : port =" << port;
         return;
     }
 
@@ -43,13 +43,14 @@ QoServer::QoServer(int port)
 //{
 //
 //}
+
 void QoServer::getClientText()
 {
     QTcpSocket *c = nextPendingConnection();
+    //connect(c, SIGNAL(disconnected()), this, SLOT(disconnectTest()));
     connect(c, SIGNAL(disconnected()), c, SLOT(deleteLater()));
-    c->waitForReadyRead();
-    QString str;
-    str = c->read(1000);
+    c->waitForReadyRead(30000);
+    QString str = c->read(1000);
     emit searchRequested(str);
 }
 
@@ -62,6 +63,11 @@ void QoServer::slotSearchText(const QObject *receiver, const char *member)
 {
     connect(this, SIGNAL(searchRequested(const QString&)), receiver, member); 
 }
+
+//void QoServer::disconnectTest()
+//{
+//    qDebug() << "disconnectTest";
+//}
 
 void QoServer::showStatus(const QString &msg)
 {

@@ -26,7 +26,7 @@ class QoServer : public QTcpServer
 {
    Q_OBJECT
 public:
-    QoServer(int port);
+    QoServer(qint16 port);
     ~QoServer() {};
 
     void slotShowStatus(const QObject *receiver, const char *member);
@@ -39,6 +39,7 @@ signals:
 
 private slots:
     void getClientText();
+    //void disconnectTest();
 };
 
 #endif

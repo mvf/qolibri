@@ -23,42 +23,98 @@
 #include <QTcpSocket>
 
 const int CONNECT_TIMEOUT = 300000;
-const int DEFAULT_PORT = 5626;
+const qint16 DEFAULT_PORT = 5626;
 
 class QoClient : public QTcpSocket
 {
-   Q_OBJECT
+    Q_OBJECT
 public:
-    QoClient(const QString &host, int port)
+    QoClient(const QString &host, qint16 port)
         : QTcpSocket(), hostName(host)
-   {
+    {
        portNo = port ? port : DEFAULT_PORT;
-   }
+    }
+
+//    ~QoClient()
+//    {
+//        qDebug() << "~QoClient";
+//        //currentState();
+//    }
+
+//    bool portTest()
+//    {
+//        connectToHost(hostName, portNo, QIODevice::WriteOnly);
+//        if (waitForConnected(CONNECT_TIMEOUT)){
+//            disconnectFromHost();
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
 
 
     bool connectHost()
     {
         //qDebug() << "connectHost" << hostName << portNo;
-        connectToHost(hostName, portNo);
+        connectToHost(hostName, portNo, QIODevice::WriteOnly);
         if (waitForConnected(CONNECT_TIMEOUT)){
             return true;
         } else {
             return false;
         }
     }
+    
+
     bool sendText(const QByteArray &msg)
     {
+        if (state() != QAbstractSocket::ConnectedState){
+            if (!connectHost()) {
+                return false;
+            }
+        }
         write(msg);
-        if (waitForBytesWritten()) {
+        if (waitForBytesWritten(30000)) {
             return true;
         } else {
+            qWarning() << "QoClient: write error port =" << portNo;
+            //currentState();
             return false;
         }
+        disconnectFromHost();
     }
-    
+
+
+//    void currentState()
+//    {
+//        switch(state()) {
+//            case QAbstractSocket::UnconnectedState:
+//                qDebug() << "The socket is not connected.";
+//                break;
+//            case QAbstractSocket::HostLookupState:
+//                qDebug() << "The socket is performing a host name lookup.";
+//                break;
+//            case QAbstractSocket::ConnectingState:
+//                qDebug() << "The socket has started establishing a connection.";
+//                break;
+//            case QAbstractSocket::ConnectedState:
+//                qDebug() << "A connection is established.";
+//                break;
+//            case QAbstractSocket::BoundState:
+//                qDebug() << "The socket is bound to an address and port.";
+//                break;
+//            case QAbstractSocket::ClosingState:
+//                qDebug() << "The socket is about to close.";
+//                break;
+//            default:
+//                qDebug() << "Undefined socket state =" << state();
+//        }
+//    }
+
 private:
+
     QString hostName;
-    int portNo;
+    qint16 portNo;
+
 };
 
 #endif
