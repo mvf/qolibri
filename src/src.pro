@@ -33,8 +33,7 @@ SOURCES += qolibri.cpp \
            fontsetting.cpp \
            ssheetsetting.cpp \
            configsetting.cpp \
-           statusbutton.cpp \
-           server.cpp
+           statusbutton.cpp
 
 QT += network
 RESOURCES += qolibri.qrc
