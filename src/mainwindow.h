@@ -61,7 +61,8 @@ signals:
     void viewFontChanged(const QFont &font);
 
 public slots:
-    void searchClientText(const QString &str);
+    //void searchClientText(const QString &str);
+
 private slots:
     void viewInfo(Book *book);
     void viewMenu();
@@ -121,7 +122,7 @@ private slots:
     void showDock();
 #endif
     void checkNextSearch();
-    //void searchClientText(const QString &str);
+    void searchClientText(const QString &str);
 
     void aboutQolibri();
 
