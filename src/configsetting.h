@@ -44,6 +44,7 @@ private slots:
 private:
     QCheckBox *highlightCheck;
     QCheckBox *beepSoundCheck;
+    QCheckBox *serverModeCheck;
     QSpinBox *historyBox;
     QSpinBox *limitImageBox;
     QSpinBox *limitCharBox;
@@ -51,6 +52,7 @@ private:
     QSpinBox *limitMaxBookBox;
     QSpinBox *limitMaxTotalBox;
     QSpinBox *indentOffsetBox;
+    QSpinBox *portNoBox;
     QSpinBox *stepBookHitBox;
     QSpinBox *stepTotalHitBox;
     QLineEdit *waveProcEdit;

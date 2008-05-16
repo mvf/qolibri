@@ -63,22 +63,25 @@ const char *version =
 
 QoServer *server;
 
+
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(qolibri);
 
+    CONF->load();
+
     QApplication app(argc, argv);
     QString searchText;
-    qint16 port = -1;
-    bool qserv = false;
+    qint16 port = CONF->portNo;
+    bool qserv = CONF->serverMode;
 
     for(int i=1; i<argc; i++){
-        QString str = QString::fromLocal8Bit(argv[i]).toLower();
-        if (str.toLower() == "-c" && (i+1) < argc) {
+        QString str = QString::fromLocal8Bit(argv[i]);
+        if (str == "-c" && (i+1) < argc) {
             CONF->settingOrg = QString::fromLocal8Bit(argv[i+1]);
             i++;
        
-        } else if (str.toLower() == "-p" && (i+1) < argc) {
+        } else if (str == "-p" && (i+1) < argc) {
             bool ok;
             port = QString::fromLocal8Bit(argv[i+1]).toInt(&ok);
             if (ok) {
@@ -86,13 +89,12 @@ int main(int argc, char *argv[])
             } else {
                 qWarning() << "can't convert port no (" << argv[i+1] << ")";
             }
-        } else if (str.toLower() == "-s") {
+        } else if (str == "-s") {
             qserv = true;
-            if (port < 0) port = 0;
-        } else if (str.toLower() == "-h" || str.toLower() == "--help") {
+        } else if (str == "-h" || str == "--help") {
             qDebug() << usage;
             return 1;
-        } else if (str.toLower() == "--version") {
+        } else if (str == "--version") {
             qDebug() << version;
             return 1;
         } else {

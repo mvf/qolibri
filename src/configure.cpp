@@ -23,6 +23,7 @@
 
 const bool highlightMatch_Def = true;
 const bool beepSound_Def = true;
+const bool serverMode_Def = false;
 const int stepBookHitMax_Def = 10;
 const int stepTotalHitMax_Def = 100;
 const int maxLimitBookHit_Def = 15000;
@@ -32,6 +33,7 @@ const int limitImageNum_Def = 700;
 const int limitBrowserChar_Def = 1000000;
 const int limitMenuHit_Def = 1000;
 const int indentOffset_Def = 30;
+const int portNo_Def = 5626;
 
 #if defined (Q_WS_MAC)
 const char* waveProcess_Def = "";
@@ -76,6 +78,7 @@ void Configure::load()
 
     highlightMatch = conf.value("highlight_match", highlightMatch_Def).toBool();
     beepSound = conf.value("beep_sound", beepSound_Def).toBool();
+    serverMode = conf.value("server_mode", serverMode_Def).toBool();
     historyMax = conf.value("hist_max", historyMax_Def).toInt();
     waveProcess = conf.value("wave_proc", waveProcess_Def).toString();
     mpegProcess = conf.value("mpeg_proc", mpegProcess_Def).toString();
@@ -87,6 +90,7 @@ void Configure::load()
     limitBrowserChar = conf.value("limit_char", limitBrowserChar_Def).toInt();
     limitMenuHit = conf.value("limit_menu", limitMenuHit_Def).toInt();
     indentOffset = conf.value("indent_offset", indentOffset_Def).toInt();
+    portNo = conf.value("port_no", portNo_Def).toInt();
     maxLimitBookHit = conf.value("limt_book", maxLimitBookHit_Def).toInt();
     maxLimitTotalHit = conf.value("limit_total", maxLimitTotalHit_Def).toInt();
     stepBookHitMax = conf.value("step_book", stepBookHitMax_Def).toInt();
@@ -108,6 +112,7 @@ void Configure::save()
 
     conf.setValue("hightlight_match", highlightMatch);
     conf.setValue("beep_sound", beepSound);
+    conf.setValue("server_mode", serverMode);
     conf.setValue("hist_max", historyMax);
     conf.setValue("wave_proc", waveProcess);
     conf.setValue("mpeg_proc", mpegProcess);
@@ -121,6 +126,7 @@ void Configure::save()
     conf.setValue("limt_book", maxLimitBookHit);
     conf.setValue("limit_total", maxLimitTotalHit);
     conf.setValue("indent_offset", indentOffset);
+    conf.setValue("port_no", portNo);
     conf.setValue("step_book", stepBookHitMax);
     conf.setValue("step_total", stepTotalHitMax);
     conf.setValue("browser_font", browserFont);
@@ -136,6 +142,7 @@ void Configure::setDefault()
 {
     highlightMatch = highlightMatch_Def;
     beepSound = beepSound_Def;
+    serverMode = serverMode_Def;
     historyMax = historyMax_Def;
     waveProcess = waveProcess_Def;
     mpegProcess = mpegProcess_Def;
@@ -147,6 +154,7 @@ void Configure::setDefault()
     limitBrowserChar = limitBrowserChar_Def;
     limitMenuHit = limitMenuHit_Def;
     indentOffset = indentOffset_Def;
+    portNo = portNo_Def;
     maxLimitBookHit = maxLimitBookHit_Def;
     maxLimitTotalHit = maxLimitTotalHit_Def;
     stepBookHitMax = stepBookHitMax_Def;

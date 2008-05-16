@@ -39,6 +39,8 @@ ConfigSetting::ConfigSetting(QWidget *parent)
     vl->addWidget(highlightCheck);
     beepSoundCheck = new QCheckBox(tr("Beep sound"));
     vl->addWidget(beepSoundCheck);
+    serverModeCheck = new QCheckBox(tr("Server mode(must restart)"));
+    vl->addWidget(serverModeCheck);
     {
         QGridLayout *g = new QGridLayout;
         {
@@ -54,6 +56,13 @@ ConfigSetting::ConfigSetting(QWidget *parent)
             indentOffsetBox->setRange(0, 100);
             indentOffsetBox->setSingleStep(10);
             g->addWidget(indentOffsetBox, 1, 1);
+        }
+        {
+            g->addWidget(new QLabel(tr("Port No (server mode)")), 2, 0);
+            portNoBox = new QSpinBox();
+            portNoBox->setRange(5000, 9999);
+            portNoBox->setSingleStep(1);
+            g->addWidget(portNoBox, 2, 1);
         }
         vl->addLayout(g);
     } {
@@ -211,8 +220,10 @@ void ConfigSetting::reset()
 
     highlightCheck->setChecked(d->highlightMatch);
     beepSoundCheck->setChecked(d->beepSound);
+    serverModeCheck->setChecked(d->serverMode);
     historyBox->setValue(d->historyMax);
     indentOffsetBox->setValue(d->indentOffset);
+    portNoBox->setValue(d->portNo);
     waveProcEdit->setText(d->waveProcess);
     mpegProcEdit->setText(d->mpegProcess);
     browserProcEdit->setText(d->browserProcess);
@@ -234,8 +245,10 @@ void ConfigSetting::update()
 
     d->highlightMatch = highlightCheck->isChecked();
     d->beepSound = beepSoundCheck->isChecked();
+    d->serverMode = serverModeCheck->isChecked();
     d->historyMax = historyBox->value();
     d->indentOffset = indentOffsetBox->value();
+    d->portNo = portNoBox->value();
     d->waveProcess = waveProcEdit->text();
     d->mpegProcess = mpegProcEdit->text();
     d->browserProcess = browserProcEdit->text();

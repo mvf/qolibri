@@ -35,6 +35,7 @@ public:
 
     bool highlightMatch;
     bool beepSound;
+    bool serverMode;
     int stepBookHitMax;
     int stepTotalHitMax;
     int maxLimitBookHit;
@@ -44,6 +45,7 @@ public:
     int limitBrowserChar;
     int limitMenuHit;
     int indentOffset;
+    int portNo;
     QString dictSheet;
     QString bookSheet;
     QString statusBarSheet;
