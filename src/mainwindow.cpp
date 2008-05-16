@@ -48,7 +48,7 @@ MainWindow::MainWindow(const QString &s_text)
     //qDebug() << QLibraryInfo::location(QLibraryInfo::TranslationsPath);
     //qDebug() << QCoreApplication::applicationDirPath();
 
-    CONF->load();
+    //CONF->load();
 
     EBook::initialize();
 
