@@ -24,22 +24,71 @@
 
 class QoServer : public QTcpServer
 {
-   Q_OBJECT
-public:
-    QoServer(qint16 port);
-    ~QoServer() {};
 
-    void slotShowStatus(const QObject *receiver, const char *member);
-    void slotSearchText(const QObject *receiver, const char *member);
-    void showStatus(const QString &str);
+   Q_OBJECT
+
+public:
+    QoServer(qint16 port)
+        : QTcpServer(0)
+    {
+
+        //if (port == 0)
+        //    port = 5626;
+    
+        if (!listen(QHostAddress::Any, port)) {
+            qWarning() << "Server Listen Error : port =" << port;
+            return;
+        }
+    
+        connect(this, SIGNAL(newConnection()), this, SLOT(getClientText()));
+
+    }
+
+//    QoServer::~QoServer()
+//    {
+//        qDebug() << "~QoServer()";
+//    }
+
+    void slotShowStatus(const QObject *receiver, const char *member)
+    {
+        connect(this, SIGNAL(statusRequested(const QString&)),
+                receiver, member); 
+    }
+
+    void slotSearchText(const QObject *receiver, const char *member)
+    {
+        connect(this, SIGNAL(searchRequested(const QString&)),
+                receiver, member); 
+    }
+
+    void showStatus(const QString &str)
+    {
+        emit statusRequested(str);
+    }
     
 signals:
     void searchRequested(const QString &str);
     void statusRequested(const QString &msg);
 
 private slots:
-    void getClientText();
-    //void disconnectTest();
+    
+    void getClientText()
+    {
+
+        QTcpSocket *c = nextPendingConnection();
+        //connect(c, SIGNAL(disconnected()), this, SLOT(disconnectTest()));
+        connect(c, SIGNAL(disconnected()), c, SLOT(deleteLater()));
+        c->waitForReadyRead(30000);
+        QString str = c->read(1000);
+        emit searchRequested(str);
+
+    }
+
+//    void disconnectTest()
+//    {
+//        qDebug() << "disconnectTest";
+//    }
+
 };
 
 #endif

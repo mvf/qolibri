@@ -27,13 +27,12 @@ const qint16 DEFAULT_PORT = 5626;
 
 class QoClient : public QTcpSocket
 {
+
     Q_OBJECT
+        
 public:
     QoClient(const QString &host, qint16 port)
-        : QTcpSocket(), hostName(host)
-    {
-       portNo = port ? port : DEFAULT_PORT;
-    }
+        : QTcpSocket(), hostName(host), portNo(port) {}
 
 //    ~QoClient()
 //    {
@@ -52,7 +51,6 @@ public:
 //        }
 //    }
 
-
     bool connectHost()
     {
         //qDebug() << "connectHost" << hostName << portNo;
@@ -63,7 +61,6 @@ public:
             return false;
         }
     }
-    
 
     bool sendText(const QByteArray &msg)
     {
@@ -82,7 +79,6 @@ public:
         }
         disconnectFromHost();
     }
-
 
 //    void currentState()
 //    {
