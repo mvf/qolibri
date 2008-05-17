@@ -19,6 +19,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#include <qdebug>
 #include <QTcpServer>
 #include <QTcpSocket>
 
