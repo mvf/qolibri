@@ -40,6 +40,8 @@ RESOURCES += qolibri.qrc
 
 TARGET = qolibri
 DESTDIR = ./bin
+OBJECTS_DIR = ./build
+MOC_DIR = ./build/moc
 
 #DEFINES += USE_GIF_FOR_FONT
 
