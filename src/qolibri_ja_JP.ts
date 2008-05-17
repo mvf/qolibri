@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="ja">
+<defaultcodec></defaultcodec>
 <context>
     <name>BookSetting</name>
     <message>
@@ -44,7 +45,7 @@
 <context>
     <name>ConfigSetting</name>
     <message>
-        <location filename="configsetting.cpp" line="158"/>
+        <location filename="configsetting.cpp" line="167"/>
         <source>Preference settings</source>
         <translation>オプション設定</translation>
     </message>
@@ -59,99 +60,109 @@
         <translation>ビープ音を鳴らす</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="45"/>
+        <location filename="configsetting.cpp" line="47"/>
         <source>Max history</source>
         <translation>検索履歴最大数</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="62"/>
+        <location filename="configsetting.cpp" line="71"/>
         <source>External program</source>
         <translation>外部プログラム</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="64"/>
+        <location filename="configsetting.cpp" line="73"/>
         <source>Sound(wave)</source>
         <translation>音声(wave)</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="72"/>
+        <location filename="configsetting.cpp" line="81"/>
         <source>Movie(mpeg)</source>
         <translation>動画(mpeg)</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="80"/>
+        <location filename="configsetting.cpp" line="89"/>
         <source>Web browser</source>
         <translation>ウェブブラウザー</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="88"/>
+        <location filename="configsetting.cpp" line="97"/>
         <source>Google URL</source>
         <translation>Google URL</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="92"/>
+        <location filename="configsetting.cpp" line="101"/>
         <source>Wikipedia URL</source>
         <translation>ウィキペディア URL</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="96"/>
+        <location filename="configsetting.cpp" line="105"/>
         <source>User defined URL</source>
         <translation>ユーザ定義のURL</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="105"/>
+        <location filename="configsetting.cpp" line="114"/>
         <source>Limit of image number</source>
         <translation>表示可能な画像数の限度</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="111"/>
+        <location filename="configsetting.cpp" line="120"/>
         <source>Limit of characters</source>
         <translation>表示可能な文字数の限度</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="117"/>
+        <location filename="configsetting.cpp" line="126"/>
         <source>Limit of menu items</source>
         <translation>表示メニュー項目の限度</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="123"/>
+        <location filename="configsetting.cpp" line="132"/>
         <source>Limit of hits per book</source>
         <translation>最大検索数の限度(辞書)</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="129"/>
+        <location filename="configsetting.cpp" line="138"/>
         <source>Limit of total hits</source>
         <translation>最大検索数の限度 (全体)</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="135"/>
+        <location filename="configsetting.cpp" line="144"/>
         <source>Step of hits per book</source>
         <translation>最大検索数(辞書)のステップ数</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="141"/>
+        <location filename="configsetting.cpp" line="150"/>
         <source>Step of total hits</source>
         <translation>最大検索数(全体)のステップ数</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="147"/>
+        <location filename="configsetting.cpp" line="156"/>
         <source>Change carefully these parameters</source>
         <translation>設定の変更には注意が必要です</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="166"/>
+        <location filename="configsetting.cpp" line="175"/>
         <source>Reset</source>
         <translation>リセット</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="185"/>
+        <location filename="configsetting.cpp" line="194"/>
         <source>Set wave player</source>
         <translation>ミュージック(音声)プレイヤー</translation>
     </message>
     <message>
-        <location filename="configsetting.cpp" line="52"/>
+        <location filename="configsetting.cpp" line="54"/>
         <source>Indent offset</source>
         <translation>本文のインデント・オフセット</translation>
+    </message>
+    <message>
+        <location filename="configsetting.cpp" line="42"/>
+        <source>Server mode(must restart)</source>
+        <translation>サーバモード（再起動で有効）</translation>
+    </message>
+    <message>
+        <location filename="configsetting.cpp" line="61"/>
+        <source>Port No (server mode)</source>
+        <translation>ポート番号（サーバモードで有効）</translation>
     </message>
 </context>
 <context>
@@ -287,303 +298,303 @@ Search Method: %2</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="mainwindow.cpp" line="109"/>
+        <location filename="mainwindow.cpp" line="120"/>
         <source>&amp;File</source>
         <translation>ファイル (&amp;F)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="111"/>
+        <location filename="mainwindow.cpp" line="122"/>
         <source>&amp;Search</source>
         <translation>検索(&amp;S)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="115"/>
+        <location filename="mainwindow.cpp" line="126"/>
         <source>&amp;Open book</source>
         <translation>メニュー表示(&amp;O)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="120"/>
+        <location filename="mainwindow.cpp" line="131"/>
         <source>&amp;View all data</source>
         <translation>全テキスト表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="124"/>
+        <location filename="mainwindow.cpp" line="135"/>
         <source>&amp;Cancel</source>
         <translation>中断(&amp;C)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="128"/>
+        <location filename="mainwindow.cpp" line="139"/>
         <source>E&amp;xit</source>
         <translation>終了 (&amp;x)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="128"/>
+        <location filename="mainwindow.cpp" line="139"/>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="133"/>
+        <location filename="mainwindow.cpp" line="144"/>
         <source>Clear search text</source>
         <translation>検索文字列を消去</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="138"/>
+        <location filename="mainwindow.cpp" line="149"/>
         <source>Dock on/off</source>
         <translation>ドックウィンドウ オン／オフ</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="144"/>
+        <location filename="mainwindow.cpp" line="155"/>
         <source>Search/read book</source>
         <translation>検索／読本</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="146"/>
+        <location filename="mainwindow.cpp" line="157"/>
         <source>Zoom &amp;out</source>
         <translation>文字縮小 (&amp;O)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="148"/>
+        <location filename="mainwindow.cpp" line="159"/>
         <source>Zoom &amp;in</source>
         <translation>文字拡大 (&amp;I)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="153"/>
+        <location filename="mainwindow.cpp" line="164"/>
         <source>Group set</source>
         <translation>グループ設定</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="157"/>
+        <location filename="mainwindow.cpp" line="168"/>
         <source>Option setting</source>
         <translation>オプション設定</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="160"/>
+        <location filename="mainwindow.cpp" line="171"/>
         <source>Book mark</source>
         <translation>ブックマーク</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="164"/>
+        <location filename="mainwindow.cpp" line="175"/>
         <source>Tab on/off</source>
         <translation>タブ　オン／オフ</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="167"/>
+        <location filename="mainwindow.cpp" line="178"/>
         <source>Font set</source>
         <translation>フォント設定</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="171"/>
+        <location filename="mainwindow.cpp" line="182"/>
         <source>Browser font</source>
         <translation>ブラウザーフォント</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="173"/>
+        <location filename="mainwindow.cpp" line="184"/>
         <source>Application font</source>
         <translation>アプリケーションフォント</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="177"/>
+        <location filename="mainwindow.cpp" line="188"/>
         <source>Style sheet</source>
         <translation>スタイルシート設定</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="181"/>
+        <location filename="mainwindow.cpp" line="192"/>
         <source>Dictionary style sheet</source>
         <translation>スタイルシート（辞書）</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="183"/>
+        <location filename="mainwindow.cpp" line="194"/>
         <source>Book style sheet</source>
         <translation>スタイルシート（読本）</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="185"/>
+        <location filename="mainwindow.cpp" line="196"/>
         <source>Internal style sheet 1</source>
         <translation>スタイルシート（内部使用１）</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="204"/>
+        <location filename="mainwindow.cpp" line="215"/>
         <source>&amp;Help</source>
         <translation>ヘルプ (&amp;H)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="266"/>
+        <location filename="mainwindow.cpp" line="277"/>
         <source>Search methods</source>
         <translation>検索方法</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="285"/>
+        <location filename="mainwindow.cpp" line="296"/>
         <source>AND</source>
         <translation>AND</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="286"/>
+        <location filename="mainwindow.cpp" line="297"/>
         <source>OR</source>
         <translation>OR</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="312"/>
+        <location filename="mainwindow.cpp" line="323"/>
         <source>Option bar on/off</source>
         <translation>オプションバー （表示／非表示）</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="416"/>
+        <location filename="mainwindow.cpp" line="427"/>
         <source>All books</source>
         <translation>全辞書</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1310"/>
+        <location filename="mainwindow.cpp" line="1322"/>
         <source>Set browser font</source>
         <translation>ブラウザーフォント設定</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1329"/>
+        <location filename="mainwindow.cpp" line="1341"/>
         <source>Set application font</source>
         <translation>アプリケーションフォント設定</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="299"/>
+        <location filename="mainwindow.cpp" line="310"/>
         <source>/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1075"/>
+        <location filename="mainwindow.cpp" line="1087"/>
         <source>Word not found.</source>
         <translation>検索されませんでした。</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1079"/>
+        <location filename="mainwindow.cpp" line="1091"/>
         <source>Not have menu data.</source>
         <translation>メニューがありません。</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1088"/>
+        <location filename="mainwindow.cpp" line="1100"/>
         <source>Interrupted.</source>
         <translation>中断されました。</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1093"/>
+        <location filename="mainwindow.cpp" line="1105"/>
         <source>Stopped (Character size limit[</source>
         <translation>中断しました (文字数の最大数を越えました [</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1097"/>
+        <location filename="mainwindow.cpp" line="1109"/>
         <source>Stopped (Image limit[</source>
         <translation>中断しました (画像数の最大を越えました [</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1101"/>
+        <location filename="mainwindow.cpp" line="1113"/>
         <source>Stopped (Item iimit[</source>
         <translation>中断しました (項目の最大数を越えました [</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="673"/>
+        <location filename="mainwindow.cpp" line="685"/>
         <source> No search book</source>
         <translation> 辞書が設定されていません</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="678"/>
+        <location filename="mainwindow.cpp" line="690"/>
         <source> ready</source>
         <translation> ready</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="681"/>
+        <location filename="mainwindow.cpp" line="693"/>
         <source> retrieving . . .</source>
         <translation> 検索中 . . .</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="187"/>
+        <location filename="mainwindow.cpp" line="198"/>
         <source>Option search</source>
         <translation>オプション検索</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="131"/>
+        <location filename="mainwindow.cpp" line="142"/>
         <source>&amp;Edit</source>
         <translation>編集(&amp;E)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="136"/>
+        <location filename="mainwindow.cpp" line="147"/>
         <source>&amp;View</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="152"/>
+        <location filename="mainwindow.cpp" line="163"/>
         <source>&amp;Setting</source>
         <translation>設定(&amp;S)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="112"/>
+        <location filename="mainwindow.cpp" line="123"/>
         <source>Ctrl+F</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="116"/>
+        <location filename="mainwindow.cpp" line="127"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="121"/>
+        <location filename="mainwindow.cpp" line="132"/>
         <source>Ctrl+D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="282"/>
+        <location filename="mainwindow.cpp" line="293"/>
         <source> Logic:</source>
         <translation> ロジック:</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="292"/>
+        <location filename="mainwindow.cpp" line="303"/>
         <source> Hit limit (book/total):</source>
         <translation> 最大検索数(辞書/全体):</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="200"/>
+        <location filename="mainwindow.cpp" line="211"/>
         <source>&amp;Suppress subscription</source>
         <translation>ルビを表示しない(&amp;S)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="903"/>
+        <location filename="mainwindow.cpp" line="915"/>
         <source>No external font</source>
         <translation>外部フォントがありません</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1208"/>
+        <location filename="mainwindow.cpp" line="1220"/>
         <source>Failed to start process.</source>
         <translation>プロセスの起動に失敗しました。</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1210"/>
+        <location filename="mainwindow.cpp" line="1222"/>
         <source>Error occured during staring process(code=%1).</source>
         <translation>プロセスの起動中にエラーが発生しました （コード ＝ %1 ）。</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="205"/>
+        <location filename="mainwindow.cpp" line="216"/>
         <source>about &amp;QT</source>
         <translation>&amp;Qtについて</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="206"/>
+        <location filename="mainwindow.cpp" line="217"/>
         <source>about q&amp;oribri</source>
         <translation>q&amp;oribriについて</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1428"/>
+        <location filename="mainwindow.cpp" line="1465"/>
         <source>&lt;h2&gt;qolibri&lt;/h2&gt;&lt;br/&gt;&lt;br/&gt;EPWING Dictioanry/Book Viewer -- version 1.0.3&lt;br/&gt;&lt;br/&gt;Home Page : &lt;a href=&apos;http://qolibri.sourceforge.jp/&apos;&gt;http://qolibri.sourceforge.jp/&lt;/a&gt;&lt;br/&gt;Latest Version : &lt;a href=&apos;http://sourceforge.jp/projects/qolibri/&apos;&gt;http://sourceforge.jp/projects/qolibri/&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;h2&gt;qolibri&lt;/h2&gt;&lt;br/&gt;&lt;br/&gt;EPWING Dictioanry/Book Viewer -- version 1.0.3&lt;br/&gt;&lt;br/&gt;ホームページ : &lt;a href=&apos;http://qolibri.sourceforge.jp/&apos;&gt;http://qolibri.sourceforge.jp/&lt;/a&gt;&lt;br/&gt;最新バージョン : &lt;a href=&apos;http://sourceforge.jp/projects/qolibri/&apos;&gt;http://sourceforge.jp/projects/qolibri/&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="197"/>
+        <location filename="mainwindow.cpp" line="208"/>
         <source>&amp;Clear cache</source>
         <translation>キャッシュデータを消去(&amp;C)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1344"/>
+        <location filename="mainwindow.cpp" line="1356"/>
         <source>Are you sure you want to remove all cache data?
 &quot;</source>
         <translation>キャッシュデータを消去してもよろしいですか ?&quot;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1388"/>
+        <location filename="mainwindow.cpp" line="1400"/>
         <source>Cannot open the book.</source>
         <translation>書籍をオープンできません。</translation>
     </message>
@@ -654,22 +665,22 @@ Search Method: %2</source>
         <translation>-----</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="273"/>
+        <location filename="mainwindow.cpp" line="284"/>
         <source>Forward search</source>
         <translation>前方一致</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="275"/>
+        <location filename="mainwindow.cpp" line="286"/>
         <source>Keyword search</source>
         <translation>条件検索</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="276"/>
+        <location filename="mainwindow.cpp" line="287"/>
         <source>Cross search</source>
         <translation>クロス検索</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="274"/>
+        <location filename="mainwindow.cpp" line="285"/>
         <source>Backward search</source>
         <translation>後方一致</translation>
     </message>
@@ -719,12 +730,12 @@ Search Method: %2</source>
         <translation>ユーザ定義のURLで検索 (&amp;U)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="277"/>
+        <location filename="mainwindow.cpp" line="288"/>
         <source>Full text search</source>
         <translation>全文検索</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="272"/>
+        <location filename="mainwindow.cpp" line="283"/>
         <source>Exact word search</source>
         <translation>完全一致</translation>
     </message>
