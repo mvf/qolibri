@@ -17,12 +17,82 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#ifndef EBOOK_HOOKS_H
-#define EBOOK_HOOKS_H
+#ifndef EBHOOK_H
+#define EBHOOK_H
 
-#include "ebook.h"
 #include <eb/eb.h>
 #include <eb/text.h>
+
+#include "ebcache.h"
+
+class EBook;
+
+class EbHook : public QObject
+{
+
+public:
+    EbHook()
+        : QObject()
+    {
+    }
+
+    void init(EbCache *cache, int fsize, QHash<QString, QString> *flist,
+           int ioffset = 50, bool rb = true) 
+    {
+        ebCache = cache;
+        fontSize = fsize;
+        fontList = flist;
+        indentOffset = ioffset;
+        ruby = rb;
+        monoWidth = 0;
+        monoHeight = 0;
+        imageCount = 0;
+        indented = false;
+    }
+
+    QByteArray begin_decoration(int deco_code);
+    QByteArray end_decoration();
+    QByteArray set_indent(int val);
+    QByteArray begin_reference();
+    QByteArray end_reference(int page, int offset);
+    QByteArray begin_candidate();
+    QByteArray begin_candidate_menu();
+    QByteArray end_candidate_group(int page, int offset);
+    QByteArray end_candidate_group_menu(int page, int offset);
+    QByteArray narrow_font(EB_Book *book, int code);
+    QByteArray wide_font(EB_Book *book, int code);
+    QByteArray end_mono_graphic(int page, int offset);
+    QByteArray begin_mpeg();
+    QByteArray begin_wave(int start_page, int start_offset,
+                          int end_page, int end_offset);
+    QByteArray begin_color_bmp(int page, int offset);
+    QByteArray begin_color_jpeg(int page, int offset);
+    QByteArray errorString(const QByteArray &error_string)
+    { return "<em class=err>" + error_string + "</em>"; }
+    QByteArray begin_subscript()
+    { return (ruby) ? "<sub>" : QByteArray(); }
+    QByteArray end_subscript()
+    { return (ruby) ? "</sub>" : QByteArray(); }
+    void end_mpeg(const unsigned int *p);
+    void begin_mono_graphic(int height, int width)
+    {
+        monoHeight = height;
+        monoWidth = width;
+        imageCount++;
+    }
+
+    EbCache *ebCache;
+    int monoWidth;
+    int monoHeight;
+    int fontSize;
+    QHash<QString, QString> *fontList;
+    int indentOffset;
+    int imageCount;
+    bool ruby;
+    bool indented;
+    QStack <int> decoStack;
+
+};
 
 #define HookFunc(name) \
     EB_Error_Code name(EB_Book *, EB_Appendix *, void*, EB_Hook_Code, int, \

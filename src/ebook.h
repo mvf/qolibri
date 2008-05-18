@@ -23,25 +23,21 @@
 #include <QTextCodec>
 #include <eb/eb.h>
 
+#include "ebcore.h"
+
 enum HookMode { HookText, HookMenu, HookFont };
 enum SearchType { SearchWord, SearchEndWord, SearchExactWord,
                   SearchKeyWord, SearchCrossWord };
 
-class EBook : public QObject
+class EBook : public EbCore
 {
 public:
     EBook(HookMode menu = HookText);
     ~EBook();
 
     // return number of Sub Book
-    int setBook(const QString &path);
     int setBook(const QString &path, int sub_book_no, int ref_pos = 0);
     int setSubBook(int sub_book_no, int ref_pos = 0);
-    inline void unsetBook()
-    {
-        eb_unset_subbook(&book);
-        //eb_finalize_book(&book);
-    }
     void initSearch(int fsize, QHash<QString, QString> *flist, 
                     int indent_offset = 50, bool ruby = true)
     {   
@@ -49,45 +45,13 @@ public:
         fontList_ = flist;
         indentOffset_ = indent_offset;
         ruby_ = ruby;
+        ebCache.init(title());
+        ebHook.init(&ebCache, fsize, flist, indent_offset, ruby);
     }
 
-    QString path();
     QString copyright();
     QString menu();
     bool menu(int *page, int *offset);
-
-    QString title();
-
-    inline bool isHaveText()
-    {
-        return (eb_have_text(&book) == 1);
-    }
-    inline bool isHaveWordSearch()
-    {
-        return (eb_have_word_search(&book) == 1);
-    }
-    inline bool isHaveKeywordSearch()
-    {
-        return (eb_have_keyword_search(&book) == 1);
-    }
-    inline bool isHaveEndwordSearch()
-    {
-        return (eb_have_endword_search(&book) == 1);
-    }
-    inline bool isHaveCrossSearch()
-    {
-        return (eb_have_cross_search(&book) == 1);
-    }
-    inline bool isHaveMenu()
-    {
-        return (eb_have_menu(&book) == 1);
-    }
-    inline bool isHaveCopyright()
-    {
-        return (eb_have_copyright(&book) == 1);
-    }
-
-
 
     QString heading(int page, int offset, bool hook = true);
     QString text(int page, int offset, bool hook = true);
@@ -141,7 +105,7 @@ public:
 	return (ruby_) ? "</sub>" : QByteArray();
     }
     void end_mpeg(const unsigned int *p);
-    inline void begin_mono_graphic(int height, int width)
+    void begin_mono_graphic(int height, int width)
     {
         monoHeight_ = height;
         monoWidth_ = width;
@@ -167,41 +131,17 @@ public:
 
     //QString loadAllFonts();
 
-    static void initialize()
-    {
-        eb_initialize_library();
-        codecEuc = QTextCodec::codecForName("EUC-JP");
-    }
-    static void finalize()
-    {
-        eb_finalize_library();
-    }
     static QString cachePath;
-    static QTextCodec *codecEuc;
+
 
 private:
-    void ebError(const QString &func, EB_Error_Code code);
     void setCache(const QString &name);
-    static QString eucToUtf(const QByteArray &a)
-    {
-        return codecEuc->toUnicode(a);
-    }
-
-    static QByteArray utfToEuc(const QString &s)
-    {
-        return codecEuc->fromUnicode(s);
-    }
     inline QByteArray makeFname(const QByteArray &type, int p1, int p2)
     {
         return QByteArray::number(p1) + 'x' + QByteArray::number(p2) +
                '.' + type;
     }
 
-    EB_Book book;
-    EB_Appendix appendix;
-    EB_Hookset hookSet;
-    EB_Subbook_Code subBookList[EB_MAX_SUBBOOKS];
-    EB_Subbook_Code subAppendixList[EB_MAX_SUBBOOKS];
     EB_Hit *hits;
     QHash <QString, QString> *fontList_;
     QStack <int> decoStack;
@@ -229,7 +169,7 @@ private:
     bool ruby_;
     bool indented_;
 
-    int subAppendixCount;
+    //int subAppendixCount;
     EB_Position seekPosition;
     EB_Position curPosition;
     bool firstSeek;

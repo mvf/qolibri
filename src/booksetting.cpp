@@ -151,12 +151,12 @@ void BookSetting::searchBook()
     int add_count = 0;
 
     foreach(QString dir, bookDirs) {
-        EBook eb;
-        int subbooks = eb.setBook(dir);
+        EbCore eb;
+        int subbooks = eb.initBook(dir);
 
         subbook_count += subbooks;
         for (int i = 0; i < subbooks; i++) {
-            eb.setSubBook(i);
+            eb.initSubBook(i);
             if (eb.isHaveText() /* && eb.isHaveWordSearch() */) {
                 if (allDicWidget->addBook(eb.title(), dir, i)) {
                     add_count++;

@@ -50,7 +50,7 @@ MainWindow::MainWindow(const QString &s_text)
 
     //CONF->load();
 
-    EBook::initialize();
+    EbCore::initialize();
 
     bookView = new BookView(this);
 
@@ -562,7 +562,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     CONF->save();
 
-    EBook::finalize();
+    EbCore::finalize();
 
     event->accept();
 }

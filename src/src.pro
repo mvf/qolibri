@@ -1,8 +1,10 @@
 HEADERS += mainwindow.h \
            method.h \
            book.h \
+           ebcore.h \
+           ebcache.h \
+           ebhook.h \
            ebook.h \
-           ebook_hooks.h \
            bookview.h \
            groupdock.h \
            groupwidget.h \
@@ -16,14 +18,17 @@ HEADERS += mainwindow.h \
            titlelabel.h \
            statusbutton.h \
            server.h \
-           client.h
+           client.h \
+           textcodec.h
 
 SOURCES += qolibri.cpp \
            mainwindow.cpp \
            method.cpp \
            book.cpp \
+           ebcore.cpp \
+           ebcache.cpp \
+           ebhook.cpp \
            ebook.cpp \
-           ebook_hooks.cpp \
            bookview.cpp \
            groupdock.cpp \
            groupwidget.cpp \
@@ -33,7 +38,8 @@ SOURCES += qolibri.cpp \
            fontsetting.cpp \
            ssheetsetting.cpp \
            configsetting.cpp \
-           statusbutton.cpp
+           statusbutton.cpp \
+           textcodec.cpp
 
 QT += network
 RESOURCES += qolibri.qrc

@@ -27,7 +27,8 @@
 #include <eb/error.h>
 
 #include "ebook.h"
-#include "ebook_hooks.h"
+#include "ebhook.h"
+#include "textcodec.h"
 
 #define toUTF(q_bytearray) \
     QTextCodec::codecForLocale()->toUnicode(q_bytearray)
@@ -38,15 +39,12 @@ const int TextBufferSize = 4000;
 const int TextSizeLimit = 2800000;
 
 QString EBook::cachePath = QDir::homePath() + "/.ebcache";
-QTextCodec * EBook::codecEuc;
+//QTextCodec * EBook::codecEuc;
 
 EBook::EBook(HookMode hmode)
-    : QObject(), fontList_(NULL), imageCount_(0), fontSize_(16),
+    : EbCore(), fontList_(NULL), imageCount_(0), fontSize_(16),
       indentOffset_(0), indented_(false)
 {
-    eb_initialize_book(&book);
-    eb_initialize_appendix(&appendix);
-    eb_initialize_hookset(&hookSet);
     switch(hmode) {
         case HookText :
             eb_set_hooks(&hookSet, hooks);
@@ -66,46 +64,12 @@ EBook::EBook(HookMode hmode)
 
 EBook::~EBook()
 {
-    eb_finalize_hookset(&hookSet);
-    eb_finalize_appendix(&appendix);
-    eb_finalize_book(&book);
-
     delete hits;
 }
 
-int EBook::setBook(const QString& path)
-{
-    EB_Error_Code ecode;
-
-    ecode = eb_bind(&book, path.toLocal8Bit());
-    if (ecode != EB_SUCCESS) {
-        ebError("eb_bind", ecode);
-        return -1;
-    }
-    ecode = eb_bind_appendix(&appendix, path.toLocal8Bit());
-    if (ecode != EB_SUCCESS) {
-        ebError("eb_bind_appendix", ecode);
-//        return -1;
-    }
-    int sub_book_count;
-    ecode = eb_subbook_list(&book, subBookList, &sub_book_count);
-    if (ecode != EB_SUCCESS) {
-        ebError("eb_subbook_list", ecode);
-        return -1;
-    }
-
-    ecode = eb_appendix_subbook_list(&appendix, subAppendixList,
-                                     &subAppendixCount);
-    if (ecode != EB_SUCCESS) {
-        ebError("eb_appendix_subbook_list", ecode);
-        //return -1;
-    }
-
-    return sub_book_count;
-}
 int EBook::setBook(const QString& path, int sub_book_no, int ref_pos)
 {
-    int cnt = setBook(path);
+    int cnt = initBook(path);
     if (cnt < 0)
         return -1;
 
@@ -117,66 +81,13 @@ int EBook::setBook(const QString& path, int sub_book_no, int ref_pos)
 
 int EBook::setSubBook(int index, int ref_pos)
 {
-    EB_Error_Code ecode;
-
-    ecode = eb_set_subbook(&book, subBookList[index]);
-    if (ecode != EB_SUCCESS) {
-        ebError("eb_set_subbook", ecode);
-        return -1;
-    }
-    ecode = eb_set_appendix_subbook(&appendix, subAppendixList[index]);
-    if (ecode != EB_SUCCESS) {
-//        qDebug() << "eb_set_appendix_subbook() failed";
-//        return -1;
-    }
-
-    EB_Character_Code ccode;
-    ecode = eb_character_code(&book, &ccode);
-    if (ecode != EB_SUCCESS) {
-        ebError("eb_chracter_code", ecode);
-    } else {
-        if (ccode == EB_CHARCODE_ISO8859_1) {
-            ebError("Using ISO 8859-1", EB_SUCCESS);
-        //else if (ccode == EB_CHARCODE_JISX0208) {
-        //    ebError("Using JIS X 0208", EB_SUCESS);
-        } else if (ccode == EB_CHARCODE_JISX0208_GB2312) {
-            ebError("Using X 0208 + GB 2312", EB_SUCCESS);
-        } else if (ccode == EB_CHARCODE_INVALID) {
-            ebError("Using Invalid Character Code", EB_SUCCESS);
-        }
-    }
-    //EB_Font_Code font_list[EB_MAX_FONTS];
-    //int font_count;
-    //if (eb_font_list(&book, font_list, &font_count) != EB_SUCCESS) {
-    //    qDebug() << "eb_font_list() failed\n";
-    //} else {
-    //    qDebug() << "font List count = " << font_count;
-    //}
-    if (eb_have_font(&book, EB_FONT_16)) {
-        ecode = eb_set_font(&book, EB_FONT_16);
-        if (ecode != EB_SUCCESS) {
-            ebError("eb_set_font", ecode);
-        }
-    }
+    int ret = initSubBook(index);
 
     setCache(title());
     refPosition_ = ref_pos;
     firstSeek = true;
 
-    return 0;
-}
-
-QString EBook::path()
-{
-    EB_Error_Code ecode;
-    char str[EB_MAX_PATH_LENGTH + 1];
-
-    ecode = eb_path(&book, str);
-    if (ecode != EB_SUCCESS) {
-        ebError("eb_path", ecode);
-        return QString();
-    }
-    return QString::fromLocal8Bit(str);
+    return ret;
 }
 
 QString EBook::copyright()
@@ -220,20 +131,6 @@ bool EBook::menu(int *page, int *offset)
     *page = position.page;
     *offset = position.offset;
     return true;
-}
-
-QString EBook::title()
-{
-    EB_Error_Code ecode;
-    char t[EB_MAX_TITLE_LENGTH + 1];
-
-    ecode = eb_subbook_title(&book, t);
-    if (ecode != EB_SUCCESS) {
-        ebError("eb_subbook_title", ecode);
-        return QString();
-    }
-    t[EB_MAX_TITLE_LENGTH] = 0;
-    return eucToUtf(t);
 }
 
 int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
@@ -577,17 +474,6 @@ void EBook::setCache(const QString &name)
     fontCacheList = QDir(fontCachePath_).entryList(QDir::Files);
     imageCacheList = QDir(imageCachePath).entryList(QDir::Files);
     waveCacheList = QDir(waveCachePath).entryList(QDir::Files);
-}
-
-void EBook::ebError(const QString &func, EB_Error_Code code)
-{
-    if (curPosition.page) {
-        qWarning() << func << "failed :" << toUTF(eb_error_message(code))
-                   << "(" << curPosition.page
-                   << "," << curPosition.offset << ")";
-    } else {
-        qWarning() << func << "failed :" << toUTF(eb_error_message(code));
-    }
 }
 
 QByteArray EBook::begin_decoration(int deco_code)

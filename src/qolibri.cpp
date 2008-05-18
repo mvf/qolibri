@@ -25,6 +25,7 @@
 #include <QTranslator>
 #include <QLocale>
 #include <QLibraryInfo>
+#include <QTextCodec>
 //#include <QtCore>
 #ifdef USE_STATIC_PLUGIN
 #include <QtPlugin>
@@ -44,6 +45,7 @@ Q_IMPORT_PLUGIN(qgif)
 #include "method.h"
 #include "server.h"
 #include "client.h"
+#include "textcodec.h"
 
 const char *usage =
     "qolibri - EPWING Dictionary/Book Viewer 1.0.3\n"
@@ -71,6 +73,9 @@ int main(int argc, char *argv[])
     CONF->load();
 
     QApplication app(argc, argv);
+    
+    codecEuc = QTextCodec::codecForName("EUC-JP");
+
     QString searchText;
     qint16 port = CONF->portNo;
     bool qserv = CONF->serverMode;

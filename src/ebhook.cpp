@@ -20,8 +20,52 @@
 #include <QtCore>
 
 #include "ebook.h"
-#include "ebook_hooks.h"
+#include "ebhook.h"
 #include <eb/eb.h>
+#include <eb/font.h>
+
+QByteArray EbHook::begin_decoration(int deco_code)
+{
+    decoStack.push(deco_code);
+    if (deco_code == 1)
+        return "<i>";
+    else if (deco_code == 3)
+        return "<b>";
+    //else
+    //    qWarning() << "Unrecognized decoration code" << deco_code;
+    return "<i>";
+}
+
+QByteArray EbHook::end_decoration()
+{
+    if (!decoStack.isEmpty()) {
+        int deco_code = decoStack.pop();
+        if (deco_code == 1)
+            return "</i>";
+        else if(deco_code == 3)
+            return "</b>";
+        //else
+            //qWarning() << "Unrecognized decoration code" << deco_code;
+    }
+    return "</i>";
+}
+
+QByteArray EbHook::set_indent(int val)
+{
+    QByteArray ret;
+    if (val > 2){
+        int mleft = indentOffset + (val * fontSize);
+        ret += "</pre><pre style=\"margin-left: " +
+               QByteArray::number(mleft) + "px; \">";
+        indented = true;
+    } else {
+        if (indented) {
+            ret = "</pre><pre>";
+            indented = false;
+        }
+    }
+    return ret;
+}
 
 /*
    EB_Error_Code hook_newline(EB_Book *book, EB_Appendix*, void*,
