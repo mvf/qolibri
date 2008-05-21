@@ -21,7 +21,6 @@
 
 #include "book.h"
 #include "groupwidget.h"
-#include "ebook.h"
 
 GroupWidget::GroupWidget(QList <Group*> *group, QWidget *parent)
     : QWidget(parent), groupList(group)
