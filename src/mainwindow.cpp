@@ -1353,15 +1353,15 @@ void MainWindow::clearCache()
     int ret = QMessageBox::question(this, Program,
                                     tr("Are you sure you want to remove all cache data?\n\"")
                                     +
-                                    EBook::cachePath + "/*\"",
+                                    QDir::homePath() +"/.ebcache/*\"",
                                     QMessageBox::Yes | QMessageBox::No);
 
     if (ret == QMessageBox::Yes) {
+        QByteArray d = QString(QDir::homePath() + "/.ebcache").toLocal8Bit();
 #ifdef Q_WS_WIN
-        execProcess("cmd.exe /c rmdir /s /q \"" +
-		    EBook::cachePath.toLocal8Bit() + "\"" );
+        execProcess("cmd.exe /c rmdir /s /q \"" + d);
 #else
-        execProcess("rm -rf " + EBook::cachePath.toLocal8Bit());
+        execProcess("rm -rf " + d);
 #endif
     }
 }
@@ -1396,13 +1396,13 @@ void MainWindow::changeViewTabCount(int tab_count)
 QString MainWindow::loadAllExternalFont(Book *pbook)
 {
     EBook eb(HookFont);
-    if (eb.setBook(pbook->path(), pbook->bookNo()) < 0) {
+    if (eb.initBook(pbook->path(), pbook->bookNo()) < 0) {
         QMessageBox::warning(this, Program, tr("Cannot open the book.") );
     }
     eb.initSearch(16, NULL);
-    QFile loadf(eb.fontCachePath() + "/loaded");
+    QFile loadf(eb.ebCache.fontCachePath + "/loaded");
     if (loadf.exists()) {
-        return eb.fontCachePath();
+        return eb.ebCache.fontCachePath;
     }
     emit nowBusy(true);
     //stopAct->setEnabled(true);
@@ -1414,7 +1414,7 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
                               "Loading all external fonts (%1).").arg(total);
         showStatus(msg);
         for(int i = 0; i < hit_num; i++){
-            eb.text(i);
+            eb.hitText(i);
         }
 
         QEventLoop().processEvents();
@@ -1426,7 +1426,7 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
     out << "All font loaded";
     emit nowBusy(false);
 
-    return eb.fontCachePath();
+    return eb.ebCache.fontCachePath;
 }
 
 void MainWindow::checkNextSearch()
