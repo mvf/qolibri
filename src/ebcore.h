@@ -38,19 +38,18 @@ public:
     static void initialize();
     static void finalize();
 
-    int initBook(const QString &path);
-    int initSubBook(int index);
+    int initBook(const QString &path, int subbook=-1, int refpos=0);
+    int initSubBook(int index, int refpos=0);
     void unsetBook() { eb_unset_subbook(&book); }
 
     QString path();
     QString title();
-/*
     QString copyright();
     QString menu();
     bool menu(EB_Position *pos);
-    QString text(EB_Position *pos, bool hflag=true);
-    QString heading(EB_Position *pos, bool hflag=true);
-*/
+    QString text(const EB_Position &pos, bool hflag=true);
+    QString heading(const EB_Position &pos, bool hflag=true);
+    QStringList candidate(const EB_Position &pos, QString *txt);
 
     bool isHaveText() { return (eb_have_text(&book) == 1); }
     bool isHaveWordSearch() { return (eb_have_word_search(&book) == 1); }
@@ -59,10 +58,11 @@ public:
     bool isHaveCrossSearch() { return (eb_have_cross_search(&book) == 1); }
     bool isHaveMenu() { return (eb_have_menu(&book) == 1); }
     bool isHaveCopyright() { return (eb_have_copyright(&book) == 1); }
+    static void ebError(const QString &func, EB_Error_Code code);
+    EbCache ebCache;
 
 protected:
 
-    void ebError(const QString &func, EB_Error_Code code);
 
     EB_Book book;
     EB_Appendix appendix;
@@ -72,7 +72,6 @@ protected:
     int subAppendixCount;
 
     EbHook ebHook;
-    EbCache ebCache;
 
 };
 

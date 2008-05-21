@@ -123,10 +123,10 @@ private:
 class ReferencePopup : public QWidget
 {
 public:
-    ReferencePopup(Book *pbook, int page, int offset, QWidget *parent, 
+    ReferencePopup(Book *pbook, const EB_Position &pos, QWidget *parent, 
                    bool menu_flag=false);
 
-    QString browserText(Book *pbook, int page, int offset);
+    QString browserText(Book *pbook, const EB_Position &pos);
 
 private:
     bool menuFlag;
@@ -262,9 +262,9 @@ private slots:
 private:
     void fullMenuPage();
     void selectMenuPage(int index);
-    void getMenus(EBook *eb, int page, int offset, PageItems *items,
+    void getMenus(EBook *eb, const EB_Position &pos, PageItems *items,
                   int count);
-    void getTopMenu(EBook *eb, int page, int offset);
+    void getTopMenu(EBook *eb, const EB_Position &pos);
     QList <EB_Position> topMenus;
     QStringList topTitles;
     int menuCount;

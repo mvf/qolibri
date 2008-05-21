@@ -58,28 +58,34 @@ public:
     QByteArray begin_candidate();
     QByteArray begin_candidate_menu();
     QByteArray end_candidate_group(int page, int offset);
-    QByteArray end_candidate_group_menu(int page, int offset);
+    QByteArray end_candidate_group_menu(EB_Book *book, int page, int offset);
     QByteArray narrow_font(EB_Book *book, int code);
     QByteArray wide_font(EB_Book *book, int code);
-    QByteArray end_mono_graphic(int page, int offset);
+    QByteArray end_mono_graphic(EB_Book *book, int page, int offset);
     QByteArray begin_mpeg();
-    QByteArray begin_wave(int start_page, int start_offset,
+    QByteArray begin_wave(EB_Book *book, int start_page, int start_offset,
                           int end_page, int end_offset);
-    QByteArray begin_color_bmp(int page, int offset);
-    QByteArray begin_color_jpeg(int page, int offset);
+    QByteArray begin_color_bmp(EB_Book *book, int page, int offset);
+    QByteArray begin_color_jpeg(EB_Book *book, int page, int offset);
     QByteArray errorString(const QByteArray &error_string)
     { return "<em class=err>" + error_string + "</em>"; }
     QByteArray begin_subscript()
     { return (ruby) ? "<sub>" : QByteArray(); }
     QByteArray end_subscript()
     { return (ruby) ? "</sub>" : QByteArray(); }
-    void end_mpeg(const unsigned int *p);
+    void end_mpeg(EB_Book *book, const unsigned int *p);
     void begin_mono_graphic(int height, int width)
     {
         monoHeight = height;
         monoWidth = width;
         imageCount++;
     }
+    QByteArray makeFname(const QByteArray &type, int p1, int p2)
+    {
+        return QByteArray::number(p1) + 'x' + QByteArray::number(p2) +
+               '.' + type;
+    }
+
 
     EbCache *ebCache;
     int monoWidth;
@@ -91,6 +97,10 @@ public:
     bool ruby;
     bool indented;
     QStack <int> decoStack;
+    QList <QByteArray> refList;
+    int refPosition;
+    QStringList candList;
+    QList <QByteArray> mpegList;
 
 };
 

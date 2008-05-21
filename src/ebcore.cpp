@@ -28,10 +28,8 @@
 
 #include "ebcore.h"
 #include "textcodec.h"
-/*
 const int TextBufferSize = 4000;
 const int TextSizeLimit = 2800000;
-*/
 
 #define toUTF(q_bytearray) \
     QTextCodec::codecForLocale()->toUnicode(q_bytearray)
@@ -61,7 +59,7 @@ void EbCore::finalize()
     eb_finalize_library();
 }
 
-int EbCore::initBook(const QString& path)
+int EbCore::initBook(const QString& path, int subbook, int refpos)
 {
     EB_Error_Code ecode;
 
@@ -88,12 +86,18 @@ int EbCore::initBook(const QString& path)
         ebError("eb_appendix_subbook_list", ecode);
         //return -1;
     }
-    return sub_book_count;
+    if (subbook >= 0) {
+        return initSubBook(subbook, refpos);
+    } else {
+        return sub_book_count;
+    }
 }
 
-int EbCore::initSubBook(int index)
+int EbCore::initSubBook(int index, int refpos)
 {
     EB_Error_Code ecode;
+
+    ebHook.refPosition = refpos;
 
     ecode = eb_set_subbook(&book, subBookList[index]);
     if (ecode != EB_SUCCESS) {
@@ -156,8 +160,6 @@ QString EbCore::title()
     return eucToUtf(t);
 }
 
-
-/*
 QString EbCore::copyright()
 {
     if (!eb_have_copyright(&book))
@@ -170,8 +172,9 @@ QString EbCore::copyright()
         ebError("eb_copyright", ecode);
         return QString();
     }
-    return text(&position, true);
+    return text(position);
 }
+
 
 QString EbCore::menu()
 {
@@ -184,7 +187,7 @@ QString EbCore::menu()
     if (err != EB_SUCCESS)
         return QString();
 
-    return text(&position);
+    return text(position);
 }
 
 bool EbCore::menu(EB_Position *pos)
@@ -198,15 +201,22 @@ bool EbCore::menu(EB_Position *pos)
     return true;
 }
 
+QStringList EbCore::candidate(const EB_Position &pos, QString *txt)          
+{                                                                         
+   ebHook.candList.clear(); 
+   *txt = text(pos);
+   return ebHook.candList;
+} 
 
-QString EbCore::text(EB_Position *pos,  bool hflag)
+QString EbCore::text(const EB_Position &pos, bool hflag)
 {
-    //qDebug() << "text : " << page << " " << offset;
+    //qDebug() << "text : " << pos->page << " " << pos->offset;
     EB_Error_Code ecode;
 
     EB_Hookset *hook = (hflag) ? &hookSet : NULL;
 
-    ecode = eb_seek_text(&book, pos);
+    ebHook.refList.clear();
+    ecode = eb_seek_text(&book, &pos);
     if (ecode != EB_SUCCESS) {
         ebError("eb_seek_text", ecode);
         return QString();
@@ -216,7 +226,7 @@ QString EbCore::text(EB_Position *pos,  bool hflag)
     char buffer[TextBufferSize + 1];
     ssize_t buffer_length;
     for (int i = 0;; i++) {
-        ecode = eb_read_text(&book, &appendix, hook, (void *)this,
+        ecode = eb_read_text(&book, &appendix, hook, (void *)&ebHook,
                              TextBufferSize, buffer, &buffer_length);
         if (ecode != EB_SUCCESS) {
             ebError("eb_read_text", ecode);
@@ -225,20 +235,59 @@ QString EbCore::text(EB_Position *pos,  bool hflag)
         ret += buffer;
         if (eb_is_text_stopped(&book)) break;
         if (((TextBufferSize * i) + buffer_length) > TextSizeLimit) {
-            qDebug() << "Data too large" << book.path << pos->page << pos->offset;
+            qDebug() << "Data too large" << book.path
+                                         << pos.page << pos.offset;
             return QString();
         }
     }
+
+    if (hflag) {
+        for (int i = 0; i < ebHook.refList.count(); i++) {
+            QByteArray f = "<R" + QByteArray::number(i) + "R>";
+            ret.replace(f, ebHook.refList[i]);
+        }
+        //for (int i = 0; i < candList.count(); i++) {
+        //    int sp = ret.indexOf("<C");
+        //    int ep = ret.indexOf("C>");
+        //    if (ep > sp) {
+        //        ret.replace(sp, ep-sp+2, "<>");
+        //    }
+        //}
+        for (int i = 0; i < ebHook.mpegList.count(); i++) {
+            QByteArray f = "<M" + QByteArray::number(i) + "M>";
+            ret.replace(f, ebHook.mpegList[i]);
+        }
+        //if (!ruby_) {
+        //    int sp;
+        //    while((sp = ret.indexOf("<sub>")) > 0) {
+        //        int ep = ret.indexOf("</sub>");
+        //        if (ep < 0 || ep <= sp) {
+        //            qWarning() << "Data Error : not match <sub></sub>"
+        //                       << sp << ep;
+        //            if (ep < 0)
+        //                break;
+        //            sp = ep;
+        //        }
+        //        ret.remove(sp, ep-sp+6);
+        //    }
+        //}
+    }
+    //QString sret = eucToUtf(ret);
+    //if (sret[sret.length()-1].isSpace()) {
+    //    sret.truncate(sret.length()-1);
+    //}
+    //return sret;
+
     return eucToUtf(ret).trimmed();
 }
 
-QString EbCore::heading(EB_Position *pos, bool hflag)
+QString EbCore::heading(const EB_Position &pos, bool hflag)
 {
     EB_Error_Code ecode;
 
     EB_Hookset *hook = (hflag) ? &hookSet : NULL;
 
-    ecode = eb_seek_text(&book, pos);
+    ecode = eb_seek_text(&book, &pos);
     if (ecode != EB_SUCCESS) {
         ebError("eb_seek_text", ecode);
         return QString();
@@ -246,7 +295,7 @@ QString EbCore::heading(EB_Position *pos, bool hflag)
 
     char head_text[1024];
     ssize_t heading_length;
-    ecode = eb_read_heading(&book, &appendix, hook, (void *)this,
+    ecode = eb_read_heading(&book, &appendix, hook, (void *)&ebHook,
                             1023, head_text, &heading_length);
     if (ecode != EB_SUCCESS) {
         ebError("eb_read_heading", ecode);
@@ -257,13 +306,17 @@ QString EbCore::heading(EB_Position *pos, bool hflag)
         return QString();
     }
     QString ret = eucToUtf(head_text);
-
+    if (hflag) {
+        for (int i = 0; i < ebHook.refList.count(); i++) {
+            QByteArray f = "<R" + QByteArray::number(i) + "R>";
+            ret.replace(f, ebHook.refList[i]);
+        }
+    }
     return ret.trimmed();
 }
-*/
 
 void EbCore::ebError(const QString &func, EB_Error_Code code)
 {
-    qWarning() << func << "failed :" << toUTF(eb_error_message(code));
+    qWarning() << func, toUTF(eb_error_message(code));
 }
 

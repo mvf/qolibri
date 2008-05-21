@@ -45,7 +45,7 @@ BookBrowser::BookBrowser(QWidget *parent)
     : QTextBrowser(parent)
 {
     setOpenExternalLinks(false);
-    setSearchPaths(QStringList() << EBook::cachePath);
+    setSearchPaths(QStringList() << QDir::homePath() + "/.ebcache");
     document()->setDefaultFont(CONF->browserFont);
 
     connect(this, SIGNAL(statusRequested(QString)),
@@ -90,10 +90,12 @@ void BookBrowser::setSource(const QUrl &name)
                 return;
             }
             bool mflag = (args[0] == "menu") ? true : false;
+            EB_Position pos;
+            pos.page = args[2].toInt();
+            pos.offset = args[3].toInt();
              
             ReferencePopup *popup =
-                new ReferencePopup(bookList_[index], args[2].toInt(),
-                                   args[3].toInt(), this, mflag);
+                new ReferencePopup(bookList_[index], pos, this, mflag);
             popup->show();
         } else {
             qWarning() << "Invalid Reference Parameter" << args.count();
@@ -175,7 +177,7 @@ void BookBrowser::pasteSearchText()
     emit pasteRequested(textCursor().selectedText());
 }
 
-ReferencePopup::ReferencePopup(Book *book, int page, int offset,
+ReferencePopup::ReferencePopup(Book *book, const EB_Position &pos,
                                QWidget *parent, bool menu_flag)
     : QWidget(parent), menuFlag(menu_flag)
 {
@@ -195,7 +197,7 @@ ReferencePopup::ReferencePopup(Book *book, int page, int offset,
     v->setSpacing(0);
     setLayout(v);
 
-    bookBrowser->setBrowser(browserText(book, page, offset));
+    bookBrowser->setBrowser(browserText(book, pos));
 
     setWindowFlags(Qt::Popup);
 
@@ -204,14 +206,14 @@ ReferencePopup::ReferencePopup(Book *book, int page, int offset,
 }
 
 
-QString ReferencePopup::browserText(Book *book, int page, int offset)
+QString ReferencePopup::browserText(Book *book, const EB_Position &pos)
 {
     EBook eb;
 
-    eb.setBook(book->path(), book->bookNo());
+    eb.initBook(book->path(), book->bookNo());
     eb.initSearch(16, book->fontList(), CONF->indentOffset);
-    bookBrowser->setSearchPaths(QStringList() << eb.cachePath);
-    QString text = eb.text(page, offset);
+    bookBrowser->setSearchPaths(QStringList() << QDir::homePath() + "/.ebcache");
+    QString text = eb.text(pos);
     QString ttl;
     if (!menuFlag) {
         QString heading = text.left(text.indexOf('\n'));
@@ -220,7 +222,8 @@ QString ReferencePopup::browserText(Book *book, int page, int offset)
             ttl += s + " > ";
         }
         ttl += heading;
-        QString addr = QString("book|%1|%2|%3|%4").arg(0).arg(page).arg(offset)
+        QString addr = QString("book|%1|%2|%3|%4").arg(0).arg(pos.page)
+                               .arg(pos.offset)
                                .arg(bookBrowser->titles().count());
         bookBrowser->addTitle("<a class=ref href=" + addr +
                           " >" + heading + "</a>");
@@ -238,7 +241,7 @@ QString ReferencePopup::browserText(Book *book, int page, int offset)
         "</head>\n"
         "<body>\n"
         "<h1>" + ttl + "</h1>\n" +
-        "<pre>" + eb.text(page, offset) + "</pre>\n"
+        "<pre>" + eb.text(pos) + "</pre>\n"
         "</body>\n"
         "</html>\n";
     return txt;
@@ -264,8 +267,10 @@ void BookBrowserPopup::setSource(const QUrl &name)
             }
         }
         ReferencePopup *popup = (ReferencePopup*)parentWidget();
-        QString str = popup->browserText(bookList_[index],
-                                            args[2].toInt(), args[3].toInt());
+        EB_Position pos;
+        pos.page = args[2].toInt();
+        pos.offset = args[3].toInt();
+        QString str = popup->browserText(bookList_[index], pos );
         setBrowser(str);
         return;
     }
@@ -581,8 +586,8 @@ bool PageWidget::isMatch( const QString &str, const QStringList &list,
 bool PageWidget::getText(EBook *eb, int index, QString *head_l, QString *head_v,
                          QString *text)
 {
-    QString t_v = eb->text(index);
-    QString h_v = eb->heading(index);
+    QString t_v = eb->hitText(index);
+    QString h_v = eb->hitHeading(index);
 
     int p = t_v.indexOf('\n');
     if (h_v.isEmpty()) {
@@ -632,7 +637,7 @@ bool PageWidget::getMatch(EBook *eb, int index, const QStringList &slist,
 {
 
     if (slist.count()) {
-        QString t_i = eb->text(index, false);
+        QString t_i = eb->hitText(index, false);
         if (!isMatch(t_i, slist, logic))
             return false;
     }
@@ -670,7 +675,7 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
 
     bookBrowser->addBookList(book);
     EBook eb;
-    if (eb.setBook(book->path(), book->bookNo()) < 0) {
+    if (eb.initBook(book->path(), book->bookNo()) < 0) {
         retStatus = NO_BOOK;
         return;
     }
@@ -729,7 +734,8 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     items.composeTrail();
     //qDebug() << txt;
     bookBrowser->setBrowser(items.text());
-    bookBrowser->setSearchPaths(QStringList() << book->path() << eb.cachePath);
+    bookBrowser->setSearchPaths(QStringList() << book->path() << 
+                                QDir::homePath() + "/.ebcache/");
     bookTree->insertTopLevelItems(0, items.items());
     bookTree->setCurrentItem(items.items()[0]);
 
@@ -763,15 +769,15 @@ void MenuPage::fullMenuPage()
 {
     checkMax = true;
     EBook eb(HookMenu);
-    if (eb.setBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
+    if (eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
         0) {
         retStatus = NO_BOOK;
     }
     eb.initSearch(bookBrowser->fontSize(), method_.bookReader->fontList(),
                   CONF->indentOffset, method_.ruby);
-    int page;
-    int offset;
-    if (!eb.menu(&page, &offset)) {
+
+    EB_Position pos;
+    if (!eb.menu(&pos)) {
         retStatus = NO_MENU;
         return;
     }
@@ -781,7 +787,7 @@ void MenuPage::fullMenuPage()
     items.addHItem(0, toAnchor("B", 0), method_.bookReader->name());
     menuCount = 0;
 
-    getMenus(&eb, page, offset, &items, 0);
+    getMenus(&eb, pos, &items, 0);
     if (retStatus == LIMIT_MENU) {
         //while (!item.item().isEmpty())
         //    delete item.time().takeLast();
@@ -804,14 +810,13 @@ void MenuPage::selectMenuPage(int index)
     checkMax = false;
     retStatus = NORMAL;
     EBook eb(HookMenu);
-    eb.setBook(method_.bookReader->path(), method_.bookReader->bookNo());
+    eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo());
     eb.initSearch(bookBrowser->fontSize(), method_.bookReader->fontList(),
                   CONF->indentOffset, method_.ruby);
-    int page;
-    int offset;
-    eb.menu(&page, &offset);
+    EB_Position pos;
+    eb.menu(&pos);
     if (index < 0) {
-        getTopMenu(&eb, page, offset);
+        getTopMenu(&eb, pos);
         index = 0;
     }
 
@@ -827,7 +832,7 @@ void MenuPage::selectMenuPage(int index)
         if (i == index) {
             items.composeHLine(1, toAnchor("H", menuCount), topTitles[i]);
 	    next = items.curItem();
-            getMenus(&eb, topMenus[i].page, topMenus[i].offset, &items, 1);
+            getMenus(&eb, topMenus[i], &items, 1);
         } else {
 	    items.addHItem(1, toAnchor("P", i), topTitles[i]);
 	    items.curItem()->setForeground(0, QColor("#666688"));
@@ -859,10 +864,10 @@ void MenuPage::changePage(QTreeWidgetItem *item, int)
     }
 }
 
-void MenuPage::getTopMenu(EBook *eb, int page, int offset)
+void MenuPage::getTopMenu(EBook *eb, const EB_Position &pos)
 {
     QString t;
-    QStringList list = eb->candidate(page, offset, &t);
+    QStringList list = eb->candidate(pos, &t);
 
     foreach(QString s, list) {
         QStringList cand = s.split("&|");
@@ -875,7 +880,7 @@ void MenuPage::getTopMenu(EBook *eb, int page, int offset)
     }
 }
 
-void MenuPage::getMenus(EBook *eb, int page, int offset, PageItems *items,
+void MenuPage::getMenus(EBook *eb, const EB_Position &pos, PageItems *items,
                         int count)
 {
     count++;
@@ -887,7 +892,7 @@ void MenuPage::getMenus(EBook *eb, int page, int offset, PageItems *items,
         }
     }
     QString c_text;
-    QStringList list = eb->candidate(page, offset, &c_text);
+    QStringList list = eb->candidate(pos, &c_text);
     if (list.count()) {
         foreach(QString s, list) {
             QStringList cand = s.split("&|");
@@ -896,10 +901,11 @@ void MenuPage::getMenus(EBook *eb, int page, int offset, PageItems *items,
                 retStatus = LIMIT_MENU;
                 break;
             }
-            int next_page = cand[1].toInt();
-            int next_offset = cand[2].toInt();
+            EB_Position next;
+            next.page = cand[1].toInt();
+            next.offset = cand[2].toInt();
             items->composeHLine(count, toAnchor("H", menuCount), cand[0]);
-            getMenus(eb, next_page, next_offset, items, count);
+            getMenus(eb, next, items, count);
         }
     } else {
         QString text_v;
@@ -947,7 +953,7 @@ RET_SEARCH WholePage::readPage(int page)
     QTreeWidgetItem *top_tree = item.curItem();
 
     EBook eb;
-    if(eb.setBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
+    if(eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
        0) {
         return NO_BOOK;
     }
@@ -990,8 +996,7 @@ RET_SEARCH WholePage::readPage(int page)
                 }
             }
         } else {
-            QString t = eb.text(seqHits[i].page,
-                                seqHits[i].offset, false);
+            QString t = eb.text(seqHits[i],  false);
             QString head_i = t.left(t.indexOf('\n'));
             QString name = "(" + QString::number(i * limit + 1) + "-) " +
                            head_i;
@@ -1031,7 +1036,7 @@ RET_SEARCH WholePage::initSeqHits()
 {
     EBook eb;
 
-    if (eb.setBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
+    if (eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
         0)
         return NO_BOOK;
 
@@ -1082,7 +1087,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
                              QString::number(totalCount) + ")");
         if (checkStop() || break_flag) break;
 
-        if ( eb.setBook(book->path(), book->bookNo(), book_count) < 0) continue;
+        if ( eb.initBook(book->path(), book->bookNo(), book_count) < 0) continue;
 
         eb.initSearch(bookBrowser->fontSize(), book->fontList(),
                       CONF->indentOffset, method.ruby);
@@ -1203,7 +1208,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
 
         matchCount = 0;
 
-        if (eb.setBook(book->path(), book->bookNo(), book_count) < 0) {
+        if (eb.initBook(book->path(), book->bookNo(), book_count) < 0) {
             qDebug() << "Can't open the book" << book->path() << book->bookNo();
             continue;
         }
