@@ -26,7 +26,7 @@
 #ifdef Q_WS_MAC
 #include "titlelabel.h"
 #endif
-#include "ebook.h"
+#include "ebcore.h"
 
 BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
     : QDialog(parent), findStop(false) 
