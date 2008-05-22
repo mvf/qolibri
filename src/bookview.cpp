@@ -29,6 +29,8 @@ static QWidget *mainWin = 0;
 const char* CutString = "----- cut -----";
 const char* IntString = "----- interrupted -----";
 
+//#define FIXED_POPUP
+
 #define SJIStoUTF(q_bytearray) \
     QTextCodec::codecForName("Shift-JIS")->toUnicode(q_bytearray)         
 
@@ -181,14 +183,22 @@ ReferencePopup::ReferencePopup(Book *book, const EB_Position &pos,
                                QWidget *parent, bool menu_flag)
     : QWidget(parent), menuFlag(menu_flag)
 {
+#ifdef FIXED_POPUP
     bookBrowser = new BookBrowserPopup(parent);
+#else
+    bookBrowser = new BookBrowser(parent);
+#endif
+#ifdef FIXED_POPUP
     QToolButton *close_button = new QToolButton(this);
     close_button->setIcon(QIcon(":images/closetab.png"));
     connect(close_button, SIGNAL(clicked()), this, SLOT(close()));
     bookBrowser->setCornerWidget(close_button);
+#endif
     //bookBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     bookBrowser->addBookList(book);
+#ifdef FIXED_POPUP
     bookBrowser->addTitle("<a class=cls href=close>" + book->name() + "</a>");
+#endif
 
 
     QVBoxLayout *v = new QVBoxLayout();
@@ -201,8 +211,21 @@ ReferencePopup::ReferencePopup(Book *book, const EB_Position &pos,
 
     setWindowFlags(Qt::Popup);
 
+#ifdef FIXED_POPUP
     move(parent->mapToGlobal(QPoint(0, 0)));
     resize(parent->size() - QSize(0, 0));
+#else
+    int posx = QCursor::pos().x();
+    if ((posx + 590) > QDesktopWidget().screenGeometry().width())
+        posx = QDesktopWidget().screenGeometry().width() - 590;
+
+    int posy = QCursor::pos().y();
+    if ((posy + 220) > QDesktopWidget().screenGeometry().height())
+        posy = QDesktopWidget().screenGeometry().height() - 220;
+
+    move(QPoint(posx, posy));
+    resize(QSize(590,220));
+#endif
 }
 
 
@@ -216,8 +239,8 @@ QString ReferencePopup::browserText(Book *book, const EB_Position &pos)
     QString text = eb.text(pos);
     QString ttl;
     if (!menuFlag) {
+#ifdef FIXED_POPUP
         QString heading = text.left(text.indexOf('\n'));
-
         foreach(QString s, bookBrowser->titles()) {
             ttl += s + " > ";
         }
@@ -227,8 +250,15 @@ QString ReferencePopup::browserText(Book *book, const EB_Position &pos)
                                .arg(bookBrowser->titles().count());
         bookBrowser->addTitle("<a class=ref href=" + addr +
                           " >" + heading + "</a>");
+#else
+        ttl = text.left(text.indexOf('\n'));
+#endif
     } else {
+#ifdef FIXED_POPUP
         ttl = bookBrowser->titles()[0];
+#else
+        ttl = text.left(text.indexOf('\n'));
+#endif
     }
 
     QString txt =
@@ -240,13 +270,14 @@ QString ReferencePopup::browserText(Book *book, const EB_Position &pos)
         "</style>\n"
         "</head>\n"
         "<body>\n"
-        "<h1>" + ttl + "</h1>\n" +
+        "<h2>" + ttl + "</h2>\n" +
         "<pre>" + eb.text(pos) + "</pre>\n"
         "</body>\n"
         "</html>\n";
     return txt;
 }
 
+#ifdef FIXED_POPUP
 void BookBrowserPopup::setSource(const QUrl &name)
 {
     QStringList args = name.toString().split('|');
@@ -266,10 +297,10 @@ void BookBrowserPopup::setSource(const QUrl &name)
                 titles_.removeLast();
             }
         }
-        ReferencePopup *popup = (ReferencePopup*)parentWidget();
         EB_Position pos;
         pos.page = args[2].toInt();
         pos.offset = args[3].toInt();
+        ReferencePopup *popup = (ReferencePopup*)parentWidget();
         QString str = popup->browserText(bookList_[index], pos );
         setBrowser(str);
         return;
@@ -277,6 +308,7 @@ void BookBrowserPopup::setSource(const QUrl &name)
     BookBrowser::setSource(name);
     return;
 }
+#endif
 
 TreeScrollPopup::TreeScrollPopup(QTreeWidgetItem *item, QWidget *parent)
     : QWidget(parent), topItem(item)

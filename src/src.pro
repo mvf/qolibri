@@ -50,6 +50,7 @@ OBJECTS_DIR = ./build
 MOC_DIR = ./build/moc
 
 #DEFINES += USE_GIF_FOR_FONT
+#DEFINES += FIXED_POPUP
 
 macx {
     !exists($$[QT_INSTALL_LIBS]/QtCore.framework) {

@@ -42,6 +42,8 @@ class Book;
 class Group;
 class EBook;
 
+//#define FIXED_POPUP
+
 enum RET_SEARCH
 { NORMAL = 0, ERROR, NO_BOOK, NOT_HIT, INTERRUPTED, NOT_HIT_INTERRUPTED,
   NO_MENU, LIMIT_CHAR, LIMIT_BOOK, LIMIT_TOTAL, LIMIT_MENU };
@@ -94,6 +96,8 @@ private slots:
     void pasteSearchText();
 };
 
+#ifdef FIXED_POPUP
+
 class BookBrowserPopup : public BookBrowser
 {
 public:
@@ -120,6 +124,8 @@ private:
 
 };
 
+#endif
+
 class ReferencePopup : public QWidget
 {
 public:
@@ -130,7 +136,11 @@ public:
 
 private:
     bool menuFlag;
+#ifdef FIXED_POPUP
     BookBrowserPopup *bookBrowser;
+#else
+    BookBrowser *bookBrowser;
+#endif
 };
 
 
