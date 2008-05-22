@@ -25,22 +25,20 @@
 
 #include "ebcore.h"
 
-enum HookMode { HookText, HookMenu, HookFont };
 enum SearchType { SearchWord, SearchEndWord, SearchExactWord,
                   SearchKeyWord, SearchCrossWord };
 
 class EBook : public EbCore
 {
 public:
-    EBook(HookMode menu = HookText);
+    EBook(HookMode hmode = HookText);
     ~EBook();
 
     // return number of Sub Book
-    void initSearch(int fsize, QHash<QString, QString> *flist, 
+    void initHook(int fsize, QHash<QString, QString> *flist, 
                     int indent_offset = 50, bool ruby = true)
     {   
-        ebCache.init(title());
-        ebHook.init(&ebCache, fsize, flist, indent_offset, ruby);
+        ebHook.init(title(), fsize, flist, indent_offset, ruby);
         firstSeek = true;
     }
 
@@ -63,11 +61,6 @@ public:
     }
     int setStartHit(const EB_Position &text_pos);
 
-
-    inline int imageCount() const
-    {
-        return ebHook.imageCount;
-    }
 
 private:
 

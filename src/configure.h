@@ -41,7 +41,6 @@ public:
     int maxLimitBookHit;
     int maxLimitTotalHit;
     int historyMax;
-    int limitImageNum;
     int limitBrowserChar;
     int limitMenuHit;
     int indentOffset;

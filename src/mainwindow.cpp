@@ -1104,10 +1104,6 @@ void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
                 msg += tr("Stopped (Character size limit[") +
                        QString::number(CONF->limitBrowserChar) + "])";
                 break;
-            case LIMIT_IMAGE:
-                msg += tr("Stopped (Image limit[") +
-                       QString::number(CONF->limitImageNum) + "])";
-                break;
             case LIMIT_TOTAL:
                 msg += tr("Stopped (Item iimit[") +
                        QString::number(mthd.limitTotal) + "])";
@@ -1353,11 +1349,11 @@ void MainWindow::clearCache()
     int ret = QMessageBox::question(this, Program,
                                     tr("Are you sure you want to remove all cache data?\n\"")
                                     +
-                                    QDir::homePath() +"/.ebcache/*\"",
+                                    EbCache::cachePath + "/*\"",
                                     QMessageBox::Yes | QMessageBox::No);
 
     if (ret == QMessageBox::Yes) {
-        QByteArray d = QString(QDir::homePath() + "/.ebcache").toLocal8Bit();
+        QByteArray d = QString(EbCache::cachePath).toLocal8Bit();
 #ifdef Q_WS_WIN
         execProcess("cmd.exe /c rmdir /s /q \"" + d);
 #else
@@ -1399,10 +1395,10 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
     if (eb.initBook(pbook->path(), pbook->bookNo()) < 0) {
         QMessageBox::warning(this, Program, tr("Cannot open the book.") );
     }
-    eb.initSearch(16, NULL);
-    QFile loadf(eb.ebCache.fontCachePath + "/loaded");
+    eb.initHook(16, NULL);
+    QFile loadf(eb.ebHook.ebCache.fontCachePath + "/loaded");
     if (loadf.exists()) {
-        return eb.ebCache.fontCachePath;
+        return eb.ebHook.ebCache.fontCachePath;
     }
     emit nowBusy(true);
     //stopAct->setEnabled(true);
@@ -1426,7 +1422,7 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
     out << "All font loaded";
     emit nowBusy(false);
 
-    return eb.ebCache.fontCachePath;
+    return eb.ebHook.ebCache.fontCachePath;
 }
 
 void MainWindow::checkNextSearch()

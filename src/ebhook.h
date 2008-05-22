@@ -36,17 +36,16 @@ public:
     {
     }
 
-    void init(EbCache *cache, int fsize, QHash<QString, QString> *flist,
+    void init(const QString title, int fsize, QHash<QString, QString> *flist,
            int ioffset = 50, bool rb = true) 
     {
-        ebCache = cache;
+        ebCache.init(title);
         fontSize = fsize;
         fontList = flist;
         indentOffset = ioffset;
         ruby = rb;
         monoWidth = 0;
         monoHeight = 0;
-        imageCount = 0;
         indented = false;
     }
 
@@ -78,7 +77,6 @@ public:
     {
         monoHeight = height;
         monoWidth = width;
-        imageCount++;
     }
     QByteArray makeFname(const QByteArray &type, int p1, int p2)
     {
@@ -87,13 +85,12 @@ public:
     }
 
 
-    EbCache *ebCache;
+    EbCache ebCache;
     int monoWidth;
     int monoHeight;
     int fontSize;
     QHash<QString, QString> *fontList;
     int indentOffset;
-    int imageCount;
     bool ruby;
     bool indented;
     QStack <int> decoStack;

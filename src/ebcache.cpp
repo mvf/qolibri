@@ -21,9 +21,12 @@
 
 #include "ebcache.h"
 
+QString EbCache::cachePath = QDir::homePath() + "/.ebcache";
+
 void EbCache::init(const QString &title)
 {
-    QString cachePath = QDir::homePath() + "/.ebcache";
+    //cachePath = QDir::homePath() + "/.ebcache";
+    //qDebug () << "Cache path =" << cachePath;
     QString bookCachePath = cachePath + "/" + title;
     QDir rootDir(bookCachePath);
 

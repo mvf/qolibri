@@ -46,7 +46,6 @@ private:
     QCheckBox *beepSoundCheck;
     QCheckBox *serverModeCheck;
     QSpinBox *historyBox;
-    QSpinBox *limitImageBox;
     QSpinBox *limitCharBox;
     QSpinBox *limitMenuBox;
     QSpinBox *limitMaxBookBox;

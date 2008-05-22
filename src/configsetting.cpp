@@ -111,47 +111,41 @@ ConfigSetting::ConfigSetting(QWidget *parent)
     vl->addStretch();
     QGridLayout *g = new QGridLayout;
     {
-        g->addWidget(new QLabel(tr("Limit of image number")), 0, 0);
-        limitImageBox = new QSpinBox();
-        limitImageBox->setRange(100, 2000);
-        limitImageBox->setSingleStep(100);
-        g->addWidget(limitImageBox, 0, 1);
-    } {
-        g->addWidget(new QLabel(tr("Limit of characters")), 1, 0);
+        g->addWidget(new QLabel(tr("Limit of characters")), 0, 0);
         limitCharBox = new QSpinBox();
         limitCharBox->setRange(100000, 7000000);
         limitCharBox->setSingleStep(10000);
-        g->addWidget(limitCharBox, 1, 1);
+        g->addWidget(limitCharBox, 0, 1);
     } {
-        g->addWidget(new QLabel(tr("Limit of menu items")), 2, 0);
+        g->addWidget(new QLabel(tr("Limit of menu items")), 1, 0);
         limitMenuBox = new QSpinBox();
         limitMenuBox->setRange(100, 7000);
         limitMenuBox->setSingleStep(100);
-        g->addWidget(limitMenuBox, 2, 1);
+        g->addWidget(limitMenuBox, 1, 1);
     } {
-        g->addWidget(new QLabel(tr("Limit of hits per book")), 3, 0);
+        g->addWidget(new QLabel(tr("Limit of hits per book")), 2, 0);
         limitMaxBookBox = new QSpinBox();
         limitMaxBookBox->setRange(1000, 100000);
         limitMaxBookBox->setSingleStep(1000);
-        g->addWidget(limitMaxBookBox, 3, 1);
+        g->addWidget(limitMaxBookBox, 2, 1);
     } {
-        g->addWidget(new QLabel(tr("Limit of total hits")), 4, 0);
+        g->addWidget(new QLabel(tr("Limit of total hits")), 3, 0);
         limitMaxTotalBox = new QSpinBox();
         limitMaxTotalBox->setRange(1000, 100000);
         limitMaxTotalBox->setSingleStep(1000);
-        g->addWidget(limitMaxTotalBox, 4, 1);
+        g->addWidget(limitMaxTotalBox, 3, 1);
     } {
-        g->addWidget(new QLabel(tr("Step of hits per book")), 5, 0);
+        g->addWidget(new QLabel(tr("Step of hits per book")), 4, 0);
         stepBookHitBox = new QSpinBox();
         stepBookHitBox->setRange(10, 1000);
         stepBookHitBox->setSingleStep(10);
-        g->addWidget(stepBookHitBox, 5, 1);
+        g->addWidget(stepBookHitBox, 4, 1);
     } {
-        g->addWidget(new QLabel(tr("Step of total hits")), 6, 0);
+        g->addWidget(new QLabel(tr("Step of total hits")), 5, 0);
         stepTotalHitBox = new QSpinBox();
         stepTotalHitBox->setRange(100, 10000);
         stepTotalHitBox->setSingleStep(100);
-        g->addWidget(stepTotalHitBox, 6, 1);
+        g->addWidget(stepTotalHitBox, 5, 1);
     }
     QGroupBox *gb = new QGroupBox(tr("Change carefully these parameters"));
     gb->setLayout(g);
@@ -230,7 +224,6 @@ void ConfigSetting::reset()
     googleUrlEdit->setText(d->googleUrl);
     wikipediaUrlEdit->setText(d->wikipediaUrl);
     userDefUrlEdit->setText(d->userDefUrl);
-    limitImageBox->setValue(d->limitImageNum);
     limitCharBox->setValue(d->limitBrowserChar);
     limitMenuBox->setValue(d->limitMenuHit);
     limitMaxBookBox->setValue(d->maxLimitBookHit);
@@ -255,7 +248,6 @@ void ConfigSetting::update()
     d->googleUrl = googleUrlEdit->text();
     d->wikipediaUrl = wikipediaUrlEdit->text();
     d->userDefUrl = userDefUrlEdit->text();
-    d->limitImageNum = limitImageBox->value();
     d->limitBrowserChar = limitCharBox->value();
     d->limitMenuHit = limitMenuBox->value();
     d->maxLimitBookHit = limitMaxBookBox->value();

@@ -92,7 +92,7 @@ QByteArray EbHook::narrow_font(EB_Book *book, int code)
     QByteArray fname = fcode.toAscii() + ".png";
 #endif
 
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache->fontCacheRel) + fname  +
+    QByteArray out = "<img src=\"" + utfToEuc(ebCache.fontCacheRel) + fname  +
                      "\"";
     int h = fontSize;
     if (h > 17) {
@@ -101,7 +101,7 @@ QByteArray EbHook::narrow_font(EB_Book *book, int code)
     }
     out += " />";
 
-    if (ebCache->fontCacheList.contains(fname))
+    if (ebCache.fontCacheList.contains(fname))
         return out;
 
     char bitmap[EB_SIZE_NARROW_FONT_16];
@@ -127,12 +127,12 @@ QByteArray EbHook::narrow_font(EB_Book *book, int code)
 #endif
 
 
-    QFile f(ebCache->fontCachePath +  '/' + fname);
+    QFile f(ebCache.fontCachePath +  '/' + fname);
     f.open(QIODevice::WriteOnly);
     f.write(buff, wlen);
     f.close();
     //qDebug() << "Output narrow_font" << fname;
-    ebCache->fontCacheList << fname;
+    ebCache.fontCacheList << fname;
 
     return out;
 }
@@ -160,7 +160,7 @@ QByteArray EbHook::wide_font(EB_Book *book, int code)
     QByteArray fname = fcode.toAscii() + ".png";
 #endif
 
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache->fontCacheRel) +
+    QByteArray out = "<img src=\"" + utfToEuc(ebCache.fontCacheRel) +
                      fname  + "\"";
     int h = fontSize;
     if (h > 17)
@@ -169,7 +169,7 @@ QByteArray EbHook::wide_font(EB_Book *book, int code)
     out += " />";
 
 
-    if (ebCache->fontCacheList.contains(fname)) {
+    if (ebCache.fontCacheList.contains(fname)) {
         return out;
     }
 
@@ -195,11 +195,11 @@ QByteArray EbHook::wide_font(EB_Book *book, int code)
     }
 #endif
 
-    QFile f(ebCache->fontCachePath + '/' + fname);
+    QFile f(ebCache.fontCachePath + '/' + fname);
     f.open(QIODevice::WriteOnly);
     f.write(buff, wlen);
     f.close();
-    ebCache->fontCacheList << fname;
+    ebCache.fontCacheList << fname;
     //qDebug() << "Output wide_font" << xpmFile;
     return out;
 }
@@ -227,13 +227,12 @@ QByteArray EbHook::begin_reference()
 
 QByteArray EbHook::begin_color_jpeg(EB_Book *book, int page, int offset)
 {
-    imageCount++;
 
     QByteArray jpgFile = makeFname("jpeg", page, offset);
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache->imageCacheRel) +
+    QByteArray out = "<img src=\"" + utfToEuc(ebCache.imageCacheRel) +
                      jpgFile + "\"><span class=img>";
 
-    if (ebCache->imageCacheList.contains(jpgFile)) {
+    if (ebCache.imageCacheList.contains(jpgFile)) {
         return out;
     }
 
@@ -252,7 +251,7 @@ QByteArray EbHook::begin_color_jpeg(EB_Book *book, int page, int offset)
     char bitmap[ImageBufferSize];
     Q_CHECK_PTR(bitmap);
     ssize_t bitmap_length;
-    QFile f(ebCache->imageCachePath + '/' + jpgFile);
+    QFile f(ebCache.imageCachePath + '/' + jpgFile);
     f.open(QIODevice::WriteOnly);
     int flg = 0;
 
@@ -270,7 +269,7 @@ QByteArray EbHook::begin_color_jpeg(EB_Book *book, int page, int offset)
     }
     f.close();
     //qDebug() << "Image Size :" << ImageBufferSize * flg;
-    ebCache->imageCacheList << jpgFile;
+    ebCache.imageCacheList << jpgFile;
 
     return out;
 }
@@ -279,13 +278,11 @@ QByteArray EbHook::begin_color_bmp(EB_Book *book, int page, int offset)
 {
     EB_Error_Code ecode;
 
-    imageCount++;
-
     QByteArray bmpFile = makeFname("bmp", page, offset);
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache->imageCacheRel) +
+    QByteArray out = "<img src=\"" + utfToEuc(ebCache.imageCacheRel) +
                      bmpFile + "\" /><span class=img>";
 
-    if (ebCache->imageCacheList.contains(bmpFile))
+    if (ebCache.imageCacheList.contains(bmpFile))
         return out;
 
     //qDebug() << "Output Image " << bmpFile;
@@ -302,7 +299,7 @@ QByteArray EbHook::begin_color_bmp(EB_Book *book, int page, int offset)
     char bitmap[ImageBufferSize];
     Q_CHECK_PTR(bitmap);
     ssize_t bitmap_length;
-    QFile f(ebCache->imageCachePath + '/' + bmpFile);
+    QFile f(ebCache.imageCachePath + '/' + bmpFile);
     f.open(QIODevice::WriteOnly);
     int flg = 0;
 
@@ -320,7 +317,7 @@ QByteArray EbHook::begin_color_bmp(EB_Book *book, int page, int offset)
     }
     f.close();
     //qDebug() << "Image Size :" << ImageBufferSize * flg;
-    ebCache->imageCacheList << bmpFile;
+    ebCache.imageCacheList << bmpFile;
 
     return out;
 }
@@ -369,7 +366,7 @@ void EbHook::end_mpeg(EB_Book *book, const unsigned int *p)
         EbCore::ebError("eb_compose_movie_path_name", ecode);
         return ;
     }
-    QString dfile = ebCache->mpegCachePath + "/" +
+    QString dfile = ebCache.mpegCachePath + "/" +
                     QFileInfo(sfile).fileName() + ".mpeg";
     if (!QFile(dfile).exists())
         QFile::copy(sfile, dfile);
@@ -382,11 +379,11 @@ QByteArray EbHook::end_mono_graphic(EB_Book *book, int page, int offset)
 
     QByteArray bmpFile = makeFname("bmp", page, offset);
 
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache->imageCacheRel) +
+    QByteArray out = "<img src=\"" + utfToEuc(ebCache.imageCacheRel) +
                      bmpFile + "\" />\n";
     
 
-    if (ebCache->imageCacheList.contains(bmpFile)) {
+    if (ebCache.imageCacheList.contains(bmpFile)) {
         return out;
     }
 
@@ -404,7 +401,7 @@ QByteArray EbHook::end_mono_graphic(EB_Book *book, int page, int offset)
     char bitmap[ImageBufferSize];
     Q_CHECK_PTR(bitmap);
     ssize_t bitmap_length;
-    QFile f(ebCache->imageCachePath + '/' + bmpFile);
+    QFile f(ebCache.imageCachePath + '/' + bmpFile);
     f.open(QIODevice::WriteOnly);
 
     int flg = 0;
@@ -419,7 +416,7 @@ QByteArray EbHook::end_mono_graphic(EB_Book *book, int page, int offset)
         if (bitmap_length < ImageBufferSize) break;
     }
     f.close();
-    ebCache->imageCacheList << bmpFile;
+    ebCache.imageCacheList << bmpFile;
 
     return out;
 }
@@ -430,10 +427,10 @@ QByteArray EbHook::begin_wave(EB_Book *book, int start_page, int start_offset,
     EB_Error_Code ecode;
 
     QString wavFile = QString("%1x%2.wav").arg(start_page).arg(start_offset);
-    QString fname = ebCache->waveCachePath + "/" + wavFile;
+    QString fname = ebCache.waveCachePath + "/" + wavFile;
     QString out =  QString("<a class=snd href=\"sound|%1\">").arg(fname);
 
-    if (ebCache->waveCacheList.contains(wavFile))
+    if (ebCache.waveCacheList.contains(wavFile))
         return utfToEuc(out);
 
     EB_Position spos, epos;
@@ -462,7 +459,7 @@ QByteArray EbHook::begin_wave(EB_Book *book, int start_page, int start_offset,
         if (data_length < ImageBufferSize) break;
     }
     f.close();
-    ebCache->waveCacheList << wavFile;
+    ebCache.waveCacheList << wavFile;
     //qDebug() << "Output wave" << fname;
     return utfToEuc(out);
 }

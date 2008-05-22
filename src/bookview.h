@@ -44,7 +44,7 @@ class EBook;
 
 enum RET_SEARCH
 { NORMAL = 0, ERROR, NO_BOOK, NOT_HIT, INTERRUPTED, NOT_HIT_INTERRUPTED,
-  NO_MENU, LIMIT_CHAR, LIMIT_IMAGE, LIMIT_BOOK, LIMIT_TOTAL, LIMIT_MENU };
+  NO_MENU, LIMIT_CHAR, LIMIT_BOOK, LIMIT_TOTAL, LIMIT_MENU };
 
 
 class BookBrowser : public QTextBrowser
@@ -212,7 +212,7 @@ protected:
     {
         return str + QString::number(num);
     }
-    RET_SEARCH checkLimit(int image_cnt, int text_length);
+    RET_SEARCH checkLimit(int text_length);
 
     QTreeWidget *bookTree;
     BookBrowser *bookBrowser;

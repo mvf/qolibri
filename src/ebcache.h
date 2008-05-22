@@ -31,6 +31,7 @@ public:
 
     void init(const QString &title);
 
+    static QString cachePath;
     QString fontCachePath;
     QString imageCachePath;
     QString waveCachePath;

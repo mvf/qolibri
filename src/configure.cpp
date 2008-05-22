@@ -29,7 +29,6 @@ const int stepTotalHitMax_Def = 100;
 const int maxLimitBookHit_Def = 15000;
 const int maxLimitTotalHit_Def = 15000;
 const int historyMax_Def = 500;
-const int limitImageNum_Def = 700;
 const int limitBrowserChar_Def = 1000000;
 const int limitMenuHit_Def = 1000;
 const int indentOffset_Def = 30;
@@ -86,7 +85,6 @@ void Configure::load()
     googleUrl = conf.value("google_url", googleUrl_Def).toString();
     wikipediaUrl = conf.value("wikipedia_url", wikipediaUrl_Def).toString();
     userDefUrl = conf.value("userdef_url", userDefUrl_Def).toString();
-    limitImageNum = conf.value("limit_image", limitImageNum_Def).toInt();
     limitBrowserChar = conf.value("limit_char", limitBrowserChar_Def).toInt();
     limitMenuHit = conf.value("limit_menu", limitMenuHit_Def).toInt();
     indentOffset = conf.value("indent_offset", indentOffset_Def).toInt();
@@ -120,7 +118,6 @@ void Configure::save()
     conf.setValue("google_url", googleUrl);
     conf.setValue("wikipedia_url", wikipediaUrl);
     conf.setValue("userdef_url", userDefUrl);
-    conf.setValue("limit_image", limitImageNum);
     conf.setValue("limit_char", limitBrowserChar);
     conf.setValue("limit_menu", limitMenuHit);
     conf.setValue("limt_book", maxLimitBookHit);
@@ -150,7 +147,6 @@ void Configure::setDefault()
     googleUrl = googleUrl_Def;
     wikipediaUrl = wikipediaUrl_Def;
     userDefUrl = userDefUrl_Def;
-    limitImageNum = limitImageNum_Def;
     limitBrowserChar = limitBrowserChar_Def;
     limitMenuHit = limitMenuHit_Def;
     indentOffset = indentOffset_Def;

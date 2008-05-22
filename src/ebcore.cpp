@@ -34,12 +34,25 @@ const int TextSizeLimit = 2800000;
 #define toUTF(q_bytearray) \
     QTextCodec::codecForLocale()->toUnicode(q_bytearray)
 
-EbCore::EbCore()
+EbCore::EbCore(HookMode hmode)
     : QObject()
 {
     eb_initialize_book(&book);
     eb_initialize_appendix(&appendix);
     eb_initialize_hookset(&hookSet);
+    switch(hmode) {
+        case HookText :
+            eb_set_hooks(&hookSet, hooks);
+            break;
+        case HookMenu :
+            eb_set_hooks(&hookSet, hooks_cand);
+            break;
+        case HookFont :
+            eb_set_hooks(&hookSet, hooks_font);
+            break;
+        default:
+            qWarning() << "Unrecognize Hook Mode" << hmode;
+    }
 }
 
 EbCore::~EbCore()
@@ -52,6 +65,7 @@ EbCore::~EbCore()
 void EbCore::initialize()
 {
     eb_initialize_library();
+    //EbCache::cachePath = QDir::homePath() + "/.ebcache";
 }
 
 void EbCore::finalize()

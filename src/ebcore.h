@@ -29,10 +29,12 @@
 #include "ebcache.h"
 #include "ebhook.h"
 
+enum HookMode { HookText, HookMenu, HookFont };
+
 class EbCore : public QObject
 {
 public:
-    EbCore();
+    EbCore(HookMode hmode=HookText);
     ~EbCore();
 
     static void initialize();
@@ -59,7 +61,8 @@ public:
     bool isHaveMenu() { return (eb_have_menu(&book) == 1); }
     bool isHaveCopyright() { return (eb_have_copyright(&book) == 1); }
     static void ebError(const QString &func, EB_Error_Code code);
-    EbCache ebCache;
+
+    EbHook ebHook;
 
 protected:
 
@@ -71,7 +74,6 @@ protected:
     EB_Subbook_Code subAppendixList[EB_MAX_SUBBOOKS];
     int subAppendixCount;
 
-    EbHook ebHook;
 
 };
 

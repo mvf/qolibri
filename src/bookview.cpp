@@ -45,7 +45,7 @@ BookBrowser::BookBrowser(QWidget *parent)
     : QTextBrowser(parent)
 {
     setOpenExternalLinks(false);
-    setSearchPaths(QStringList() << QDir::homePath() + "/.ebcache");
+    setSearchPaths(QStringList() << EbCache::cachePath);
     document()->setDefaultFont(CONF->browserFont);
 
     connect(this, SIGNAL(statusRequested(QString)),
@@ -211,8 +211,8 @@ QString ReferencePopup::browserText(Book *book, const EB_Position &pos)
     EBook eb;
 
     eb.initBook(book->path(), book->bookNo());
-    eb.initSearch(16, book->fontList(), CONF->indentOffset);
-    bookBrowser->setSearchPaths(QStringList() << QDir::homePath() + "/.ebcache");
+    eb.initHook(16, book->fontList(), CONF->indentOffset);
+    bookBrowser->setSearchPaths(QStringList() << EbCache::cachePath);
     QString text = eb.text(pos);
     QString ttl;
     if (!menuFlag) {
@@ -649,7 +649,7 @@ bool PageWidget::getMatch(EBook *eb, int index, const QStringList &slist,
 
 }
 
-RET_SEARCH PageWidget::checkLimit(int image_cnt, int text_length)
+RET_SEARCH PageWidget::checkLimit(int text_length)
 {
 
     if (totalCount >= method_.limitTotal)
@@ -658,8 +658,6 @@ RET_SEARCH PageWidget::checkLimit(int image_cnt, int text_length)
         return LIMIT_BOOK;
     if (text_length >= CONF->limitBrowserChar)
         return LIMIT_CHAR;
-    if (image_cnt >= CONF->limitImageNum)
-        return LIMIT_IMAGE;
 
     return NORMAL;
 }
@@ -679,7 +677,7 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
         retStatus = NO_BOOK;
         return;
     }
-    eb.initSearch(bookBrowser->fontSize(), book->fontList(),
+    eb.initHook(bookBrowser->fontSize(), book->fontList(),
                   CONF->indentOffset,  method.ruby);
 
     QString mstr = "<b>";
@@ -735,7 +733,7 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     //qDebug() << txt;
     bookBrowser->setBrowser(items.text());
     bookBrowser->setSearchPaths(QStringList() << book->path() << 
-                                QDir::homePath() + "/.ebcache/");
+                                EbCache::cachePath);
     bookTree->insertTopLevelItems(0, items.items());
     bookTree->setCurrentItem(items.items()[0]);
 
@@ -773,7 +771,7 @@ void MenuPage::fullMenuPage()
         0) {
         retStatus = NO_BOOK;
     }
-    eb.initSearch(bookBrowser->fontSize(), method_.bookReader->fontList(),
+    eb.initHook(bookBrowser->fontSize(), method_.bookReader->fontList(),
                   CONF->indentOffset, method_.ruby);
 
     EB_Position pos;
@@ -811,7 +809,7 @@ void MenuPage::selectMenuPage(int index)
     retStatus = NORMAL;
     EBook eb(HookMenu);
     eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo());
-    eb.initSearch(bookBrowser->fontSize(), method_.bookReader->fontList(),
+    eb.initHook(bookBrowser->fontSize(), method_.bookReader->fontList(),
                   CONF->indentOffset, method_.ruby);
     EB_Position pos;
     eb.menu(&pos);
@@ -957,7 +955,7 @@ RET_SEARCH WholePage::readPage(int page)
        0) {
         return NO_BOOK;
     }
-    eb.initSearch(bookBrowser->fontSize(), method_.bookReader->fontList(),
+    eb.initHook(bookBrowser->fontSize(), method_.bookReader->fontList(),
                   CONF->indentOffset, method_.ruby);
     bookBrowser->addBookList(method_.bookReader);
 
@@ -987,11 +985,9 @@ RET_SEARCH WholePage::readPage(int page)
                 QString text_v;
                 getText(&eb, j, &head_l, &head_v, &text_v);
                 item.composeHLine(2, toAnchor("H", j), head_l, head_v, text_v);
-                if (item.textLength() > CONF->limitBrowserChar ||
-                    eb.imageCount() > CONF->limitImageNum) {
+                if (item.textLength() > CONF->limitBrowserChar) {
                     item.composeError(toAnchor("CUT", 1), CutString);
-                    ret = (eb.imageCount() > CONF->limitImageNum) ? 
-                        LIMIT_IMAGE : LIMIT_CHAR;
+                    ret = LIMIT_CHAR;
                     break;
                 }
             }
@@ -1089,7 +1085,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
 
         if ( eb.initBook(book->path(), book->bookNo(), book_count) < 0) continue;
 
-        eb.initSearch(bookBrowser->fontSize(), book->fontList(),
+        eb.initHook(bookBrowser->fontSize(), book->fontList(),
                       CONF->indentOffset, method.ruby);
 
         int hit_num = 0;
@@ -1134,7 +1130,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
             }
             items.composeHLine(2, toAnchor("H", totalCount), head_i, head_v, text_v);
 
-            RET_SEARCH chk = checkLimit(eb.imageCount(), items.textLength());
+            RET_SEARCH chk = checkLimit(items.textLength());
             if (chk != NORMAL) {
                 items.composeError(toAnchor("CUT", totalCount), CutString);
                 if (chk != LIMIT_BOOK) {
@@ -1216,7 +1212,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
             eb.unsetBook();
             continue;
         }
-        eb.initSearch(bookBrowser->fontSize(), book->fontList(),
+        eb.initHook(bookBrowser->fontSize(), book->fontList(),
                       CONF->indentOffset, method.ruby);
         bookBrowser->addBookList(book);
         book_count++;
@@ -1255,7 +1251,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
                 }
                 item.composeHLine(2, toAnchor("H", totalCount), head_i,
                                   head_v, text_v);
-                break_check = checkLimit(eb.imageCount(), item.textLength());
+                break_check = checkLimit(item.textLength());
                 if (break_check != NORMAL) {
                     item.composeError(toAnchor("C", totalCount), CutString);
                     break;

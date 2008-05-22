@@ -30,30 +30,13 @@
 #include "ebhook.h"
 #include "textcodec.h"
 
-#define toUTF(q_bytearray) \
-    QTextCodec::codecForLocale()->toUnicode(q_bytearray)
-
 const int HitsBufferSize = 10000;
 const int TextBufferSize = 4000;
 const int TextSizeLimit = 2800000;
 
 EBook::EBook(HookMode hmode)
-    : EbCore()
+    : EbCore(hmode)
 {
-    switch(hmode) {
-        case HookText :
-            eb_set_hooks(&hookSet, hooks);
-            break;
-        case HookMenu :
-            eb_set_hooks(&hookSet, hooks_cand);
-            break;
-        case HookFont :
-            eb_set_hooks(&hookSet, hooks_font);
-            break;
-        default:
-            qWarning() << "Unrecognize Hook Mode" << hmode;
-    }
-
     hits = new EB_Hit[HitsBufferSize];
 }
 
