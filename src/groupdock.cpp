@@ -280,6 +280,16 @@ void MarkTab::delCurrent()
     delete mrk;
 }
 
+void MarkTab::delAll()
+{
+    int ret = QMessageBox::question(this, "qolibri",                        
+                                    tr("Are you sure you want to remove all list?"),
+                                    QMessageBox::Yes | QMessageBox::No);  
+    if (ret == QMessageBox::Yes) {
+        listWidget_->clear();
+    }
+}
+
 void MarkTab::viewCurrent()
 {
     SearchItem *mrk = (SearchItem*)listWidget_->currentItem();
@@ -345,7 +355,9 @@ void MarkTab::popupMenu(const QPoint &pos)
                    tr("&Set to current search condition"),
                    this, SLOT(pasteCurrent()));
     menu.addAction(QIcon(":images/delete.png"), tr("&Delete"),
-                   this, SLOT(deleteCurrnt()));
+                   this, SLOT(delCurrent()));
+    menu.addAction(QIcon(":images/delete.png"), tr("Delete &All"),
+                   this, SLOT(delAll()));
     menu.exec(listWidget_->viewport()->mapToGlobal(pos));
 }
 
@@ -414,6 +426,16 @@ void HistoryTab::delCurrent()
     delete hst;
 }
 
+void HistoryTab::delAll()
+{
+    int ret = QMessageBox::question(this, "qolibri",                        
+                                    tr("Are you sure you want to remove all list?"),
+                                    QMessageBox::Yes | QMessageBox::No);  
+    if (ret == QMessageBox::Yes) {
+        listWidget_->clear();
+    }
+}
+
 void HistoryTab::viewCurrent()
 {
     SearchItem *item = (SearchItem*)listWidget_->currentItem();
@@ -462,6 +484,8 @@ void HistoryTab::popupMenu(const QPoint &pos)
                    this, SLOT(pasteCurrent()));
     menu.addAction(QIcon(":images/delete.png"), tr("&Delete"),
                    this, SLOT(delCurrent()));
+    menu.addAction(QIcon(":images/delete.png"), tr("Delete &All"),
+                   this, SLOT(delAll()));
     menu.exec(listWidget_->viewport()->mapToGlobal(pos));
 }
 

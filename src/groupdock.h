@@ -104,8 +104,9 @@ private slots:
     void viewCurrent();
     void upCurrent();
     void downCurrent();
-    void resetButtons();
     void pasteCurrent();
+    void delAll();
+    void resetButtons();
     void popupMenu(const QPoint &pos);
 
 private:
@@ -137,6 +138,7 @@ private slots:
     void viewCurrent();
     void resetButtons();
     void pasteCurrent();
+    void delAll();
     void popupMenu(const QPoint &pos);
 
 private:

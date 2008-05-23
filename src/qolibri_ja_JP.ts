@@ -211,17 +211,17 @@
 <context>
     <name>GroupDock</name>
     <message>
-        <location filename="groupdock.cpp" line="494"/>
+        <location filename="groupdock.cpp" line="518"/>
         <source>Group</source>
         <translation>グループ</translation>
     </message>
     <message>
-        <location filename="groupdock.cpp" line="497"/>
+        <location filename="groupdock.cpp" line="521"/>
         <source>Mark</source>
         <translation>マーク</translation>
     </message>
     <message>
-        <location filename="groupdock.cpp" line="500"/>
+        <location filename="groupdock.cpp" line="524"/>
         <source>History</source>
         <translation> 履歴 </translation>
     </message>
@@ -265,19 +265,29 @@
 <context>
     <name>HistoryTab</name>
     <message>
-        <location filename="groupdock.cpp" line="458"/>
+        <location filename="groupdock.cpp" line="480"/>
         <source>&amp;Execute</source>
         <translation>実行 (&amp;E)</translation>
     </message>
     <message>
-        <location filename="groupdock.cpp" line="461"/>
+        <location filename="groupdock.cpp" line="483"/>
         <source>&amp;Copy to current search condition</source>
         <translation>現在の検索条件に設定 (&amp;C)</translation>
     </message>
     <message>
-        <location filename="groupdock.cpp" line="463"/>
+        <location filename="groupdock.cpp" line="485"/>
         <source>&amp;Delete</source>
         <translation>削除 (&amp;D)</translation>
+    </message>
+    <message>
+        <location filename="groupdock.cpp" line="432"/>
+        <source>Are you sure you want to remove all list?</source>
+        <translation>全項目を削除してもよろしいのですか?</translation>
+    </message>
+    <message>
+        <location filename="groupdock.cpp" line="487"/>
+        <source>Delete &amp;All</source>
+        <translation>全削除 (&amp;A)</translation>
     </message>
 </context>
 <context>
@@ -597,19 +607,29 @@ Search Method: %2</source>
 <context>
     <name>MarkTab</name>
     <message>
-        <location filename="groupdock.cpp" line="342"/>
+        <location filename="groupdock.cpp" line="352"/>
         <source>&amp;Execute</source>
         <translation>実行 (&amp;E)</translation>
     </message>
     <message>
-        <location filename="groupdock.cpp" line="345"/>
+        <location filename="groupdock.cpp" line="355"/>
         <source>&amp;Set to current search condition</source>
         <translation>現在の検索条件に設定 (&amp;C)</translation>
     </message>
     <message>
-        <location filename="groupdock.cpp" line="347"/>
+        <location filename="groupdock.cpp" line="357"/>
         <source>&amp;Delete</source>
         <translation>削除 (&amp;D)</translation>
+    </message>
+    <message>
+        <location filename="groupdock.cpp" line="286"/>
+        <source>Are you sure you want to remove all list?</source>
+        <translation>全項目を削除してもよろしいのですか?</translation>
+    </message>
+    <message>
+        <location filename="groupdock.cpp" line="359"/>
+        <source>Delete &amp;All</source>
+        <translation>全削除 (&amp;A)</translation>
     </message>
 </context>
 <context>
