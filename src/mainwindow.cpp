@@ -208,7 +208,7 @@ void MainWindow::createMenus()
     smenu->addAction(QIcon(":/images/delete.png"), tr("&Clear cache"),
                      this, SLOT(clearCache()));
     toggleRubyAct = smenu->addAction(QIcon(":/images/ruby.png"),
-                                     tr("&Suppress subscription"), this,
+                                     tr("&Ruby(subscription) on/off"), this,
                                      SLOT(toggleRuby()));
     toggleRubyAct->setCheckable(true);
 
@@ -270,8 +270,8 @@ void MainWindow::createToolBars()
     bar2->addAction(addMarkAct);
     bar2->addAction(zoomInAct);
     bar2->addAction(zoomOutAct);
-
     bar2->addAction(toggleTabsAct);
+
 
     addToolBarBreak();
     methodBar = addToolBar(tr("Search methods"));
@@ -325,6 +325,9 @@ void MainWindow::createToolBars()
 
     bar2->addAction(toggleMethodBarAct);
     bar2->addAction(toggleDockAct);
+#ifdef RUBY_ON_TOOLBAR
+    bar2->addAction(toggleRubyAct);
+#endif
 }
 
 void MainWindow::createStatusBar()
@@ -437,7 +440,7 @@ void MainWindow::readSettings()
     changeLimitBook(method.limitBook);
     limitTotalSpin->setValue(method.limitTotal);
     changeLimitTotal(method.limitTotal);
-    toggleRubyAct->setChecked(!method.ruby);
+    toggleRubyAct->setChecked(method.ruby);
 
     QSettings hist(CONF->settingOrg, "EpwingHistory");
     int hcnt = hist.beginReadArray("History");
@@ -825,7 +828,7 @@ void MainWindow::toggleBar()
 
 void MainWindow::toggleRuby()
 {
-    method.ruby = ! toggleRubyAct->isChecked();
+    method.ruby = toggleRubyAct->isChecked();
 }
 
 void MainWindow::changeGroup(int group_index)
