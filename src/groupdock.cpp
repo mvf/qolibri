@@ -282,10 +282,9 @@ void MarkTab::delCurrent()
 
 void MarkTab::delAll()
 {
-    int ret = QMessageBox::question(this, "qolibri",                        
-                                    tr("Are you sure you want to remove all list?"),
-                                    QMessageBox::Yes | QMessageBox::No);  
-    if (ret == QMessageBox::Yes) {
+    if (QMessageBox::question(this, "qolibri",                        
+                              tr("Are you sure you want to remove all list?"),
+                              QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {  
         listWidget_->clear();
     }
 }
@@ -428,10 +427,9 @@ void HistoryTab::delCurrent()
 
 void HistoryTab::delAll()
 {
-    int ret = QMessageBox::question(this, "qolibri",                        
-                                    tr("Are you sure you want to remove all list?"),
-                                    QMessageBox::Yes | QMessageBox::No);  
-    if (ret == QMessageBox::Yes) {
+    if (QMessageBox::question(this, "qolibri",                        
+                              tr("Are you sure you want to remove all list?"),
+                              QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {  
         listWidget_->clear();
     }
 }
