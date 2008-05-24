@@ -21,14 +21,15 @@
 #define GROUPDOCK_H
 
 #include <QListWidgetItem>
+#include <QPushButton>
 
 #include "bookwidget.h"
 #include "method.h"
 
-class QPushButton;
 class QListWidget;
 class QTabWidget;
 class QComboBox;
+class QHBoxLayout;
 
 class SearchItem : public QListWidgetItem
 {
@@ -46,6 +47,37 @@ public:
 protected:
     QString searchStr_;
     SearchMethod method_;
+};
+
+class GTab : public QWidget
+{
+    Q_OBJECT
+public:
+    GTab(QWidget *parent);
+    void changeGroupList(QList<Group*> *gList);
+    QListWidget *listWidget() { return listWidget_; }
+
+signals:
+    void searchRequested(const QString &name, const SearchMethod &method );
+    void pasteRequested(const QString &name, const SearchMethod &method );
+
+private slots:
+    void upCurrent();
+    void downCurrent();
+    void delCurrent();
+    void delAll();
+    void viewCurrent();
+    void pasteCurrent();
+    void popupMenu(const QPoint &pos);
+    void resetButtons();
+
+protected:
+    QListWidget *listWidget_;
+    QHBoxLayout *buttonLayout;
+    QPushButton *upButton;
+    QPushButton *downButton;
+    QPushButton *delButton;
+    QPushButton *viewButton;
 };
 
 class GroupTab : public QWidget
@@ -83,68 +115,24 @@ private:
     BookWidget *bookWidget_;
 };
 
-class MarkTab : public QWidget
+class MarkTab : public GTab
 {
-    Q_OBJECT
 public:
-    MarkTab(QWidget *parent);
+    MarkTab(QWidget *parent) : GTab(parent) {}
     void addMark(const QString &str, const SearchMethod &method);
-    inline QListWidget* listWidget() const
-    {
-        return listWidget_;
-    }
-    void changeGroupList(QList<Group*> *gList);
 
-signals:
-    void searchRequested(const QString &name, const SearchMethod &method );
-    void pasteRequested(const QString &name, const SearchMethod &method );
-
-private slots:
-    void delCurrent();
-    void viewCurrent();
-    void upCurrent();
-    void downCurrent();
-    void pasteCurrent();
-    void delAll();
-    void resetButtons();
-    void popupMenu(const QPoint &pos);
-
-private:
-    QListWidget *listWidget_;
-    QPushButton *upButton;
-    QPushButton *downButton;
-    QPushButton *delButton;
-    QPushButton *viewButton;
 };
 
-class HistoryTab : public QWidget
+class HistoryTab : public GTab
 {
-    Q_OBJECT
 public:
-    HistoryTab(QWidget *parent);
-    void addHistory(const QString &str, const SearchMethod &method);
-    inline QListWidget *listWidget() const
+    HistoryTab(QWidget *parent) : GTab(parent)
     {
-        return listWidget_;
+        upButton->hide();
+        downButton->hide();
     }
-    void changeGroupList(QList<Group*> *gList);
+    void addHistory(const QString &str, const SearchMethod &method);
 
-signals:
-    void searchRequested(const QString &name, const SearchMethod &method );
-    void pasteRequested(const QString &name, const SearchMethod &method );
-
-private slots:
-    void delCurrent();
-    void viewCurrent();
-    void resetButtons();
-    void pasteCurrent();
-    void delAll();
-    void popupMenu(const QPoint &pos);
-
-private:
-    QListWidget *listWidget_;
-    QPushButton *delButton;
-    QPushButton *viewButton;
 };
 
 #if defined (Q_WS_MAC)

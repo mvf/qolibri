@@ -209,19 +209,47 @@
     </message>
 </context>
 <context>
+    <name>GTab</name>
+    <message>
+        <location filename="groupdock.cpp" line="167"/>
+        <source>Are you sure you want to remove all list?</source>
+        <translation>全項目を削除してもよろしいのですか?</translation>
+    </message>
+    <message>
+        <location filename="groupdock.cpp" line="196"/>
+        <source>&amp;Execute</source>
+        <translation>実行 (&amp;E)</translation>
+    </message>
+    <message>
+        <location filename="groupdock.cpp" line="199"/>
+        <source>&amp;Set to current search condition</source>
+        <translation>現在の検索条件に設定 (&amp;C)</translation>
+    </message>
+    <message>
+        <location filename="groupdock.cpp" line="201"/>
+        <source>&amp;Delete</source>
+        <translation>削除 (&amp;D)</translation>
+    </message>
+    <message>
+        <location filename="groupdock.cpp" line="203"/>
+        <source>Delete &amp;All</source>
+        <translation>全削除 (&amp;A)</translation>
+    </message>
+</context>
+<context>
     <name>GroupDock</name>
     <message>
-        <location filename="groupdock.cpp" line="518"/>
+        <location filename="groupdock.cpp" line="402"/>
         <source>Group</source>
         <translation>グループ</translation>
     </message>
     <message>
-        <location filename="groupdock.cpp" line="521"/>
+        <location filename="groupdock.cpp" line="405"/>
         <source>Mark</source>
         <translation>マーク</translation>
     </message>
     <message>
-        <location filename="groupdock.cpp" line="524"/>
+        <location filename="groupdock.cpp" line="408"/>
         <source>History</source>
         <translation> 履歴 </translation>
     </message>
@@ -229,22 +257,22 @@
 <context>
     <name>GroupTab</name>
     <message>
-        <location filename="groupdock.cpp" line="172"/>
+        <location filename="groupdock.cpp" line="331"/>
         <source>Show book &amp;Information</source>
         <translation>書籍情報表示 (&amp;I)</translation>
     </message>
     <message>
-        <location filename="groupdock.cpp" line="174"/>
+        <location filename="groupdock.cpp" line="333"/>
         <source>&amp;Read book</source>
         <translation>メニュー表示 (&amp;R)</translation>
     </message>
     <message>
-        <location filename="groupdock.cpp" line="176"/>
+        <location filename="groupdock.cpp" line="335"/>
         <source>Read &amp;All cata</source>
         <translation>全テキスト表示 (&amp;A)</translation>
     </message>
     <message>
-        <location filename="groupdock.cpp" line="178"/>
+        <location filename="groupdock.cpp" line="337"/>
         <source>&amp;Font setting</source>
         <translation>フォント設定 (&amp;F)</translation>
     </message>
@@ -260,34 +288,6 @@
         <location filename="groupwidget.cpp" line="35"/>
         <source>Create</source>
         <translation>作成</translation>
-    </message>
-</context>
-<context>
-    <name>HistoryTab</name>
-    <message>
-        <location filename="groupdock.cpp" line="480"/>
-        <source>&amp;Execute</source>
-        <translation>実行 (&amp;E)</translation>
-    </message>
-    <message>
-        <location filename="groupdock.cpp" line="483"/>
-        <source>&amp;Copy to current search condition</source>
-        <translation>現在の検索条件に設定 (&amp;C)</translation>
-    </message>
-    <message>
-        <location filename="groupdock.cpp" line="485"/>
-        <source>&amp;Delete</source>
-        <translation>削除 (&amp;D)</translation>
-    </message>
-    <message>
-        <location filename="groupdock.cpp" line="432"/>
-        <source>Are you sure you want to remove all list?</source>
-        <translation>全項目を削除してもよろしいのですか?</translation>
-    </message>
-    <message>
-        <location filename="groupdock.cpp" line="487"/>
-        <source>Delete &amp;All</source>
-        <translation>全削除 (&amp;A)</translation>
     </message>
 </context>
 <context>
@@ -483,11 +483,6 @@ Search Method: %2</source>
         <translation>中断しました (文字数の最大数を越えました [</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1109"/>
-        <source>Stopped (Image limit[</source>
-        <translation type="obsolete">中断しました (画像数の最大を越えました [</translation>
-    </message>
-    <message>
         <location filename="mainwindow.cpp" line="1112"/>
         <source>Stopped (Item iimit[</source>
         <translation>中断しました (項目の最大数を越えました [</translation>
@@ -602,34 +597,6 @@ Search Method: %2</source>
         <location filename="mainwindow.cpp" line="1399"/>
         <source>Cannot open the book.</source>
         <translation>書籍をオープンできません。</translation>
-    </message>
-</context>
-<context>
-    <name>MarkTab</name>
-    <message>
-        <location filename="groupdock.cpp" line="352"/>
-        <source>&amp;Execute</source>
-        <translation>実行 (&amp;E)</translation>
-    </message>
-    <message>
-        <location filename="groupdock.cpp" line="355"/>
-        <source>&amp;Set to current search condition</source>
-        <translation>現在の検索条件に設定 (&amp;C)</translation>
-    </message>
-    <message>
-        <location filename="groupdock.cpp" line="357"/>
-        <source>&amp;Delete</source>
-        <translation>削除 (&amp;D)</translation>
-    </message>
-    <message>
-        <location filename="groupdock.cpp" line="286"/>
-        <source>Are you sure you want to remove all list?</source>
-        <translation>全項目を削除してもよろしいのですか?</translation>
-    </message>
-    <message>
-        <location filename="groupdock.cpp" line="359"/>
-        <source>Delete &amp;All</source>
-        <translation>全削除 (&amp;A)</translation>
     </message>
 </context>
 <context>
