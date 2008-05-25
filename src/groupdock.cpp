@@ -21,7 +21,6 @@
 #include "groupdock.h"
 #include "book.h"
 #include "groupwidget.h"
-#include "configure.h"
 
 SearchItem::SearchItem(const QString &str, const SearchMethod &method)
     : QListWidgetItem(), searchStr_(str), method_(method)
@@ -229,8 +228,6 @@ void GTab::resetButtons()
 }
 
 
-
-
 GroupTab::GroupTab(QWidget *parent)
     : QWidget(parent), groupList(NULL), group(NULL)
 {
@@ -240,7 +237,10 @@ GroupTab::GroupTab(QWidget *parent)
     groupCombo_->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     connect(groupCombo_, SIGNAL(currentIndexChanged(int)),
             this, SLOT(changeGroup(int)));
-    bookWidget_ = new BookWidget(group, false, true, true, false, false, this);
+    bookWidget_ = new BookWidget(group, this);
+    bookWidget_->hideDelButton();
+    bookWidget_->hideEditButton();
+    bookWidget_->hideNameEdit();
     bookWidget_->bookListWidget()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(bookWidget_, SIGNAL(rowChanged(int)),
             this, SIGNAL(bookChanged(int)));
@@ -364,9 +364,10 @@ void MarkTab::addMark(const QString &str, const SearchMethod &method)
     listWidget_->insertItem(0, new SearchItem(str, method));
 }
 
-void HistoryTab::addHistory(const QString &str, const SearchMethod &method)
+void HistoryTab::addHistory(const QString &str, const SearchMethod &method,
+                            int max_hist)
 {
-    if (listWidget_->count() >= CONF->historyMax) {
+    if (listWidget_->count() >= max_hist) {
         QListWidgetItem *rem = listWidget_->takeItem(listWidget_->count() - 1);
         delete rem;
     }

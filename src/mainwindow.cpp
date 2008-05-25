@@ -450,7 +450,7 @@ void MainWindow::readSettings()
         SearchMethod m = readMethodSetting(hist);
         if (!m.group || !m.book) continue;
 
-        groupDock->addHistory(str, m);
+        groupDock->addHistory(str, m, CONF->historyMax);
     }
     hist.endArray();
 
@@ -1075,7 +1075,7 @@ void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
 
     RET_SEARCH ret = bookView->newPage(list, mthd, ntab);
     QString sstr = toLogicString(list, mthd);
-    groupDock->addHistory(toLogicString(list, mthd), mthd);
+    groupDock->addHistory(toLogicString(list, mthd), mthd, CONF->historyMax);
 
     emit nowBusy(false);
     stopAct->setEnabled(false);

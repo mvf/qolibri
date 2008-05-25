@@ -131,7 +131,8 @@ public:
         upButton->hide();
         downButton->hide();
     }
-    void addHistory(const QString &str, const SearchMethod &method);
+    void addHistory(const QString &str, const SearchMethod &method,
+                    int max_hist);
 
 };
 
@@ -192,9 +193,10 @@ public:
     {
         markTab->addMark(str, method);
     }
-    inline void addHistory(const QString &str, const SearchMethod &method)
+    inline void addHistory(const QString &str, const SearchMethod &method,
+                           int max_hist)
     {
-        historyTab->addHistory(str, method);
+        historyTab->addHistory(str, method, max_hist);
     }
     inline void changeTabToMark()
     {
