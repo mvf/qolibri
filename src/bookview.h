@@ -252,7 +252,6 @@ private slots:
 
 class InfoPage : public PageWidget
 {
-    Q_OBJECT
 public:
     InfoPage(QWidget *parent, const SearchMethod&);
 
