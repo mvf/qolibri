@@ -82,8 +82,9 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
     if (groupList_.count() == 0)
         groupList_ << new Group(tr("All Books"));
 
-    allDicWidget = new BookWidget(groupList_[0],
-                                  true, false, false, true, true, this);
+    allDicWidget = new BookWidget(groupList_[0], this);
+    allDicWidget->hideViewButton();
+    allDicWidget->hideFontButton();
     connect(allDicWidget, SIGNAL(rowChanged(int)),
             this, SLOT(changeBookSelection(int)));
 
@@ -91,7 +92,10 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
     connect(groupWidget, SIGNAL(rowChanged(int)),
             this, SLOT(changeGroupSelection(int)));
 
-    dicWidget = new BookWidget(NULL, true, false, false, true, false, this);
+    dicWidget = new BookWidget(NULL, this);
+    dicWidget->hideViewButton();
+    dicWidget->hideFontButton();
+    dicWidget->hideEditButton();
 
     QVBoxLayout *v2 = new QVBoxLayout();
     {
