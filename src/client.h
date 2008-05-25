@@ -28,8 +28,6 @@ const qint16 DEFAULT_PORT = 5626;
 class QoClient : public QTcpSocket
 {
 
-    Q_OBJECT
-        
 public:
     QoClient(const QString &host, qint16 port)
         : QTcpSocket(), hostName(host), portNo(port) {}
