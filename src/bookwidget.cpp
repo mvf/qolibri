@@ -23,16 +23,12 @@
 #include "bookwidget.h"
 
 
-BookWidget::BookWidget(Group *grp, bool bDel, bool bView, bool bFont,
-                       bool titleDisp, bool bEdit, QWidget *parent)
+BookWidget::BookWidget(Group *grp, QWidget *parent)
     : QWidget(parent)
 {
-    groupNameEdit = NULL;
-    if (titleDisp) {
-        groupNameEdit = new QLineEdit(this);
-        connect(groupNameEdit, SIGNAL(textChanged(QString)),
-                this, SLOT(changeGroupName(QString)));
-    }
+    groupNameEdit = new QLineEdit(this);
+    connect(groupNameEdit, SIGNAL(textChanged(QString)),
+            this, SLOT(changeGroupName(QString)));
     QHBoxLayout *h = new QHBoxLayout();
     h->setMargin(0);
     h->addStretch();
@@ -44,50 +40,34 @@ BookWidget::BookWidget(Group *grp, bool bDel, bool bView, bool bFont,
     connect(downButton, SIGNAL(clicked()), this, SLOT(downItem()));
     h->addWidget(upButton);
     h->addWidget(downButton);
-    editButton = NULL;
-    if (bEdit) {
-        editButton = new QPushButton(this);
-        editButton->setIcon(QIcon(":images/edit.png"));
-        h->addWidget(editButton);
-        connect(editButton, SIGNAL(clicked()), this, SLOT(editItem()));
-    }
-    delButton = NULL;
-    if (bDel) {
-        delButton = new QPushButton(this);
-        delButton->setIcon(QIcon(":images/delete.png"));
-        h->addWidget(delButton);
-        connect(delButton, SIGNAL(clicked()), this, SLOT(delItem()));
-    }
-    fontButton = NULL;
-    if (bFont) {
-        fontButton = new QPushButton(this);
-        fontButton->setIcon(QIcon(":images/font3.png"));
-        h->addWidget(fontButton);
-        connect(fontButton, SIGNAL(clicked()), this, SLOT(setFont()));
-    }
-    viewButton = NULL;
-    if (bView) {
-        viewButton = new QPushButton(this);
-        viewButton->setIcon(QIcon(":images/find_l.png"));
-        h->addWidget(viewButton);
-        connect(viewButton, SIGNAL(clicked()), this, SLOT(viewItem()));
-    }
+    editButton = new QPushButton(this);
+    editButton->setIcon(QIcon(":images/edit.png"));
+    h->addWidget(editButton);
+    connect(editButton, SIGNAL(clicked()), this, SLOT(editItem()));
+    delButton = new QPushButton(this);
+    delButton->setIcon(QIcon(":images/delete.png"));
+    h->addWidget(delButton);
+    connect(delButton, SIGNAL(clicked()), this, SLOT(delItem()));
+    fontButton = new QPushButton(this);
+    fontButton->setIcon(QIcon(":images/font3.png"));
+    h->addWidget(fontButton);
+    connect(fontButton, SIGNAL(clicked()), this, SLOT(setFont()));
+    viewButton = new QPushButton(this);
+    viewButton->setIcon(QIcon(":images/find_l.png"));
+    h->addWidget(viewButton);
+    connect(viewButton, SIGNAL(clicked()), this, SLOT(viewItem()));
     bookListWidget_ = new QListWidget(this);
     connect(bookListWidget_, SIGNAL(currentRowChanged(int)),
             this, SLOT(changeRow(int)));
-    if (bView) {
-        connect(bookListWidget_, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-                this, SLOT(viewItem()));
-    }
-    if (bEdit) {
-        connect(bookListWidget_, SIGNAL(itemChanged(QListWidgetItem*)),
-                this, SLOT(changeName(QListWidgetItem*)));
-        connect(bookListWidget_, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-                this, SLOT(editItem(QListWidgetItem*)));
-        connect(bookListWidget_,
-                SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem*)),
-                this, SLOT(changeSelect(QListWidgetItem *, QListWidgetItem*)));
-    }
+    connect(bookListWidget_, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+            this, SLOT(viewItem()));
+    connect(bookListWidget_, SIGNAL(itemChanged(QListWidgetItem*)),
+            this, SLOT(changeName(QListWidgetItem*)));
+    connect(bookListWidget_, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+            this, SLOT(editItem(QListWidgetItem*)));
+    connect(bookListWidget_,
+            SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem*)),
+            this, SLOT(changeSelect(QListWidgetItem *, QListWidgetItem*)));
 
     QVBoxLayout *v = new QVBoxLayout;
     v->setMargin(0);
@@ -106,7 +86,7 @@ void BookWidget::initBook(Group *grp)
 {
     group = grp;
     if (group == NULL) {
-        if (groupNameEdit) groupNameEdit->clear();
+        groupNameEdit->clear();
         int cnt = bookListWidget_->count();
         disconnect(bookListWidget_, SIGNAL(currentRowChanged(int)),
                    this, SLOT(changeRow(int)));
@@ -116,7 +96,7 @@ void BookWidget::initBook(Group *grp)
         connect(bookListWidget_, SIGNAL(currentRowChanged(int)),
                 this, SLOT(changeRow(int)));
     } else {
-        if (groupNameEdit) groupNameEdit->setText(group->name());
+        groupNameEdit->setText(group->name());
         int cnt = bookListWidget_->count();
         //bookListWidget_->clear();
         disconnect(bookListWidget_, SIGNAL(currentRowChanged(int)),
@@ -157,10 +137,10 @@ void BookWidget::resetButtons()
 
     upButton->setEnabled(row > 0 );
     downButton->setEnabled((( cnt - row) > 1 ) && ( row >= 0 ));
-    if (delButton) delButton->setEnabled(row >= 0);
-    if (viewButton) viewButton->setEnabled(row >= 0);
-    if (fontButton) fontButton->setEnabled(row >= 0);
-    if (editButton) editButton->setEnabled(row >= 0);
+    delButton->setEnabled(row >= 0);
+    viewButton->setEnabled(row >= 0);
+    fontButton->setEnabled(row >= 0);
+    editButton->setEnabled(row >= 0);
     emit rowChanged(row);
 }
 

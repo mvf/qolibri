@@ -20,6 +20,8 @@
 #ifndef BOOKWIDGET_H
 #define BOOKWIDGET_H
 
+#include <QPushButton>
+#include <QLineEdit>
 #include "book.h"
 
 class QPushButton;
@@ -31,8 +33,7 @@ class BookWidget : public QWidget
 {
     Q_OBJECT
 public:
-    BookWidget(Group *grp, bool bDel, bool bView, bool bFont,
-               bool titleDisp, bool bEdit, QWidget *parent);
+    BookWidget(Group *grp, QWidget *parent);
     void initBook(Group *grp);
     bool addBook(const QString &name, const QString &path, int subbook );
     inline QListWidget *bookListWidget() const
@@ -55,6 +56,11 @@ public:
     {
         bookListWidget_->setCurrentRow(row);
     }
+    void hideDelButton() { delButton->hide(); }
+    void hideViewButton() { viewButton->hide(); }
+    void hideFontButton() { fontButton->hide(); }
+    void hideEditButton() { editButton->hide(); }
+    void hideNameEdit() { groupNameEdit->hide(); }
 
 signals:
     void rowChanged(int row);
