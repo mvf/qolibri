@@ -77,8 +77,10 @@ private slots:
     }
     void editItem(QListWidgetItem* item)
     {
-        bookListWidget_->openPersistentEditor(item);
-        bookListWidget_->editItem(item);
+        if (editButton->isVisible()) {
+            bookListWidget_->openPersistentEditor(item);
+            bookListWidget_->editItem(item);
+        }
     }
     void editItem()
     {
