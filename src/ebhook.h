@@ -20,12 +20,19 @@
 #ifndef EBHOOK_H
 #define EBHOOK_H
 
+#include <qstack>
 #include <eb/eb.h>
 #include <eb/text.h>
 
 #include "ebcache.h"
 
 class EBook;
+
+struct CandItems 
+{
+    QString title;
+    EB_Position position;
+};
 
 class EbHook : public QObject
 {
@@ -57,7 +64,7 @@ public:
     QByteArray begin_candidate();
     QByteArray begin_candidate_menu();
     QByteArray end_candidate_group(int page, int offset);
-    QByteArray end_candidate_group_menu(EB_Book *book, int page, int offset);
+    void end_candidate_group_menu(EB_Book *book, int page, int offset);
     QByteArray narrow_font(EB_Book *book, int code);
     QByteArray wide_font(EB_Book *book, int code);
     QByteArray end_mono_graphic(EB_Book *book, int page, int offset);
@@ -96,8 +103,8 @@ public:
     QStack <int> decoStack;
     QList <QByteArray> refList;
     int refPosition;
-    QStringList candList;
     QList <QByteArray> mpegList;
+    QList <CandItems> candList;
 
 };
 

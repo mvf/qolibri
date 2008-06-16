@@ -34,19 +34,34 @@ const int HitsBufferSize = 10000;
 const int TextBufferSize = 4000;
 const int TextSizeLimit = 2800000;
 
+QList <CandItems> EbMenu::topMenu()
+{
+
+    EB_Position pos;
+
+    if (!menu(&pos)) {
+        QList<CandItems> i;
+        return i;
+    }
+
+    QString t;
+    return candidate(pos, &t);
+
+}
+
 EBook::EBook(HookMode hmode)
     : EbCore(hmode)
 {
-    hits = new EB_Hit[HitsBufferSize];
+    firstSeek = true;
 }
 
 EBook::~EBook()
 {
-    delete hits;
 }
 
 int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
 {
+    hits.clear();
     if ((stype == SearchKeyWord && !isHaveWordSearch()) ||
         (stype == SearchCrossWord && !isHaveCrossSearch()) )
         return 0;
@@ -86,16 +101,16 @@ int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
 
         for (int i = 0; i < hit_count; i++) {
             bool same_text = false;
-            for (int j = 0; j < count; j++) {
-                if (wrk[i].text.page == hits[j].text.page &&
-                    wrk[i].text.offset == hits[j].text.offset) {
+            foreach(EB_Hit h, hits) {
+                if (wrk[i].text.page == h.text.page &&
+                    wrk[i].text.offset == h.text.offset) {
                     same_text = true;
                     break;
                 }
             }
             if (same_text) continue;
 
-            hits[count] = wrk[i];
+            hits << wrk[i];
             count++;
             if (count >= maxcnt) break;
         }
@@ -109,6 +124,7 @@ int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
 
 int EBook::hitWord(int maxcnt, const QString &word, SearchType type)
 {
+    hits.clear();
     if ( maxcnt <= 0 ) maxcnt = HitsBufferSize;
     EB_Error_Code ecode;
     QByteArray bword = utfToEuc(word);
@@ -149,16 +165,16 @@ int EBook::hitWord(int maxcnt, const QString &word, SearchType type)
     int count = 0;
     for (int i = 0; i < hit_count; i++) {
         bool same_text = false;
-        for (int j = 0; j < count; j++) {
-            if (wrk[i].text.page == hits[j].text.page &&
-                wrk[i].text.offset == hits[j].text.offset) {
+        foreach (EB_Hit h, hits) {
+            if (wrk[i].text.page == h.text.page &&
+                wrk[i].text.offset == h.text.offset) {
                 same_text = true;
                 break;
             }
         }
         if (same_text)  continue;
+        hits << wrk[i];
 
-        hits[count] = wrk[i];
         count++;
         if (count >= maxcnt) break;
     }
@@ -167,6 +183,7 @@ int EBook::hitWord(int maxcnt, const QString &word, SearchType type)
 
 int EBook::hitFull(int maxcnt)
 {
+    hits.clear();
     EB_Error_Code ecode;
     EB_Position position;
     int count = 0;
@@ -181,8 +198,10 @@ int EBook::hitFull(int maxcnt)
     } else {
         position = seekPosition;
     }
-    hits[count].heading = position;
-    hits[count].text = position;
+    EB_Hit hit;
+    hit.heading = position;
+    hit.text = position;
+    hits << hit; 
     count++;
     while (count <= maxcnt) {
         ecode = eb_seek_text(&book, &position);
@@ -198,6 +217,8 @@ int EBook::hitFull(int maxcnt)
                 //         << "offset=" << position.offset
                 //         << "end page=" << book.subbook_current->text.end_page;
                 ecode = eb_tell_text(&book, &position);
+                //qDebug() << "tell_text : page=" << position.page
+                //         << "offset=" << position.offset;
                 if (ecode != EB_SUCCESS) {
                     ebError("eb_tell_text", ecode);
                     break;
@@ -219,8 +240,10 @@ int EBook::hitFull(int maxcnt)
             }
         }
         if (count < maxcnt) {
-            hits[count].heading = position;
-            hits[count].text = position;
+            EB_Hit hit;
+            hit.heading = position;
+            hit.text = position;
+            hits << hit; 
         }
         count++;
     }

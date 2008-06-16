@@ -28,6 +28,26 @@
 enum SearchType { SearchWord, SearchEndWord, SearchExactWord,
                   SearchKeyWord, SearchCrossWord };
 
+class EbMenu : public EbCore
+{
+public:
+    EbMenu() : EbCore(HookMenu) {}
+    ~EbMenu() {}
+
+    QList <CandItems> topMenu();
+};
+
+class EbAll : public EbCore
+{
+public:
+    EbAll() : EbCore(HookText) {}
+    ~EbAll() {}
+
+    EB_Position seekPosition;
+    bool firstSeek;
+};
+
+
 class EBook : public EbCore
 {
 public:
@@ -35,13 +55,6 @@ public:
     ~EBook();
 
     // return number of Sub Book
-    void initHook(int fsize, QHash<QString, QString> *flist, 
-                    int indent_offset = 50, bool ruby = true)
-    {   
-        ebHook.init(title(), fsize, flist, indent_offset, ruby);
-        firstSeek = true;
-    }
-
     QString hitText(int index, bool hook = true)
     {
         return EbCore::text(hits[index].text, hook);
@@ -60,11 +73,12 @@ public:
         return hits[index];
     }
     int setStartHit(const EB_Position &text_pos);
+    void initSeek() { firstSeek = true; }
 
 
 private:
 
-    EB_Hit *hits;
+    QList <EB_Hit> hits;
 
     EB_Position seekPosition;
     bool firstSeek;

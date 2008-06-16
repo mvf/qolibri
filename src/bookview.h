@@ -29,6 +29,7 @@
 #include <eb/eb.h>
 
 #include "method.h"
+#include "ebhook.h"
 
 class QContextMenuEvent;
 class QUrl;
@@ -41,6 +42,7 @@ class QMouseEvent;
 class Book;
 class Group;
 class EBook;
+class EbMenu;
 
 //#define FIXED_POPUP
 
@@ -271,20 +273,18 @@ private slots:
 private:
     void fullMenuPage();
     void selectMenuPage(int index);
-    void getMenus(EBook *eb, const EB_Position &pos, PageItems *items,
+    void getMenus(EbMenu *eb, const EB_Position &pos, PageItems *items,
                   int count);
-    void getTopMenu(EBook *eb, const EB_Position &pos);
-    QList <EB_Position> topMenus;
-    QStringList topTitles;
+    QList <CandItems> topCands;
     int menuCount;
     bool checkMax;
 };
 
-class WholePage : public PageWidget
+class AllPage : public PageWidget
 {
     Q_OBJECT
 public:
-    WholePage(QWidget *parent, const SearchMethod &);
+    AllPage(QWidget *parent, const SearchMethod &);
 
 
 private slots:

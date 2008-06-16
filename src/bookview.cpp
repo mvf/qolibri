@@ -798,13 +798,13 @@ MenuPage::MenuPage(QWidget *parent, const SearchMethod &method)
 void MenuPage::fullMenuPage()
 {
     checkMax = true;
-    EBook eb(HookMenu);
+    EbMenu eb;
     if (eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
         0) {
         retStatus = NO_BOOK;
     }
     eb.initHook(bookBrowser->fontSize(), method_.bookReader->fontList(),
-                  CONF->indentOffset, method_.ruby);
+                CONF->indentOffset, method_.ruby);
 
     EB_Position pos;
     if (!eb.menu(&pos)) {
@@ -839,17 +839,14 @@ void MenuPage::selectMenuPage(int index)
 {
     checkMax = false;
     retStatus = NORMAL;
-    EBook eb(HookMenu);
+    EbMenu eb;
     eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo());
     eb.initHook(bookBrowser->fontSize(), method_.bookReader->fontList(),
-                  CONF->indentOffset, method_.ruby);
-    EB_Position pos;
-    eb.menu(&pos);
+                CONF->indentOffset, method_.ruby);
     if (index < 0) {
-        getTopMenu(&eb, pos);
+        topCands = eb.topMenu();
         index = 0;
     }
-
    
     PageItems items(CONF->bookSheet);
 
@@ -858,13 +855,13 @@ void MenuPage::selectMenuPage(int index)
     menuCount = 0;
     QTreeWidgetItem *next = 0;
 
-    for (int i = 0; i < topMenus.count(); i++) {
+    for (int i = 0; i < topCands.count(); i++) {
         if (i == index) {
-            items.composeHLine(1, toAnchor("H", menuCount), topTitles[i]);
+            items.composeHLine(1, toAnchor("H", menuCount), topCands[i].title);
 	    next = items.curItem();
-            getMenus(&eb, topMenus[i], &items, 1);
+            getMenus(&eb, topCands[i].position, &items, 1);
         } else {
-	    items.addHItem(1, toAnchor("P", i), topTitles[i]);
+	    items.addHItem(1, toAnchor("P", i), topCands[i].title);
 	    items.curItem()->setForeground(0, QColor("#666688"));
         }
     }
@@ -894,23 +891,7 @@ void MenuPage::changePage(QTreeWidgetItem *item, int)
     }
 }
 
-void MenuPage::getTopMenu(EBook *eb, const EB_Position &pos)
-{
-    QString t;
-    QStringList list = eb->candidate(pos, &t);
-
-    foreach(QString s, list) {
-        QStringList cand = s.split("&|");
-
-        topTitles << cand[0];
-        EB_Position p;
-        p.page = cand[1].toInt();
-        p.offset = cand[2].toInt();
-        topMenus << p;
-    }
-}
-
-void MenuPage::getMenus(EBook *eb, const EB_Position &pos, PageItems *items,
+void MenuPage::getMenus(EbMenu *eb, const EB_Position &pos, PageItems *items,
                         int count)
 {
     count++;
@@ -922,19 +903,16 @@ void MenuPage::getMenus(EBook *eb, const EB_Position &pos, PageItems *items,
         }
     }
     QString c_text;
-    QStringList list = eb->candidate(pos, &c_text);
+    QList <CandItems> list = eb->candidate(pos, &c_text);
     if (list.count()) {
-        foreach(QString s, list) {
-            QStringList cand = s.split("&|");
+        foreach(CandItems i, list) {
             menuCount++;
             if (checkMax && menuCount >= CONF->limitMenuHit) {
                 retStatus = LIMIT_MENU;
                 break;
             }
-            EB_Position next;
-            next.page = cand[1].toInt();
-            next.offset = cand[2].toInt();
-            items->composeHLine(count, toAnchor("H", menuCount), cand[0]);
+            EB_Position next = i.position;
+            items->composeHLine(count, toAnchor("H", menuCount), i.title);
             getMenus(eb, next, items, count);
         }
     } else {
@@ -950,7 +928,7 @@ void MenuPage::getMenus(EBook *eb, const EB_Position &pos, PageItems *items,
     return;
 }
 
-WholePage::WholePage(QWidget *parent, const SearchMethod &method)
+AllPage::AllPage(QWidget *parent, const SearchMethod &method)
     : PageWidget(parent, method)
 {
     connect(bookTree, SIGNAL(itemActivated(QTreeWidgetItem *, int)),
@@ -964,7 +942,7 @@ WholePage::WholePage(QWidget *parent, const SearchMethod &method)
     return;
 }
 
-RET_SEARCH WholePage::readPage(int page)
+RET_SEARCH AllPage::readPage(int page)
 {
     curPage = page;
 
@@ -1050,7 +1028,7 @@ RET_SEARCH WholePage::readPage(int page)
     return ret;
 }
 
-void WholePage::changePage(QTreeWidgetItem *item, int)
+void AllPage::changePage(QTreeWidgetItem *item, int)
 {
     QString anc = item->text(1);
 
@@ -1060,7 +1038,7 @@ void WholePage::changePage(QTreeWidgetItem *item, int)
     }
 }
 
-RET_SEARCH WholePage::initSeqHits()
+RET_SEARCH AllPage::initSeqHits()
 {
     EBook eb;
 
@@ -1240,6 +1218,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
             qDebug() << "Can't open the book" << book->path() << book->bookNo();
             continue;
         }
+        eb.initSeek();
         if (!eb.isHaveText()) {
             eb.unsetBook();
             continue;
@@ -1370,7 +1349,7 @@ RET_SEARCH BookView::newPage(const QStringList &list,
     if (method.direction == FullTextSearch)
         page = new SearchWholePage(this, list, method);
     else if (method.direction == WholeRead)
-        page = new WholePage(this, method);
+        page = new AllPage(this, method);
     else if (method.direction == MenuRead)
         page = new MenuPage(this, method);
     else if (method.direction == BookInfo)

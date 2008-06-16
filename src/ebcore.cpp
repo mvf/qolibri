@@ -215,7 +215,7 @@ bool EbCore::menu(EB_Position *pos)
     return true;
 }
 
-QStringList EbCore::candidate(const EB_Position &pos, QString *txt)          
+QList <CandItems> EbCore::candidate(const EB_Position &pos, QString *txt)          
 {                                                                         
    ebHook.candList.clear(); 
    *txt = text(pos);

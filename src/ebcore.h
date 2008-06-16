@@ -42,6 +42,12 @@ public:
 
     int initBook(const QString &path, int subbook=-1, int refpos=0);
     int initSubBook(int index, int refpos=0);
+    void initHook(int fsize, QHash<QString, QString> *flist,
+                  int indent_offset = 50, bool ruby = true)
+    {
+        ebHook.init(title(), fsize, flist, indent_offset, ruby);
+    }
+
     void unsetBook() { eb_unset_subbook(&book); }
 
     QString path();
@@ -51,7 +57,7 @@ public:
     bool menu(EB_Position *pos);
     QString text(const EB_Position &pos, bool hflag=true);
     QString heading(const EB_Position &pos, bool hflag=true);
-    QStringList candidate(const EB_Position &pos, QString *txt);
+    QList <CandItems> candidate(const EB_Position &pos, QString *txt);
 
     bool isHaveText() { return (eb_have_text(&book) == 1); }
     bool isHaveWordSearch() { return (eb_have_word_search(&book) == 1); }

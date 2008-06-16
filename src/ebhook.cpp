@@ -342,13 +342,15 @@ QByteArray EbHook::end_candidate_group(int page, int offset)
     return "</a>";
 }
 
-QByteArray EbHook::end_candidate_group_menu(EB_Book *book, int page, int offset)
+void EbHook::end_candidate_group_menu(EB_Book *book, int page, int offset)
 {
-    QString str = eucToUtf(eb_current_candidate(book)) + "&|" +
-                  QString::number(page) + "&|" +  QString::number(offset);
+    CandItems cItem;
+    cItem.title = eucToUtf(eb_current_candidate(book));
+    cItem.position.page = page;
+    cItem.position.offset = offset;
+    candList << cItem;
 
-    candList << str;
-    return "C>";
+    return;
 }
 
 QByteArray EbHook::begin_mpeg()
@@ -603,13 +605,13 @@ EB_Error_Code hook_begin_candidate(EB_Book *book, EB_Appendix*,
     return 0;
 }
 
-EB_Error_Code hook_begin_candidate_menu(EB_Book *book, EB_Appendix*,
-                                   void *container, EB_Hook_Code, int,
+EB_Error_Code hook_begin_candidate_menu(EB_Book *, EB_Appendix*,
+                                   void *, EB_Hook_Code, int,
                                    const unsigned int*)
 {
-    EbHook *eb = static_cast<EbHook*>(container);
+    //EbHook *eb = static_cast<EbHook*>(container);
 
-    eb_write_text_string(book, eb->begin_candidate_menu());
+    //eb_write_text_string(book, eb->begin_candidate_menu());
     return 0;
 }
 
@@ -638,8 +640,7 @@ EB_Error_Code hook_end_candidate_group_menu(EB_Book *book, EB_Appendix*,
 {
     EbHook *eb = static_cast<EbHook*>(container);
 
-    eb_write_text_string(book,
-                         eb->end_candidate_group_menu(book, argv[1], argv[2]));
+    eb->end_candidate_group_menu(book, argv[1], argv[2]);
 
     return 0;
 }
