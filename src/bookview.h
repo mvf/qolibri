@@ -177,7 +177,12 @@ public:
     void composeHLine(int num, const QString &anchor, const QString &title,
                       const QString &text = QString());
     void composeTrail();
+#ifdef TEST_MODE
+    void addHItem(int num, const QString &anchor, const QString &title,
+                  int hp, int ho, int tp, int to);
+#else
     void addHItem(int num, const QString &anchor, const QString &title);
+#endif
     void addHtmlStr(const QString &html) { text_ += html; }
     void addTextStr(const QString &str) { text_ += str; }
     void expand(int level);
@@ -335,4 +340,5 @@ private slots:
 };
 
 #endif
+
 

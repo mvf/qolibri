@@ -960,7 +960,7 @@ RET_SEARCH AllPage::readPage(int page)
     }
     QTreeWidgetItem *top_tree = item.curItem();
 
-    EBook eb;
+    EbAll eb;
     if(eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
        0) {
         return NO_BOOK;
@@ -1040,7 +1040,7 @@ void AllPage::changePage(QTreeWidgetItem *item, int)
 
 RET_SEARCH AllPage::initSeqHits()
 {
-    EBook eb;
+    EbAll eb;
 
     if (eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
         0)
@@ -1196,7 +1196,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
                                const SearchMethod &method)
     : PageWidget(parent, method)
 {
-    EBook eb;
+    EbAll eb;
 
     int search_total = 0;
     int book_count = 0;
