@@ -19,7 +19,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include <qdebug>
+#include <QtGui>
 #include <QTcpSocket>
 
 const int CONNECT_TIMEOUT = 300000;
