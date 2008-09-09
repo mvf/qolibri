@@ -1394,7 +1394,7 @@ void MainWindow::changeViewTabCount(int tab_count)
 
 QString MainWindow::loadAllExternalFont(Book *pbook)
 {
-    EBook eb(HookFont);
+    EbAll eb(HookFont);
     if (eb.initBook(pbook->path(), pbook->bookNo()) < 0) {
         QMessageBox::warning(this, Program, tr("Cannot open the book.") );
     }
