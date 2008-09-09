@@ -52,7 +52,6 @@ QList <CandItems> EbMenu::topMenu()
 EBook::EBook(HookMode hmode)
     : EbCore(hmode)
 {
-    firstSeek = true;
 }
 
 EBook::~EBook()
@@ -181,7 +180,7 @@ int EBook::hitWord(int maxcnt, const QString &word, SearchType type)
     return count;
 }
 
-int EBook::hitFull(int maxcnt)
+int EbAll::hitFull(int maxcnt)
 {
     hits.clear();
     EB_Error_Code ecode;
@@ -251,7 +250,7 @@ int EBook::hitFull(int maxcnt)
     return count - 1;
 }
 
-int EBook::setStartHit(const EB_Position &text_pos)
+int EbAll::setStartHit(const EB_Position &text_pos)
 {
     seekPosition = text_pos;
     firstSeek = false;

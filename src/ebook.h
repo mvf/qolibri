@@ -37,17 +37,6 @@ public:
     QList <CandItems> topMenu();
 };
 
-class EbAll : public EbCore
-{
-public:
-    EbAll() : EbCore(HookText) {}
-    ~EbAll() {}
-
-    EB_Position seekPosition;
-    bool firstSeek;
-};
-
-
 class EBook : public EbCore
 {
 public:
@@ -67,22 +56,31 @@ public:
 
     int hitWord(int maxcnt, const QString &word, SearchType type);
     int hitMultiWord(int maxcnt, const QStringList &word_list, SearchType type);
-    int hitFull(int maxcnt);
     inline EB_Hit hit(int index)
     {
         return hits[index];
     }
-    int setStartHit(const EB_Position &text_pos);
-    void initSeek() { firstSeek = true; }
 
 
-private:
+protected:
 
     QList <EB_Hit> hits;
 
+};
+
+class EbAll : public EBook
+{
+public:
+    EbAll(HookMode mode=HookText) : EBook(mode) {}
+    ~EbAll() {}
+
+    int hitFull(int maxcnt);
+    int setStartHit(const EB_Position &text_pos);
+    void initSeek() { firstSeek = true; }
+
+private:
     EB_Position seekPosition;
     bool firstSeek;
 };
 
 #endif
-
