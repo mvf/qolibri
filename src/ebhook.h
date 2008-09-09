@@ -20,7 +20,7 @@
 #ifndef EBHOOK_H
 #define EBHOOK_H
 
-#include <qstack>
+#include <QStack>
 #include <eb/eb.h>
 #include <eb/text.h>
 
