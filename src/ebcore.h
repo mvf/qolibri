@@ -20,7 +20,7 @@
 #ifndef EBCORE_H
 #define EBCORE_H
 
-#include <qdebug>
+#include <QStack>
 #include <QObject>
 
 #include <eb/eb.h>
