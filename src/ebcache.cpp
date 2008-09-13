@@ -29,13 +29,36 @@ void EbCache::init(const QString &title)
     //qDebug () << "Cache path =" << cachePath;
     QString bookCachePath = cachePath + "/" + title;
     QDir rootDir(bookCachePath);
-
     if (!rootDir.exists()) {
         QDir().mkpath(bookCachePath);
         rootDir.mkdir("font");
         rootDir.mkdir("image");
         rootDir.mkdir("wave");
         rootDir.mkdir("mpeg");
+    }
+    
+    if (!QFile::exists(cachePath + "/sound")) {
+        {
+            QFile f(cachePath + "/sound");
+            f.open(QIODevice::WriteOnly | QIODevice::Text);
+            f.write("sound");
+        }{
+            QFile f(cachePath + "/mpeg");
+            f.open(QIODevice::WriteOnly | QIODevice::Text);
+            f.write("mped");
+        }{
+            QFile f(cachePath + "/book");
+            f.open(QIODevice::WriteOnly | QIODevice::Text);
+            f.write("book");
+        }{
+            QFile f(cachePath + "/close");
+            f.open(QIODevice::WriteOnly | QIODevice::Text);
+            f.write("close");
+        }{
+            QFile f(cachePath + "/menu");
+            f.open(QIODevice::WriteOnly | QIODevice::Text);
+            f.write("menu");
+        }
     }
     fontCachePath = bookCachePath + "/font";
     fontCacheRel   = title + "/font/";
