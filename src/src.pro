@@ -74,12 +74,6 @@ macx {
 win32 {
     INCLUDEPATH += "C:\Program Files\EB Library\include"
     LIBS += -L"C:\Program Files\EB Library\lib"
-    !exists($$[QT_INSTALL_LIBS]/QtCore4.dll) {
-        CONFIG += static
-        QTPLUGIN += qjpcodecs qjpeg
-        DEFINES += USE_STATIC_PLUGIN
-        LIBS += -dead_strip
-    }
     #debug {
     #    CONFIG += console
     #}
@@ -88,8 +82,8 @@ win32 {
 
     i18n.path = $$DESTDIR/i18n
     i18n_s.path = $$DESTDIR/i18n/qolibri
-    i18n.files = src/i18n/*.qm
-    i18n_s.files = src/i18n/qolibri/*sample*
+    i18n.files = i18n/*.qm
+    i18n_s.files = i18n/qolibri/*sample*
 
 } 
 unix:!macx {

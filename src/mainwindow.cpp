@@ -175,14 +175,9 @@ void MainWindow::createMenus()
                                      tr("Tab on/off"));
     toggleTabsAct->setCheckable(true);
     CONNECT_BUSY(toggleTabsAct);
-    QMenu *mf = smenu->addMenu(QIcon(":/images/font1.png"), tr("Font set"));
-    fontAct = mf->menuAction();
-    connect(fontAct, SIGNAL(triggered(bool)), this, SLOT(setViewFont()));
-    
-    mf->addAction(QIcon(":/images/font1.png"), tr("Browser font"),
-                  this, SLOT(setViewFont()));
-    mf->addAction(QIcon(":/images/font2.png"), tr("Application font"),
-                  this, SLOT(setAppFont()));
+    fontAct = smenu->addAction(QIcon(":/images/font1.png"),
+                               tr("Set browser font"),
+                               this, SLOT(setViewFont()));
 
     QMenu *ms = smenu->addMenu(QIcon(":/images/stylesheet.png"),
                                tr("Style sheet"));
@@ -316,8 +311,8 @@ void MainWindow::createToolBars()
     methodBar->addWidget(limitTotalSpin);
     methodBar->addSeparator();
     methodBar->addAction(booksAct);
-    methodBar->addAction(sSheetAct);
     methodBar->addAction(fontAct);
+    methodBar->addAction(sSheetAct);
 
     toggleMethodBarAct = methodBar->toggleViewAction();
     toggleMethodBarAct->setText(tr("Option bar on/off"));
@@ -1330,20 +1325,6 @@ void MainWindow::setViewFont()
         showStatus(str);
         //} else {
         //showStatus("Cancelled Font Dialog");
-    }
-}
-
-void MainWindow::setAppFont()
-{
-    bool ok;
-    QFont font = QFontDialog::getFont(&ok, qApp->font(),
-                                      this, tr("Set application font"));
-
-    if (ok) {
-        qApp->setFont(font);
-        QString str = "font-family=" + font.family() +
-                      " font-size=" + QString::number(font.pointSize());
-        showStatus(str);
     }
 }
 

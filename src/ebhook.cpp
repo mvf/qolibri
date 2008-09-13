@@ -324,8 +324,8 @@ QByteArray EbHook::begin_color_bmp(EB_Book *book, int page, int offset)
 
 QByteArray EbHook::end_reference(int page, int offset)
 {
-    QByteArray ref = "book|" + QByteArray::number(refPosition) + '|' +
-                     QByteArray::number(page) + '|' +
+    QByteArray ref = "book?" + QByteArray::number(refPosition) + '?' +
+                     QByteArray::number(page) + '?' +
                      QByteArray::number(offset);
 
     refList << ref;
@@ -334,8 +334,8 @@ QByteArray EbHook::end_reference(int page, int offset)
 
 QByteArray EbHook::end_candidate_group(int page, int offset)
 {
-    QByteArray cnd = "menu|" + QByteArray::number(refPosition) + '|' +
-                     QByteArray::number(page) + '|' +
+    QByteArray cnd = "menu?" + QByteArray::number(refPosition) + '?' +
+                     QByteArray::number(page) + '?' +
                      QByteArray::number(offset);
 
     refList << cnd;
@@ -372,7 +372,7 @@ void EbHook::end_mpeg(EB_Book *book, const unsigned int *p)
                     QFileInfo(sfile).fileName() + ".mpeg";
     if (!QFile(dfile).exists())
         QFile::copy(sfile, dfile);
-    mpegList << "mpeg|" + utfToEuc(dfile);
+    mpegList << "mpeg?" + utfToEuc(dfile);
 }
 
 QByteArray EbHook::end_mono_graphic(EB_Book *book, int page, int offset)
@@ -430,7 +430,7 @@ QByteArray EbHook::begin_wave(EB_Book *book, int start_page, int start_offset,
 
     QString wavFile = QString("%1x%2.wav").arg(start_page).arg(start_offset);
     QString fname = ebCache.waveCachePath + "/" + wavFile;
-    QString out =  QString("<a class=snd href=\"sound|%1\">").arg(fname);
+    QString out =  QString("<a class=snd href=\"sound?%1\">").arg(fname);
 
     if (ebCache.waveCacheList.contains(wavFile))
         return utfToEuc(out);

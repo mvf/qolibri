@@ -130,11 +130,17 @@ private:
 
 class ReferencePopup : public QWidget
 {
+    Q_OBJECT
 public:
     ReferencePopup(Book *pbook, const EB_Position &pos, QWidget *parent, 
                    bool menu_flag=false);
 
     QString browserText(Book *pbook, const EB_Position &pos);
+//private slots:
+//    void resizeNoScroll();
+
+protected:
+    void showEvent(QShowEvent*);
 
 private:
     bool menuFlag;

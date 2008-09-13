@@ -46,7 +46,6 @@ bool checkStop()
 BookBrowser::BookBrowser(QWidget *parent)
     : QTextBrowser(parent)
 {
-    setOpenExternalLinks(false);
     setSearchPaths(QStringList() << EbCache::cachePath);
     document()->setDefaultFont(CONF->browserFont);
 
@@ -68,7 +67,8 @@ BookBrowser::BookBrowser(QWidget *parent)
 
 void BookBrowser::setSource(const QUrl &name)
 {
-    QStringList args = name.toString().split('|');
+
+    QStringList args = name.toString().split('?');
 
     if (args[0] == "sound") {
         // args[1] : wave file
@@ -200,7 +200,6 @@ ReferencePopup::ReferencePopup(Book *book, const EB_Position &pos,
     bookBrowser->addTitle("<a class=cls href=close>" + book->name() + "</a>");
 #endif
 
-
     QVBoxLayout *v = new QVBoxLayout();
     v->addWidget(bookBrowser);
     v->setMargin(0);
@@ -208,24 +207,54 @@ ReferencePopup::ReferencePopup(Book *book, const EB_Position &pos,
     setLayout(v);
 
     bookBrowser->setBrowser(browserText(book, pos));
+    //bookBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //bookBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     setWindowFlags(Qt::Popup);
+    if ( parent->objectName() == "main_browser") {
+        setFixedWidth((parent->width() / 4) * 3);
+    } else {
+        setFixedWidth(parent->width());
+    }
 
+}
+
+void ReferencePopup::showEvent(QShowEvent*)
+{
 #ifdef FIXED_POPUP
     move(parent->mapToGlobal(QPoint(0, 0)));
     resize(parent->size() - QSize(0, 0));
 #else
+    qDebug() << "showEvent!";
+
+    QSize sz = bookBrowser->size();
+    QScrollBar *hb = bookBrowser->horizontalScrollBar();
+    if ( hb && hb->maximum() > 0) {
+        sz.setWidth(hb->maximum() - hb->minimum() + hb->pageStep() + 10);
+        resize(sz);
+    }
+    QScrollBar *vb = bookBrowser->verticalScrollBar();
+    if ( vb && vb->maximum() > 0) {
+        int h = vb->maximum() - vb->minimum() + vb->pageStep() + 10;
+        int ph = QDesktopWidget().screenGeometry().height() - 50;
+        if ( h > ph ) {
+            h = ph;
+        }
+        sz.setHeight(h);
+    }
+
     int posx = QCursor::pos().x();
-    if ((posx + 590) > QDesktopWidget().screenGeometry().width())
-        posx = QDesktopWidget().screenGeometry().width() - 590;
+    if ((posx + sz.width()) > QDesktopWidget().screenGeometry().width())
+        posx = QDesktopWidget().screenGeometry().width() - sz.width();
 
     int posy = QCursor::pos().y();
-    if ((posy + 220) > QDesktopWidget().screenGeometry().height())
-        posy = QDesktopWidget().screenGeometry().height() - 220;
+    if ((posy + sz.height()) > QDesktopWidget().screenGeometry().height())
+        posy = QDesktopWidget().screenGeometry().height() - sz.height();
 
     move(QPoint(posx, posy));
-    resize(QSize(590,220));
+    resize(sz);
 #endif
+
 }
 
 
@@ -493,6 +522,7 @@ PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
     bookTree->setIndentation(15);
 
     bookBrowser = new BookBrowser(this);
+    bookBrowser->setObjectName("main_browser");
 
     addWidget(bookTree);
     addWidget(bookBrowser);
@@ -1188,6 +1218,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
     checkStop();
 
     bookBrowser->setBrowser(items.text());
+    //qDebug() << items.text();
 
     return;
 }

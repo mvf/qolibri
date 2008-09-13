@@ -77,7 +77,6 @@ private slots:
     void setBooks();
     void setBookFont(Book *book);
     void setViewFont();
-    void setAppFont();
     void setDictSheet();
     void setBookSheet();
     void setStatusBarSheet();
