@@ -191,8 +191,9 @@ ReferencePopup::ReferencePopup(Book *book, const EB_Position &pos,
 #ifdef FIXED_POPUP
     QToolButton *close_button = new QToolButton(this);
     close_button->setIcon(QIcon(":images/closetab.png"));
+    bookBrowser->setCornerWidget(close_button, Qt::TopRightCorner);
     connect(close_button, SIGNAL(clicked()), this, SLOT(close()));
-    bookBrowser->setCornerWidget(close_button);
+
 #endif
     //bookBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     bookBrowser->addBookList(book);
@@ -225,7 +226,6 @@ void ReferencePopup::showEvent(QShowEvent*)
     move(parent->mapToGlobal(QPoint(0, 0)));
     resize(parent->size() - QSize(0, 0));
 #else
-    qDebug() << "showEvent!";
 
     QSize sz = bookBrowser->size();
     QScrollBar *hb = bookBrowser->horizontalScrollBar();
@@ -1117,6 +1117,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
     bool break_flag = false;
 
     foreach(Book *book, method.group->bookList()) {
+        if (book->bookType() != BookEpwingLocal) continue;
         if (book->checkState() != Qt::Checked) continue;
 
         emit statusRequested(book->name() + ":(" +
@@ -1239,6 +1240,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
     RET_SEARCH break_check = NORMAL;
 
     foreach(Book * book, method.group->bookList()) {
+        if (book->bookType() != BookEpwingLocal) continue;
         if (checkStop() || break_flag) break;
 
         if (book->checkState() != Qt::Checked) continue;
@@ -1353,20 +1355,79 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
     return;
 }
 
+WebPage::WebPage(QWidget *parent, const QString &url, const QStringList &slist)
+    : QWebView(parent)
+{
+    tabBar_ = 0;
+    QString str = url;
+    connect(this, SIGNAL(loadStarted()),
+            this, SLOT(progressStart()));
+    connect(this, SIGNAL(loadFinished(bool)),
+            this, SLOT(progressFinished(bool)));
+    connect(this, SIGNAL(loadProgress(int)),
+            this, SLOT(progress(int)));
+    foreach(QString s, slist) {
+        str += s + " ";
+    }
+                     
+    QWebSettings *ws = settings();
+    ws->setAttribute(QWebSettings::JavascriptEnabled, true);
+    ws->setAttribute(QWebSettings::JavaEnabled, true);
+    ws->setAttribute(QWebSettings::PluginsEnabled, true);
+    load(QUrl(str));
+    show();
+}
+
+void WebPage::progressStart()
+{
+    if (tabBar_) tabBar_->setTabIcon(tabIndex_, QIcon(":/images/web2.png"));
+
+    progressCount_ = 0;
+}
+
+void WebPage::progress(int)
+{
+    if (!tabBar_) return;
+    if (progressCount_ == 0)  {
+        tabBar_->setTabIcon(tabIndex_, QIcon(":/images/web3.png"));
+        progressCount_ = 1;
+    } else {
+        tabBar_->setTabIcon(tabIndex_, QIcon(":/images/web2.png"));
+        progressCount_ = 0;
+    }
+}
+
+void WebPage::progressFinished(bool bOk)
+{
+    if (tabBar_) tabBar_->setTabIcon(tabIndex_, QIcon(":/images/web1.png"));
+}
+
 BookView::BookView(QWidget *parent)
     : QTabWidget(parent)
 {
     mainWin = parent;
+    setUsesScrollButtons(true);
     QToolButton *close_button = new QToolButton(this);
     setCornerWidget(close_button, Qt::TopRightCorner);
+    QToolButton *close_all_button = new QToolButton(this);
+    setCornerWidget(close_all_button, Qt::TopLeftCorner);
     close_button->setCursor(Qt::ArrowCursor);
     close_button->setAutoRaise(true);
     close_button->setIcon(QIcon(":images/closetab.png"));
     close_button->setToolTip(tr("Close page"));
     close_button->setEnabled(true);
+    close_all_button->setCursor(Qt::ArrowCursor);
+    close_all_button->setAutoRaise(true);
+    close_all_button->setIcon(QIcon(":images/closealltab.png"));
+    close_all_button->setToolTip(tr("Close All Page"));
+    close_all_button->setEnabled(true);
     connect(close_button, SIGNAL(clicked()), this, SLOT(closeTab()));
+    connect(close_all_button, SIGNAL(clicked()), this, SLOT(closeAllTab()));
     connect(this, SIGNAL(tabChanged(int)),
             parent, SLOT(changeViewTabCount(int)));
+    tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(tabBar(), SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(showTabBarMenu(const QPoint&)));
 }
 
 
@@ -1391,38 +1452,134 @@ RET_SEARCH BookView::newPage(const QStringList &list,
         page = new SearchPage(this, list, method);
 
     RET_SEARCH ret = page->retStatus;
+    QWidget *focus_page = 0;
     if (ret == NOT_HIT || ret == NOT_HIT_INTERRUPTED || ret == NO_MENU ||
         ret == NO_BOOK) {
         delete page;
-        return ret;
-    }
-
-    QString tab_title = toLogicString(list, method, false);
-    if (newTab || count() == 0) {
-        addTab(page, tab_title);
+        bool rflag = true;
+        foreach(Book *book, method.group->bookList()) {
+            if (book->bookType() == BookWeb) {
+                ret = NORMAL;
+                rflag = false;
+            }
+        }
+        if (rflag) return ret;
     } else {
-        int index = currentIndex();
-        closeTab();
-        insertTab(index, page, tab_title);
+
+        QString tab_title = toLogicString(list, method, false);
+        if (newTab || count() == 0) {
+            addTab(page, QIcon(":/images/sbook.png"), tab_title);
+        } else {
+            int index = currentIndex();
+            closeTab();
+            insertTab(index, page, QIcon(":/images/sbook.png"), tab_title);
+        }
+        focus_page = (QWidget*)page;
+        connect(this, SIGNAL(fontChanged(QFont)), page, SLOT(changeFont(QFont)));
+        emit tabChanged(count());
     }
-    setCurrentWidget(page);
 
-    connect(this, SIGNAL(fontChanged(QFont)), page, SLOT(changeFont(QFont)));
-
-    emit tabChanged(count());
+    foreach(Book *book, method.group->bookList()) {
+        if (book->bookType() == BookWeb) {
+            WebPage *wpage = new WebPage(this, book->path(), list);
+            QString vtitle = QString("%1(%2)").arg(list[0]).arg(book->name());
+            int idx = addTab(wpage, QIcon(":/images/web1.png"), vtitle);
+            wpage->setTabIndex(idx);
+            wpage->setTabBar(tabBar());
+            if (!focus_page) {
+                focus_page = (QWidget *)wpage;
+            }
+        }
+    }
+    if (focus_page) {
+        setCurrentWidget(focus_page);
+    }
 
     return ret;
 }
 
+void BookView::showTabBarMenu(const QPoint& pnt)
+{
+    QTabBar *bar = tabBar();
+    int index = 0;
+    int tabnum = bar->count();
+    for (; index < tabnum; index++) {
+        if (bar->tabRect(index).contains(pnt))
+            break;
+    }
+    QMenu menu("", bar);
+    QAction *close_other_page = 0; 
+    QAction *close_left_page = 0;
+    QAction *close_right_page = 0;
+    QAction *close_all_page = 0;
+    QAction *close_this_page = menu.addAction(tr("Close This Page"));
+    if (tabnum > 1)
+        close_other_page = menu.addAction(tr("Close Other Pages"));
+    if (index > 0)
+        close_left_page = menu.addAction(tr("Close Left Pages"));
+    if (index < (tabnum-1))
+        close_right_page = menu.addAction(tr("Close Right Pages"));
+    if (tabnum > 1)
+        close_all_page = menu.addAction(tr("Close All Pages"));
+
+    QAction *sel_act = menu.exec(bar->mapToGlobal(pnt));
+    if (!sel_act)
+        return;
+    if(sel_act == close_this_page) {
+        closeTab1(index);
+    } else if (sel_act == close_other_page) {
+        for (int i=tabnum-1; i>index; i--) {
+            closeTab1(i);
+        }
+        for (int i=index-1; i>=0; i--) {
+            closeTab1(i);
+        }
+    } else if (sel_act == close_left_page) {
+        for (int i=index-1; i>=0; i--) {
+            closeTab1(i);
+        }
+    } else if (sel_act == close_right_page) {
+        for (int i=tabnum-1; i>index; i--) {
+            closeTab1(i);
+        }
+    } else if (sel_act == close_all_page) {
+        for (int i=tabnum-1; i>=0; i--) {
+            closeTab1(i);
+        }
+    }
+    emit tabChanged(count());
+}
+
+void BookView::closeTab1(int index)
+{
+    QWidget *wgt = widget(index);
+    removeTab(index);
+    //wgt->close();
+    QTimer::singleShot(0, wgt, SLOT(deleteLater()));
+
+}
+
+void BookView::closeAllTab()
+{
+    QTabBar *bar = tabBar();
+    int tabnum = bar->count();
+    for (int i=bar->count()-1;  i >= 0; i--) {
+        closeTab1(i);
+    }
+
+    emit tabChanged(count());
+}
 
 void BookView::closeTab()
 {
-    int idx = currentIndex();
-    QWidget *wgt = currentWidget();
+//    int idx = currentIndex();
+//    QWidget *wgt = currentWidget();
 
-    removeTab(idx);
-    wgt->close();
-    delete wgt;
+//    removeTab(idx);
+//    wgt->close();
+//    delete wgt;
+
+    closeTab1(currentIndex());
 
     emit tabChanged(count());
 }

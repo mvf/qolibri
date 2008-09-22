@@ -90,7 +90,7 @@ void GroupWidget::initGroup()
     for (int i = 0; i < cnt; i++) {
         groupListWidget->takeItem(0);
     }
-    for (int i = 1; i < groupList->count(); i++) {
+    for (int i = 0; i < groupList->count(); i++) {
         groupListWidget->addItem((*groupList)[i]);
     }
     if ( groupListWidget->count() > 0 ) {
@@ -118,9 +118,9 @@ void GroupWidget::upItem()
     Group *grp = (Group*)groupListWidget->takeItem(row);
 
     groupListWidget->insertItem(row - 1, grp);
-    groupListWidget->setCurrentItem(grp);
     groupList->takeAt(row + 1);
     groupList->insert(row, grp);
+    groupListWidget->setCurrentItem(grp);
 }
 
 void GroupWidget::downItem()
@@ -129,9 +129,9 @@ void GroupWidget::downItem()
     Group *grp = (Group*)groupListWidget->takeItem(row);
 
     groupListWidget->insertItem(row + 1, grp);
-    groupListWidget->setCurrentItem(grp);
     groupList->takeAt(row + 1);
     groupList->insert(row + 2, grp);
+    groupListWidget->setCurrentItem(grp);
 }
 
 void GroupWidget::delItem()

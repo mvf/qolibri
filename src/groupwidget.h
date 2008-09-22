@@ -39,7 +39,7 @@ public:
     }
     inline Group *currentGroup() const
     {
-        return (*groupList)[currentRow() + 1];
+        return (*groupList)[currentRow()];
     }
     inline QListWidgetItem* currentItem() const
     {

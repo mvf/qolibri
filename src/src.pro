@@ -42,6 +42,7 @@ SOURCES += qolibri.cpp \
            textcodec.cpp
 
 QT += network
+QT += webkit
 RESOURCES += qolibri.qrc
 
 TARGET = qolibri

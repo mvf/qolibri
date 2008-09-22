@@ -28,7 +28,8 @@
 #endif
 #include "ebcore.h"
 
-BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
+BookSetting::BookSetting(Group *lbook, Group *wsite,
+                         const QList<Group*> &grp, QWidget *parent)
     : QDialog(parent), findStop(false) 
 {
 #ifdef Q_WS_MAC
@@ -36,6 +37,9 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
 #else
     setWindowTitle(tr("Book and group settings"));
 #endif
+    localBooks_ = new Group(*lbook);
+    webSites_ = new Group(*wsite);
+
     foreach(Group * g, grp) {
         groupList_ << new Group(*g);
     }
@@ -43,15 +47,15 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
     {
         QHBoxLayout *h1 = new QHBoxLayout();
         {
-            QLabel *l = new QLabel(tr("Search directory"));
+            //QLabel *l = new QLabel(tr("Search directory"));
             searchPath = new QLineEdit(QDir::homePath(), this);
             connect(searchPath, SIGNAL(textChanged(QString)),
                     this, SLOT(searchPathChanged(QString)));
-            h1->addWidget(l);
-            h1->addWidget(searchPath);
+            //h1->addWidget(l);
             pathButton = new QPushButton(QIcon(":images/open.png"),
                                          QString(), this);
             connect(pathButton, SIGNAL(clicked()), this, SLOT(setPath()));
+            h1->addWidget(searchPath);
             h1->addWidget(pathButton);
         }
         QHBoxLayout *h2 = new QHBoxLayout();
@@ -71,7 +75,7 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
         QLabel *l = new QLabel(tr("<b>SEARCH BOOKS :</b>"));
         findPaths = new QLabel();
         findPaths->setFrameShape(QFrame::StyledPanel);
-        findPaths->setFixedWidth(290);
+        //findPaths->setFixedWidth(290);
         v1->addStretch();
         v1->addWidget(l);
         v1->addLayout(h1);
@@ -79,12 +83,61 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
         v1->addWidget(findPaths);
         v1->addStretch();
     }
-    if (groupList_.count() == 0)
-        groupList_ << new Group(tr("All Books"));
+    QVBoxLayout *v2 = new QVBoxLayout();
+    {
+        QLabel *l = new QLabel(tr("<b>Internet Search :</b>"));
+        QHBoxLayout *h1 = new QHBoxLayout();
+        {
+            QLabel *n = new QLabel(tr("Name :"));
+            webNameEdit = new QLineEdit("",this);
+            connect(webNameEdit, SIGNAL(textChanged(QString)),
+                    this, SLOT(webNameChanged(QString)));
+            h1->addWidget(n);
+            h1->addWidget(webNameEdit);
+        }
+        QHBoxLayout *h2 = new QHBoxLayout();
+        {
+            QLabel *s = new QLabel(tr("Site :"));
+            webSiteEdit = new QLineEdit("http://",this);
+            connect(webSiteEdit, SIGNAL(textChanged(QString)),
+                    this, SLOT(webSiteChanged(QString)));
+            h2->addWidget(s);
+            h2->addWidget(webSiteEdit);
+        }
+        QHBoxLayout *h3 = new QHBoxLayout();
+        {
+            webAddButton = new QPushButton(
+                    QIcon(":images/downarrow.png"), tr("Add"), this);
+            connect(webAddButton, SIGNAL(clicked()),
+                    this, SLOT(addWebSite()));
+            h3->addStretch();
+            h3->addWidget(webAddButton);
+            h3->addStretch();
+        }
+        //v2->addStretch();
+        v2->addWidget(l);
+        v2->addLayout(h1);
+        v2->addLayout(h2);
+        v2->addLayout(h3);
+        //v2->addStretch();
+        webNameChanged("");
+    }
+    QWidget *dicSearch = new QWidget(this);
+    dicSearch->setLayout(v1);
+    QWidget *webSearch = new QWidget(this);
+    webSearch->setLayout(v2);
+    QTabWidget *tab = new QTabWidget(this);
+    tab->addTab(dicSearch, tr("Add Dictionary"));
+    tab->addTab(webSearch, tr("Add Web Site"));
+    connect(tab, SIGNAL(currentChanged(int)),
+            this, SLOT(changeTab(int)));
 
-    allDicWidget = new BookWidget(groupList_[0], this);
+    allDicWidget = new BookWidget(localBooks_, this);
     allDicWidget->hideViewButton();
     allDicWidget->hideFontButton();
+    allDicWidget->setFixedWidth(320);
+    allDicWidget->bookListWidget()->setSelectionMode(
+                                      QAbstractItemView::ExtendedSelection);
     connect(allDicWidget, SIGNAL(rowChanged(int)),
             this, SLOT(changeBookSelection(int)));
 
@@ -93,28 +146,33 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
             this, SLOT(changeGroupSelection(int)));
 
     dicWidget = new BookWidget(NULL, this);
+    dicWidget->bookListWidget()->setSelectionMode(
+                                      QAbstractItemView::ExtendedSelection);
+    dicWidget->setFixedWidth(320);
     dicWidget->hideViewButton();
     dicWidget->hideFontButton();
     dicWidget->hideEditButton();
 
-    QVBoxLayout *v2 = new QVBoxLayout();
+    QVBoxLayout *va = new QVBoxLayout();
     {
         selButton = new QPushButton(this);
         selButton->setIcon(QIcon(":images/rightarrow.png"));
         selButton->setEnabled(false);
         connect(selButton, SIGNAL(clicked()), this, SLOT(addBook()));
-        v2->addStretch();
-        v2->addWidget(selButton);
-        v2->addStretch();
+        va->addStretch();
+        va->addWidget(selButton);
+        va->addStretch();
     }
 
     QGridLayout*g = new QGridLayout();
     {
-        g->addLayout(v1, 0, 0, 1, 1);
+        g->addWidget(tab, 0, 0, 1, 2);
+        //g->addLayout(v1, 0, 0, 1, 2);
         g->addWidget(allDicWidget, 1, 0);
         g->addWidget(groupWidget, 0, 2);
         g->addWidget(dicWidget, 1, 2);
-        g->addLayout(v2, 1, 1);
+        g->addLayout(va, 1, 1);
+        g->setColumnStretch(0, 0);
     }
 
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
@@ -131,7 +189,7 @@ BookSetting::BookSetting(const QList<Group*> &grp, QWidget *parent)
     v->addWidget(buttonBox);
     setLayout(v);
 
-    if (groupList_.count()  > 1)
+    if (groupList_.count()  > 0)
         changeGroupSelection(0);
 }
 
@@ -162,7 +220,8 @@ void BookSetting::searchBook()
         for (int i = 0; i < subbooks; i++) {
             eb.initSubBook(i);
             if (eb.isHaveText() /* && eb.isHaveWordSearch() */) {
-                if (allDicWidget->addBook(eb.title(), dir, i)) {
+                if (allDicWidget->addBook(eb.title(), BookEpwingLocal,
+                                          dir, i)) {
                     add_count++;
                 }
             }
@@ -195,7 +254,7 @@ void BookSetting::findCategory(const QString &name)
     if (checkStop())
         return;
 
-    findPaths->setText("Searching ..." + name.right(28));
+    //findPaths->setText("Searching ..." + name.right(28));
 
     QDir dir(name);
     if (dir.entryList(QStringList() << "CATALOG" << "CATALOGS", 
@@ -208,6 +267,9 @@ void BookSetting::findCategory(const QString &name)
             findCategory(dir.absoluteFilePath(file));
         }
     }
+    QString msg = QString("%1 founded | %2")
+                  .arg(bookDirs.size()).arg(dir.dirName().right(20));
+    findPaths->setText(msg);
 }
 
 void BookSetting::searchPathChanged(const QString &str)
@@ -221,9 +283,12 @@ void BookSetting::searchPathChanged(const QString &str)
 
 void BookSetting::addBook()
 {
-    Book *book = allDicWidget->currentBook();
+    foreach(QListWidgetItem *i, allDicWidget->selectedBooks()) {
+        Book *book = (Book*)i;
+        dicWidget->addBook(book->name(), book->bookType(),
+                           book->path(), book->bookNo());
+    }
 
-    dicWidget->addBook(book->name(), book->path(), book->bookNo());
 }
 
 void BookSetting::changeBookSelection(int row)
@@ -272,4 +337,40 @@ void BookSetting::keyPressEvent(QKeyEvent *event)
         return;
 
     return QDialog::keyPressEvent(event);
+}
+
+void BookSetting::webNameChanged(const QString &str)
+{
+    QString stext = webSiteEdit->text();
+    if (!str.isEmpty() && !stext.isEmpty() && stext != "http://"){
+        webAddButton->setEnabled(true);
+    } else {
+        webAddButton->setEnabled(false);
+    }
+}
+
+void BookSetting::webSiteChanged(const QString &str)
+{
+    QString ntext = webNameEdit->text();
+    if (!ntext.isEmpty() && !str.isEmpty() && str != "http://"){
+        webAddButton->setEnabled(true);
+    } else {
+        webAddButton->setEnabled(false);
+    }
+}
+
+void BookSetting::addWebSite()
+{
+    allDicWidget->addBook(webNameEdit->text(), BookWeb,
+                          webSiteEdit->text(), 0);
+}
+
+void BookSetting::changeTab(int index)
+{
+    if (index == 0) {
+        allDicWidget->initBook(localBooks_);
+    } else {
+        allDicWidget->initBook(webSites_);
+    }
+
 }

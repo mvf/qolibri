@@ -26,6 +26,7 @@
 #include <QTreeWidgetItem>
 #include <QLineEdit>
 #include <QSplitter>
+#include <QWebView>
 #include <eb/eb.h>
 
 #include "method.h"
@@ -320,7 +321,24 @@ class SearchWholePage : public PageWidget
 public:
     SearchWholePage(QWidget *parent, const QStringList&, const SearchMethod&);
 };
+class WebPage : public QWebView
+{
+    Q_OBJECT
+public:
+    WebPage(QWidget *parent, const QString &url, const QStringList &list); 
+    void setTabIndex(int index) { tabIndex_ = index; }
+    void setTabBar(QTabBar *bar) { tabBar_ = bar; }
 
+private slots:
+    void progressStart();
+    void progress(int pcount);
+    void progressFinished(bool ok);
+
+private:
+    int progressCount_;
+    int tabIndex_;
+    QTabBar *tabBar_;
+};
 
 class BookView : public QTabWidget
 {
@@ -334,12 +352,18 @@ public:
         return (PageWidget *)currentWidget();
     }
 
+private:
+    void closeTab1(int index);
+
+
 signals:
     void fontChanged(const QFont &font);
     void tabChanged(int tab);
 
 private slots:
+    void showTabBarMenu(const QPoint &pnt);
     void closeTab();
+    void closeAllTab();
     void stopSearch();
     void zoomIn();
     void zoomOut();

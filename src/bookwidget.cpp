@@ -22,13 +22,12 @@
 #include "ebook.h"
 #include "bookwidget.h"
 
-
 BookWidget::BookWidget(Group *grp, QWidget *parent)
     : QWidget(parent)
 {
-    groupNameEdit = new QLineEdit(this);
-    connect(groupNameEdit, SIGNAL(textChanged(QString)),
-            this, SLOT(changeGroupName(QString)));
+    groupNameLabel = new QLabel(this);
+    groupNameLabel->setFrameShape(QFrame::StyledPanel);
+    groupNameLabel->setAlignment(Qt::AlignCenter);
     QHBoxLayout *h = new QHBoxLayout();
     h->setMargin(0);
     h->addStretch();
@@ -57,8 +56,8 @@ BookWidget::BookWidget(Group *grp, QWidget *parent)
     h->addWidget(viewButton);
     connect(viewButton, SIGNAL(clicked()), this, SLOT(viewItem()));
     bookListWidget_ = new QListWidget(this);
-    connect(bookListWidget_, SIGNAL(currentRowChanged(int)),
-            this, SLOT(changeRow(int)));
+    connect(bookListWidget_, SIGNAL(itemSelectionChanged()),
+            this, SLOT(changeRow()));
     connect(bookListWidget_, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
             this, SLOT(viewItem()));
     connect(bookListWidget_, SIGNAL(itemChanged(QListWidgetItem*)),
@@ -72,7 +71,7 @@ BookWidget::BookWidget(Group *grp, QWidget *parent)
     QVBoxLayout *v = new QVBoxLayout;
     v->setMargin(0);
     v->setSpacing(0);
-    if (groupNameEdit) v->addWidget(groupNameEdit);
+    if (groupNameLabel) v->addWidget(groupNameLabel);
     v->addWidget(bookListWidget_);
     v->addLayout(h);
     setLayout(v);
@@ -86,26 +85,26 @@ void BookWidget::initBook(Group *grp)
 {
     group = grp;
     if (group == NULL) {
-        groupNameEdit->clear();
+        groupNameLabel->clear();
         int cnt = bookListWidget_->count();
-        disconnect(bookListWidget_, SIGNAL(currentRowChanged(int)),
-                   this, SLOT(changeRow(int)));
+        disconnect(bookListWidget_, SIGNAL(itemSelectionChanged()),
+                   this, SLOT(changeRow()));
         for (int i = 0; i < cnt; i++) {
             bookListWidget_->takeItem(0);
         }
-        connect(bookListWidget_, SIGNAL(currentRowChanged(int)),
-                this, SLOT(changeRow(int)));
+        connect(bookListWidget_, SIGNAL(itemSelectionChanged()),
+                this, SLOT(changeRow()));
     } else {
-        groupNameEdit->setText(group->name());
+        groupNameLabel->setText(group->name());
         int cnt = bookListWidget_->count();
         //bookListWidget_->clear();
-        disconnect(bookListWidget_, SIGNAL(currentRowChanged(int)),
-                   this, SLOT(changeRow(int)));
+        disconnect(bookListWidget_, SIGNAL(itemSelectionChanged()),
+                   this, SLOT(changeRow()));
         for (int i = 0; i < cnt; i++) {
             bookListWidget_->takeItem(0);
         }
-        connect(bookListWidget_, SIGNAL(currentRowChanged(int)),
-                this, SLOT(changeRow(int)));
+        connect(bookListWidget_, SIGNAL(itemSelectionChanged()),
+                this, SLOT(changeRow()));
         foreach(Book * b, group->bookList()) {
             bookListWidget_->addItem(b);
         }
@@ -113,14 +112,15 @@ void BookWidget::initBook(Group *grp)
     }
 }
 
-bool BookWidget::addBook(const QString &name, const QString &path, int subbook)
+bool BookWidget::addBook(const QString &name, BookType btype,
+                         const QString &path, int subbook)
 {
     foreach(Book * b, group->bookList()) {
         if (b->path() == path && b->bookNo() == subbook) {
             return false;
         }
     }
-    Book *book = new Book(name, path, subbook, true);
+    Book *book = new Book(name, btype, path, subbook, true);
     book->setData(Qt::CheckStateRole, 1);
     book->setCheckState(Qt::Checked);
     group->addBook(book);
@@ -132,15 +132,16 @@ bool BookWidget::addBook(const QString &name, const QString &path, int subbook)
 
 void BookWidget::resetButtons()
 {
+    int num = bookListWidget_->selectedItems().count();
     int row = currentRow();
     int cnt = bookListWidget_->count();
 
-    upButton->setEnabled(row > 0 );
-    downButton->setEnabled((( cnt - row) > 1 ) && ( row >= 0 ));
+    upButton->setEnabled(num == 1 && row > 0 );
+    downButton->setEnabled(num == 1 && ( cnt - row) > 1  &&  row >= 0 );
     delButton->setEnabled(row >= 0);
-    viewButton->setEnabled(row >= 0);
-    fontButton->setEnabled(row >= 0);
-    editButton->setEnabled(row >= 0);
+    viewButton->setEnabled(num == 1 && row >= 0);
+    fontButton->setEnabled(num == 1 && row >= 0);
+    editButton->setEnabled(num == 1 && row >= 0);
     emit rowChanged(row);
 }
 
@@ -168,12 +169,12 @@ void BookWidget::downItem()
 
 void BookWidget::delItem()
 {
-    int row = currentRow();
-    Book *book = (Book *)bookListWidget_->takeItem(row);
-
-    group->takeBook(row);
-    delete book;
-    //qDebug() << "BookWidget::delItem(int row) " << row;
-    //resetButtons();
+    QList <QListWidgetItem *> items = bookListWidget_->selectedItems();
+    foreach( QListWidgetItem *i, items) {
+        int r = bookListWidget_->row(i);
+        Book *book = (Book *)bookListWidget_->takeItem(r);
+        group->takeBook(r);
+        delete book;
+    }
 }
 

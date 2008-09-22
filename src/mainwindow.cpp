@@ -82,11 +82,7 @@ MainWindow::MainWindow(const QString &s_text)
 
 
 #if defined (Q_WS_X11)
-    timerDock = NULL;
-    timerDock = new QTimer(this);
-    timerDock->setSingleShot(true);
-    connect(timerDock, SIGNAL(timeout()), this, SLOT(showDock()));
-    timerDock->start(0);
+    QTimer::singleShot(0,this, SLOT(showDock()));
 #elif defined (Q_WS_WIN)
     showDock();
 #elif defined (Q_WS_MAC)
@@ -96,18 +92,11 @@ MainWindow::MainWindow(const QString &s_text)
 #endif
 
     sound = NULL;
-    timer = NULL;
     if (groupList[0]->bookList().count() == 0) {
-        timer = new QTimer(this);
-        timer->setSingleShot(true);
-        connect(timer, SIGNAL(timeout()), this, SLOT(setBooks()));
-        timer->start(0);
+        QTimer::singleShot(0, this, SLOT(setBooks()));
     } else if (!s_text.isEmpty()) {
         clientText << s_text;
-        timer = new QTimer(this);
-        timer->setSingleShot(true);
-        connect(timer, SIGNAL(timeout()), this, SLOT(checkNextSearch()));
-        timer->start(0);
+        QTimer::singleShot(0, this, SLOT(checkNextSearch()));
     }
     statusBar()->setStyleSheet(CONF->statusBarSheet);
 
@@ -397,25 +386,36 @@ void MainWindow::readSettings()
     }
 
     QSettings groups(CONF->settingOrg, "EpwingGroups");
+
+    localBooks = new Group("Local Books", true);
+    webSites = new Group("Web Sites", true);
     int gcnt = groups.beginReadArray("DictionaryGroups");
     for (int i = 0; i < gcnt; i++) {
         groups.setArrayIndex(i);
         QString name = groups.value("name").toString();
         QString use = groups.value("use").toString();
         bool bUse = false;
+        Group *g;
         if (use == "ON") bUse = true;
-        Group *g = new Group(name, bUse);
-        groupList << g;
+        if (i == 0) {
+            g = localBooks;
+        } else if (i == 1) {
+            g = webSites;
+        } else {
+            g = new Group(name, bUse);
+            groupList << g;
+        }
         int dcnt = groups.beginReadArray("Dictionaries");
         for (int j = 0; j < dcnt; j++) {
             groups.setArrayIndex(j);
             name = groups.value("name").toString();
+            int booktype = groups.value("booktype").toInt();
             QString path = groups.value("path").toString();
             int subbook = groups.value("subbook").toInt();
             use = groups.value("use").toString();
             bUse = false;
             if (use == "ON") bUse = true;
-            Book *d = new Book(name, path, subbook, bUse);
+            Book *d = new Book(name, (BookType)booktype, path, subbook, bUse);
             g->addBook(d);
         }
         groups.endArray();
@@ -476,9 +476,17 @@ void MainWindow::writeSettings()
     writeMethodSetting(method, &settings);
 
     QSettings groups(CONF->settingOrg, "EpwingGroups");
+
     groups.beginWriteArray("DictionaryGroups");
-    for (int i = 0; i < groupList.count(); i++) {
-        Group *g = groupList[i];
+    for (int i = 0; i < groupList.count()+2 ; i++) {
+        Group *g;
+        if (i == 0) {
+            g = localBooks;
+        } else if (i == 1) {
+            g = webSites;
+        } else {
+            g = groupList[i-2];
+        }
         groups.setArrayIndex(i);
         groups.setValue("name", g->name());
         if (g->checkState() == Qt::Checked) {
@@ -490,6 +498,7 @@ void MainWindow::writeSettings()
         for (int j = 0; j < g->bookList().count(); j++) {
             Book *d = g->bookList()[j];
             groups.setArrayIndex(j);
+            groups.setValue("booktype", (int)(d->bookType()));
             groups.setValue("name", d->name());
             groups.setValue("path", d->path());
             groups.setValue("subbook", d->bookNo());
@@ -794,9 +803,6 @@ void MainWindow::showDock()
     } else {
         groupDock->show();
     }
-#if defined (Q_WS_X11)
-    delete timerDock;
-#endif
 }
 
 #endif
@@ -940,9 +946,17 @@ void MainWindow::setBookFont(Book *book)
 void MainWindow::setBooks()
 {
 //    qDebug() << "MainWindow::setBook() " << currentGroup->name;
-    BookSetting dlg(groupList, this);
+    BookSetting dlg(localBooks, webSites, groupList, this);
 
     if (dlg.exec() == QDialog::Accepted) {
+
+        QList <Book*> lbook = dlg.localBooks()->bookList();
+        delete localBooks;
+        localBooks = new Group(*dlg.localBooks());
+
+        delete webSites;
+        webSites = new Group(*dlg.webSites());
+
         QList <Group*> grp = dlg.groupList();
 
         groupList.clear();
@@ -982,10 +996,6 @@ void MainWindow::setBooks()
         showStatus(msg);
     } else {
         showStatus("Group Setting Cancelled");
-    }
-    if (timer) {
-        delete timer;
-        timer = NULL;
     }
 }
 

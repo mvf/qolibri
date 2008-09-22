@@ -234,13 +234,13 @@ GroupTab::GroupTab(QWidget *parent)
     QVBoxLayout *v = new QVBoxLayout();
 
     groupCombo_ = new QComboBox(this);
-    groupCombo_->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    //groupCombo_->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     connect(groupCombo_, SIGNAL(currentIndexChanged(int)),
             this, SLOT(changeGroup(int)));
     bookWidget_ = new BookWidget(group, this);
     bookWidget_->hideDelButton();
     bookWidget_->hideEditButton();
-    bookWidget_->hideNameEdit();
+    bookWidget_->hideGroupName();
     bookWidget_->bookListWidget()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(bookWidget_, SIGNAL(rowChanged(int)),
             this, SIGNAL(bookChanged(int)));

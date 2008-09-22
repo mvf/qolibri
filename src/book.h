@@ -22,11 +22,15 @@
 
 #include <QListWidgetItem>
 
+enum BookType { BookEpwingLocal=0, BookWeb };
+
 class Book : public QListWidgetItem
 {
 public:
-    Book(const QString &nam, const QString &pth, int bno, bool bUse = true)
-        : QListWidgetItem(nam), path_(pth), bookNo_(bno), fontList_(NULL)
+    Book(const QString &nam, BookType btype, const QString &pth, int bno,
+         bool bUse = true)
+        : QListWidgetItem(nam), bookType_(btype), path_(pth), bookNo_(bno),
+          fontList_(NULL)
     {
         setData(Qt::CheckStateRole, true);
         if (bUse) {
@@ -34,10 +38,13 @@ public:
         } else {
             setCheckState(Qt::Unchecked);
         }
+        if (btype != BookEpwingLocal) {
+            setForeground(QColor("#6666ff"));
+        }
         loadAlterFont();
     }
     Book(const Book &that)
-        : QListWidgetItem(that), path_(that.path_),
+        : QListWidgetItem(that), bookType_(that.bookType_), path_(that.path_),
         bookNo_(that.bookNo_), fontList_(that.fontList_)
     {
     }
@@ -55,7 +62,11 @@ public:
     {
         return path_;
     }
-    inline int bookNo() const
+	inline BookType bookType()
+	{
+        return bookType_;
+    }
+    inline int bookNo()
     {
         return bookNo_;
     }
@@ -74,6 +85,7 @@ public:
     }
 
 private:
+    BookType bookType_;
     QString path_;
     int bookNo_;
     QHash<QString, QString> *fontList_;

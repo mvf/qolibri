@@ -21,7 +21,7 @@
 #define BOOKWIDGET_H
 
 #include <QPushButton>
-#include <QLineEdit>
+#include <QLabel>
 #include "book.h"
 
 class QPushButton;
@@ -35,7 +35,8 @@ class BookWidget : public QWidget
 public:
     BookWidget(Group *grp, QWidget *parent);
     void initBook(Group *grp);
-    bool addBook(const QString &name, const QString &path, int subbook );
+    bool addBook(const QString &name, BookType btype,
+                 const QString &path, int subbook );
     inline QListWidget *bookListWidget() const
     {
         return bookListWidget_;
@@ -47,6 +48,10 @@ public:
     inline Book *currentBook() const
     {
         return group->bookList()[currentRow()];
+    }
+    QList <QListWidgetItem*> selectedBooks() const
+    {
+        return bookListWidget_->selectedItems();
     }
     inline QListWidgetItem *currentItem() const
     {
@@ -60,7 +65,7 @@ public:
     void hideViewButton() { viewButton->hide(); }
     void hideFontButton() { fontButton->hide(); }
     void hideEditButton() { editButton->hide(); }
-    void hideNameEdit() { groupNameEdit->hide(); }
+    void hideGroupName() { groupNameLabel->hide(); }
 
 signals:
     void rowChanged(int row);
@@ -92,7 +97,7 @@ private slots:
         emit fontViewRequested(currentBook());
     }
 
-    void changeRow(int)
+    void changeRow()
     {
         resetButtons();
     }
@@ -104,20 +109,13 @@ private slots:
     {
         bookListWidget_->closePersistentEditor(prev);
     }
-    void changeGroupName(const QString &name)
-    {
-        if (group) {
-            group->setName(name);
-            group->setText(name);
-        }
-    }
 
 
 private:
     void resetButtons();
 
     QListWidget *bookListWidget_;
-    QLineEdit *groupNameEdit;
+    QLabel *groupNameLabel;
     QPushButton *upButton;
     QPushButton *downButton;
     QPushButton *delButton;

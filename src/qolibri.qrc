@@ -3,11 +3,13 @@
     <file>images/title.png</file>
     <file>images/book.png</file>
     <file>images/books.png</file>
+    <file>images/sbook.png</file>
     <file>images/bookmark.png</file>
     <file>images/bookopen.png</file>
     <file>images/group.png</file>
     <file>images/clear.png</file>
     <file>images/closetab.png</file>
+    <file>images/closealltab.png</file>
     <file>images/configure.png</file>
     <file>images/copy.png</file>
     <file>images/cut.png</file>
@@ -38,5 +40,8 @@
     <file>images/zoomin.png</file>
     <file>images/zoomout.png</file>
     <file>images/edit.png</file>
+    <file>images/web1.png</file>
+    <file>images/web2.png</file>
+    <file>images/web3.png</file>
 </qresource>
 </RCC>

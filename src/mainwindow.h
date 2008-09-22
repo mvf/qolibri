@@ -153,6 +153,8 @@ private:
 #endif
 
     QList <Group*> groupList;
+    Group* localBooks;
+    Group* webSites;
     SearchMethod method;
     BookMode bookMode;
 
@@ -198,9 +200,6 @@ private:
     QSound *sound;
     SearchDirection optDirection;
     QTimer *timer;
-#if defined (Q_WS_X11)
-    QTimer *timerDock;
-#endif
     QStringList  clientText;
 
 #if defined (Q_WS_X11) || defined (Q_WS_WIN)

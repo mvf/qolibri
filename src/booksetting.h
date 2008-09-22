@@ -38,10 +38,19 @@ class BookSetting : public QDialog
 {
     Q_OBJECT
 public:
-    BookSetting(const QList<Group*> &grp, QWidget *parent);
+    BookSetting(Group *lbook, Group *wsite,
+                const QList<Group*> &grp, QWidget *parent);
     QList <Group*> groupList()
     {
         return groupList_;
+    }
+    Group* localBooks()
+    {
+        return localBooks_;
+    }
+    Group* webSites()
+    {
+        return webSites_;
     }
 
 private slots:
@@ -51,8 +60,12 @@ private slots:
         findStop = true;
     }
 
+    void changeTab(int index);
     void searchPathChanged(const QString &str);
+    void webNameChanged(const QString &str);
+    void webSiteChanged(const QString &str);
     void addBook();
+    void addWebSite();
     void changeGroupSelection(int row);
     void changeBookSelection(int row);
     void setPath();
@@ -72,13 +85,18 @@ private:
 
     bool findStop;
     QList <Group*> groupList_;
+    Group* localBooks_;
+    Group* webSites_;
     QLineEdit *searchPath;
+    QLineEdit *webNameEdit;
+    QLineEdit *webSiteEdit;
     QLabel *findPaths;
 
     QPushButton *pathButton;
     QPushButton *searchButton;
     QPushButton *cancelButton;
     QPushButton *selButton;
+    QPushButton *webAddButton;
 
     BookWidget *allDicWidget;
     BookWidget *dicWidget;

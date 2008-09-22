@@ -11,7 +11,7 @@
     <message>
         <location filename="booksetting.cpp" line="46"/>
         <source>Search directory</source>
-        <translation>検索するディレクトリ</translation>
+        <translation>検索ディレクトリ</translation>
     </message>
     <message>
         <location filename="booksetting.cpp" line="60"/>

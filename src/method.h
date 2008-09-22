@@ -20,11 +20,11 @@
 #ifndef METHOD_H
 #define METHOD_H
 
-enum SearchDirection { ExactWordSearch = 0, ForwardSearch,
-                       BackwardSearch, KeywordSearch, CrossSearch,
-                       FullTextSearch, WholeRead, MenuRead,
-                       BookInfo, GoogleSearch, WikipediaSearch,
-                       Option1Search, Option2Search };
+enum SearchDirection { ExactWordSearch = 0, ForwardSearch, BackwardSearch,
+                       KeywordSearch, CrossSearch, FullTextSearch,
+                       WholeRead, MenuRead, BookInfo,
+                       GoogleSearch, WikipediaSearch, Option1Search,
+                       Option2Search };
 
 enum NarrowingLogic { LogicAND = 0, LogicOR };
 
