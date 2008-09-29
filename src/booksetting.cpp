@@ -28,6 +28,124 @@
 #endif
 #include "ebcore.h"
 
+WebSetting::WebSetting(QWidget *parent, const QString &name, const QString &url)
+    : QDialog(parent)
+{
+
+   QHBoxLayout *h1 = new QHBoxLayout; 
+   {
+       h1->addWidget(new QLabel(tr("Name :")));
+       nameEdit_ = new QLineEdit(name, this);
+       connect(nameEdit_, SIGNAL(textChanged(const QString&)),
+               this, SLOT(setOkButton(const QString&)));
+       connect(nameEdit_, SIGNAL(textEdited(const QString&)),
+               this, SLOT(setOkButton(const QString&)));
+       h1->addWidget(nameEdit_);
+   }
+   QHBoxLayout *h2 = new QHBoxLayout; 
+   {
+       h2->addWidget(new QLabel(tr("URL :")));
+       urlEdit_ = new QLineEdit(url, this);
+       connect(urlEdit_, SIGNAL(textChanged(const QString&)),
+               this, SLOT(setOkButton(const QString&)));
+       connect(urlEdit_, SIGNAL(textEdited(const QString&)),
+               this, SLOT(setOkButton(const QString&)));
+       h2->addWidget(urlEdit_);
+   }
+
+   buttonBox_ = new QDialogButtonBox(QDialogButtonBox::Ok |
+                                     QDialogButtonBox::Cancel);
+   connect(buttonBox_, SIGNAL(accepted()), this, SLOT(accept()));
+   connect(buttonBox_, SIGNAL(rejected()), this, SLOT(reject()));
+
+   QVBoxLayout *v = new QVBoxLayout;
+   v->addWidget(new QLabel(tr("Web Site Setting")));
+   v->addLayout(h1);
+   v->addLayout(h2);
+   v->addWidget(buttonBox_);
+   setLayout(v);
+   setFixedWidth(500);
+}
+
+void WebSetting::setOkButton(const QString&)
+{
+
+    QPushButton *b = buttonBox_->button(QDialogButtonBox::Ok);
+
+    if (nameEdit_->text().isEmpty() || urlEdit_->text().isEmpty()) {
+        b->setEnabled(false);
+    } else {
+        b->setEnabled(true);
+    }
+
+}
+
+EpwingFileSetting::EpwingFileSetting(QWidget *parent, const QString &name,
+                                     const QString &path, int book_no)
+    : QDialog(parent)
+{
+
+   QHBoxLayout *h1 = new QHBoxLayout; 
+   {
+       h1->addWidget(new QLabel(tr("Name :")));
+       nameEdit_ = new QLineEdit(name, this);
+       connect(nameEdit_, SIGNAL(textChanged(const QString&)),
+               this, SLOT(setOkButton(const QString&)));
+       connect(nameEdit_, SIGNAL(textEdited(const QString&)),
+               this, SLOT(setOkButton(const QString&)));
+       h1->addWidget(nameEdit_);
+   }
+   QHBoxLayout *h2 = new QHBoxLayout; 
+   {
+       h2->addWidget(new QLabel(tr("Path :")));
+       pathEdit_ = new QLineEdit(path, this);
+       connect(pathEdit_, SIGNAL(textChanged(const QString&)),
+               this, SLOT(setOkButton(const QString&)));
+       connect(pathEdit_, SIGNAL(textEdited(const QString&)),
+               this, SLOT(setOkButton(const QString&)));
+       h2->addWidget(pathEdit_);
+   }
+   QHBoxLayout *h3 = new QHBoxLayout; 
+   {
+       h3->addWidget(new QLabel(tr("Book No :")));
+       bookNoEdit_ = new QLineEdit(QString::number(book_no), this);
+       bookNoEdit_->setInputMask("9");
+       connect(bookNoEdit_, SIGNAL(textChanged(const QString&)),
+               this, SLOT(setOkButton(const QString&)));
+       connect(bookNoEdit_, SIGNAL(textEdited(const QString&)),
+               this, SLOT(setOkButton(const QString&)));
+       h3->addWidget(bookNoEdit_);
+   }
+
+
+   buttonBox_ = new QDialogButtonBox(QDialogButtonBox::Ok |
+                                     QDialogButtonBox::Cancel);
+   connect(buttonBox_, SIGNAL(accepted()), this, SLOT(accept()));
+   connect(buttonBox_, SIGNAL(rejected()), this, SLOT(reject()));
+
+   QVBoxLayout *v = new QVBoxLayout;
+   v->addWidget(new QLabel(tr("Epwing File Setting")));
+   v->addLayout(h1);
+   v->addLayout(h2);
+   v->addLayout(h3);
+   v->addWidget(buttonBox_);
+   setLayout(v);
+   setFixedWidth(500);
+}
+
+void EpwingFileSetting::setOkButton(const QString&)
+{
+
+    QPushButton *b = buttonBox_->button(QDialogButtonBox::Ok);
+
+    if (nameEdit_->text().isEmpty() || pathEdit_->text().isEmpty() ||
+        bookNoEdit_->text().isEmpty()) {
+        b->setEnabled(false);
+    } else {
+        b->setEnabled(true);
+    }
+
+}
 BookSetting::BookSetting(Group *lbook, Group *wsite,
                          const QList<Group*> &grp, QWidget *parent)
     : QDialog(parent), findStop(false) 
@@ -140,6 +258,8 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
                                       QAbstractItemView::ExtendedSelection);
     connect(allDicWidget, SIGNAL(rowChanged(int)),
             this, SLOT(changeBookSelection(int)));
+    connect(allDicWidget->editButton(), SIGNAL(clicked()),
+            this, SLOT(editItem()));
 
     groupWidget = new GroupWidget(&groupList_, this);
     connect(groupWidget, SIGNAL(rowChanged(int)),
@@ -317,6 +437,26 @@ void BookSetting::changeGroupSelection(int row)
     } else {
         dicWidget->initBook(NULL);
     }
+}
+
+void BookSetting::editItem()
+{
+    Book *b = (Book *)allDicWidget->currentItem();
+    if (b->bookType() == BookEpwingLocal) {
+        EpwingFileSetting dlg(this, b->name(), b->path(), b->bookNo());
+        if (dlg.exec() == QDialog::Accepted){
+            b->setName(dlg.name());
+            b->setPath(dlg.path());
+            b->setBookNo(dlg.bookNo());
+        }
+    } else if (b->bookType() == BookWeb) {
+        WebSetting dlg(this, b->name(), b->path());
+        if (dlg.exec() == QDialog::Accepted){
+            b->setName(dlg.name());
+            b->setPath(dlg.url());
+        }
+    }
+
 }
 
 void BookSetting::setPath()

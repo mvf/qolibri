@@ -23,6 +23,7 @@
 #include <QDialog>
 #include <QLabel>
 #include <QEventLoop>
+#include <QLineEdit>
 
 class QLineEdit;
 class QPushButton;
@@ -33,6 +34,52 @@ class Book;
 class Group;
 class BookWidget;
 class GroupWidget;
+
+class WebSetting : public QDialog
+{
+    Q_OBJECT
+public:
+    WebSetting(QWidget *parent, const QString &name, const QString &url);
+
+public:
+
+    QString name() { return nameEdit_->text(); }
+    QString url() { return urlEdit_->text(); }
+
+private slots:
+    void setOkButton(const QString &text);
+
+private:
+    QLineEdit *nameEdit_;
+    QLineEdit *urlEdit_;
+    QDialogButtonBox *buttonBox_;
+
+};
+
+class EpwingFileSetting : public QDialog
+{
+    Q_OBJECT
+public:
+    EpwingFileSetting(QWidget *parent, const QString &name, const QString &path,
+                      int book_no);
+
+public:
+
+    QString name() { return nameEdit_->text(); }
+    QString path() { return pathEdit_->text(); }
+    int bookNo() { return bookNoEdit_->text().toInt(); }
+
+private slots:
+    void setOkButton(const QString &text);
+
+private:
+    QLineEdit *nameEdit_;
+    QLineEdit *pathEdit_;
+    QLineEdit *bookNoEdit_;
+    QDialogButtonBox *buttonBox_;
+
+};
+
 
 class BookSetting : public QDialog
 {
@@ -64,6 +111,7 @@ private slots:
     void searchPathChanged(const QString &str);
     void webNameChanged(const QString &str);
     void webSiteChanged(const QString &str);
+    void editItem();
     void addBook();
     void addWebSite();
     void changeGroupSelection(int row);

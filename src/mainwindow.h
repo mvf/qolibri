@@ -70,8 +70,10 @@ private slots:
     void viewSearch();
     void viewSearch(const QString &str, const SearchMethod &method);
     void viewSearch(SearchDirection d, const QString &str);
+    void viewWeb(const QString &name, const QString &url);
     void doSearch();                            // by Menu
     void showStatus(const QString &str = QString());
+    void showTabInfo(int index);
     void pasteMethod(const QString &str, const SearchMethod &method);
     void pasteSearchText(const QString&);
     void setBooks();

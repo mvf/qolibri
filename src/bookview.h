@@ -29,6 +29,7 @@
 #include <QWebView>
 #include <eb/eb.h>
 
+#include "book.h"
 #include "method.h"
 #include "ebhook.h"
 
@@ -325,16 +326,31 @@ class WebPage : public QWebView
 {
     Q_OBJECT
 public:
-    WebPage(QWidget *parent, const QString &url, const QStringList &list); 
+    WebPage(QWidget *parent, const QString &url, const SearchMethod &meth,
+            const QStringList &list); 
+    WebPage(QWidget *parent, const QString &url); 
     void setTabIndex(int index) { tabIndex_ = index; }
     void setTabBar(QTabBar *bar) { tabBar_ = bar; }
+    SearchMethod method() { return method_; }
 
 private slots:
     void progressStart();
     void progress(int pcount);
     void progressFinished(bool ok);
+    void openLink(const QUrl &url);
+
+signals:
+    void linkRequested(const QString& prog);
 
 private:
+    QByteArray encString(const QString &url);
+    QString setSearchString(const QString &url, const QByteArray &enc, 
+                            const QStringList &slist);
+    QString directionString(const QString &url);
+    QString setDirectionString(const QString &url, const QString &dstr,
+                               SearchDirection &direc);
+    
+    SearchMethod method_;
     int progressCount_;
     int tabIndex_;
     QTabBar *tabBar_;
@@ -347,10 +363,11 @@ public:
     BookView(QWidget *parent);
     RET_SEARCH newPage(const QStringList &slist,
                        const SearchMethod &method, bool newTab = true);
-    inline PageWidget* currentPage() const
-    {
-        return (PageWidget *)currentWidget();
-    }
+    RET_SEARCH newWebPage(const QString &name, const QString &url);
+    BookType pageType(int index);
+    BookType currentPageType();
+    SearchMethod pageMethod(int index);
+    SearchMethod currentPageMethod();
 
 private:
     void closeTab1(int index);
@@ -358,6 +375,7 @@ private:
 
 signals:
     void fontChanged(const QFont &font);
+    void statusRequested(const QString &str);
     void tabChanged(int tab);
 
 private slots:

@@ -39,10 +39,10 @@ BookWidget::BookWidget(Group *grp, QWidget *parent)
     connect(downButton, SIGNAL(clicked()), this, SLOT(downItem()));
     h->addWidget(upButton);
     h->addWidget(downButton);
-    editButton = new QPushButton(this);
-    editButton->setIcon(QIcon(":images/edit.png"));
-    h->addWidget(editButton);
-    connect(editButton, SIGNAL(clicked()), this, SLOT(editItem()));
+    editButton_ = new QPushButton(this);
+    editButton_->setIcon(QIcon(":images/edit.png"));
+    h->addWidget(editButton_);
+    //connect(editButton_, SIGNAL(clicked()), this, SLOT(editItem()));
     delButton = new QPushButton(this);
     delButton->setIcon(QIcon(":images/delete.png"));
     h->addWidget(delButton);
@@ -141,7 +141,7 @@ void BookWidget::resetButtons()
     delButton->setEnabled(row >= 0);
     viewButton->setEnabled(num == 1 && row >= 0);
     fontButton->setEnabled(num == 1 && row >= 0);
-    editButton->setEnabled(num == 1 && row >= 0);
+    editButton_->setEnabled(num == 1 && row >= 0);
     emit rowChanged(row);
 }
 

@@ -22,6 +22,7 @@
 #include "bookview.h"
 #include "ebook.h"
 #include "configure.h"
+#include "textcodec.h"
 
 static bool stopFlag = false;
 static QWidget *mainWin = 0;
@@ -513,6 +514,7 @@ void PageItems::expand(int level)
 PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
     : QSplitter(parent), method_(method)
 {
+    setObjectName("dicpage");
     bookTree = new QTreeWidget();
     bookTree->header()->hide();
     bookTree->setColumnCount(2);
@@ -1355,9 +1357,13 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
     return;
 }
 
-WebPage::WebPage(QWidget *parent, const QString &url, const QStringList &slist)
-    : QWebView(parent)
+WebPage::WebPage(QWidget *parent, const QString &url,
+                 const SearchMethod &meth,
+                 const QStringList &slist)
+    : QWebView(parent), method_(meth)
 {
+    setObjectName("webpage");
+    page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     tabBar_ = 0;
     QString str = url;
     connect(this, SIGNAL(loadStarted()),
@@ -1366,17 +1372,167 @@ WebPage::WebPage(QWidget *parent, const QString &url, const QStringList &slist)
             this, SLOT(progressFinished(bool)));
     connect(this, SIGNAL(loadProgress(int)),
             this, SLOT(progress(int)));
-    foreach(QString s, slist) {
-        str += s + " ";
+    connect(this, SIGNAL(linkClicked(const QUrl&)),
+            this, SLOT(openLink(const QUrl&)));
+    connect(this, SIGNAL(linkRequested(QString)),
+            mainWin, SLOT(execProcess(QString)));
+
+    QByteArray enc = encString(url);
+    QString ustr = setSearchString(url, enc, slist);
+    QString sdir = directionString(url);
+    if (!sdir.isEmpty()) {
+        ustr = setDirectionString(ustr, sdir, method_.direction);
     }
+
+    qDebug() << ustr;
                      
     QWebSettings *ws = settings();
     ws->setAttribute(QWebSettings::JavascriptEnabled, true);
     ws->setAttribute(QWebSettings::JavaEnabled, true);
     ws->setAttribute(QWebSettings::PluginsEnabled, true);
-    load(QUrl(str));
+    if (enc.isEmpty()) {
+        load(QUrl::fromEncoded(ustr.toAscii()));
+    } else {
+        load(QUrl::fromEncoded(QTextCodec::codecForName(enc)->fromUnicode(ustr)));
+    }
+
     show();
 }
+
+WebPage::WebPage(QWidget *parent, const QString &url)
+    : QWebView(parent)
+{
+    setObjectName("webpage");
+    page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    tabBar_ = 0;
+    connect(this, SIGNAL(loadStarted()),
+            this, SLOT(progressStart()));
+    connect(this, SIGNAL(loadFinished(bool)),
+            this, SLOT(progressFinished(bool)));
+    connect(this, SIGNAL(loadProgress(int)),
+            this, SLOT(progress(int)));
+    connect(this, SIGNAL(linkClicked(const QUrl&)),
+            this, SLOT(openLink(const QUrl&)));
+    connect(this, SIGNAL(linkRequested(QString)),
+            mainWin, SLOT(execProcess(QString)));
+
+    qDebug() << url;
+
+    QWebSettings *ws = settings();
+    ws->setAttribute(QWebSettings::JavascriptEnabled, true);
+    ws->setAttribute(QWebSettings::JavaEnabled, true);
+    ws->setAttribute(QWebSettings::PluginsEnabled, true);
+
+    load(url);
+    /*
+    if (enc.isEmpty()) {
+        load(QUrl::fromEncoded(ustr.toAscii()));
+    } else {
+        load(QUrl::fromEncoded(QTextCodec::codecForName(enc)->fromUnicode(ustr)));
+    }
+    */
+
+    show();
+}
+
+QByteArray WebPage::encString(const QString &url)
+{
+    if (!url.contains(QRegExp("\\{.*\\}"))) {
+        return QByteArray();
+    } else {
+        QString w1 = url.mid(url.indexOf('{')+1);
+        QString w2 = w1.left(w1.indexOf('}'));
+        w2.trimmed();
+        return w2.toAscii();
+    }
+}
+
+QString WebPage::setSearchString(const QString &url, const QByteArray &enc,
+                                 const QStringList &slist)
+{
+    QString str;
+    for (int i=0; i<slist.count(); i++) {
+        str += slist[i];
+        if (i < (slist.count() - 1)){
+            str += " ";
+        }
+    }
+    QByteArray bstr;
+    if (enc.isEmpty()) {
+        bstr = str.toUtf8();
+    } else {
+        bstr = QTextCodec::codecForName(enc)->fromUnicode(str);
+    }
+    QString fstr("");
+    foreach(const char c, bstr) {
+        fstr += "%" + QString::number((ushort)((uchar)c), 16).toUpper();
+    }
+    QString ustr = url;
+    QRegExp rx("\\{.*\\}");
+    if (!url.contains(rx)) {
+        ustr += fstr;
+    } else {
+        ustr.replace(rx, fstr);
+    }
+    return ustr;
+}
+QString WebPage::directionString(const QString &url)
+{
+    if (!url.contains(QRegExp("\\[.*\\]"))) {
+        return QString();
+    } else {
+        QString w1 = url.mid(url.indexOf('[')+1);
+        QString w2 = w1.left(w1.indexOf(']'));
+        w2.trimmed();
+        return w2;
+    }
+}
+QString WebPage::setDirectionString(const QString &url, const QString &dstr,
+                                    SearchDirection &direc)
+{
+
+    QChar cdirec;
+    switch(direc) {
+        case ExactWordSearch :
+            cdirec = 'E'; break;
+        case ForwardSearch :
+            cdirec = 'F'; break;
+        case BackwardSearch :
+            cdirec = 'B'; break;
+        case FullTextSearch :
+            cdirec = 'W'; break;
+        default:
+            cdirec = 'E';
+    }
+
+    QString udirec;
+
+    bool first = true;
+    foreach(QString s, dstr.split(',')) {
+
+        // check format
+        if (s.indexOf(':') != 1) {
+            qWarning() << "Url Search Type Error" << dstr;
+            return url;
+        }
+
+        if (first || s[0] == cdirec) {
+            first = false;
+            udirec = s.mid(2);
+            break;
+        }
+
+    }
+    
+    if (udirec.isEmpty()) {
+        qWarning() << "Url Search Type Error" << dstr;
+        return url;
+    }
+
+    return QString(url).replace(QRegExp("\\[.*\\]"), udirec);
+
+}
+
 
 void WebPage::progressStart()
 {
@@ -1397,9 +1553,20 @@ void WebPage::progress(int)
     }
 }
 
-void WebPage::progressFinished(bool bOk)
+void WebPage::progressFinished(bool)
 {
     if (tabBar_) tabBar_->setTabIcon(tabIndex_, QIcon(":/images/web1.png"));
+}
+
+void WebPage::openLink(const QUrl &url)
+{
+    QUrl u = QUrl::fromEncoded(url.toEncoded(), QUrl::TolerantMode);
+    qDebug() << url.toEncoded();
+    qDebug() << u.toString();
+
+    //emit linkRequested(CONF->browserProcess + ' ' + u.toString());
+    emit linkRequested(CONF->browserProcess + ' ' +
+                       QString::fromAscii(url.toEncoded()));
 }
 
 BookView::BookView(QWidget *parent)
@@ -1424,10 +1591,14 @@ BookView::BookView(QWidget *parent)
     connect(close_button, SIGNAL(clicked()), this, SLOT(closeTab()));
     connect(close_all_button, SIGNAL(clicked()), this, SLOT(closeAllTab()));
     connect(this, SIGNAL(tabChanged(int)),
-            parent, SLOT(changeViewTabCount(int)));
+            mainWin, SLOT(changeViewTabCount(int)));
+    connect(this, SIGNAL(currentChanged(int)),
+            mainWin, SLOT(showTabInfo(int)));
     tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tabBar(), SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(showTabBarMenu(const QPoint&)));
+    connect(this, SIGNAL(statusRequested(QString)),
+            mainWin, SLOT(showStatus(QString)));
 }
 
 
@@ -1480,10 +1651,11 @@ RET_SEARCH BookView::newPage(const QStringList &list,
     }
 
     foreach(Book *book, method.group->bookList()) {
-        if (book->bookType() == BookWeb) {
-            WebPage *wpage = new WebPage(this, book->path(), list);
+        if (book->bookType() == BookWeb &&
+                book->checkState() == Qt::Checked) {
+            WebPage *wpage = new WebPage(this, book->path(), method, list);
             QString vtitle = QString("%1(%2)").arg(list[0]).arg(book->name());
-            int idx = addTab(wpage, QIcon(":/images/web1.png"), vtitle);
+            int idx = addTab(wpage, QIcon(":/images/web2.png"), vtitle);
             wpage->setTabIndex(idx);
             wpage->setTabBar(tabBar());
             if (!focus_page) {
@@ -1496,6 +1668,18 @@ RET_SEARCH BookView::newPage(const QStringList &list,
     }
 
     return ret;
+}
+
+RET_SEARCH BookView::newWebPage(const QString &name, const QString &url)
+{
+    WebPage *wpage = new WebPage(this, url);
+    int idx = addTab(wpage, QIcon(":/images/web2.png"), name);
+    wpage->setTabIndex(idx);
+    wpage->setTabBar(tabBar());
+    setCurrentWidget(wpage);
+    emit tabChanged(count());
+
+    return NORMAL;
 }
 
 void BookView::showTabBarMenu(const QPoint& pnt)
@@ -1562,7 +1746,6 @@ void BookView::closeTab1(int index)
 void BookView::closeAllTab()
 {
     QTabBar *bar = tabBar();
-    int tabnum = bar->count();
     for (int i=bar->count()-1;  i >= 0; i--) {
         closeTab1(i);
     }
@@ -1582,6 +1765,40 @@ void BookView::closeTab()
     closeTab1(currentIndex());
 
     emit tabChanged(count());
+}
+BookType BookView::pageType(int index)
+{
+    QWidget *w = widget(index);
+    if (w->objectName() == "dicpage"){
+        return BookEpwingLocal;
+    } else if (w->objectName() == "webpage") {
+        return BookWeb;
+    } else {
+        return BookWeb;
+    }
+
+}
+BookType BookView::currentPageType()
+{
+    return pageType(currentIndex());
+}
+
+SearchMethod BookView::pageMethod(int index)
+{
+    QWidget *w = widget(index);
+    BookType t = pageType(index);
+    if (t == BookEpwingLocal) {
+        return ((PageWidget*)w)->method();
+    } else if (t == BookWeb) {
+        return ((WebPage*)w)->method();
+    } else {
+        return ((WebPage*)w)->method();
+    }
+}
+
+SearchMethod BookView::currentPageMethod()
+{
+    return pageMethod(currentIndex());
 }
 
 void BookView::stopSearch()

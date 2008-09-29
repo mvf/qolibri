@@ -64,8 +64,9 @@ public:
     void hideDelButton() { delButton->hide(); }
     void hideViewButton() { viewButton->hide(); }
     void hideFontButton() { fontButton->hide(); }
-    void hideEditButton() { editButton->hide(); }
+    void hideEditButton() { editButton_->hide(); }
     void hideGroupName() { groupNameLabel->hide(); }
+    QPushButton *editButton() { return editButton_; }
 
 signals:
     void rowChanged(int row);
@@ -82,7 +83,7 @@ private slots:
     }
     void editItem(QListWidgetItem* item)
     {
-        if (editButton->isVisible()) {
+        if (editButton_->isVisible()) {
             bookListWidget_->openPersistentEditor(item);
             bookListWidget_->editItem(item);
         }
@@ -121,7 +122,7 @@ private:
     QPushButton *delButton;
     QPushButton *viewButton;
     QPushButton *fontButton;
-    QPushButton *editButton;
+    QPushButton *editButton_;
 
     Group *group;
 };

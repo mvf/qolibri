@@ -35,6 +35,7 @@ class SearchItem : public QListWidgetItem
 {
 public:
     SearchItem(const QString &str, const SearchMethod &method);
+    SearchItem(const QString &name, const QString &url);
     inline QString searchStr() const
     {
         return searchStr_;
@@ -43,9 +44,14 @@ public:
     {
         return method_;
     }
+    inline QString url() const
+    {
+        return url_;
+    }
 
 protected:
     QString searchStr_;
+    QString url_;
     SearchMethod method_;
 };
 
@@ -59,6 +65,7 @@ public:
 
 signals:
     void searchRequested(const QString &name, const SearchMethod &method );
+    void webRequested(const QString &name, const QString &url );
     void pasteRequested(const QString &name, const SearchMethod &method );
 
 private slots:
@@ -120,6 +127,7 @@ class MarkTab : public GTab
 public:
     MarkTab(QWidget *parent) : GTab(parent) {}
     void addMark(const QString &str, const SearchMethod &method);
+    void addMark(const QString &str, const QString &url);
 
 };
 
@@ -192,6 +200,10 @@ public:
     inline void addMark(const QString &str, const SearchMethod &method)
     {
         markTab->addMark(str, method);
+    }
+    inline void addMark(const QString &str, const QString &url)
+    {
+        markTab->addMark(str, url);
     }
     inline void addHistory(const QString &str, const SearchMethod &method,
                            int max_hist)

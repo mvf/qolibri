@@ -58,6 +58,14 @@ public:
     {
         setText(name);
     }
+    inline void setPath(const QString pth)
+    {
+        path_ = pth;
+    }
+    inline void setBookNo(int bno)
+    {
+        bookNo_ = bno;
+    }
     inline QString path() const
     {
         return path_;

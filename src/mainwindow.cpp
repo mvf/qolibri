@@ -454,10 +454,16 @@ void MainWindow::readSettings()
     for (int i = 0; i < mcnt; i++) {
         mark.setArrayIndex(i);
         QString str = mark.value("name").toString();
-        SearchMethod method = readMethodSetting(mark);
-        if (!method.group || !method.book) continue;
+        QString u = mark.value("url").toString();
+        //qDebug() << str << u;
+        if (u.isEmpty()) {
+            SearchMethod method = readMethodSetting(mark);
+            if (!method.group || !method.book) continue;
+            groupDock->addMark(str, method);
+        } else {
+            groupDock->addMark(str, u);
+        }
 
-        groupDock->addMark(str, method);
     }
     mark.endArray();
 }
@@ -531,7 +537,11 @@ void MainWindow::writeSettings()
         mark.setArrayIndex(i);
         SearchItem *item = (SearchItem *)mlist->item(mlist->count() - i - 1);
         mark.setValue("name", item->searchStr());
-        writeMethodSetting(item->method(), &mark);
+        if (item->url().isEmpty()) {
+            writeMethodSetting(item->method(), &mark);
+        } else {
+            mark.setValue("url", item->url());
+        }
     }
     mark.endArray();
 }
@@ -702,6 +712,24 @@ void MainWindow::showStatus(const QString &str)
     processLabel->setText(str + msg);
 }
 
+void MainWindow::showTabInfo(int index)
+{
+    if (index < 0) {
+        return;
+    }
+    if (bookView->pageType(index) == BookEpwingLocal) {
+        SearchMethod m = bookView->pageMethod(index);
+        QString s = bookView->tabText(index);
+        s.replace("&&", "&");
+        SearchItem i(s, m);
+        showStatus(i.text());
+    } else {
+        QString u =
+                ((WebPage*)(bookView->widget(index)))->url().toString();
+        showStatus(u);
+    }
+
+}
 
 void MainWindow::toggleDock(bool check)
 {
@@ -903,11 +931,23 @@ void MainWindow::viewInfo(Book *book)
 {
     //qDebug() << "MainWindow::viewInfo(Book *dic) Name=" << book->name();
     //bookView->newInfoPage(book, toggleTabsAct->isChecked());
-    SearchMethod m = method;
-
-    m.book = book;
-    m.direction = BookInfo;
-    viewSearch(m.book->name(), m);
+    if (book->bookType() == BookEpwingLocal) {
+        SearchMethod m = method;
+        m.book = book;
+        m.direction = BookInfo;
+        viewSearch(m.book->name(), m);
+    } else {
+        QString u = book->path();
+        int index = u.indexOf('?');
+        if (index < 0) {
+            index = u.indexOf('{');
+            if (index < 0) {
+                index = u.length();
+            }
+        }
+        QString s = u.left(index);
+        viewWeb(book->name(), s);
+    }
 }
 
 void MainWindow::setBookFont(Book *book)
@@ -996,6 +1036,16 @@ void MainWindow::setBooks()
         showStatus(msg);
     } else {
         showStatus("Group Setting Cancelled");
+    }
+}
+
+void MainWindow::viewWeb(const QString &name, const QString &url)
+{
+    RET_SEARCH ret = bookView->newWebPage(name, url);
+    if (ret != NORMAL) {
+        showStatus("Error :" + url);
+    } else {
+        showStatus(url);
     }
 }
 
@@ -1267,10 +1317,16 @@ void MainWindow::stopSound()
 
 void MainWindow::addMark()
 {
-    SearchMethod m = bookView->currentPage()->method();
-    QString sstr = bookView->tabText(bookView->currentIndex());
-    sstr.replace("&&", "&");
-    groupDock->addMark(sstr, m);
+    QString s = bookView->tabText(bookView->currentIndex());
+    if (bookView->currentPageType() == BookEpwingLocal) {
+        SearchMethod m = bookView->currentPageMethod();
+        s.replace("&&", "&");
+        groupDock->addMark(s, m);
+    } else {
+        QString u =
+                ((WebPage*)(bookView->currentWidget()))->url().toString();
+        groupDock->addMark(s, u);
+    }
 
     toggleDockAct->setChecked(true);
     groupDock->show();

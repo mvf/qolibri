@@ -69,6 +69,11 @@ SearchItem::SearchItem(const QString &str, const SearchMethod &method)
         setText(text);
     }
 }
+SearchItem::SearchItem(const QString &name, const QString &url)
+    : QListWidgetItem(), searchStr_(name), url_(url)
+{
+    setText(name);
+}
 
 GTab::GTab(QWidget *parent)
     : QWidget(parent)
@@ -108,6 +113,8 @@ GTab::GTab(QWidget *parent)
     QObject *mainw = parent->parentWidget();
     connect(this, SIGNAL(searchRequested(QString, SearchMethod)),
             mainw, SLOT(viewSearch(QString, SearchMethod)));
+    connect(this, SIGNAL(webRequested(QString, QString)),
+            mainw, SLOT(viewWeb(QString, QString)));
     connect(this, SIGNAL(pasteRequested(QString, SearchMethod)),
             mainw, SLOT(pasteMethod(QString, SearchMethod)));
 
@@ -119,8 +126,10 @@ void GTab::changeGroupList(QList<Group*> *gList)
         bool flg = false;
         foreach(Group * g, (*gList)) {
             SearchItem *item = (SearchItem*)listWidget_->item(i - 1);
-
-            if (item->method().group->name() == g->name()) {
+            if (!item->url().isEmpty()) {
+                flg = true;
+                break;
+            } else if (item->method().group->name() == g->name()) {
                 flg = true;
                 break;
             }
@@ -173,7 +182,11 @@ void GTab::delAll()
 void GTab::viewCurrent()
 {
     SearchItem *item = (SearchItem*)listWidget_->currentItem();
-    emit searchRequested(item->searchStr(), item->method());
+    if (!item->url().isEmpty()) {
+        emit webRequested(item->searchStr(), item->url());
+    } else {
+        emit searchRequested(item->searchStr(), item->method());
+    }
 }
 
 void GTab::pasteCurrent()
@@ -363,6 +376,12 @@ void MarkTab::addMark(const QString &str, const SearchMethod &method)
 
     listWidget_->insertItem(0, new SearchItem(str, method));
 }
+void MarkTab::addMark(const QString &str, const QString &url)
+{
+
+    listWidget_->insertItem(0, new SearchItem(str, url));
+}
+
 
 void HistoryTab::addHistory(const QString &str, const SearchMethod &method,
                             int max_hist)
