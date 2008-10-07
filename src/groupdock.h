@@ -223,6 +223,17 @@ protected:
 
 signals:
     void closed();
+    // from Gtab
+    void searchRequested(const QString &name, const SearchMethod &method );
+    void webRequested(const QString &name, const QString &url );
+    void pasteRequested(const QString &name, const SearchMethod &method );
+    // from GroupTab
+    void groupChanged(int grp);
+    void bookChanged(int index);
+    void bookViewRequested(Book *book);
+    void fontViewRequested(Book *book);
+    void menuRequested();
+    void fullRequested();
 
 private:
 #if !defined (Q_WS_MAC)

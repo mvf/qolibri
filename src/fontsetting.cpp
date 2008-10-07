@@ -43,7 +43,7 @@ FontSetting::FontSetting(Book *pbook, QWidget *parent)
         h->setStretchFactor(fontTreeWidget, 2);
         connect(fontTreeWidget,
                 SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem*)),
-                this, SLOT(selectFont(QTreeWidgetItem *, QTreeWidgetItem*)));
+                SLOT(selectFont(QTreeWidgetItem *, QTreeWidgetItem*)));
     }
     {
         QVBoxLayout *v = new QVBoxLayout();
@@ -65,7 +65,7 @@ FontSetting::FontSetting(Book *pbook, QWidget *parent)
         } {
             fontCodeEdit = new QLineEdit(this);
             connect(fontCodeEdit, SIGNAL(textChanged(QString)),
-                    this, SLOT(changeFontCode(QString)));
+                    SLOT(changeFontCode(QString)));
             v->addWidget(fontCodeEdit);
         } {
             fontLabel = new QLabel(" \n \n ");
@@ -93,10 +93,10 @@ FontSetting::FontSetting(Book *pbook, QWidget *parent)
     QPushButton *load = bBox->addButton(tr("Load from file..."),
                                         QDialogButtonBox::ActionRole);
     bBox->addButton(load, QDialogButtonBox::ActionRole);
-    connect(save, SIGNAL(clicked()), this, SLOT(save()));
-    connect(load, SIGNAL(clicked()), this, SLOT(load()));
-    connect(bBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(bBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(save, SIGNAL(clicked()), SLOT(save()));
+    connect(load, SIGNAL(clicked()), SLOT(load()));
+    connect(bBox, SIGNAL(accepted()), SLOT(accept()));
+    connect(bBox, SIGNAL(rejected()), SLOT(reject()));
     v->addLayout(h);
     v->addWidget(bBox);
     setLayout(v);

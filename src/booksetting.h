@@ -28,6 +28,7 @@
 class QLineEdit;
 class QPushButton;
 class QDialogButtonBox;
+class QTabWidget;
 class QKeyEvent;
 
 class Book;
@@ -112,6 +113,7 @@ private slots:
     void webNameChanged(const QString &str);
     void webSiteChanged(const QString &str);
     void editItem();
+    void addItem();
     void addBook();
     void addWebSite();
     void changeGroupSelection(int row);
@@ -139,6 +141,7 @@ private:
     QLineEdit *webNameEdit;
     QLineEdit *webSiteEdit;
     QLabel *findPaths;
+    QTabWidget *tab;
 
     QPushButton *pathButton;
     QPushButton *searchButton;

@@ -41,7 +41,7 @@ public:
             return;
         }
     
-        connect(this, SIGNAL(newConnection()), this, SLOT(getClientText()));
+        connect(this, SIGNAL(newConnection()), SLOT(getClientText()));
 
     }
 

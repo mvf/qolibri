@@ -74,7 +74,7 @@ ConfigSetting::ConfigSetting(QWidget *parent)
             waveProcEdit = new QLineEdit();
             QPushButton *b = new QPushButton(QIcon(":images/open.png"), 
                                              QString(), this);
-            connect(b, SIGNAL(clicked()), this, SLOT(setWaveProcess()));
+            connect(b, SIGNAL(clicked()), SLOT(setWaveProcess()));
             g->addWidget(waveProcEdit, 1, 1);
             g->addWidget(b, 1, 2);
         } {
@@ -82,7 +82,7 @@ ConfigSetting::ConfigSetting(QWidget *parent)
             mpegProcEdit = new QLineEdit();
             QPushButton *b = new QPushButton(QIcon(":images/open.png"), 
                                              QString(), this);
-            connect(b, SIGNAL(clicked()), this, SLOT(setMpegProcess()));
+            connect(b, SIGNAL(clicked()), SLOT(setMpegProcess()));
             g->addWidget(mpegProcEdit, 2, 1);
             g->addWidget(b, 2, 2);
         } {
@@ -90,7 +90,7 @@ ConfigSetting::ConfigSetting(QWidget *parent)
             browserProcEdit = new QLineEdit();
             QPushButton *b = new QPushButton(QIcon(":images/open.png"),
                                              QString(), this);
-            connect(b, SIGNAL(clicked()), this, SLOT(setBrowserProcess()));
+            connect(b, SIGNAL(clicked()), SLOT(setBrowserProcess()));
             g->addWidget(browserProcEdit, 3, 1);
             g->addWidget(b, 3, 2);
         } {
@@ -168,10 +168,10 @@ ConfigSetting::ConfigSetting(QWidget *parent)
         QPushButton *def = bBox->addButton(QDialogButtonBox::RestoreDefaults);
         QPushButton *res = bBox->addButton(tr("Reset"),
                                            QDialogButtonBox::ActionRole);
-        connect(bBox, SIGNAL(accepted()), this, SLOT(accept()));
-        connect(bBox, SIGNAL(rejected()), this, SLOT(reject()));
-        connect(def, SIGNAL(clicked()), this, SLOT(defaultReset()));
-        connect(res, SIGNAL(clicked()), this, SLOT(reset()));
+        connect(bBox, SIGNAL(accepted()), SLOT(accept()));
+        connect(bBox, SIGNAL(rejected()), SLOT(reject()));
+        connect(def, SIGNAL(clicked()), SLOT(defaultReset()));
+        connect(res, SIGNAL(clicked()), SLOT(reset()));
         v->addWidget(bBox);
     }
 

@@ -37,9 +37,9 @@ class QContextMenuEvent;
 class QUrl;
 class QFont;
 class QKeyEvent;
-#ifdef Q_WS_X11
+//#ifdef Q_WS_X11
 class QMouseEvent;
-#endif
+//#endif
 
 class Book;
 class Group;
@@ -82,9 +82,9 @@ public:
 protected:
     QList <Book*> bookList_;
     void contextMenuEvent(QContextMenuEvent* event);
-#ifdef Q_WS_X11
+//#ifdef Q_WS_X11
     void mouseReleaseEvent(QMouseEvent* event);
-#endif
+//#endif
 
 signals:
     void searchRequested(SearchDirection, const QString &);
@@ -140,6 +140,7 @@ public:
     QString browserText(Book *pbook, const EB_Position &pos);
 //private slots:
 //    void resizeNoScroll();
+    BookBrowser *bookBrowser() { return bookBrowser_; }
 
 protected:
     void showEvent(QShowEvent*);
@@ -147,9 +148,9 @@ protected:
 private:
     bool menuFlag;
 #ifdef FIXED_POPUP
-    BookBrowserPopup *bookBrowser;
+    BookBrowserPopup *bookBrowser_;
 #else
-    BookBrowser *bookBrowser;
+    BookBrowser *bookBrowser_;
 #endif
 };
 
@@ -225,6 +226,12 @@ public:
     bool getText(EBook *eb, int lndex, QString *head_l, QString *head_v,
                  QString *text);
     QString emphasize(const QString &str, const QString &word);
+    void zoomIn();
+    void zoomOut();
+    BookBrowser* bookBrowser()
+    {
+        return bookBrowser_;
+    }
 
     inline SearchMethod method() const
     {
@@ -239,8 +246,8 @@ protected:
     }
     RET_SEARCH checkLimit(int text_length);
 
+    BookBrowser *bookBrowser_;
     QTreeWidget *bookTree;
-    BookBrowser *bookBrowser;
     SearchMethod method_;
     int totalCount;
     int matchCount;
@@ -329,15 +336,25 @@ public:
     WebPage(QWidget *parent, const QString &url, const SearchMethod &meth,
             const QStringList &list); 
     WebPage(QWidget *parent, const QString &url); 
+    void zoomIn();
+    void zoomOut();
     void setTabIndex(int index) { tabIndex_ = index; }
     void setTabBar(QTabBar *bar) { tabBar_ = bar; }
     SearchMethod method() { return method_; }
+    bool loading() { return loading_; }
+
+protected:
+    void contextMenuEvent(QContextMenuEvent* event);
 
 private slots:
     void progressStart();
     void progress(int pcount);
     void progressFinished(bool ok);
     void openLink(const QUrl &url);
+    void openNewWin();
+    void copyHoveredLink(const QString &link, const QString &title,
+                         const QString &text);
+    void changeFont(const QFont &font);
 
 signals:
     void linkRequested(const QString& prog);
@@ -350,6 +367,8 @@ private:
     QString setDirectionString(const QString &url, const QString &dstr,
                                SearchDirection &direc);
     
+    QString hoveredLink;
+    bool loading_;
     SearchMethod method_;
     int progressCount_;
     int tabIndex_;
@@ -361,22 +380,35 @@ class BookView : public QTabWidget
     Q_OBJECT
 public:
     BookView(QWidget *parent);
-    RET_SEARCH newPage(const QStringList &slist,
+    RET_SEARCH newPage(QWidget *parent, const QStringList &slist,
                        const SearchMethod &method, bool newTab = true);
     RET_SEARCH newWebPage(const QString &name, const QString &url);
     BookType pageType(int index);
     BookType currentPageType();
     SearchMethod pageMethod(int index);
     SearchMethod currentPageMethod();
+    void showTabBar(int new_tab);
+    QWidget* pageWidget(int index);
+    QWidget* currentPageWidget();
 
 private:
     void closeTab1(int index);
+    bool checkLoaded();
+    void stopAllLoading();
 
 
 signals:
-    void fontChanged(const QFont &font);
-    void statusRequested(const QString &str);
-    void tabChanged(int tab);
+    void searchRequested(SearchDirection, const QString&);
+    void pasteRequested(const QString&);
+    void processRequested(const QString&);
+    void soundRequested(const QString&);
+    void selectionRequested(const QString&);
+    //void linkRequested(const QString& prog);
+
+    void fontChanged(const QFont&);
+    void statusRequested(const QString&);
+    void tabChanged(int tab_count);
+    void allWebLoaded();
 
 private slots:
     void showTabBarMenu(const QPoint &pnt);
@@ -385,8 +417,8 @@ private slots:
     void stopSearch();
     void zoomIn();
     void zoomOut();
+    void viewTabChanged(int index);
+    void webViewFinished(bool);
 };
 
 #endif
-
-

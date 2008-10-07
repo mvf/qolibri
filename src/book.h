@@ -22,7 +22,7 @@
 
 #include <QListWidgetItem>
 
-enum BookType { BookEpwingLocal=0, BookWeb };
+enum BookType { BookLocal=0, BookWeb, BookNet, BookUnset };
 
 class Book : public QListWidgetItem
 {
@@ -38,7 +38,7 @@ public:
         } else {
             setCheckState(Qt::Unchecked);
         }
-        if (btype != BookEpwingLocal) {
+        if (btype == BookWeb) {
             setForeground(QColor("#6666ff"));
         }
         loadAlterFont();

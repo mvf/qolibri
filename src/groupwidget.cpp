@@ -30,12 +30,11 @@ GroupWidget::GroupWidget(QList <Group*> *group, QWidget *parent)
     {
         QLabel *l = new QLabel(tr("Group: "));
         addGroupEdit = new QLineEdit(this);
-        connect(addGroupEdit, SIGNAL(editingFinished()),
-                this, SLOT(createGroup()));
+        connect(addGroupEdit, SIGNAL(editingFinished()), SLOT(createGroup()));
         addButton = new QPushButton(tr("Create"), this);
         connect(addGroupEdit, SIGNAL(textChanged(QString)),
-                this, SLOT(changeAddGroup(QString)));
-        connect(addButton, SIGNAL(clicked()), this, SLOT(createGroup()));
+                SLOT(changeAddGroup(QString)));
+        connect(addButton, SIGNAL(clicked()), SLOT(createGroup()));
         addButton->setEnabled(false);
         h1->addWidget(l);
         h1->addWidget(addGroupEdit);
@@ -67,19 +66,19 @@ GroupWidget::GroupWidget(QList <Group*> *group, QWidget *parent)
     v->addLayout(h2);
     setLayout(v);
     //qDebug() << "BookWidget 3";
-    connect(upButton, SIGNAL(clicked()), this, SLOT(upItem()));
-    connect(downButton, SIGNAL(clicked()), this, SLOT(downItem()));
-    connect(editButton, SIGNAL(clicked()), this, SLOT(editItem()));
-    connect(delButton, SIGNAL(clicked()), this, SLOT(delItem()));
+    connect(upButton, SIGNAL(clicked()), SLOT(upItem()));
+    connect(downButton, SIGNAL(clicked()), SLOT(downItem()));
+    connect(editButton, SIGNAL(clicked()), SLOT(editItem()));
+    connect(delButton, SIGNAL(clicked()), SLOT(delItem()));
     connect(groupListWidget, SIGNAL(currentRowChanged(int)),
-            this, SLOT(changeRow(int)));
+            SLOT(changeRow(int)));
     connect(groupListWidget, SIGNAL(itemChanged(QListWidgetItem*)),
-            this, SLOT(changeName(QListWidgetItem*)));
+            SLOT(changeName(QListWidgetItem*)));
     connect(groupListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-            this, SLOT(editItem(QListWidgetItem*)));
+            SLOT(editItem(QListWidgetItem*)));
     connect(groupListWidget,
             SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem*)),
-            this, SLOT(changeSelect(QListWidgetItem *, QListWidgetItem*)));
+            SLOT(changeSelect(QListWidgetItem *, QListWidgetItem*)));
     initGroup();
     resetButtons();
 }

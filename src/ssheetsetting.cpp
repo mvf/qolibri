@@ -94,15 +94,15 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
                                         QDialogButtonBox::ActionRole);
     QPushButton *aply = bBox->addButton(tr("Test"),
                                         QDialogButtonBox::ActionRole);
-    connect(bBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(bBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(bBox, SIGNAL(accepted()), SLOT(accept()));
+    connect(bBox, SIGNAL(rejected()), SLOT(reject()));
     connect(bBox->button(QDialogButtonBox::RestoreDefaults),
-            SIGNAL(clicked()), this, SLOT(defaultReset()));
+            SIGNAL(clicked()), SLOT(defaultReset()));
     connect(bBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
-            this, SLOT(reset()));
-    connect(save, SIGNAL(clicked()), this, SLOT(save()));
-    connect(load, SIGNAL(clicked()), this, SLOT(load()));
-    connect(aply, SIGNAL(clicked()), this, SLOT(apply()));
+            SLOT(reset()));
+    connect(save, SIGNAL(clicked()), SLOT(save()));
+    connect(load, SIGNAL(clicked()), SLOT(load()));
+    connect(aply, SIGNAL(clicked()), SLOT(apply()));
     v->addWidget(bBox);
 
     setLayout(v);
@@ -174,12 +174,12 @@ SSheetOptSetting::SSheetOptSetting(const QString &current,
     QDialogButtonBox *bBox = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel |
         QDialogButtonBox::RestoreDefaults | QDialogButtonBox::Reset);
-    connect(bBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(bBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(bBox, SIGNAL(accepted()), SLOT(accept()));
+    connect(bBox, SIGNAL(rejected()), SLOT(reject()));
     connect(bBox->button(QDialogButtonBox::RestoreDefaults), SIGNAL(clicked()),
-            this, SLOT(defaultReset()));
+            SLOT(defaultReset()));
     connect(bBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
-            this, SLOT(reset()));
+            SLOT(reset()));
     v->addWidget(edit);
     v->setStretchFactor(edit, 1);
     v->addWidget(bBox);

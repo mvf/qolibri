@@ -36,6 +36,7 @@
     <file>images/stylesheet2.png</file>
     <file>images/stylesheet3.png</file>
     <file>images/tabs.png</file>
+    <file>images/stabs.png</file>
     <file>images/uparrow.png</file>
     <file>images/zoomin.png</file>
     <file>images/zoomout.png</file>
@@ -43,5 +44,10 @@
     <file>images/web1.png</file>
     <file>images/web2.png</file>
     <file>images/web3.png</file>
+    <file>images/go-next.png</file>
+    <file>images/go-previous.png</file>
+    <file>images/reload.png</file>
+    <file>images/add.png</file>
+    <file>images/new_window.png</file>
 </qresource>
 </RCC>

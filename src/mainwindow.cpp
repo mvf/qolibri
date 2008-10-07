@@ -18,6 +18,7 @@
 ***************************************************************************/
 
 #include <QtGui>
+#include <QWebHistory>
 //#include <stdlib.h>
 //#include <stdio.h>
 
@@ -53,8 +54,10 @@ MainWindow::MainWindow(const QString &s_text)
     EbCore::initialize();
 
     bookView = new BookView(this);
+    bookViewSlots();
 
     groupDock = new GroupDock(this);
+    groupDockSlots();
 //#if defined (Q_WS_X11) || defined (Q_WS_WIN)
 //    groupDock->hide();
 //#endif
@@ -100,7 +103,7 @@ MainWindow::MainWindow(const QString &s_text)
     }
     statusBar()->setStyleSheet(CONF->statusBarSheet);
 
-    connect(this, SIGNAL(searchFinished()), this, SLOT(checkNextSearch()));
+    connect(this, SIGNAL(searchFinished()), SLOT(checkNextSearch()));
 
 }
 
@@ -123,7 +126,7 @@ void MainWindow::createMenus()
 
     stopAct = fmenu->addAction(QIcon(":/images/stop.png"), tr("&Cancel"),
                                bookView, SLOT(stopSearch()), Qt::Key_Escape);
-    connect(stopAct, SIGNAL(triggered()), this, SLOT(stopSound()));
+    connect(stopAct, SIGNAL(triggered()), SLOT(stopSound()));
     stopAct->setEnabled(false);
     exitAct = fmenu->addAction(tr("E&xit"), this, SLOT(close()), tr("Ctrl+Q"));
     CONNECT_BUSY(exitAct);
@@ -138,7 +141,7 @@ void MainWindow::createMenus()
                                 tr("Dock on/off"), this);
     toggleDockAct->setCheckable(true);
     connect(toggleDockAct, SIGNAL(triggered(bool)),
-            this, SLOT(toggleDock(bool)));
+            SLOT(toggleDock(bool)));
     vmenu->addAction(toggleDockAct);
     toggleBarAct = vmenu->addAction(QIcon(":/images/find_l.png"),
                                     tr("Search/read book"),
@@ -147,6 +150,12 @@ void MainWindow::createMenus()
                                  bookView, SLOT(zoomIn()), QString("Ctrl+-"));
     zoomOutAct = vmenu->addAction(QIcon(":/images/zoomout.png"), tr("Zoom &in"),
                                   bookView, SLOT(zoomOut()), QString("Ctrl++"));
+    goPrevAct = vmenu->addAction(QIcon(":/images/goprev.png"),
+                                 tr("Go &Previous"), this, SLOT(goPrev()));
+    goNextAct = vmenu->addAction(QIcon(":/images/gonext.png"),
+                                 tr("Go &Next"), this, SLOT(goNext()));
+    reloadAct = vmenu->addAction(QIcon(":/images/reload.png"),
+                                 tr("&Reload"), this, SLOT(reload()));
 
 
     QMenu *smenu = menuBar()->addMenu(tr("&Setting"));
@@ -161,7 +170,8 @@ void MainWindow::createMenus()
                                   this, SLOT(addMark()));
     CONNECT_BUSY(addMarkAct);
     toggleTabsAct = smenu->addAction(QIcon(":/images/tabs.png"),
-                                     tr("Tab on/off"));
+                                     tr("Tab on/off"),
+                                     this, SLOT(toggleNewTab(bool)));
     toggleTabsAct->setCheckable(true);
     CONNECT_BUSY(toggleTabsAct);
     fontAct = smenu->addAction(QIcon(":/images/font1.png"),
@@ -171,7 +181,7 @@ void MainWindow::createMenus()
     QMenu *ms = smenu->addMenu(QIcon(":/images/stylesheet.png"),
                                tr("Style sheet"));
     sSheetAct = ms->menuAction();
-    connect(sSheetAct, SIGNAL(triggered(bool)), this, SLOT(setDictSheet()));
+    connect(sSheetAct, SIGNAL(triggered(bool)), SLOT(setDictSheet()));
     ms->addAction(QIcon(":/images/stylesheet.png"),
                   tr("Dictionary style sheet"), this, SLOT(setDictSheet()));
     ms->addAction(QIcon(":/images/stylesheet2.png"),
@@ -187,7 +197,7 @@ void MainWindow::createMenus()
         a->setCheckable(true);
     }
     connect(optDirectionMenu, SIGNAL(triggered(QAction*)),
-            this, SLOT(changeOptDirection(QAction*)));
+            SLOT(changeOptDirection(QAction*)));
 
     smenu->addAction(QIcon(":/images/delete.png"), tr("&Clear cache"),
                      this, SLOT(clearCache()));
@@ -220,9 +230,9 @@ void MainWindow::createToolBars()
 
     searchBar->addAction(clearEditAct);
     searchTextEdit = new QLineEdit(this);
-    connect(searchTextEdit, SIGNAL(returnPressed()), this, SLOT(viewSearch()));
+    connect(searchTextEdit, SIGNAL(returnPressed()), SLOT(viewSearch()));
     connect(searchTextEdit, SIGNAL(textChanged(QString)),
-            this, SLOT(changeSearchText(QString)));
+            SLOT(changeSearchText(QString)));
     connect(clearEditAct, SIGNAL(triggered()), searchTextEdit, SLOT(clear()));
     connect(clearEditAct, SIGNAL(triggered()), searchTextEdit, SLOT(setFocus()));
     CONNECT_BUSY(searchTextEdit);
@@ -256,6 +266,15 @@ void MainWindow::createToolBars()
     bar2->addAction(zoomOutAct);
     bar2->addAction(toggleTabsAct);
 
+    webBar = addToolBar("Web");
+    webBar->setMovable(false);
+    webBar->addSeparator();
+
+    webBar->addAction(goPrevAct);
+    webBar->addAction(goNextAct);
+    webBar->addAction(reloadAct);
+    webBar->hide();
+
 
     addToolBarBreak();
     methodBar = addToolBar(tr("Search methods"));
@@ -272,7 +291,7 @@ void MainWindow::createToolBars()
     methodCombo->addItem(QObject::tr("Full text search"));
     methodCombo->setCurrentIndex(-1);
     connect(methodCombo, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(changeDirection(int)));
+            SLOT(changeDirection(int)));
     methodBar->addWidget(methodCombo);
     methodBar->addWidget(new QLabel(tr(" Logic:")));
     logicCombo = new QComboBox(this);
@@ -281,7 +300,7 @@ void MainWindow::createToolBars()
     logicCombo->addItem(tr("OR"));
     logicCombo->setCurrentIndex(-1);
     connect(logicCombo, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(changeLogic(int)));
+            SLOT(changeLogic(int)));
     methodBar->addWidget(logicCombo);
 
     methodBar->addWidget(new QLabel(tr(" Hit limit (book/total):")));
@@ -289,14 +308,14 @@ void MainWindow::createToolBars()
     limitBookSpin->setRange(CONF->stepBookHitMax, CONF->maxLimitBookHit);
     limitBookSpin->setSingleStep(CONF->stepBookHitMax);
     connect(limitBookSpin, SIGNAL(valueChanged(int)),
-            this, SLOT(changeLimitBook(int)));
+            SLOT(changeLimitBook(int)));
     methodBar->addWidget(limitBookSpin);
     methodBar->addWidget(new QLabel(tr("/")));
     limitTotalSpin = new QSpinBox();
     limitTotalSpin->setRange(CONF->stepTotalHitMax, CONF->maxLimitTotalHit);
     limitTotalSpin->setSingleStep(CONF->stepTotalHitMax);
     connect(limitTotalSpin, SIGNAL(valueChanged(int)),
-            this, SLOT(changeLimitTotal(int)));
+            SLOT(changeLimitTotal(int)));
     methodBar->addWidget(limitTotalSpin);
     methodBar->addSeparator();
     methodBar->addAction(booksAct);
@@ -347,7 +366,7 @@ void MainWindow::createStatusBar()
     optSearchButton = new QPushButton(this);
     optSearchButton->setObjectName("selection");
     optSearchButton->setFlat(true);
-    connect(optSearchButton, SIGNAL(clicked()), this, SLOT(doSearch()));
+    connect(optSearchButton, SIGNAL(clicked()), SLOT(doSearch()));
     CONNECT_BUSY(optSearchButton);
     bar->addWidget(optSearchButton);
 }
@@ -567,7 +586,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (isBusy()) {
         clientText.clear();
-        connect(this, SIGNAL(searchFinished()), this, SLOT(close()));
+        connect(this, SIGNAL(searchFinished()), SLOT(close()));
         stopAct->trigger();
         event->ignore();
         return;
@@ -717,16 +736,32 @@ void MainWindow::showTabInfo(int index)
     if (index < 0) {
         return;
     }
-    if (bookView->pageType(index) == BookEpwingLocal) {
+    BookType t = bookView->pageType(index);
+    if (t == BookLocal) {
         SearchMethod m = bookView->pageMethod(index);
         QString s = bookView->tabText(index);
         s.replace("&&", "&");
         SearchItem i(s, m);
+        webBar->hide();
         showStatus(i.text());
+    } else if (t == BookWeb) {
+        WebPage *w = (WebPage*)(bookView->pageWidget(index));
+        QString u = w->url().toString();
+        showStatus(w->url().toString());
+        webBar->show();
+        if (w->history()->canGoBack()) {
+            goPrevAct->setEnabled(true);
+        } else {
+            goPrevAct->setEnabled(false);
+        }
+        if (w->history()->canGoForward()) {
+            goNextAct->setEnabled(true);
+        } else {
+            goNextAct->setEnabled(false);
+        }
     } else {
-        QString u =
-                ((WebPage*)(bookView->widget(index)))->url().toString();
-        showStatus(u);
+        webBar->hide();
+        showStatus("BookView");
     }
 
 }
@@ -747,7 +782,12 @@ void MainWindow::toggleDock(bool check)
     }
 }
 
-void MainWindow::closedDock()
+void MainWindow::toggleNewTab(bool check)
+{
+    bookView->showTabBar(check);
+}
+
+void MainWindow::setDockOff()
 {
     toggleDockAct->setChecked(false);
 }
@@ -931,7 +971,7 @@ void MainWindow::viewInfo(Book *book)
 {
     //qDebug() << "MainWindow::viewInfo(Book *dic) Name=" << book->name();
     //bookView->newInfoPage(book, toggleTabsAct->isChecked());
-    if (book->bookType() == BookEpwingLocal) {
+    if (book->bookType() == BookLocal) {
         SearchMethod m = method;
         m.book = book;
         m.direction = BookInfo;
@@ -1128,12 +1168,12 @@ void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
 
     bool ntab = toggleTabsAct->isChecked();
 
-    RET_SEARCH ret = bookView->newPage(list, mthd, ntab);
+    RET_SEARCH ret = bookView->newPage(this, list, mthd, ntab);
     QString sstr = toLogicString(list, mthd);
     groupDock->addHistory(toLogicString(list, mthd), mthd, CONF->historyMax);
 
     emit nowBusy(false);
-    stopAct->setEnabled(false);
+    //stopAct->setEnabled(false);
     QString msg;
     QString msg_b;
     if (ret == NORMAL) {
@@ -1261,7 +1301,7 @@ void MainWindow::execProcess(const QString &prog)
 {
     QProcess *proc = new QProcess(this);
     connect(proc, SIGNAL(error(QProcess::ProcessError)),
-            this, SLOT(execError(QProcess::ProcessError)));
+            SLOT(execError(QProcess::ProcessError)));
     proc->start(prog);
 
     QString msg = "Execute :" + prog;
@@ -1288,7 +1328,7 @@ void MainWindow::execSound(const QString &fname)
     sound = new QSound(fname, this);
     sound->play();
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(checkSound()));
+    connect(timer, SIGNAL(timeout()), SLOT(checkSound()));
     timer->start(1000);
 }
 
@@ -1318,13 +1358,20 @@ void MainWindow::stopSound()
 void MainWindow::addMark()
 {
     QString s = bookView->tabText(bookView->currentIndex());
-    if (bookView->currentPageType() == BookEpwingLocal) {
+    if (bookView->currentPageType() == BookLocal) {
         SearchMethod m = bookView->currentPageMethod();
         s.replace("&&", "&");
         groupDock->addMark(s, m);
     } else {
-        QString u =
-                ((WebPage*)(bookView->currentWidget()))->url().toString();
+        QTabWidget *v = bookView;
+        if (bookView->currentWidget()->objectName() == "bookview") {
+            v = (QTabWidget*)bookView->currentWidget();
+            s += " (" + v->tabText(v->currentIndex()) + ")";
+        } else {
+            s = v->tabText(v->currentIndex());
+        }
+        WebPage *w = (WebPage*)(bookView->currentPageWidget());
+        QString u = w->url().toString();
         groupDock->addMark(s, u);
     }
 
@@ -1433,6 +1480,7 @@ void MainWindow::changeViewTabCount(int tab_count)
         zoomInAct->setEnabled(false);
         zoomOutAct->setEnabled(false);
     } else {
+        bookView->showTabBar(toggleTabsAct->isChecked());
         addMarkAct->setEnabled(true);
         zoomInAct->setEnabled(true);
         zoomOutAct->setEnabled(true);
@@ -1515,3 +1563,86 @@ void MainWindow::aboutQolibri()
 
 }
 
+void MainWindow::goPrev()
+{
+    WebPage *w = (WebPage*)bookView->currentPageWidget();
+    w->back();
+    if (w->history()->canGoBack()) {
+        goPrevAct->setEnabled(true);
+    } else {
+        goPrevAct->setEnabled(false);
+    }
+    if (w->history()->canGoForward()) {
+        goNextAct->setEnabled(true);
+    } else {
+        goNextAct->setEnabled(false);
+    }
+}
+
+void MainWindow::goNext()
+{
+    WebPage *w = (WebPage*)bookView->currentPageWidget();
+    w->forward();
+    if (w->history()->canGoBack()) {
+        goPrevAct->setEnabled(true);
+    } else {
+        goPrevAct->setEnabled(false);
+    }
+    if (w->history()->canGoForward()) {
+        goNextAct->setEnabled(true);
+    } else {
+        goNextAct->setEnabled(false);
+    }
+}
+
+void MainWindow::reload()
+{
+    WebPage *w = (WebPage*)bookView->currentPageWidget();
+    w->reload();
+}
+
+void MainWindow::bookViewSlots()
+{
+    connect(bookView, SIGNAL(tabChanged(int)), SLOT(changeViewTabCount(int)));
+    connect(bookView, SIGNAL(currentChanged(int)), SLOT(showTabInfo(int)));
+    connect(bookView, SIGNAL(statusRequested(QString)),
+            SLOT(showStatus(QString)));
+    connect(bookView, SIGNAL(searchRequested(SearchDirection,QString)),
+            SLOT(viewSearch(SearchDirection,QString)));
+    connect(bookView, SIGNAL(pasteRequested(QString)),
+            SLOT(pasteSearchText(QString)));
+    connect(bookView, SIGNAL(processRequested(QString)),
+            SLOT(execProcess(QString)));
+    connect(bookView, SIGNAL(soundRequested(QString)),
+            SLOT(execSound(QString)));
+    connect(bookView, SIGNAL(selectionRequested(QString)),
+            SLOT(changeOptSearchButtonText(QString)));
+    connect(bookView, SIGNAL(allWebLoaded()),
+            SLOT(setWebLoaded()));
+    //connect(bookView, SIGNAL(linkRequested(QString)),
+    //        SLOT(execProcess(QString)));
+}
+
+void MainWindow::groupDockSlots()
+{
+    connect(groupDock, SIGNAL(closed()), SLOT(setDockOff()));
+    connect(groupDock, SIGNAL(searchRequested(QString, SearchMethod)),
+            SLOT(viewSearch(QString, SearchMethod)));
+    connect(groupDock, SIGNAL(webRequested(QString, QString)),
+            SLOT(viewWeb(QString, QString)));
+    connect(groupDock, SIGNAL(pasteRequested(QString, SearchMethod)),
+            SLOT(pasteMethod(QString, SearchMethod)));
+    connect(groupDock, SIGNAL(bookViewRequested(Book*)),
+            SLOT(viewInfo(Book*)));
+    connect(groupDock, SIGNAL(fontViewRequested(Book*)),
+            SLOT(setBookFont(Book*)));
+    connect(groupDock, SIGNAL(menuRequested()), SLOT(viewMenu()));
+    connect(groupDock, SIGNAL(fullRequested()), SLOT(viewFull()));
+    connect(groupDock, SIGNAL(groupChanged(int)), SLOT(changeGroup(int)));
+    connect(groupDock, SIGNAL(bookChanged(int)), SLOT(changeBook(int)));
+}
+
+void MainWindow::setWebLoaded()
+{
+    stopAct->setEnabled(false);
+}

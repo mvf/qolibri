@@ -50,20 +50,7 @@ BookBrowser::BookBrowser(QWidget *parent)
     setSearchPaths(QStringList() << EbCache::cachePath);
     document()->setDefaultFont(CONF->browserFont);
 
-    connect(this, SIGNAL(statusRequested(QString)),
-            mainWin, SLOT(showStatus(QString)));
-    connect(this, SIGNAL(searchRequested(SearchDirection, QString)),
-            mainWin, SLOT(viewSearch(SearchDirection, QString)));
-    connect(this, SIGNAL(pasteRequested(QString)),
-            mainWin, SLOT(pasteSearchText(QString)));
-    connect(this, SIGNAL(processRequested(QString)),
-            mainWin, SLOT(execProcess(QString)));
-    connect(this, SIGNAL(soundRequested(QString)),
-            mainWin, SLOT(execSound(QString)));
-    connect(this, SIGNAL(selectionChanged()),
-            this, SLOT(changeTextSelection()));
-    connect(this, SIGNAL(selectionRequested(QString)),
-            mainWin, SLOT(changeOptSearchButtonText(QString)));
+    connect(this, SIGNAL(selectionChanged()), SLOT(changeTextSelection()));
 }
 
 void BookBrowser::setSource(const QUrl &name)
@@ -99,6 +86,19 @@ void BookBrowser::setSource(const QUrl &name)
              
             ReferencePopup *popup =
                 new ReferencePopup(bookList_[index], pos, this, mflag);
+            connect(popup->bookBrowser(), SIGNAL(statusRequested(QString)),
+                    SIGNAL(statusRequested(QString)));
+            connect(popup->bookBrowser(),
+                    SIGNAL(searchRequested(SearchDirection,QString)),
+                    SIGNAL(searchRequested(SearchDirection,QString)));
+            connect(popup->bookBrowser(), SIGNAL(pasteRequested(QString)),
+                    SIGNAL(pasteRequested(QString)));
+            connect(popup->bookBrowser(), SIGNAL(processRequested(QString)),
+                    SIGNAL(processRequested(QString)));
+            connect(popup->bookBrowser(), SIGNAL(soundRequested(QString)),
+                    SIGNAL(soundRequested(QString)));
+            connect(popup->bookBrowser(), SIGNAL(selectionRequested(QString)),
+                    SIGNAL(selectionRequested(QString)));
             popup->show();
         } else {
             qWarning() << "Invalid Reference Parameter" << args.count();
@@ -122,6 +122,8 @@ void BookBrowser::contextMenuEvent(QContextMenuEvent* event)
 {
     QMenu *menu = createStandardContextMenu();
 
+    //if (textCursor().hasSelection() &&
+    //    parent()->parent()->objectName() == "main_browser") {
     if (textCursor().hasSelection()) {
         menu->addSeparator();
         addDirectionMenu(menu);
@@ -157,7 +159,7 @@ void BookBrowser::contextMenuEvent(QContextMenuEvent* event)
     delete menu;
 }
 
-#ifdef Q_WS_X11
+//#ifdef Q_WS_X11
 // Implement for linux.
 // For "selectionChanged" SIGNAL not allways invoked at mouse move and
 // release timing.
@@ -168,7 +170,7 @@ void BookBrowser::mouseReleaseEvent(QMouseEvent *ev)
 
     QTextEdit::mouseReleaseEvent(ev);
 }
-#endif
+//#endif
 
 void BookBrowser::changeTextSelection()
 {
@@ -185,32 +187,32 @@ ReferencePopup::ReferencePopup(Book *book, const EB_Position &pos,
     : QWidget(parent), menuFlag(menu_flag)
 {
 #ifdef FIXED_POPUP
-    bookBrowser = new BookBrowserPopup(parent);
+    bookBrowser_ = new BookBrowserPopup(parent);
 #else
-    bookBrowser = new BookBrowser(parent);
+    bookBrowser_ = new BookBrowser(parent);
 #endif
 #ifdef FIXED_POPUP
     QToolButton *close_button = new QToolButton(this);
     close_button->setIcon(QIcon(":images/closetab.png"));
-    bookBrowser->setCornerWidget(close_button, Qt::TopRightCorner);
-    connect(close_button, SIGNAL(clicked()), this, SLOT(close()));
+    bookBrowser_->setCornerWidget(close_button, Qt::TopRightCorner);
+    connect(close_button, SIGNAL(clicked()), SLOT(close()));
 
 #endif
-    //bookBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    bookBrowser->addBookList(book);
+    //bookBrowser_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    bookBrowser_->addBookList(book);
 #ifdef FIXED_POPUP
-    bookBrowser->addTitle("<a class=cls href=close>" + book->name() + "</a>");
+    bookBrowser_->addTitle("<a class=cls href=close>" + book->name() + "</a>");
 #endif
 
     QVBoxLayout *v = new QVBoxLayout();
-    v->addWidget(bookBrowser);
+    v->addWidget(bookBrowser_);
     v->setMargin(0);
     v->setSpacing(0);
     setLayout(v);
 
-    bookBrowser->setBrowser(browserText(book, pos));
-    //bookBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //bookBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    bookBrowser_->setBrowser(browserText(book, pos));
+    //bookBrowser_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //bookBrowser_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     setWindowFlags(Qt::Popup);
     if ( parent->objectName() == "main_browser") {
@@ -228,13 +230,13 @@ void ReferencePopup::showEvent(QShowEvent*)
     resize(parent->size() - QSize(0, 0));
 #else
 
-    QSize sz = bookBrowser->size();
-    QScrollBar *hb = bookBrowser->horizontalScrollBar();
+    QSize sz = bookBrowser_->size();
+    QScrollBar *hb = bookBrowser_->horizontalScrollBar();
     if ( hb && hb->maximum() > 0) {
         sz.setWidth(hb->maximum() - hb->minimum() + hb->pageStep() + 10);
         resize(sz);
     }
-    QScrollBar *vb = bookBrowser->verticalScrollBar();
+    QScrollBar *vb = bookBrowser_->verticalScrollBar();
     if ( vb && vb->maximum() > 0) {
         int h = vb->maximum() - vb->minimum() + vb->pageStep() + 10;
         int ph = QDesktopWidget().screenGeometry().height() - 50;
@@ -265,27 +267,27 @@ QString ReferencePopup::browserText(Book *book, const EB_Position &pos)
 
     eb.initBook(book->path(), book->bookNo());
     eb.initHook(16, book->fontList(), CONF->indentOffset);
-    bookBrowser->setSearchPaths(QStringList() << EbCache::cachePath);
+    bookBrowser_->setSearchPaths(QStringList() << EbCache::cachePath);
     QString text = eb.text(pos);
     QString ttl;
     if (!menuFlag) {
 #ifdef FIXED_POPUP
         QString heading = text.left(text.indexOf('\n'));
-        foreach(QString s, bookBrowser->titles()) {
+        foreach(QString s, bookBrowser_->titles()) {
             ttl += s + " > ";
         }
         ttl += heading;
         QString addr = QString("book|%1|%2|%3|%4").arg(0).arg(pos.page)
                                .arg(pos.offset)
-                               .arg(bookBrowser->titles().count());
-        bookBrowser->addTitle("<a class=ref href=" + addr +
+                               .arg(bookBrowser_->titles().count());
+        bookBrowser_->addTitle("<a class=ref href=" + addr +
                           " >" + heading + "</a>");
 #else
         ttl = text.left(text.indexOf('\n'));
 #endif
     } else {
 #ifdef FIXED_POPUP
-        ttl = bookBrowser->titles()[0];
+        ttl = bookBrowser_->titles()[0];
 #else
         ttl = text.left(text.indexOf('\n'));
 #endif
@@ -366,7 +368,7 @@ TreeScrollPopup::TreeScrollPopup(QTreeWidgetItem *item, QWidget *parent)
 
     setWindowFlags(Qt::Popup);
 
-    connect(sbar, SIGNAL(valueChanged(int)), this, SLOT(changeExpand(int)));
+    connect(sbar, SIGNAL(valueChanged(int)), SLOT(changeExpand(int)));
 }
 
 void TreeScrollPopup::countDepth(QTreeWidgetItem *item,
@@ -523,27 +525,23 @@ PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
     bookTree->setContextMenuPolicy(Qt::CustomContextMenu);
     bookTree->setIndentation(15);
 
-    bookBrowser = new BookBrowser(this);
-    bookBrowser->setObjectName("main_browser");
+    bookBrowser_ = new BookBrowser(this);
+    bookBrowser_->setObjectName("main_browser");
 
     addWidget(bookTree);
-    addWidget(bookBrowser);
-    setStretchFactor(indexOf(bookBrowser), 1);
+    addWidget(bookBrowser_);
+    setStretchFactor(indexOf(bookBrowser_), 1);
 
     connect(this, SIGNAL(statusRequested(QString)),
             mainWin, SLOT(showStatus(QString)));
-    connect(this, SIGNAL(selectionRequested(QString)),
-            mainWin, SLOT(changeOptSearchButtonText(QString)));
-    connect(mainWin, SIGNAL(viewFontChanged(QFont)),
-            this, SLOT(changeFont(QFont)));
     connect(bookTree,
             SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
-            this, SLOT(scrollTo(QTreeWidgetItem*,QTreeWidgetItem*)));
+            SLOT(scrollTo(QTreeWidgetItem*,QTreeWidgetItem*)));
     connect(bookTree,
             SIGNAL(itemPressed(QTreeWidgetItem*,int)),
-            this, SLOT(scrollTo(QTreeWidgetItem*,int)));
+            SLOT(scrollTo(QTreeWidgetItem*,int)));
     connect(bookTree, SIGNAL(customContextMenuRequested(QPoint)),
-            this, SLOT(popupSlide(QPoint)));
+            SLOT(popupSlide(QPoint)));
 
     totalCount = 0;
     retStatus = NORMAL;
@@ -553,15 +551,15 @@ PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
 void PageWidget::scrollTo(QTreeWidgetItem *to)
 {
     if (to && to->text(1).at(0) != 'P' ) {
-        bookBrowser->scrollToAnchor(to->text(1));
+        bookBrowser_->scrollToAnchor(to->text(1));
         emit selectionRequested(to->text(0));
     }
 }
 
 void PageWidget::changeFont(const QFont &font)
 {
-    bookBrowser->document()->setDefaultFont(font);
-    bookBrowser->setFont(font);
+    bookBrowser_->document()->setDefaultFont(font);
+    bookBrowser_->setFont(font);
 }
 
 void PageWidget::popupSlide(const QPoint &pos)
@@ -726,6 +724,26 @@ RET_SEARCH PageWidget::checkLimit(int text_length)
     return NORMAL;
 }
 
+void PageWidget::zoomIn()
+{
+    QFont font = bookBrowser_->currentFont();
+    int fsz = font.pointSize();
+    font.setPointSize(fsz + 1);
+
+    bookBrowser_->document()->setDefaultFont(font);
+    bookBrowser_->setFont(font);
+}
+
+void PageWidget::zoomOut()
+{
+    QFont font = bookBrowser_->currentFont();
+    int fsz = font.pointSize();
+    font.setPointSize(fsz - 1);
+
+    bookBrowser_->document()->setDefaultFont(font);
+    bookBrowser_->setFont(font);
+}
+
 InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     : PageWidget(parent, method)
 {
@@ -735,13 +753,13 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
 
     items.composeHLine(1, "TOP", book->name());
 
-    bookBrowser->addBookList(book);
+    bookBrowser_->addBookList(book);
     EBook eb;
     if (eb.initBook(book->path(), book->bookNo()) < 0) {
         retStatus = NO_BOOK;
         return;
     }
-    eb.initHook(bookBrowser->fontSize(), book->fontList(),
+    eb.initHook(bookBrowser_->fontSize(), book->fontList(),
                   CONF->indentOffset,  method.ruby);
 
     QString mstr = "<b>";
@@ -795,8 +813,8 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     }
     items.composeTrail();
     //qDebug() << txt;
-    bookBrowser->setBrowser(items.text());
-    bookBrowser->setSearchPaths(QStringList() << book->path() << 
+    bookBrowser_->setBrowser(items.text());
+    bookBrowser_->setSearchPaths(QStringList() << book->path() << 
                                 EbCache::cachePath);
     bookTree->insertTopLevelItems(0, items.items());
     bookTree->setCurrentItem(items.items()[0]);
@@ -816,9 +834,9 @@ QString InfoPage::convSpecialChar(const QString &str) const
 MenuPage::MenuPage(QWidget *parent, const SearchMethod &method)
     : PageWidget(parent, method)
 {
-    bookBrowser->addBookList(method.bookReader);
+    bookBrowser_->addBookList(method.bookReader);
     connect(bookTree, SIGNAL(itemActivated(QTreeWidgetItem *, int)),
-            this, SLOT(changePage(QTreeWidgetItem *, int)));
+            SLOT(changePage(QTreeWidgetItem *, int)));
     fullMenuPage();
 
     if (retStatus == LIMIT_MENU)
@@ -835,7 +853,7 @@ void MenuPage::fullMenuPage()
         0) {
         retStatus = NO_BOOK;
     }
-    eb.initHook(bookBrowser->fontSize(), method_.bookReader->fontList(),
+    eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList(),
                 CONF->indentOffset, method_.ruby);
 
     EB_Position pos;
@@ -862,7 +880,7 @@ void MenuPage::fullMenuPage()
 
     bookTree->setCurrentItem(items.topItem());
 
-    bookBrowser->setBrowser(items.text());
+    bookBrowser_->setBrowser(items.text());
 
     return;
 }
@@ -873,7 +891,7 @@ void MenuPage::selectMenuPage(int index)
     retStatus = NORMAL;
     EbMenu eb;
     eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo());
-    eb.initHook(bookBrowser->fontSize(), method_.bookReader->fontList(),
+    eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList(),
                 CONF->indentOffset, method_.ruby);
     if (index < 0) {
         topCands = eb.topMenu();
@@ -908,7 +926,7 @@ void MenuPage::selectMenuPage(int index)
         bookTree->setCurrentItem(next);
     }
 
-    bookBrowser->setBrowser(items.text());
+    bookBrowser_->setBrowser(items.text());
     emit statusRequested(QString("%1").arg(menuCount));
 }
 
@@ -964,7 +982,7 @@ AllPage::AllPage(QWidget *parent, const SearchMethod &method)
     : PageWidget(parent, method)
 {
     connect(bookTree, SIGNAL(itemActivated(QTreeWidgetItem *, int)),
-            this, SLOT(changePage(QTreeWidgetItem *, int)));
+            SLOT(changePage(QTreeWidgetItem *, int)));
     retStatus = initSeqHits();
     if (retStatus != NORMAL)
         return;
@@ -997,9 +1015,9 @@ RET_SEARCH AllPage::readPage(int page)
        0) {
         return NO_BOOK;
     }
-    eb.initHook(bookBrowser->fontSize(), method_.bookReader->fontList(),
+    eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList(),
                   CONF->indentOffset, method_.ruby);
-    bookBrowser->addBookList(method_.bookReader);
+    bookBrowser_->addBookList(method_.bookReader);
 
     QTreeWidgetItem *current_item = top_tree;
     QTreeWidgetItem *page_tree;
@@ -1056,7 +1074,7 @@ RET_SEARCH AllPage::readPage(int page)
 
     bookTree->setCurrentItem(current_item);
 
-    bookBrowser->setBrowser(item.text());
+    bookBrowser_->setBrowser(item.text());
     return ret;
 }
 
@@ -1119,7 +1137,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
     bool break_flag = false;
 
     foreach(Book *book, method.group->bookList()) {
-        if (book->bookType() != BookEpwingLocal) continue;
+        if (book->bookType() != BookLocal) continue;
         if (book->checkState() != Qt::Checked) continue;
 
         emit statusRequested(book->name() + ":(" +
@@ -1128,7 +1146,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
 
         if ( eb.initBook(book->path(), book->bookNo(), book_count) < 0) continue;
 
-        eb.initHook(bookBrowser->fontSize(), book->fontList(),
+        eb.initHook(bookBrowser_->fontSize(), book->fontList(),
                       CONF->indentOffset, method.ruby);
 
         int hit_num = 0;
@@ -1161,7 +1179,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
                              &head_i, &head_v, &text_v)) continue;
 
             if (matchCount == 1) {
-                bookBrowser->addBookList(book);
+                bookBrowser_->addBookList(book);
                 book_count++;
                 items.composeHLine(1, toAnchor("B", book_count), book->name());
             }
@@ -1220,7 +1238,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
                          .arg(items.textLength()));
     checkStop();
 
-    bookBrowser->setBrowser(items.text());
+    bookBrowser_->setBrowser(items.text());
     //qDebug() << items.text();
 
     return;
@@ -1242,7 +1260,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
     RET_SEARCH break_check = NORMAL;
 
     foreach(Book * book, method.group->bookList()) {
-        if (book->bookType() != BookEpwingLocal) continue;
+        if (book->bookType() != BookLocal) continue;
         if (checkStop() || break_flag) break;
 
         if (book->checkState() != Qt::Checked) continue;
@@ -1258,9 +1276,9 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
             eb.unsetBook();
             continue;
         }
-        eb.initHook(bookBrowser->fontSize(), book->fontList(),
+        eb.initHook(bookBrowser_->fontSize(), book->fontList(),
                       CONF->indentOffset, method.ruby);
-        bookBrowser->addBookList(book);
+        bookBrowser_->addBookList(book);
         book_count++;
 
         int search_count = 0;
@@ -1352,7 +1370,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
                          .arg(item.textLength()));
     checkStop();
 
-    bookBrowser->setBrowser(item.text());
+    bookBrowser_->setBrowser(item.text());
 
     return;
 }
@@ -1362,20 +1380,17 @@ WebPage::WebPage(QWidget *parent, const QString &url,
                  const QStringList &slist)
     : QWebView(parent), method_(meth)
 {
+    loading_ = true;
     setObjectName("webpage");
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     tabBar_ = 0;
     QString str = url;
-    connect(this, SIGNAL(loadStarted()),
-            this, SLOT(progressStart()));
-    connect(this, SIGNAL(loadFinished(bool)),
-            this, SLOT(progressFinished(bool)));
-    connect(this, SIGNAL(loadProgress(int)),
-            this, SLOT(progress(int)));
+    connect(this, SIGNAL(loadStarted()), SLOT(progressStart()));
+    connect(this, SIGNAL(loadFinished(bool)), SLOT(progressFinished(bool)));
+    connect(this, SIGNAL(loadProgress(int)), SLOT(progress(int)));
     connect(this, SIGNAL(linkClicked(const QUrl&)),
-            this, SLOT(openLink(const QUrl&)));
-    connect(this, SIGNAL(linkRequested(QString)),
-            mainWin, SLOT(execProcess(QString)));
+            SLOT(openLink(const QUrl&)));
+    //connect(this, SIGNAL(linkRequested(QString)), SLOT(execProcess(QString)));
 
     QByteArray enc = encString(url);
     QString ustr = setSearchString(url, enc, slist);
@@ -1384,8 +1399,6 @@ WebPage::WebPage(QWidget *parent, const QString &url,
         ustr = setDirectionString(ustr, sdir, method_.direction);
     }
 
-    qDebug() << ustr;
-                     
     QWebSettings *ws = settings();
     ws->setAttribute(QWebSettings::JavascriptEnabled, true);
     ws->setAttribute(QWebSettings::JavaEnabled, true);
@@ -1395,6 +1408,10 @@ WebPage::WebPage(QWidget *parent, const QString &url,
     } else {
         load(QUrl::fromEncoded(QTextCodec::codecForName(enc)->fromUnicode(ustr)));
     }
+    QAction *newWinAct = pageAction(QWebPage::OpenLinkInNewWindow);
+    connect(newWinAct, SIGNAL(triggered()), SLOT(openNewWin()));
+    connect(page(), SIGNAL(linkHovered(QString,QString,QString)),
+            SLOT(copyHoveredLink(QString,QString,QString)));
 
     show();
 }
@@ -1402,21 +1419,21 @@ WebPage::WebPage(QWidget *parent, const QString &url,
 WebPage::WebPage(QWidget *parent, const QString &url)
     : QWebView(parent)
 {
+    loading_ = true;
     setObjectName("webpage");
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     tabBar_ = 0;
-    connect(this, SIGNAL(loadStarted()),
-            this, SLOT(progressStart()));
-    connect(this, SIGNAL(loadFinished(bool)),
-            this, SLOT(progressFinished(bool)));
-    connect(this, SIGNAL(loadProgress(int)),
-            this, SLOT(progress(int)));
+    connect(this, SIGNAL(loadStarted()), SLOT(progressStart()));
+    connect(this, SIGNAL(loadFinished(bool)), SLOT(progressFinished(bool)));
+    connect(this, SIGNAL(loadProgress(int)), SLOT(progress(int)));
     connect(this, SIGNAL(linkClicked(const QUrl&)),
-            this, SLOT(openLink(const QUrl&)));
-    connect(this, SIGNAL(linkRequested(QString)),
-            mainWin, SLOT(execProcess(QString)));
+            SLOT(openLink(const QUrl&)));
+    QAction *newWinAct = pageAction(QWebPage::OpenLinkInNewWindow);
+    connect(newWinAct, SIGNAL(triggered()), SLOT(openNewWin()));
+    connect(page(), SIGNAL(linkHovered(QString,QString,QString)),
+            SLOT(copyHoveredLink(QString,QString,QString)));
 
-    qDebug() << url;
+    //qDebug() << url;
 
     QWebSettings *ws = settings();
     ws->setAttribute(QWebSettings::JavascriptEnabled, true);
@@ -1424,15 +1441,29 @@ WebPage::WebPage(QWidget *parent, const QString &url)
     ws->setAttribute(QWebSettings::PluginsEnabled, true);
 
     load(url);
-    /*
-    if (enc.isEmpty()) {
-        load(QUrl::fromEncoded(ustr.toAscii()));
-    } else {
-        load(QUrl::fromEncoded(QTextCodec::codecForName(enc)->fromUnicode(ustr)));
-    }
-    */
 
     show();
+}
+void WebPage::openNewWin()
+{
+    emit linkRequested(CONF->browserProcess + ' ' + hoveredLink);
+}
+
+void WebPage::copyHoveredLink(const QString &link, const QString&,
+                              const QString&)
+{
+    if (!link.isEmpty()) {
+        hoveredLink = link;
+    }
+}
+
+void WebPage::contextMenuEvent(QContextMenuEvent* event)
+{
+    QWebView::contextMenuEvent(event);
+    //QMenu *menu = createStandardContextMenu();
+    //QAction *a = menu->exec(event->globalPos());
+    //delete menu;
+
 }
 
 QByteArray WebPage::encString(const QString &url)
@@ -1536,6 +1567,7 @@ QString WebPage::setDirectionString(const QString &url, const QString &dstr,
 
 void WebPage::progressStart()
 {
+    loading_ = true;
     if (tabBar_) tabBar_->setTabIcon(tabIndex_, QIcon(":/images/web2.png"));
 
     progressCount_ = 0;
@@ -1555,6 +1587,7 @@ void WebPage::progress(int)
 
 void WebPage::progressFinished(bool)
 {
+    loading_ = false;
     if (tabBar_) tabBar_->setTabIcon(tabIndex_, QIcon(":/images/web1.png"));
 }
 
@@ -1563,49 +1596,82 @@ void WebPage::openLink(const QUrl &url)
     QUrl u = QUrl::fromEncoded(url.toEncoded(), QUrl::TolerantMode);
     qDebug() << url.toEncoded();
     qDebug() << u.toString();
+    load(u);
 
     //emit linkRequested(CONF->browserProcess + ' ' + u.toString());
-    emit linkRequested(CONF->browserProcess + ' ' +
-                       QString::fromAscii(url.toEncoded()));
+    //emit linkRequested(CONF->browserProcess + ' ' +
+    //                   QString::fromAscii(url.toEncoded()));
+}
+
+void WebPage::changeFont(const QFont &font)
+{
+
+    qDebug() << "WebPage::changeFont" << font.family();
+    settings()->setFontFamily(QWebSettings::StandardFont, font.family());
+
+}
+
+void WebPage::zoomIn()
+{
+    QWebSettings *s = settings();
+    int dsz = s->fontSize(QWebSettings::DefaultFontSize);
+    int fsz = s->fontSize(QWebSettings::DefaultFixedFontSize);
+    s->setFontSize(QWebSettings::DefaultFontSize, dsz + 1);
+    s->setFontSize(QWebSettings::DefaultFixedFontSize, fsz + 1);
+    reload();
+}
+
+void WebPage::zoomOut()
+{
+    QWebSettings *s = settings();
+    int dsz = s->fontSize(QWebSettings::DefaultFontSize);
+    int fsz = s->fontSize(QWebSettings::DefaultFixedFontSize);
+    s->setFontSize(QWebSettings::DefaultFontSize, dsz - 1);
+    s->setFontSize(QWebSettings::DefaultFixedFontSize, fsz - 1);
+    reload();
 }
 
 BookView::BookView(QWidget *parent)
     : QTabWidget(parent)
 {
     mainWin = parent;
+    setObjectName("bookview");
     setUsesScrollButtons(true);
     QToolButton *close_button = new QToolButton(this);
     setCornerWidget(close_button, Qt::TopRightCorner);
-    QToolButton *close_all_button = new QToolButton(this);
-    setCornerWidget(close_all_button, Qt::TopLeftCorner);
+    //QToolButton *close_all_button = new QToolButton(this);
+    //setCornerWidget(close_all_button, Qt::TopLeftCorner);
     close_button->setCursor(Qt::ArrowCursor);
     close_button->setAutoRaise(true);
     close_button->setIcon(QIcon(":images/closetab.png"));
     close_button->setToolTip(tr("Close page"));
     close_button->setEnabled(true);
-    close_all_button->setCursor(Qt::ArrowCursor);
-    close_all_button->setAutoRaise(true);
-    close_all_button->setIcon(QIcon(":images/closealltab.png"));
-    close_all_button->setToolTip(tr("Close All Page"));
-    close_all_button->setEnabled(true);
-    connect(close_button, SIGNAL(clicked()), this, SLOT(closeTab()));
-    connect(close_all_button, SIGNAL(clicked()), this, SLOT(closeAllTab()));
-    connect(this, SIGNAL(tabChanged(int)),
-            mainWin, SLOT(changeViewTabCount(int)));
-    connect(this, SIGNAL(currentChanged(int)),
-            mainWin, SLOT(showTabInfo(int)));
+    //close_all_button->setCursor(Qt::ArrowCursor);
+    //close_all_button->setAutoRaise(true);
+    //close_all_button->setIcon(QIcon(":images/closealltab.png"));
+    //close_all_button->setToolTip(tr("Close All Page"));
+    //close_all_button->setEnabled(true);
+    connect(close_button, SIGNAL(clicked()), SLOT(closeTab()));
+    //connect(close_all_button, SIGNAL(clicked()), SLOT(closeAllTab()));
     tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tabBar(), SIGNAL(customContextMenuRequested(const QPoint&)),
-            this, SLOT(showTabBarMenu(const QPoint&)));
-    connect(this, SIGNAL(statusRequested(QString)),
-            mainWin, SLOT(showStatus(QString)));
+            SLOT(showTabBarMenu(const QPoint&)));
 }
 
-
-RET_SEARCH BookView::newPage(const QStringList &list,
+RET_SEARCH BookView::newPage(QWidget *parent, const QStringList &list,
                              const SearchMethod &method, bool newTab)
 {
     stopFlag = false;
+
+    int dcount = 0;
+    if (method.direction != MenuRead && method.direction != BookInfo) {
+        foreach(Book *book, method.group->bookList()) {
+            if (book->bookType() == BookWeb &&
+                    book->checkState() == Qt::Checked) {
+                dcount++;
+            }
+        }
+    }
 
     PageWidget *page;
 
@@ -1622,50 +1688,94 @@ RET_SEARCH BookView::newPage(const QStringList &list,
         // KeywordSearch, CrossSearch,
         page = new SearchPage(this, list, method);
 
+    connect(page->bookBrowser(), SIGNAL(statusRequested(QString)),
+            SIGNAL(statusRequested(QString)));
+    connect(page->bookBrowser(),
+            SIGNAL(searchRequested(SearchDirection,QString)),
+            SIGNAL(searchRequested(SearchDirection,QString)));
+    connect(page->bookBrowser(), SIGNAL(pasteRequested(QString)),
+            SIGNAL(pasteRequested(QString)));
+    connect(page->bookBrowser(), SIGNAL(processRequested(QString)),
+            SIGNAL(processRequested(QString)));
+    connect(page->bookBrowser(), SIGNAL(soundRequested(QString)),
+            SIGNAL(soundRequested(QString)));
+    connect(page, SIGNAL(selectionRequested(QString)),
+            SIGNAL(selectionRequested(QString)));
+    connect(page->bookBrowser(), SIGNAL(selectionRequested(QString)),
+            SIGNAL(selectionRequested(QString)));
+    connect(parent, SIGNAL(viewFontChanged(QFont)), page,
+            SLOT(changeFont(QFont)));
+
     RET_SEARCH ret = page->retStatus;
     QWidget *focus_page = 0;
-    if (ret == NOT_HIT || ret == NOT_HIT_INTERRUPTED || ret == NO_MENU ||
-        ret == NO_BOOK) {
-        delete page;
-        bool rflag = true;
-        foreach(Book *book, method.group->bookList()) {
-            if (book->bookType() == BookWeb) {
-                ret = NORMAL;
-                rflag = false;
-            }
-        }
-        if (rflag) return ret;
-    } else {
-
+    BookView *view = this;
+    if (ret == NORMAL) {
+        dcount++;
+    }
+    if (dcount > 1) {
+        view = new BookView(parent);
         QString tab_title = toLogicString(list, method, false);
         if (newTab || count() == 0) {
-            addTab(page, QIcon(":/images/sbook.png"), tab_title);
+            addTab(view, QIcon(":/images/stabs.png"), tab_title);
         } else {
             int index = currentIndex();
             closeTab();
-            insertTab(index, page, QIcon(":/images/sbook.png"), tab_title);
+            insertTab(index, view, QIcon(":/images/stabs.png"),
+                      tab_title);
+        }
+        connect(view, SIGNAL(currentChanged(int)), SLOT(viewTabChanged(int)));
+        setCurrentWidget(view);
+    } else {
+        if (checkLoaded()) {
+            emit allWebLoaded();
+        }
+    }
+    if (ret != NORMAL) {
+        delete page;
+        if (dcount == 0) return ret;
+        ret = NORMAL;
+    } else {
+        QString tab_title = toLogicString(list, method, false);
+        if (dcount > 1 || newTab || view->count() == 0) {
+            view->addTab(page, QIcon(":/images/sbook.png"), tab_title);
+        } else {
+            int index = view->currentIndex();
+            view->closeTab();
+            view->insertTab(index, page, QIcon(":/images/sbook.png"),
+                            tab_title);
         }
         focus_page = (QWidget*)page;
-        connect(this, SIGNAL(fontChanged(QFont)), page, SLOT(changeFont(QFont)));
-        emit tabChanged(count());
+        connect(this, SIGNAL(fontChanged(QFont)), page,
+                SLOT(changeFont(QFont)));
+        if (method.direction == MenuRead || method.direction == BookInfo) {
+            view->setCurrentWidget(focus_page);
+            return NORMAL;
+        }
     }
 
     foreach(Book *book, method.group->bookList()) {
         if (book->bookType() == BookWeb &&
                 book->checkState() == Qt::Checked) {
             WebPage *wpage = new WebPage(this, book->path(), method, list);
-            QString vtitle = QString("%1(%2)").arg(list[0]).arg(book->name());
-            int idx = addTab(wpage, QIcon(":/images/web2.png"), vtitle);
+            connect(wpage, SIGNAL(loadFinished(bool)),
+                    SLOT(webViewFinished(bool)));
+            connect(wpage, SIGNAL(linkRequested(QString)),
+                    SIGNAL(processRequested(QString)));
+            connect(parent, SIGNAL(viewFontChanged(QFont)), wpage,
+                    SLOT(changeFont(QFont)));
+            int idx = view->addTab(wpage, QIcon(":/images/web2.png"),
+                    book->name());
             wpage->setTabIndex(idx);
-            wpage->setTabBar(tabBar());
+            wpage->setTabBar(view->tabBar());
             if (!focus_page) {
                 focus_page = (QWidget *)wpage;
             }
         }
     }
     if (focus_page) {
-        setCurrentWidget(focus_page);
+        view->setCurrentWidget(focus_page);
     }
+    emit tabChanged(count());
 
     return ret;
 }
@@ -1673,6 +1783,9 @@ RET_SEARCH BookView::newPage(const QStringList &list,
 RET_SEARCH BookView::newWebPage(const QString &name, const QString &url)
 {
     WebPage *wpage = new WebPage(this, url);
+    connect(wpage, SIGNAL(loadFinished(bool)), SLOT(webViewFinished(bool)));
+    connect(wpage, SIGNAL(linkRequested(QString)), 
+            SIGNAL(processRequested(QString)));
     int idx = addTab(wpage, QIcon(":/images/web2.png"), name);
     wpage->setTabIndex(idx);
     wpage->setTabBar(tabBar());
@@ -1768,13 +1881,19 @@ void BookView::closeTab()
 }
 BookType BookView::pageType(int index)
 {
-    QWidget *w = widget(index);
-    if (w->objectName() == "dicpage"){
-        return BookEpwingLocal;
-    } else if (w->objectName() == "webpage") {
+    if (index < 0) {
+        return BookUnset;
+    }
+    QString oname = widget(index)->objectName();
+    if (oname == "dicpage"){
+        return BookLocal;
+    } else if (oname == "webpage") {
         return BookWeb;
+    } else if (oname == "bookview") {
+        BookView *v = (BookView*)widget(index);
+        return v->currentPageType();
     } else {
-        return BookWeb;
+        return BookUnset;
     }
 
 }
@@ -1783,16 +1902,41 @@ BookType BookView::currentPageType()
     return pageType(currentIndex());
 }
 
+QWidget* BookView::pageWidget(int index)
+{
+    if (index < 0) {
+        return 0;
+    }
+    QString oname = widget(index)->objectName();
+    if (oname == "bookview") {
+            BookView *v = (BookView*)widget(index);
+            return v->pageWidget(v->currentIndex());
+    } else {
+        return widget(index);
+    }
+
+}
+QWidget* BookView::currentPageWidget()
+{
+    return pageWidget(currentIndex());
+}
+
 SearchMethod BookView::pageMethod(int index)
 {
+    if (index < 0) {
+        return SearchMethod();
+    }
     QWidget *w = widget(index);
-    BookType t = pageType(index);
-    if (t == BookEpwingLocal) {
+    QString oname = w->objectName();
+    if (oname == "dicpage"){
         return ((PageWidget*)w)->method();
-    } else if (t == BookWeb) {
+    } else if (oname == "webpage") {
         return ((WebPage*)w)->method();
+    } else if (oname == "bookview") {
+        BookView *v = (BookView*)widget(index);
+        return v->currentPageMethod();
     } else {
-        return ((WebPage*)w)->method();
+        return SearchMethod();
     }
 }
 
@@ -1804,23 +1948,102 @@ SearchMethod BookView::currentPageMethod()
 void BookView::stopSearch()
 {
     stopFlag = true;
+    stopAllLoading();
 }
 
 void BookView::zoomIn()
 {
-    int fsize = CONF->browserFont.pointSize();
+    //int fsize = CONF->browserFont.pointSize();
 
-    CONF->browserFont.setPointSize(fsize + 1);
-    emit fontChanged(CONF->browserFont);
+    //CONF->browserFont.setPointSize(fsize + 1);
+    //emit fontChanged(CONF->browserFont);
+    QWidget *w = currentPageWidget();
+    if (w->objectName() == "dicpage") {
+        ((PageWidget*)w)->zoomIn();
+    }else{
+        ((WebPage*)w)->zoomIn();
+    }
 }
 
 void BookView::zoomOut()
 {
-    int fsize = CONF->browserFont.pointSize();
+    //int fsize = CONF->browserFont.pointSize();
 
-    if (fsize > 5) {
-        CONF->browserFont.setPointSize(fsize - 1);
-        emit fontChanged(CONF->browserFont);
+    //if (fsize > 5) {
+    //    CONF->browserFont.setPointSize(fsize - 1);
+    //    emit fontChanged(CONF->browserFont);
+    //}
+    QWidget *w = currentPageWidget();
+    if (w->objectName() == "dicpage") {
+        ((PageWidget*)w)->zoomOut();
+    }else{
+        ((WebPage*)w)->zoomOut();
     }
 }
 
+void BookView::showTabBar(int new_tab)
+{
+    int tcount = count();
+    if (!new_tab) {
+        if (tcount > 0) {
+            if (tcount > 1){
+                int index = currentIndex();
+                for (int i=tcount-1; i>index; i--) {
+                    closeTab1(i);
+                }
+                for (int i=index-1; i>=0; i--) {
+                    closeTab1(i);
+                }
+            }
+            tabBar()->hide();
+        }
+    } else {
+        if (tcount > 0) {
+            tabBar()->show();
+        }
+    }
+}
+
+void BookView::viewTabChanged(int) {
+    emit currentChanged(currentIndex());
+}
+
+void BookView::stopAllLoading()
+{
+    for(int i=0; i < count(); i++) {
+        if (widget(i)->objectName() == "webpage") {
+            WebPage *w = (WebPage*)widget(i);
+            w->stop();
+        } else if (widget(i)->objectName() == "bookview") {
+            BookView *w = (BookView*)widget(i);
+            w->stopAllLoading();
+        }
+    }
+}
+
+bool BookView::checkLoaded() {
+    bool all_loaded = true;
+    for(int i=0; i < count(); i++) {
+        if (widget(i)->objectName() == "webpage") {
+            WebPage *w = (WebPage*)widget(i);
+            if (w->loading()) {
+                all_loaded = false;
+                break;
+            }
+        } else if (widget(i)->objectName() == "bookview") {
+            BookView *w = (BookView*)widget(i);
+            if (!w->checkLoaded()){
+                all_loaded = false;
+                break;
+            }
+        }
+    }
+    return all_loaded;
+}
+
+void BookView::webViewFinished(bool) {
+    if (checkLoaded()) {
+        emit allWebLoaded();
+    }
+    emit currentChanged(currentIndex());
+}

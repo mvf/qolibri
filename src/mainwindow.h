@@ -86,6 +86,11 @@ private slots:
     void toggleBar();
     void toggleRuby();
     void toggleDock(bool check);
+    void toggleNewTab(bool check);
+    void goNext();
+    void goPrev();
+    void reload();
+    void setWebLoaded();
 
     void changeSearchText(const QString&);
     void changeDirection(int direction)
@@ -117,7 +122,7 @@ private slots:
     void checkSound();
     void stopSound();
     void clearCache();
-    void closedDock();
+    void setDockOff();
 
 #if defined (Q_WS_X11) || defined (Q_WS_WIN)
     void showDock();
@@ -134,6 +139,9 @@ private:
     void createStatusBar();
     void readSettings();
     void writeSettings();
+
+    void bookViewSlots();
+    void groupDockSlots();
 
     void setTitle();
 
@@ -182,10 +190,14 @@ private:
     QAction *zoomInAct;
     QAction *zoomOutAct;
     QAction *viewAllAct;
+    QAction *goPrevAct;
+    QAction *goNextAct;
+    QAction *reloadAct;
 
     QToolBar *searchBar;
     QToolBar *bookBar;
     QToolBar *methodBar;
+    QToolBar *webBar;
 
     QLineEdit *searchTextEdit;
     QComboBox *methodCombo;

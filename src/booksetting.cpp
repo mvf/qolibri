@@ -37,9 +37,9 @@ WebSetting::WebSetting(QWidget *parent, const QString &name, const QString &url)
        h1->addWidget(new QLabel(tr("Name :")));
        nameEdit_ = new QLineEdit(name, this);
        connect(nameEdit_, SIGNAL(textChanged(const QString&)),
-               this, SLOT(setOkButton(const QString&)));
+               SLOT(setOkButton(const QString&)));
        connect(nameEdit_, SIGNAL(textEdited(const QString&)),
-               this, SLOT(setOkButton(const QString&)));
+               SLOT(setOkButton(const QString&)));
        h1->addWidget(nameEdit_);
    }
    QHBoxLayout *h2 = new QHBoxLayout; 
@@ -47,16 +47,16 @@ WebSetting::WebSetting(QWidget *parent, const QString &name, const QString &url)
        h2->addWidget(new QLabel(tr("URL :")));
        urlEdit_ = new QLineEdit(url, this);
        connect(urlEdit_, SIGNAL(textChanged(const QString&)),
-               this, SLOT(setOkButton(const QString&)));
+               SLOT(setOkButton(const QString&)));
        connect(urlEdit_, SIGNAL(textEdited(const QString&)),
-               this, SLOT(setOkButton(const QString&)));
+               SLOT(setOkButton(const QString&)));
        h2->addWidget(urlEdit_);
    }
 
    buttonBox_ = new QDialogButtonBox(QDialogButtonBox::Ok |
                                      QDialogButtonBox::Cancel);
-   connect(buttonBox_, SIGNAL(accepted()), this, SLOT(accept()));
-   connect(buttonBox_, SIGNAL(rejected()), this, SLOT(reject()));
+   connect(buttonBox_, SIGNAL(accepted()), SLOT(accept()));
+   connect(buttonBox_, SIGNAL(rejected()), SLOT(reject()));
 
    QVBoxLayout *v = new QVBoxLayout;
    v->addWidget(new QLabel(tr("Web Site Setting")));
@@ -90,9 +90,9 @@ EpwingFileSetting::EpwingFileSetting(QWidget *parent, const QString &name,
        h1->addWidget(new QLabel(tr("Name :")));
        nameEdit_ = new QLineEdit(name, this);
        connect(nameEdit_, SIGNAL(textChanged(const QString&)),
-               this, SLOT(setOkButton(const QString&)));
+               SLOT(setOkButton(const QString&)));
        connect(nameEdit_, SIGNAL(textEdited(const QString&)),
-               this, SLOT(setOkButton(const QString&)));
+               SLOT(setOkButton(const QString&)));
        h1->addWidget(nameEdit_);
    }
    QHBoxLayout *h2 = new QHBoxLayout; 
@@ -100,9 +100,9 @@ EpwingFileSetting::EpwingFileSetting(QWidget *parent, const QString &name,
        h2->addWidget(new QLabel(tr("Path :")));
        pathEdit_ = new QLineEdit(path, this);
        connect(pathEdit_, SIGNAL(textChanged(const QString&)),
-               this, SLOT(setOkButton(const QString&)));
+               SLOT(setOkButton(const QString&)));
        connect(pathEdit_, SIGNAL(textEdited(const QString&)),
-               this, SLOT(setOkButton(const QString&)));
+               SLOT(setOkButton(const QString&)));
        h2->addWidget(pathEdit_);
    }
    QHBoxLayout *h3 = new QHBoxLayout; 
@@ -111,17 +111,17 @@ EpwingFileSetting::EpwingFileSetting(QWidget *parent, const QString &name,
        bookNoEdit_ = new QLineEdit(QString::number(book_no), this);
        bookNoEdit_->setInputMask("9");
        connect(bookNoEdit_, SIGNAL(textChanged(const QString&)),
-               this, SLOT(setOkButton(const QString&)));
+               SLOT(setOkButton(const QString&)));
        connect(bookNoEdit_, SIGNAL(textEdited(const QString&)),
-               this, SLOT(setOkButton(const QString&)));
+               SLOT(setOkButton(const QString&)));
        h3->addWidget(bookNoEdit_);
    }
 
 
    buttonBox_ = new QDialogButtonBox(QDialogButtonBox::Ok |
                                      QDialogButtonBox::Cancel);
-   connect(buttonBox_, SIGNAL(accepted()), this, SLOT(accept()));
-   connect(buttonBox_, SIGNAL(rejected()), this, SLOT(reject()));
+   connect(buttonBox_, SIGNAL(accepted()), SLOT(accept()));
+   connect(buttonBox_, SIGNAL(rejected()), SLOT(reject()));
 
    QVBoxLayout *v = new QVBoxLayout;
    v->addWidget(new QLabel(tr("Epwing File Setting")));
@@ -168,11 +168,11 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
             //QLabel *l = new QLabel(tr("Search directory"));
             searchPath = new QLineEdit(QDir::homePath(), this);
             connect(searchPath, SIGNAL(textChanged(QString)),
-                    this, SLOT(searchPathChanged(QString)));
+                    SLOT(searchPathChanged(QString)));
             //h1->addWidget(l);
             pathButton = new QPushButton(QIcon(":images/open.png"),
                                          QString(), this);
-            connect(pathButton, SIGNAL(clicked()), this, SLOT(setPath()));
+            connect(pathButton, SIGNAL(clicked()), SLOT(setPath()));
             h1->addWidget(searchPath);
             h1->addWidget(pathButton);
         }
@@ -180,11 +180,10 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
         {
             searchButton = new QPushButton(QIcon(":images/downarrow.png"),
                                            tr("Start search"), this);
-            connect(searchButton, SIGNAL(clicked()), this, SLOT(searchBook()));
+            connect(searchButton, SIGNAL(clicked()), SLOT(searchBook()));
             cancelButton = new QPushButton(tr("Cancel"), this);
             cancelButton->setEnabled(false);
-            connect(cancelButton, SIGNAL(clicked()), this,
-                    SLOT(cancelSearch()));
+            connect(cancelButton, SIGNAL(clicked()), SLOT(cancelSearch()));
             h2->addStretch();
             h2->addWidget(searchButton);
             h2->addWidget(cancelButton);
@@ -209,7 +208,7 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
             QLabel *n = new QLabel(tr("Name :"));
             webNameEdit = new QLineEdit("",this);
             connect(webNameEdit, SIGNAL(textChanged(QString)),
-                    this, SLOT(webNameChanged(QString)));
+                    SLOT(webNameChanged(QString)));
             h1->addWidget(n);
             h1->addWidget(webNameEdit);
         }
@@ -218,7 +217,7 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
             QLabel *s = new QLabel(tr("Site :"));
             webSiteEdit = new QLineEdit("http://",this);
             connect(webSiteEdit, SIGNAL(textChanged(QString)),
-                    this, SLOT(webSiteChanged(QString)));
+                    SLOT(webSiteChanged(QString)));
             h2->addWidget(s);
             h2->addWidget(webSiteEdit);
         }
@@ -227,7 +226,7 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
             webAddButton = new QPushButton(
                     QIcon(":images/downarrow.png"), tr("Add"), this);
             connect(webAddButton, SIGNAL(clicked()),
-                    this, SLOT(addWebSite()));
+                    SLOT(addWebSite()));
             h3->addStretch();
             h3->addWidget(webAddButton);
             h3->addStretch();
@@ -244,11 +243,10 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
     dicSearch->setLayout(v1);
     QWidget *webSearch = new QWidget(this);
     webSearch->setLayout(v2);
-    QTabWidget *tab = new QTabWidget(this);
+    tab = new QTabWidget(this);
     tab->addTab(dicSearch, tr("Add Dictionary"));
     tab->addTab(webSearch, tr("Add Web Site"));
-    connect(tab, SIGNAL(currentChanged(int)),
-            this, SLOT(changeTab(int)));
+    connect(tab, SIGNAL(currentChanged(int)), SLOT(changeTab(int)));
 
     allDicWidget = new BookWidget(localBooks_, this);
     allDicWidget->hideViewButton();
@@ -257,13 +255,13 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
     allDicWidget->bookListWidget()->setSelectionMode(
                                       QAbstractItemView::ExtendedSelection);
     connect(allDicWidget, SIGNAL(rowChanged(int)),
-            this, SLOT(changeBookSelection(int)));
-    connect(allDicWidget->editButton(), SIGNAL(clicked()),
-            this, SLOT(editItem()));
+            SLOT(changeBookSelection(int)));
+    connect(allDicWidget->editButton(), SIGNAL(clicked()), SLOT(editItem()));
+    connect(allDicWidget->addButton(), SIGNAL(clicked()), SLOT(addItem()));
 
     groupWidget = new GroupWidget(&groupList_, this);
     connect(groupWidget, SIGNAL(rowChanged(int)),
-            this, SLOT(changeGroupSelection(int)));
+            SLOT(changeGroupSelection(int)));
 
     dicWidget = new BookWidget(NULL, this);
     dicWidget->bookListWidget()->setSelectionMode(
@@ -271,6 +269,7 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
     dicWidget->setFixedWidth(320);
     dicWidget->hideViewButton();
     dicWidget->hideFontButton();
+    dicWidget->hideAddButton();
     dicWidget->hideEditButton();
 
     QVBoxLayout *va = new QVBoxLayout();
@@ -278,7 +277,7 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
         selButton = new QPushButton(this);
         selButton->setIcon(QIcon(":images/rightarrow.png"));
         selButton->setEnabled(false);
-        connect(selButton, SIGNAL(clicked()), this, SLOT(addBook()));
+        connect(selButton, SIGNAL(clicked()), SLOT(addBook()));
         va->addStretch();
         va->addWidget(selButton);
         va->addStretch();
@@ -298,8 +297,8 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
                                      QDialogButtonBox::Cancel);
 
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(buttonBox, SIGNAL(accepted()), SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), SLOT(reject()));
     QVBoxLayout *v = new QVBoxLayout;
 #ifdef Q_WS_MAC
     TitleLabel *l = new TitleLabel(tr("Book and group settings"));
@@ -340,7 +339,7 @@ void BookSetting::searchBook()
         for (int i = 0; i < subbooks; i++) {
             eb.initSubBook(i);
             if (eb.isHaveText() /* && eb.isHaveWordSearch() */) {
-                if (allDicWidget->addBook(eb.title(), BookEpwingLocal,
+                if (allDicWidget->addBook(eb.title(), BookLocal,
                                           dir, i)) {
                     add_count++;
                 }
@@ -442,7 +441,7 @@ void BookSetting::changeGroupSelection(int row)
 void BookSetting::editItem()
 {
     Book *b = (Book *)allDicWidget->currentItem();
-    if (b->bookType() == BookEpwingLocal) {
+    if (b->bookType() == BookLocal) {
         EpwingFileSetting dlg(this, b->name(), b->path(), b->bookNo());
         if (dlg.exec() == QDialog::Accepted){
             b->setName(dlg.name());
@@ -456,6 +455,25 @@ void BookSetting::editItem()
             b->setPath(dlg.url());
         }
     }
+
+}
+
+void BookSetting::addItem()
+{
+    if (tab->currentIndex() == 0) {
+        EpwingFileSetting dlg(this, "", "", 0);
+        if (dlg.exec() == QDialog::Accepted){
+            allDicWidget->addBook(dlg.name(), BookLocal, dlg.path(),
+                                  dlg.bookNo());
+        }
+    } else if (tab->currentIndex() == 1) {
+        WebSetting dlg(this, "", "");
+        if (dlg.exec() == QDialog::Accepted){
+            allDicWidget->addBook(dlg.name(), BookWeb, dlg.url(),
+                                  0);
+        }
+    }
+
 
 }
 

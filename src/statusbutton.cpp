@@ -30,26 +30,26 @@ StatusButton::StatusButton(QWidget *enter, const QString &name,
     leaveFocus = 0;
     QString class_name = enter->metaObject()->className();
     if (class_name == "QComboBox") {
-        connect(this, SIGNAL(pressed()), this, SLOT(popupMenuCombo()));
+        connect(this, SIGNAL(pressed()), SLOT(popupMenuCombo()));
         connect((QComboBox*)enter, SIGNAL(currentIndexChanged(QString)),
-                this, SLOT(changeTextCombo(QString)));
-        connect(this, SIGNAL(updown(int)), this, SLOT(updownCombo(int)));
+                SLOT(changeTextCombo(QString)));
+        connect(this, SIGNAL(updown(int)), SLOT(updownCombo(int)));
     } else if (class_name == "QSpinBox") {
-        connect(this, SIGNAL(pressed()), this, SLOT(popupMenuSpin()));
+        connect(this, SIGNAL(pressed()), SLOT(popupMenuSpin()));
         connect((QSpinBox*)enter, SIGNAL(valueChanged(int)),
-                this, SLOT(changeValueSpin(int)));
-        connect(this, SIGNAL(updown(int)), this, SLOT(updownSpin(int)));
+                SLOT(changeValueSpin(int)));
+        connect(this, SIGNAL(updown(int)), SLOT(updownSpin(int)));
     } else if (class_name == "QListWidget") {
         setText(" - ");
-        connect(this, SIGNAL(pressed()), this, SLOT(popupMenuList()));
+        connect(this, SIGNAL(pressed()), SLOT(popupMenuList()));
         connect((QListWidget*)enter, SIGNAL(currentRowChanged(int)),
-                this, SLOT(changeTextList(int)));
-        connect(this, SIGNAL(updown(int)), this, SLOT(updownList(int)));
+                SLOT(changeTextList(int)));
+        connect(this, SIGNAL(updown(int)), SLOT(updownList(int)));
     } else if (class_name == "QMenu") {
-        connect(this, SIGNAL(pressed()), this, SLOT(popupMenuMenu()));
+        connect(this, SIGNAL(pressed()), SLOT(popupMenuMenu()));
         connect((QMenu*)enter, SIGNAL(triggered(QAction*)),
-                this, SLOT(changeTextMenu(QAction*)));
-        connect(this, SIGNAL(updown(int)), this, SLOT(updownMenu(int)));
+                SLOT(changeTextMenu(QAction*)));
+        connect(this, SIGNAL(updown(int)), SLOT(updownMenu(int)));
     } else {
         qWarning()<< "Unrecognized class Name" << class_name;
     }

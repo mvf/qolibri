@@ -65,7 +65,9 @@ public:
     void hideViewButton() { viewButton->hide(); }
     void hideFontButton() { fontButton->hide(); }
     void hideEditButton() { editButton_->hide(); }
+    void hideAddButton() { addButton_->hide(); }
     void hideGroupName() { groupNameLabel->hide(); }
+    QPushButton *addButton() { return addButton_; }
     QPushButton *editButton() { return editButton_; }
 
 signals:
@@ -123,6 +125,7 @@ private:
     QPushButton *viewButton;
     QPushButton *fontButton;
     QPushButton *editButton_;
+    QPushButton *addButton_;
 
     Group *group;
 };

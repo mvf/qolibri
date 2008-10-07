@@ -83,7 +83,7 @@ GTab::GTab(QWidget *parent)
     listWidget_->setContextMenuPolicy(Qt::CustomContextMenu);
     v->addWidget(listWidget_);
     connect(listWidget_, SIGNAL(currentRowChanged(int)),
-            this, SLOT(resetButtons()));
+            SLOT(resetButtons()));
 
     buttonLayout = new QHBoxLayout();
     buttonLayout->addStretch();
@@ -102,21 +102,13 @@ GTab::GTab(QWidget *parent)
     setLayout(v);
 
     connect(listWidget_, SIGNAL(customContextMenuRequested(QPoint)),
-            this, SLOT(popupMenu(QPoint)));
+            SLOT(popupMenu(QPoint)));
     connect(listWidget_, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
-            this, SLOT(viewCurrent()));
+            SLOT(viewCurrent()));
 
-    connect(upButton, SIGNAL(clicked()), this, SLOT(upCurrent()));
-    connect(downButton, SIGNAL(clicked()), this, SLOT(downCurrent()));
-    connect(delButton, SIGNAL(clicked()), this, SLOT(delCurrent()));
-
-    QObject *mainw = parent->parentWidget();
-    connect(this, SIGNAL(searchRequested(QString, SearchMethod)),
-            mainw, SLOT(viewSearch(QString, SearchMethod)));
-    connect(this, SIGNAL(webRequested(QString, QString)),
-            mainw, SLOT(viewWeb(QString, QString)));
-    connect(this, SIGNAL(pasteRequested(QString, SearchMethod)),
-            mainw, SLOT(pasteMethod(QString, SearchMethod)));
+    connect(upButton, SIGNAL(clicked()), SLOT(upCurrent()));
+    connect(downButton, SIGNAL(clicked()), SLOT(downCurrent()));
+    connect(delButton, SIGNAL(clicked()), SLOT(delCurrent()));
 
 }
 
@@ -249,14 +241,19 @@ GroupTab::GroupTab(QWidget *parent)
     groupCombo_ = new QComboBox(this);
     //groupCombo_->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     connect(groupCombo_, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(changeGroup(int)));
+            SLOT(changeGroup(int)));
     bookWidget_ = new BookWidget(group, this);
     bookWidget_->hideDelButton();
+    bookWidget_->hideAddButton();
     bookWidget_->hideEditButton();
     bookWidget_->hideGroupName();
     bookWidget_->bookListWidget()->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(bookWidget_, SIGNAL(bookViewRequested(Book*)),
+            SIGNAL(bookViewRequested(Book*)));
+    connect(bookWidget_, SIGNAL(fontViewRequested(Book*)),
+            SIGNAL(fontViewRequested(Book*)));
     connect(bookWidget_, SIGNAL(rowChanged(int)),
-            this, SIGNAL(bookChanged(int)));
+            SIGNAL(bookChanged(int)));
     v->addWidget(groupCombo_);
     v->addWidget(bookWidget_);
 
@@ -269,23 +266,9 @@ GroupTab::GroupTab(QWidget *parent)
     v2->setSpacing(0);
     setLayout(v2);
 
-
-    QWidget *mainwin = parent->parentWidget();
-    connect(bookWidget_, SIGNAL(bookViewRequested(Book*)),
-            mainwin, SLOT(viewInfo(Book*)));
-    connect(bookWidget_, SIGNAL(fontViewRequested(Book*)),
-            mainwin, SLOT(setBookFont(Book*)));
-    connect(this, SIGNAL(bookViewRequested(Book*)),
-            mainwin, SLOT(viewInfo(Book*)));
-    connect(this, SIGNAL(fontViewRequested(Book*)),
-            mainwin, SLOT(setBookFont(Book*)));
-    connect(this, SIGNAL(menuRequested()), mainwin, SLOT(viewMenu()));
-    connect(this, SIGNAL(fullRequested()), mainwin, SLOT(viewFull()));
-    connect(this, SIGNAL(groupChanged(int)), mainwin, SLOT(changeGroup(int)));
-    connect(this, SIGNAL(bookChanged(int)), mainwin, SLOT(changeBook(int)));
     connect(bookWidget_->bookListWidget(),
             SIGNAL(customContextMenuRequested(QPoint)),
-            this, SLOT(popupMenu(QPoint)));
+            SLOT(popupMenu(QPoint)));
 }
 
 void GroupTab::changeGroup(int index)
@@ -310,7 +293,7 @@ void GroupTab::changeGroupNoSignal(int index)
     groupCombo_->setCurrentIndex(index);
     bookWidget_->initBook(group);
     connect(groupCombo_, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(changeGroup(int)));
+            SLOT(changeGroup(int)));
 }
 
 void GroupTab::changeGroupList(QList<Group*> *gList)
@@ -325,7 +308,7 @@ void GroupTab::changeGroupList(QList<Group*> *gList)
     }
     groupCombo_->setCurrentIndex(-1);
     connect(groupCombo_, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(changeGroup(int)));
+            SLOT(changeGroup(int)));
 }
 
 void GroupTab::popupMenu(const QPoint &pos)
@@ -405,11 +388,31 @@ GroupDock::GroupDock(QWidget * parent)
 
     groupTab = new GroupTab(this);
     addTab(groupTab, QIcon(":/images/group.png"), tr("Group"));
+    connect(groupTab, SIGNAL(bookViewRequested(Book*)),
+            SIGNAL(bookViewRequested(Book*)));
+    connect(groupTab, SIGNAL(fontViewRequested(Book*)),
+            SIGNAL(fontViewRequested(Book*)));
+    connect(groupTab, SIGNAL(menuRequested()), SIGNAL(menuRequested()));
+    connect(groupTab, SIGNAL(fullRequested()), SIGNAL(fullRequested()));
+    connect(groupTab, SIGNAL(groupChanged(int)), SIGNAL(groupChanged(int)));
+    connect(groupTab, SIGNAL(bookChanged(int)), SIGNAL(bookChanged(int)));
 
     markTab = new MarkTab(this);
+    connect(markTab, SIGNAL(searchRequested(QString, SearchMethod)),
+            SIGNAL(searchRequested(QString, SearchMethod)));
+    connect(markTab, SIGNAL(webRequested(QString, QString)),
+            SIGNAL(webRequested(QString, QString)));
+    connect(markTab, SIGNAL(pasteRequested(QString, SearchMethod)),
+            SIGNAL(pasteRequested(QString, SearchMethod)));
     addTab(markTab, QIcon(":/images/bookmark.png"), tr("Mark"));
 
     historyTab = new HistoryTab(this);
+    connect(historyTab, SIGNAL(searchRequested(QString, SearchMethod)),
+            SIGNAL(searchRequested(QString, SearchMethod)));
+    connect(historyTab, SIGNAL(webRequested(QString, QString)),
+            SIGNAL(webRequested(QString, QString)));
+    connect(historyTab, SIGNAL(pasteRequested(QString, SearchMethod)),
+            SIGNAL(pasteRequested(QString, SearchMethod)));
     addTab(historyTab, QIcon(":/images/history.png"), tr("History"));
 
     setWindowFlags(Qt::Drawer);
@@ -438,5 +441,5 @@ GroupDock::GroupDock(QWidget * parent)
 
 #endif
 
-    connect(this, SIGNAL(closed()), parent, SLOT(closedDock()));
+    //connect(this, SIGNAL(closed()), parent, SLOT(closedDock()));
 }
