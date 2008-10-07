@@ -96,9 +96,9 @@ public:
     {
         return bookWidget_;
     }
-    inline QComboBox *groupCombo() const
+    inline QListWidget *groupWidget() const
     {
-        return groupCombo_;
+        return groupWidget_;
     }
     void changeGroupList(QList<Group*> *gList);
     void changeGroupNoSignal(int index);
@@ -118,7 +118,7 @@ private slots:
 private:
     QList<Group*> *groupList;
     Group *group;
-    QComboBox *groupCombo_;
+    QListWidget *groupWidget_;
     BookWidget *bookWidget_;
 };
 
@@ -185,9 +185,9 @@ public:
         markTab->changeGroupList(group_list);
         historyTab->changeGroupList(group_list);
     }
-    inline QComboBox *groupCombo() const
+    inline QListWidget *groupWidget() const
     {
-        return groupTab->groupCombo();
+        return groupTab->groupWidget();
     }
     inline QListWidget *historyListWidget() const
     {

@@ -102,12 +102,12 @@ private:
 class Group : public QListWidgetItem
 {
 public:
-    Group(const QString &nam, bool bUse = true)
+    Group(const QString &nam)
         : QListWidgetItem(nam)
     {
-        setData(Qt::CheckStateRole, bUse);
-        if (bUse) setCheckState(Qt::Checked);
-        else setCheckState(Qt::Unchecked);
+        //setData(Qt::CheckStateRole, bUse);
+        //if (bUse) setCheckState(Qt::Checked);
+        //else setCheckState(Qt::Unchecked);
     }
     Group(const Group &that)
         : QListWidgetItem(that)

@@ -98,7 +98,7 @@ GTab::GTab(QWidget *parent)
     buttonLayout->addWidget(viewButton);
     v->addLayout(buttonLayout);
     v->setSpacing(0);
-    v->setMargin(3);
+    v->setMargin(0);
     setLayout(v);
 
     connect(listWidget_, SIGNAL(customContextMenuRequested(QPoint)),
@@ -238,9 +238,9 @@ GroupTab::GroupTab(QWidget *parent)
 {
     QVBoxLayout *v = new QVBoxLayout();
 
-    groupCombo_ = new QComboBox(this);
-    //groupCombo_->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    connect(groupCombo_, SIGNAL(currentIndexChanged(int)),
+    groupWidget_ = new QListWidget(this);
+    groupWidget_->setResizeMode(QListView::Adjust);
+    connect(groupWidget_, SIGNAL(currentRowChanged(int)),
             SLOT(changeGroup(int)));
     bookWidget_ = new BookWidget(group, this);
     bookWidget_->hideDelButton();
@@ -254,7 +254,10 @@ GroupTab::GroupTab(QWidget *parent)
             SIGNAL(fontViewRequested(Book*)));
     connect(bookWidget_, SIGNAL(rowChanged(int)),
             SIGNAL(bookChanged(int)));
-    v->addWidget(groupCombo_);
+    v->addWidget(new QLabel(tr("Groups:")));
+    v->addWidget(groupWidget_);
+    v->addSpacing(10);
+    v->addWidget(new QLabel(tr("Books:")));
     v->addWidget(bookWidget_);
 
     v->setMargin(0);
@@ -262,7 +265,7 @@ GroupTab::GroupTab(QWidget *parent)
 
     QVBoxLayout *v2 = new QVBoxLayout();
     v2->addLayout(v);
-    v2->setMargin(3);
+    v2->setMargin(0);
     v2->setSpacing(0);
     setLayout(v2);
 
@@ -287,12 +290,12 @@ void GroupTab::changeGroup(int index)
 
 void GroupTab::changeGroupNoSignal(int index)
 {
-    disconnect(groupCombo_, SIGNAL(currentIndexChanged(int)),
+    disconnect(groupWidget_, SIGNAL(currentRowChanged(int)),
                this, SLOT(changeGroup(int)));
     group = (*groupList)[index];
-    groupCombo_->setCurrentIndex(index);
+    groupWidget_->setCurrentRow(index);
     bookWidget_->initBook(group);
-    connect(groupCombo_, SIGNAL(currentIndexChanged(int)),
+    connect(groupWidget_, SIGNAL(currentRowChanged(int)),
             SLOT(changeGroup(int)));
 }
 
@@ -300,15 +303,23 @@ void GroupTab::changeGroupList(QList<Group*> *gList)
 {
     groupList = gList;
     bookWidget_->initBook(NULL);
-    disconnect(groupCombo_, SIGNAL(currentIndexChanged(int)),
+    disconnect(groupWidget_, SIGNAL(currentRowChanged(int)),
                this, SLOT(changeGroup(int)));
-    groupCombo_->clear();
+    groupWidget_->clear();
     foreach(Group * g, (*groupList)) {
-        groupCombo_->addItem(g->name());
+        groupWidget_->addItem(g->name());
     }
-    groupCombo_->setCurrentIndex(-1);
-    connect(groupCombo_, SIGNAL(currentIndexChanged(int)),
+    groupWidget_->setCurrentRow(-1);
+    connect(groupWidget_, SIGNAL(currentRowChanged(int)),
             SLOT(changeGroup(int)));
+    int h = groupWidget_->sizeHintForRow(1);
+    if (h == -1) {
+        h = 16;
+    } else {
+        h *= groupList->count();
+    }
+    groupWidget_->setFixedHeight(h+5);
+
 }
 
 void GroupTab::popupMenu(const QPoint &pos)

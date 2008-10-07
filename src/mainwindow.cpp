@@ -223,7 +223,7 @@ void MainWindow::createToolBars()
     //bar1->addWidget(new QLabel("  "));
     searchBar = addToolBar("Search");
     searchBar->setMovable(false);
-    StatusButton *gbutton1 = new StatusButton(groupDock->groupCombo(),
+    StatusButton *gbutton1 = new StatusButton(groupDock->groupWidget(),
                                               "group", this, true);
     gbutton1->setStyleSheet("QPushButton { font-weight:bold; }");
     searchBar->addWidget(gbutton1);
@@ -242,7 +242,7 @@ void MainWindow::createToolBars()
 
     bookBar = addToolBar("Read Book");
     bookBar->setMovable(false);
-    StatusButton *gbutton2 = new StatusButton(groupDock->groupCombo(),
+    StatusButton *gbutton2 = new StatusButton(groupDock->groupWidget(),
                                               "group", this, true);
     gbutton2->setStyleSheet("QPushButton { font-weight:bold; }");
     bookBar->addWidget(gbutton2);
@@ -264,7 +264,6 @@ void MainWindow::createToolBars()
     bar2->addAction(addMarkAct);
     bar2->addAction(zoomInAct);
     bar2->addAction(zoomOutAct);
-    bar2->addAction(toggleTabsAct);
 
     webBar = addToolBar("Web");
     webBar->setMovable(false);
@@ -293,7 +292,7 @@ void MainWindow::createToolBars()
     connect(methodCombo, SIGNAL(currentIndexChanged(int)),
             SLOT(changeDirection(int)));
     methodBar->addWidget(methodCombo);
-    methodBar->addWidget(new QLabel(tr(" Logic:")));
+    //methodBar->addWidget(new QLabel(tr(" Logic:")));
     logicCombo = new QComboBox(this);
     logicCombo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     logicCombo->addItem(tr("AND"));
@@ -319,6 +318,7 @@ void MainWindow::createToolBars()
     methodBar->addWidget(limitTotalSpin);
     methodBar->addSeparator();
     methodBar->addAction(booksAct);
+    methodBar->addAction(toggleTabsAct);
     methodBar->addAction(fontAct);
     methodBar->addAction(sSheetAct);
 
@@ -406,22 +406,19 @@ void MainWindow::readSettings()
 
     QSettings groups(CONF->settingOrg, "EpwingGroups");
 
-    localBooks = new Group("Local Books", true);
-    webSites = new Group("Web Sites", true);
+    localBooks = new Group("Local Books");
+    webSites = new Group("Web Sites");
     int gcnt = groups.beginReadArray("DictionaryGroups");
     for (int i = 0; i < gcnt; i++) {
         groups.setArrayIndex(i);
         QString name = groups.value("name").toString();
-        QString use = groups.value("use").toString();
-        bool bUse = false;
         Group *g;
-        if (use == "ON") bUse = true;
         if (i == 0) {
             g = localBooks;
         } else if (i == 1) {
             g = webSites;
         } else {
-            g = new Group(name, bUse);
+            g = new Group(name);
             groupList << g;
         }
         int dcnt = groups.beginReadArray("Dictionaries");
@@ -431,8 +428,8 @@ void MainWindow::readSettings()
             int booktype = groups.value("booktype").toInt();
             QString path = groups.value("path").toString();
             int subbook = groups.value("subbook").toInt();
-            use = groups.value("use").toString();
-            bUse = false;
+            QString use = groups.value("use").toString();
+            bool bUse = false;
             if (use == "ON") bUse = true;
             Book *d = new Book(name, (BookType)booktype, path, subbook, bUse);
             g->addBook(d);
@@ -829,7 +826,7 @@ void MainWindow::resizeDock()
     //qDebug() << "frameSize height" << groupDock->frameSize().height()
     //         << "height" << groupDock->size().height();
 
-    QSize sz(280, height);
+    QSize sz(270, height);
 
     //QSize sz = groupDock->size();
     //sz.setHeight(size().height());
