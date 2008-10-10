@@ -37,9 +37,8 @@ const int TextSizeLimit = 2800000;
 QList <CandItems> EbMenu::topMenu()
 {
 
-    EB_Position pos;
-
-    if (!menu(&pos)) {
+    EB_Position pos = menu();
+    if (!isValidPosition(pos)) {
         QList<CandItems> i;
         return i;
     }
@@ -65,58 +64,43 @@ int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
         (stype == SearchCrossWord && !isHaveCrossSearch()) )
         return 0;
 
-    int word_num = words.count();
-
-    char** word_list = new char*[word_num + 1];
-    QList <QByteArray> bword_list;
-    for (int i = 0; i < word_num; i++ ) {
-	bword_list << utfToEuc(words[i]);
-	word_list[i] = bword_list[i].data();
-    }
-    word_list[word_num] = NULL;
-
     if ( maxcnt <= 0 )
         maxcnt = HitsBufferSize;
-    int hit_count;
     int count = 0;
     for (;;) {
         EB_Error_Code ecode;
         if (stype == SearchKeyWord) {
-            ecode = eb_search_keyword(&book, word_list);
+            ecode = searchKeyword(words);
         } else {
-            ecode = eb_search_cross(&book, word_list);
+            ecode = searchCross(words);
         }
         if (ecode != EB_SUCCESS) {
-            ebError("eb_search_cross", ecode);
             break;
         }
 
-        EB_Hit wrk[HitsBufferSize];
-        ecode = eb_hit_list(&book, HitsBufferSize, wrk, &hit_count);
-        if (ecode != EB_SUCCESS) {
-            ebError("eb_hit_list", ecode);
-            break;
+        QList <EB_Hit> wrk = hitList(HitsBufferSize);
+        if (wrk.count() == 0) {
+            return 0;
         }
 
-        for (int i = 0; i < hit_count; i++) {
+        foreach(EB_Hit w, wrk) {
             bool same_text = false;
             foreach(EB_Hit h, hits) {
-                if (wrk[i].text.page == h.text.page &&
-                    wrk[i].text.offset == h.text.offset) {
+                if (w.text.page == h.text.page &&
+                    w.text.offset == h.text.offset) {
                     same_text = true;
                     break;
                 }
             }
             if (same_text) continue;
 
-            hits << wrk[i];
+            hits << w;
             count++;
             if (count >= maxcnt) break;
         }
 
         break;
     }
-    delete word_list;
 
     return count;
 }
@@ -126,53 +110,46 @@ int EBook::hitWord(int maxcnt, const QString &word, SearchType type)
     hits.clear();
     if ( maxcnt <= 0 ) maxcnt = HitsBufferSize;
     EB_Error_Code ecode;
-    QByteArray bword = utfToEuc(word);
     if (type == SearchWord) {
 	if (!isHaveWordSearch())
 	    return 0;
-        ecode = eb_search_word(&book, bword);
+        ecode = searchWord(word);
         if (ecode != EB_SUCCESS) {
-            ebError("eb_search_word", ecode);
             return -1;
         }
     } else if (type == SearchEndWord) {
 	if (!isHaveEndwordSearch())
 	    return 0;
-        ecode = eb_search_endword(&book, bword);
+        ecode = searchEndword(word);
         if (ecode != EB_SUCCESS) {
-            ebError("eb_search_endword", ecode);
             return -1;
         }
     } else {
-	if (!isHaveWordSearch())
+	if (!isHaveExactwordSearch())
 	    return 0;
-        ecode = eb_search_exactword(&book, bword);
+        ecode = searchExactword(word);
         if (ecode != EB_SUCCESS) {
-            ebError("eb_search_exactword", ecode);
             return -1;
         }
     }
 
-    EB_Hit wrk[HitsBufferSize];
-    int hit_count;
-    ecode = eb_hit_list(&book, HitsBufferSize, wrk, &hit_count);
-    if (ecode != EB_SUCCESS) {
-        ebError("eb_hit_list", ecode);
-        return -1;
+    QList <EB_Hit> wrk = hitList(HitsBufferSize);
+    if (wrk.count() == 0) {
+        return 0;
     }
 
     int count = 0;
-    for (int i = 0; i < hit_count; i++) {
+    foreach(EB_Hit w, wrk) {
         bool same_text = false;
         foreach (EB_Hit h, hits) {
-            if (wrk[i].text.page == h.text.page &&
-                wrk[i].text.offset == h.text.offset) {
+            if (w.text.page == h.text.page &&
+                w.text.offset == h.text.offset) {
                 same_text = true;
                 break;
             }
         }
         if (same_text)  continue;
-        hits << wrk[i];
+        hits << w;
 
         count++;
         if (count >= maxcnt) break;
@@ -188,9 +165,8 @@ int EbAll::hitFull(int maxcnt)
     int count = 0;
 
     if (firstSeek) {
-        ecode = eb_text(&book, &position);
-        if (ecode != EB_SUCCESS) {
-            ebError("eb_text", ecode);
+        position = startText();
+        if (!isValidPosition(position)) {
             return -1;
         }
         firstSeek = false;
@@ -203,23 +179,21 @@ int EbAll::hitFull(int maxcnt)
     hits << hit; 
     count++;
     while (count <= maxcnt) {
-        ecode = eb_seek_text(&book, &position);
+        ecode = seekText(position);
         if (ecode != EB_SUCCESS) {
-            ebError("eb_seek_text", ecode);
             break;
         }
-        ecode = eb_forward_text(&book, &appendix);
+        ecode = forwardText();
         if (ecode != EB_SUCCESS) {
             if (ecode == EB_ERR_END_OF_CONTENT &&
                 position.page < book.subbook_current->text.end_page) {
                 //qDebug() << "hitFull : page=" << position.page
                 //         << "offset=" << position.offset
                 //         << "end page=" << book.subbook_current->text.end_page;
-                ecode = eb_tell_text(&book, &position);
+                position = tellText( );
                 //qDebug() << "tell_text : page=" << position.page
                 //         << "offset=" << position.offset;
-                if (ecode != EB_SUCCESS) {
-                    ebError("eb_tell_text", ecode);
+                if (!isValidPosition(position)){
                     break;
                 }
                 if (position.page >= book.subbook_current->text.end_page) {
@@ -232,9 +206,8 @@ int EbAll::hitFull(int maxcnt)
                 break;
             }
         } else {
-            ecode = eb_tell_text(&book, &position);
-            if (ecode != EB_SUCCESS) {
-                ebError("eb_tell_text", ecode);
+            position = tellText();
+            if (!isValidPosition(position)){
                 break;
             }
         }

@@ -391,8 +391,8 @@ public:
     QWidget* pageWidget(int index);
     QWidget* currentPageWidget();
 
-private:
     void closeTab1(int index);
+private:
     bool checkLoaded();
     void stopAllLoading();
 

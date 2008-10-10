@@ -339,7 +339,7 @@ void BookSetting::searchBook()
         for (int i = 0; i < subbooks; i++) {
             eb.initSubBook(i);
             if (eb.isHaveText() /* && eb.isHaveWordSearch() */) {
-                if (allDicWidget->addBook(eb.title(), BookLocal,
+                if (allDicWidget->addBook(eb.subbookTitle(), BookLocal,
                                           dir, i)) {
                     add_count++;
                 }

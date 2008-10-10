@@ -1,6 +1,7 @@
 HEADERS += mainwindow.h \
            method.h \
            book.h \
+           qeb.h \
            ebcore.h \
            ebcache.h \
            ebhook.h \
@@ -25,6 +26,7 @@ SOURCES += qolibri.cpp \
            mainwindow.cpp \
            method.cpp \
            book.cpp \
+           qeb.cpp \
            ebcore.cpp \
            ebcache.cpp \
            ebhook.cpp \

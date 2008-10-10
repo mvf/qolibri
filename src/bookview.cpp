@@ -20,6 +20,8 @@
 
 #include "book.h"
 #include "bookview.h"
+#include "qeb.h"
+#include "ebcore.h"
 #include "ebook.h"
 #include "configure.h"
 #include "textcodec.h"
@@ -778,15 +780,15 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     mstr += "</b>";
 
     QString str = QString(tr("Title: <b>%1</b>\nSearch Method: %2"))
-                          .arg(eb.title()).arg(mstr);
+                          .arg(eb.subbookTitle()).arg(mstr);
     items.composeHLine(2, "BOOK", eb.path(), str);
 
     if (eb.isHaveMenu()) {
-        items.composeHLine(2, "MENU", "Menu", eb.menu());
+        items.composeHLine(2, "MENU", "Menu", eb.getMenu());
     }
 
     if (eb.isHaveCopyright()) {
-        items.composeHLine(2, "COPYRIGHT", "Copyright", eb.copyright());
+        items.composeHLine(2, "COPYRIGHT", "Copyright", eb.getCopyright());
     }
 
     QStringList sfile;
@@ -856,8 +858,8 @@ void MenuPage::fullMenuPage()
     eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList(),
                 CONF->indentOffset, method_.ruby);
 
-    EB_Position pos;
-    if (!eb.menu(&pos)) {
+    EB_Position pos = eb.menu();
+    if (!eb.isValidPosition(pos)){
         retStatus = NO_MENU;
         return;
     }
@@ -1164,7 +1166,7 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
             qWarning() << "Invalid Search Method" << method.direction;
         }
         if (hit_num <= 0) {
-            eb.unsetBook();
+            eb.unsetSubbook();
             continue;
         }
 
@@ -1202,13 +1204,13 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
             }
         }
         if (matchCount == 0) {
-            eb.unsetBook();
+            eb.unsetSubbook();
             continue;
         }
 	items.item(1)->setText(0, book->name() + " (" +
                                   QString::number(matchCount)  + ')');
 
-        eb.unsetBook();
+        eb.unsetSubbook();
     }
     if (totalCount == 0) {
         retStatus = (checkStop()) ? NOT_HIT_INTERRUPTED : NOT_HIT;
@@ -1273,7 +1275,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
         }
         eb.initSeek();
         if (!eb.isHaveText()) {
-            eb.unsetBook();
+            eb.unsetSubbook();
             continue;
         }
         eb.initHook(bookBrowser_->fontSize(), book->fontList(),
@@ -1333,7 +1335,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
 
             if (hit_num < 3000) break;
         }
-        eb.unsetBook();
+        eb.unsetSubbook();
         if (matchCount == 0) continue;
 
 	item.item(1)->setText(0, QString("%1(%2)")
@@ -2004,8 +2006,13 @@ void BookView::showTabBar(int new_tab)
     }
 }
 
-void BookView::viewTabChanged(int) {
-    emit currentChanged(currentIndex());
+void BookView::viewTabChanged(int index) {
+    if (index < 0) {
+        closeTab1(currentIndex());
+        emit tabChanged(count());
+    } else {
+        emit currentChanged(currentIndex());
+    }
 }
 
 void BookView::stopAllLoading()

@@ -313,12 +313,10 @@ void GroupTab::changeGroupList(QList<Group*> *gList)
     connect(groupWidget_, SIGNAL(currentRowChanged(int)),
             SLOT(changeGroup(int)));
     int h = groupWidget_->sizeHintForRow(1);
-    if (h == -1) {
-        h = 16;
-    } else {
-        h *= groupList->count();
-    }
-    groupWidget_->setFixedHeight(h+5);
+    int c = groupList->count() <= 8 ? groupList->count() : 8;
+    if (h == -1) h = 16;
+
+    groupWidget_->setFixedHeight((h * c) + 5);
 
 }
 

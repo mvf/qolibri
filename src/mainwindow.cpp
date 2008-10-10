@@ -156,6 +156,9 @@ void MainWindow::createMenus()
                                  tr("Go &Next"), this, SLOT(goNext()));
     reloadAct = vmenu->addAction(QIcon(":/images/reload.png"),
                                  tr("&Reload"), this, SLOT(reload()));
+    goPrevAct->setEnabled(false);
+    goNextAct->setEnabled(false);
+    reloadAct->setEnabled(false);
 
 
     QMenu *smenu = menuBar()->addMenu(tr("&Setting"));
@@ -740,12 +743,16 @@ void MainWindow::showTabInfo(int index)
         s.replace("&&", "&");
         SearchItem i(s, m);
         webBar->hide();
+        goPrevAct->setEnabled(false);
+        goNextAct->setEnabled(false);
+        reloadAct->setEnabled(false);
         showStatus(i.text());
     } else if (t == BookWeb) {
         WebPage *w = (WebPage*)(bookView->pageWidget(index));
         QString u = w->url().toString();
         showStatus(w->url().toString());
         webBar->show();
+        reloadAct->setEnabled(true);
         if (w->history()->canGoBack()) {
             goPrevAct->setEnabled(true);
         } else {
@@ -758,7 +765,7 @@ void MainWindow::showTabInfo(int index)
         }
     } else {
         webBar->hide();
-        showStatus("BookView");
+        //showStatus("");
     }
 
 }
@@ -1354,22 +1361,25 @@ void MainWindow::stopSound()
 
 void MainWindow::addMark()
 {
-    QString s = bookView->tabText(bookView->currentIndex());
     if (bookView->currentPageType() == BookLocal) {
         SearchMethod m = bookView->currentPageMethod();
+        QString s = bookView->tabText(bookView->currentIndex());
         s.replace("&&", "&");
         groupDock->addMark(s, m);
     } else {
-        QTabWidget *v = bookView;
-        if (bookView->currentWidget()->objectName() == "bookview") {
-            v = (QTabWidget*)bookView->currentWidget();
-            s += " (" + v->tabText(v->currentIndex()) + ")";
-        } else {
-            s = v->tabText(v->currentIndex());
-        }
         WebPage *w = (WebPage*)(bookView->currentPageWidget());
-        QString u = w->url().toString();
-        groupDock->addMark(s, u);
+        groupDock->addMark(w->title(), w->url().toString());
+
+//        QTabWidget *v = bookView;
+//        if (bookView->currentWidget()->objectName() == "bookview") {
+//            v = (QTabWidget*)bookView->currentWidget();
+//            s += " (" + v->tabText(v->currentIndex()) + ")";
+//        } else {
+//            s = v->tabText(v->currentIndex());
+//        }
+//        QString s = w->title();
+//        QString u = w->url().toString();
+//        groupDock->addMark(s, u);
     }
 
     toggleDockAct->setChecked(true);
@@ -1473,6 +1483,7 @@ void MainWindow::changeSearchText(const QString&)
 void MainWindow::changeViewTabCount(int tab_count)
 {
     if (tab_count == 0 ) {
+        showStatus();
         addMarkAct->setEnabled(false);
         zoomInAct->setEnabled(false);
         zoomOutAct->setEnabled(false);

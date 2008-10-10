@@ -1,6 +1,5 @@
 /***************************************************************************
 *   Copyright (C) 2007 by BOP                                             *
-*   polepolek@gmail.com                                                   *
 *                                                                         *
 *   This program is free software; you can redistribute it and/or modify  *
 *   it under the terms of the GNU General Public License as published by  *
@@ -17,48 +16,19 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#ifndef EBCORE_H
-#define EBCORE_H
 
-#include <QStack>
-#include <QObject>
-
-#include <eb/eb.h>
-#include <eb/text.h>
+#include <QtCore>
 
 #include "qeb.h"
-#include "ebcache.h"
-#include "ebhook.h"
+#include "textcodec.h"
 
-enum HookMode { HookText, HookMenu, HookFont };
-
-class EbCore : public QEb
+void QEb::initialize()
 {
-public:
-    EbCore(HookMode hmode=HookText);
-    ~EbCore();
+    eb_initialize_library();
+}
 
-    QString getCopyright();
-    QString getMenu();
-    int initBook(const QString &path, int subbook=-1, int refpos=0);
-    int initSubBook(int index, int refpos=0);
-    void initHook(int fsize, QHash<QString, QString> *flist,
-                  int indent_offset = 50, bool ruby = true)
-    {
-        ebHook.init(this, subbookTitle(), fsize, flist, indent_offset, ruby);
-    }
+void QEb::finalize()
+{
+    eb_finalize_library();
+}
 
-    QString text(const EB_Position &pos, bool hflag=true);
-    QString heading(const EB_Position &pos, bool hflag=true);
-    QList <CandItems> candidate(const EB_Position &pos, QString *txt);
-
-    EbHook ebHook;
-
-protected:
-
-    QList <EB_Subbook_Code> subBookList;
-    QList <EB_Subbook_Code> subAppendixList;
-
-};
-
-#endif

@@ -19,13 +19,14 @@
 
 #include <QtCore>
 
-#include "ebook.h"
-#include "ebhook.h"
-#include "textcodec.h"
 #include <eb/eb.h>
 #include <eb/error.h>
 #include <eb/font.h>
 #include <eb/binary.h>
+#include "qeb.h"
+#include "ebook.h"
+#include "ebhook.h"
+#include "textcodec.h"
 
 const int ImageBufferSize = 50000;
 
@@ -72,14 +73,13 @@ QByteArray EbHook::set_indent(int val)
     return ret;
 }
 
-QByteArray EbHook::narrow_font(EB_Book *book, int code)
+QByteArray EbHook::narrow_font(int code)
 {
-    if (!eb_have_narrow_font(book)) {
+    if (!eb->isHaveNarrowFont()) {
         qDebug() << "not have narrow font";
         return errorString("narrow font error");
     }
 
-    EB_Error_Code ecode;
     QString fcode = "n" + QString::number(code, 16);
     if (fontList) {
         QString afont = fontList->value(fcode);
@@ -104,32 +104,25 @@ QByteArray EbHook::narrow_font(EB_Book *book, int code)
     if (ebCache.fontCacheList.contains(fname))
         return out;
 
-    char bitmap[EB_SIZE_NARROW_FONT_16];
-    if ((ecode = eb_narrow_font_character_bitmap(book, code, bitmap))
-        != EB_SUCCESS) {
-        EbCore::ebError("eb_narrow_font_character_bitmap", ecode);
+    QByteArray bitmap = eb->narrowFontCharacterBitmap(code);
+    if (bitmap.isNull())
         return errorString("narrow font error");
-    }
 
-    size_t wlen;
 #ifdef USE_GIF_FOR_FONT
-    char buff[EB_SIZE_NARROW_FONT_16_GIF];
-    if ((ecode = eb_bitmap_to_gif(bitmap, 8, 16, buff, &wlen) != EB_SUCCESS)) {
-        EbCore::ebError("eb_bitmap_to_gif", ecode);
+    QByteArray cnv = eb->narrowBitmapToGif(bitmap);
+    if (cnv.isNull())
         return errorString("narrow font error");
-    }
+
 #else
-    char buff[EB_SIZE_NARROW_FONT_16_PNG];
-    if ((ecode = eb_bitmap_to_png(bitmap, 8, 16, buff, &wlen) != EB_SUCCESS)) {
-        EbCore::ebError("eb_bitmap_to_png", ecode);
+    QByteArray cnv = eb->narrowBitmapToPng(bitmap);
+    if (cnv.isNull())
         return errorString("narrow font error");
-    }
 #endif
 
 
     QFile f(ebCache.fontCachePath +  '/' + fname);
     f.open(QIODevice::WriteOnly);
-    f.write(buff, wlen);
+    f.write(cnv);
     f.close();
     //qDebug() << "Output narrow_font" << fname;
     ebCache.fontCacheList << fname;
@@ -137,11 +130,10 @@ QByteArray EbHook::narrow_font(EB_Book *book, int code)
     return out;
 }
 
-QByteArray EbHook::wide_font(EB_Book *book, int code)
+QByteArray EbHook::wide_font(int code)
 {
-    EB_Error_Code ecode;
 
-    if (!eb_have_wide_font(book)) {
+    if (!eb->isHaveWideFont()) {
         qDebug() << "not have wide font";
         return errorString("wide font error");
     }
@@ -173,31 +165,25 @@ QByteArray EbHook::wide_font(EB_Book *book, int code)
         return out;
     }
 
-    char bitmap[EB_SIZE_WIDE_FONT_16];
-    if ((ecode = eb_wide_font_character_bitmap(book, code, bitmap))
-        != EB_SUCCESS) {
-        EbCore::ebError("eb_wide_font_character_bitmap", ecode);
+    QByteArray bitmap = eb->wideFontCharacterBitmap(code);
+    if (bitmap.isNull())
         return errorString("wide font error");
-    }
 
-    size_t wlen;
 #ifdef USE_GIF_FOR_FONT
-    char buff[EB_SIZE_WIDE_FONT_16_GIF];
-    if ((ecode = eb_bitmap_to_gif(bitmap, 16, 16, buff, &wlen)) != EB_SUCCESS) {
-        EbCore::ebError("eb_bitmap_to_gif", ecode);
+    QByteArray cnv = eb->wideBitmapToGif(bitmap);
+    if (cnv.isNull()) {
         return errorString("wide font error");
     }
 #else
-    char buff[EB_SIZE_WIDE_FONT_16_PNG];
-    if ((ecode = eb_bitmap_to_png(bitmap, 16, 16, buff, &wlen)) != EB_SUCCESS) {
-        EbCore::ebError("eb_bitmap_to_png", ecode);
+    QByteArray cnv = eb->wideBitmapToPng(bitmap);
+    if (cnv.isNull()) {
         return errorString("wide font error");
     }
 #endif
 
     QFile f(ebCache.fontCachePath + '/' + fname);
     f.open(QIODevice::WriteOnly);
-    f.write(buff, wlen);
+    f.write(cnv);
     f.close();
     ebCache.fontCacheList << fname;
     //qDebug() << "Output wide_font" << xpmFile;
@@ -225,7 +211,7 @@ QByteArray EbHook::begin_reference()
            "R>\">";
 }
 
-QByteArray EbHook::begin_color_jpeg(EB_Book *book, int page, int offset)
+QByteArray EbHook::begin_color_jpeg(int page, int offset)
 {
 
     QByteArray jpgFile = makeFname("jpeg", page, offset);
@@ -242,39 +228,27 @@ QByteArray EbHook::begin_color_jpeg(EB_Book *book, int page, int offset)
     EB_Error_Code err;
     pos.page = page;
     pos.offset = offset;
-    if ((err = eb_set_binary_color_graphic(book, &pos)) != EB_SUCCESS) {
-    EbCore::ebError("eb_set_binary_color_graphic", err);
+
+    if ((err = eb->setBinaryColorGraphic(pos)) != EB_SUCCESS) {
         return errorString("image(jpeg) error");
     }
 
-
-    char bitmap[ImageBufferSize];
-    Q_CHECK_PTR(bitmap);
-    ssize_t bitmap_length;
+    QByteArray b = eb->readBinary();
+    if (b.isNull()) {
+        return errorString("read binary error");
+    }
+    
     QFile f(ebCache.imageCachePath + '/' + jpgFile);
     f.open(QIODevice::WriteOnly);
-    int flg = 0;
-
-    for (;;)
-    {
-        if ((err = eb_read_binary(book, ImageBufferSize, bitmap,
-                                  &bitmap_length)) != EB_SUCCESS) {
-            EbCore::ebError("eb_read_binary", err);
-            return errorString("image(jpeg) error");
-        }
-        // qDebug() << "eb_read_binary : size=" << bitmap_length;
-        f.write(bitmap, bitmap_length);
-        flg++;
-        if (bitmap_length < ImageBufferSize) break;
-    }
+    f.write(b);
     f.close();
-    //qDebug() << "Image Size :" << ImageBufferSize * flg;
+
     ebCache.imageCacheList << jpgFile;
 
     return out;
 }
 
-QByteArray EbHook::begin_color_bmp(EB_Book *book, int page, int offset)
+QByteArray EbHook::begin_color_bmp(int page, int offset)
 {
     EB_Error_Code ecode;
 
@@ -290,32 +264,21 @@ QByteArray EbHook::begin_color_bmp(EB_Book *book, int page, int offset)
     EB_Position pos;
     pos.page = page;
     pos.offset = offset;
-    if ((ecode = eb_set_binary_color_graphic(book, &pos)) != EB_SUCCESS) {
-        EbCore::ebError("eb_set_binary_color_graphic", ecode);
+
+    if ((ecode = eb->setBinaryColorGraphic(pos)) != EB_SUCCESS) {
         return errorString("image(bmp) error");
     }
 
+    QByteArray b = eb->readBinary();
+    if (b.isNull()) {
+        return errorString("read binary error");
+    }
 
-    char bitmap[ImageBufferSize];
-    Q_CHECK_PTR(bitmap);
-    ssize_t bitmap_length;
     QFile f(ebCache.imageCachePath + '/' + bmpFile);
     f.open(QIODevice::WriteOnly);
-    int flg = 0;
-
-    for (;;)
-    {
-        if ((ecode = eb_read_binary(book, ImageBufferSize,
-                                    bitmap, &bitmap_length)) != EB_SUCCESS) {
-            EbCore::ebError("eb_read_binary", ecode);
-            return errorString("image(bmp) error");
-        }
-        //qDebug() << "eb_read_binary : size=" << bitmap_length;
-        f.write(bitmap, bitmap_length);
-        flg++;
-        if (bitmap_length < ImageBufferSize) break;
-    }
+    f.write(b);
     f.close();
+
     //qDebug() << "Image Size :" << ImageBufferSize * flg;
     ebCache.imageCacheList << bmpFile;
 
@@ -342,10 +305,10 @@ QByteArray EbHook::end_candidate_group(int page, int offset)
     return "</a>";
 }
 
-void EbHook::end_candidate_group_menu(EB_Book *book, int page, int offset)
+void EbHook::end_candidate_group_menu(int page, int offset)
 {
     CandItems cItem;
-    cItem.title = eucToUtf(eb_current_candidate(book));
+    cItem.title = eb->currentCandidate();
     cItem.position.page = page;
     cItem.position.offset = offset;
     candList << cItem;
@@ -359,23 +322,21 @@ QByteArray EbHook::begin_mpeg()
            "M>\">";
 }
 
-void EbHook::end_mpeg(EB_Book *book, const unsigned int *p)
+void EbHook::end_mpeg(const unsigned int *p)
 {
-    EB_Error_Code ecode;
-    char sfile[EB_MAX_PATH_LENGTH + 1];
 
-    if ((ecode = eb_compose_movie_path_name(book, p, sfile)) != EB_SUCCESS) {
-        EbCore::ebError("eb_compose_movie_path_name", ecode);
-        return ;
+    QString path = eb->composeMoviePathName(p);
+    if (path.isEmpty()) {
+        return;
     }
     QString dfile = ebCache.mpegCachePath + "/" +
-                    QFileInfo(sfile).fileName() + ".mpeg";
+                    QFileInfo(path).fileName() + ".mpeg";
     if (!QFile(dfile).exists())
-        QFile::copy(sfile, dfile);
+        QFile::copy(path, dfile);
     mpegList << "mpeg?" + utfToEuc(dfile);
 }
 
-QByteArray EbHook::end_mono_graphic(EB_Book *book, int page, int offset)
+QByteArray EbHook::end_mono_graphic(int page, int offset)
 {
     EB_Error_Code ecode;
 
@@ -393,40 +354,29 @@ QByteArray EbHook::end_mono_graphic(EB_Book *book, int page, int offset)
     pos.page = page;
     pos.offset = offset;
     //qDebug() << eb->monoWidth << " " << eb->monoHeight;
-    if ((ecode = eb_set_binary_mono_graphic(book, &pos, monoWidth,
+    if ((ecode = eb->setBinaryMonoGraphic(pos, monoWidth,
                                             monoHeight)) != EB_SUCCESS) {
-        EbCore::ebError("eb_set_binary_mono_graphic", ecode);
         return errorString("image(mono) error");
     }
 
 
-    char bitmap[ImageBufferSize];
-    Q_CHECK_PTR(bitmap);
-    ssize_t bitmap_length;
+    QByteArray b = eb->readBinary();
+    if (b.isNull()) {
+        return errorString("read binary error");
+    }
+
     QFile f(ebCache.imageCachePath + '/' + bmpFile);
     f.open(QIODevice::WriteOnly);
-
-    int flg = 0;
-    for (;;) {
-        if ((ecode = eb_read_binary(book, ImageBufferSize, bitmap,
-                                    &bitmap_length)) != EB_SUCCESS) {
-            EbCore::ebError("eb_read_binary", ecode);
-            return errorString("image(mono) error");
-        }
-        f.write(bitmap, bitmap_length);
-        flg++;
-        if (bitmap_length < ImageBufferSize) break;
-    }
+    f.write(b);
     f.close();
     ebCache.imageCacheList << bmpFile;
 
     return out;
 }
 
-QByteArray EbHook::begin_wave(EB_Book *book, int start_page, int start_offset,
+QByteArray EbHook::begin_wave(int start_page, int start_offset,
                               int end_page, int end_offset)
 {
-    EB_Error_Code ecode;
 
     QString wavFile = QString("%1x%2.wav").arg(start_page).arg(start_offset);
     QString fname = ebCache.waveCachePath + "/" + wavFile;
@@ -440,26 +390,18 @@ QByteArray EbHook::begin_wave(EB_Book *book, int start_page, int start_offset,
     spos.offset = start_offset;
     epos.page = end_page;
     epos.offset = end_offset;
-    eb_set_binary_wave(book, &spos, &epos);
+    if (eb->setBinaryWave(spos, epos) != EB_SUCCESS) {
+        return errorString("image(wave) error");
+    }
 
-    char data[ImageBufferSize];
-    Q_CHECK_PTR(data);
-    ssize_t data_length;
+    QByteArray b = eb->readBinary();
+    if (b.isNull()) {
+        return errorString("read binary error");
+    }
+
     QFile f(fname);
     f.open(QIODevice::WriteOnly);
-    int flg = 0;
-    for (;;)
-    {
-        if ((ecode = eb_read_binary(book, ImageBufferSize, data,
-                                    &data_length)) != EB_SUCCESS) {
-            EbCore::ebError("eb_read_binary", ecode);
-            return errorString("wave error");
-        }
-        //qDebug() << "eb_read_binary : size=" << data_length;
-        f.write(data, data_length);
-        flg++;
-        if (data_length < ImageBufferSize) break;
-    }
+    f.write(b);
     f.close();
     ebCache.waveCacheList << wavFile;
     //qDebug() << "Output wave" << fname;
@@ -634,13 +576,13 @@ EB_Error_Code hook_end_candidate_group(EB_Book *book, EB_Appendix*,
     return 0;
 }
 
-EB_Error_Code hook_end_candidate_group_menu(EB_Book *book, EB_Appendix*,
+EB_Error_Code hook_end_candidate_group_menu(EB_Book *, EB_Appendix*,
                                             void *container, EB_Hook_Code,
                                             int, const unsigned int *argv)
 {
     EbHook *eb = static_cast<EbHook*>(container);
 
-    eb->end_candidate_group_menu(book, argv[1], argv[2]);
+    eb->end_candidate_group_menu(argv[1], argv[2]);
 
     return 0;
 }
@@ -721,7 +663,7 @@ EB_Error_Code hook_end_mono_graphic(EB_Book *book, EB_Appendix*,
 {
     EbHook *eb = static_cast<EbHook*>(container);
 
-    eb_write_text_string(book, eb->end_mono_graphic(book, argv[1], argv[2]));
+    eb_write_text_string(book, eb->end_mono_graphic(argv[1], argv[2]));
 
     return 0;
 }
@@ -732,7 +674,7 @@ EB_Error_Code hook_begin_color_bmp(EB_Book *book, EB_Appendix*,
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, "\n");
-    eb_write_text_string(book, eb->begin_color_bmp(book, argv[2], argv[3]));
+    eb_write_text_string(book, eb->begin_color_bmp(argv[2], argv[3]));
     return 0;
 }
 EB_Error_Code hook_begin_color_jpeg(EB_Book *book, EB_Appendix*,
@@ -742,7 +684,7 @@ EB_Error_Code hook_begin_color_jpeg(EB_Book *book, EB_Appendix*,
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, "\n");
-    eb_write_text_string(book, eb->begin_color_jpeg(book, argv[2], argv[3]));
+    eb_write_text_string(book, eb->begin_color_jpeg(argv[2], argv[3]));
 
     return 0;
 }
@@ -759,7 +701,7 @@ EB_Error_Code hook_begin_in_color_bmp(EB_Book *book, EB_Appendix*,
 {
     EbHook *eb = static_cast<EbHook*>(container);
 
-    eb_write_text_string(book, eb->begin_color_bmp(book, argv[2], argv[3]));
+    eb_write_text_string(book, eb->begin_color_bmp(argv[2], argv[3]));
     return 0;
 }
 
@@ -769,7 +711,7 @@ EB_Error_Code hook_begin_in_color_jpeg(EB_Book *book, EB_Appendix*,
 {
     EbHook *eb = static_cast<EbHook*>(container);
 
-    eb_write_text_string(book, eb->begin_color_jpeg(book, argv[2], argv[3]));
+    eb_write_text_string(book, eb->begin_color_jpeg(argv[2], argv[3]));
     return 0;
 }
 
@@ -794,7 +736,7 @@ EB_Error_Code hook_end_mpeg(EB_Book *book, EB_Appendix*, void *container,
 {
     EbHook *eb = static_cast<EbHook*>(container);
 
-    eb->end_mpeg(book, argv + 2);
+    eb->end_mpeg(argv + 2);
     eb_write_text_string(book, "</a>");
 
     return 0;
@@ -805,7 +747,7 @@ EB_Error_Code hook_narrow_font(EB_Book *book, EB_Appendix*, void *container,
 {
     EbHook *eb = static_cast<EbHook*>(container);
 
-    eb_write_text_string(book, eb->narrow_font(book, argv[0]));
+    eb_write_text_string(book, eb->narrow_font(argv[0]));
     return 0;
 }
 
@@ -814,7 +756,7 @@ EB_Error_Code hook_wide_font(EB_Book *book, EB_Appendix*, void *container,
 {
     EbHook *eb = static_cast<EbHook*>(container);
 
-    eb_write_text_string(book, eb->wide_font(book, argv[0]));
+    eb_write_text_string(book, eb->wide_font(argv[0]));
     return 0;
 }
 
@@ -823,7 +765,7 @@ EB_Error_Code hook_begin_wave(EB_Book *book, EB_Appendix*, void *container,
 {
     EbHook *eb = static_cast<EbHook*>(container);
 
-    eb_write_text_string(book, eb->begin_wave(book, argv[2], argv[3],
+    eb_write_text_string(book, eb->begin_wave(argv[2], argv[3],
                                               argv[4], argv[5]));
 
     return 0;
