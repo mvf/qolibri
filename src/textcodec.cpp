@@ -20,7 +20,6 @@
 #include "textcodec.h"
 
 QTextCodec *codecEuc;
-//QTextCodec *codecEuc = QTextCodec::codecForName("EUC-JP");
 
 QString eucToUtf(const QByteArray &b)
 {

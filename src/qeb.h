@@ -53,7 +53,6 @@ protected:
     EB_Appendix appendix;
     EB_Hookset hookset;
     EB_BookList bookList;
-    EB_Hook *hooks;
     EB_Font_Code fontCode;
     EB_Error_Code ecode;
 
@@ -436,17 +435,17 @@ public:
         }
         return ecode;
     }
-    QString readText(bool hook_flag=true)
+    QString readText(void *para, bool hook_flag=true)
     {
         char buff[1024+1];
         ssize_t len;
         QByteArray b;
         for(;;) {
             if (hook_flag) {
-                ecode = eb_read_text(&book, &appendix, &hookset, (void*)this,
+                ecode = eb_read_text(&book, &appendix, &hookset, para,
                                 1024, buff, &len);
             } else {
-                ecode = eb_read_text(&book, &appendix, NULL, (void*)this,
+                ecode = eb_read_text(&book, &appendix, NULL, para,
                                 1024, buff, &len);
             }
             if (ecode != EB_SUCCESS) {
@@ -463,20 +462,20 @@ public:
                 break;
             }
         }
-        return toUTF(b);
+        return eucToUtf(b);
 
     }
-    QString readHeading(bool hook_flag=true)
+    QString readHeading(void *para, bool hook_flag=true)
     {
         char buff[1024+1];
         ssize_t len;
         QByteArray b;
         for(;;) {
             if (hook_flag) {
-                ecode = eb_read_heading(&book, &appendix, &hookset, (void*)this,
+                ecode = eb_read_heading(&book, &appendix, &hookset, para,
                                 1024, buff, &len);
             } else {
-                ecode = eb_read_heading(&book, &appendix, NULL, (void*)this,
+                ecode = eb_read_heading(&book, &appendix, NULL, para,
                                 1024, buff, &len);
             }
             if (ecode != EB_SUCCESS) {
@@ -493,7 +492,7 @@ public:
                 break;
             }
         }
-        return toUTF(b);
+        return eucToUtf(b);
 
     }
     EB_Error_Code forwardText()

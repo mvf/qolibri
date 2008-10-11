@@ -32,8 +32,7 @@
 const int TextBufferSize = 4000;
 const int TextSizeLimit = 2800000;
 
-EbCore::EbCore(HookMode hmode)
-    : QEb()
+EbCore::EbCore(HookMode hmode) : QEb()
 {
     initializeBook();
     initializeAppendix();
@@ -127,7 +126,7 @@ QString EbCore::getCopyright()
     if (seekText(position) != EB_SUCCESS) {
         return QString();
     }
-    return readText();
+    return readText((void*)&ebHook);
 }
 
 
@@ -144,7 +143,7 @@ QString EbCore::getMenu()
         return QString();
     }
 
-    return readText();
+    return readText((void*)&ebHook);
 }
 
 QList <CandItems> EbCore::candidate(const EB_Position &pos, QString *txt)          
@@ -165,8 +164,9 @@ QString EbCore::text(const EB_Position &pos, bool hflag)
         return QString();
     }
 
-    QString str = readText(hflag);
+    QString str = readText((void*)&ebHook,hflag);
     if (hflag) {
+    qDebug() << 4;
         for (int i = 0; i < ebHook.refList.count(); i++) {
             QString f = "<R" + QString::number(i) + "R>";
             str.replace(f, ebHook.refList[i]);
@@ -189,7 +189,7 @@ QString EbCore::heading(const EB_Position &pos, bool hflag)
         return QString();
     }
 
-    QString str = readHeading(hflag);
+    QString str = readHeading((void*)&ebHook, hflag);
     if (hflag) {
         for (int i = 0; i < ebHook.refList.count(); i++) {
             QString f = "<R" + QString::number(i) + "R>";
