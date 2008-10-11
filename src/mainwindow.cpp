@@ -51,7 +51,7 @@ MainWindow::MainWindow(const QString &s_text)
 
     //CONF->load();
 
-    EbCore::initialize();
+    QEb::initialize();
 
     bookView = new BookView(this);
     bookViewSlots();
@@ -598,7 +598,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     CONF->save();
 
-    EbCore::finalize();
+    QEb::finalize();
 
     event->accept();
 }
