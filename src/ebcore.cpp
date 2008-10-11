@@ -96,17 +96,19 @@ int EbCore::initSubBook(int index, int refpos)
     if (ecode != EB_SUCCESS) {
         return -1;
     }
-    setAppendixSubbook(subAppendixList[index]);
+    if (isHaveAppendixSubbook(subAppendixList[index])) {
+        setAppendixSubbook(subAppendixList[index]);
+    }
 
     EB_Character_Code ccode = characterCode();
     if (ccode == EB_CHARCODE_ISO8859_1) {
-            qWarning() << "Using ISO 8859-1";
+        qWarning() << "Using ISO 8859-1";
     //else if (ccode == EB_CHARCODE_JISX0208) {
-            //    qWarning() << "Using JIS X 0208";
+        //    qWarning() << "Using JIS X 0208";
     } else if (ccode == EB_CHARCODE_JISX0208_GB2312) {
-            qWarning() << "Using X 0208 + GB 2312";
+        qWarning() << "Using X 0208 + GB 2312";
     } else if (ccode == EB_CHARCODE_INVALID) {
-            qWarning() << "Using Invalid Character Code";
+        qWarning() << "Using Invalid Character Code";
     }
     if (isHaveFont(EB_FONT_16)) {
         setFont(EB_FONT_16);
@@ -166,7 +168,6 @@ QString EbCore::text(const EB_Position &pos, bool hflag)
 
     QString str = readText((void*)&ebHook,hflag);
     if (hflag) {
-    qDebug() << 4;
         for (int i = 0; i < ebHook.refList.count(); i++) {
             QString f = "<R" + QString::number(i) + "R>";
             str.replace(f, ebHook.refList[i]);

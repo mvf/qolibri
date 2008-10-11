@@ -691,7 +691,6 @@ bool PageWidget::getText(EBook *eb, int index, QString *head_l, QString *head_v,
     *head_v = h_v;
     *text = t_v;
 
-qDebug() << 4;
     return !(t_v.isEmpty());
 
 }

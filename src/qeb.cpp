@@ -1180,7 +1180,7 @@ QList <EB_Subbook_Code> QEb::appendixSubbookList()
     if (ecode != EB_SUCCESS)
         dispError("eb_appendix_subbook_list", ecode);
     else
-        for (int i = 0; i < cnt; i++) 
+        for (int i = 0; i < cnt; i++)
             list << code[i];
     return list;
 }
@@ -1212,11 +1212,21 @@ QString QEb::appendixSubbookDirectory(EB_Subbook_Code code)
     }
     return toUTF(dir);
 }
+bool QEb::isHaveAppendixSubbook(EB_Subbook_Code code)
+{
+    EB_Error_Code ecode = eb_set_appendix_subbook(&appendix, code);
+    if (ecode != EB_SUCCESS) {
+        return false;
+    }
+    eb_unset_appendix_subbook(&appendix);
+    return true;
+}
 EB_Error_Code QEb::setAppendixSubbook(EB_Subbook_Code code)
 {
     EB_Error_Code ecode = eb_set_appendix_subbook(&appendix, code);
     if (ecode != EB_SUCCESS)
         dispError("eb_set_appendix_subbook", ecode);
+
     return ecode;
 }
 EB_Error_Code QEb::stopCode(int *stop1, int *stop2)

@@ -225,6 +225,7 @@ public:
     QString appendixSubbookDirectory();
     QString appendixSubbookDirectory(EB_Subbook_Code code);
     EB_Error_Code setAppendixSubbook(EB_Subbook_Code code);
+    bool isHaveAppendixSubbook(EB_Subbook_Code code);
     void unsetAppendixSubbook() { eb_unset_appendix_subbook(&appendix); }
     bool isHaveStopCode() { return (eb_have_stop_code(&appendix) == 1); }
     EB_Error_Code stopCode(int *stop1, int *stop2);
