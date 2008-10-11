@@ -429,7 +429,6 @@ EB_Error_Code hook_narrow_jisx0208(EB_Book* book, EB_Appendix* appendix,
                                    void* container, EB_Hook_Code code, int argc,
                                    const unsigned int *argv)
 {
-    qDebug() << "1";
     if (*argv == 41443) {
         eb_write_text_string(book, "&lt;");
     } else if (*argv == 41444) {
@@ -439,7 +438,6 @@ EB_Error_Code hook_narrow_jisx0208(EB_Book* book, EB_Appendix* appendix,
     } else {
         eb_hook_euc_to_ascii(book, appendix, container, code, argc, argv);
     }
-    qDebug() << "2";
     return 0;
 }
 
@@ -484,71 +482,57 @@ EB_Error_Code hook_wide_jisx0208(EB_Book *book, EB_Appendix*, void*,
 EB_Error_Code hook_set_indent(EB_Book *book, EB_Appendix*, void *container,
                                    EB_Hook_Code, int, const unsigned int *argv)
 {
-    qDebug() << "3";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->set_indent(argv[1]));
-    qDebug() << "4";
     return 0;
 }
 
 EB_Error_Code hook_begin_subscript(EB_Book *book, EB_Appendix*, void *container,
                                    EB_Hook_Code, int, const unsigned int*)
 {
-    qDebug() << "5";
     EbHook *eb = static_cast<EbHook*>(container);
 
     //eb_write_text_string(book, "<sub>");
     eb_write_text_string(book, eb->begin_subscript());
-    qDebug() << "6";
     return 0;
 }
 
 EB_Error_Code hook_end_subscript(EB_Book *book, EB_Appendix*, void *container,
                                  EB_Hook_Code, int, const unsigned int*)
 {
-    qDebug() << "7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     //eb_write_text_string(book, "</sub>");
     eb_write_text_string(book, eb->end_subscript());
-    qDebug() << "8";
     return 0;
 }
 
 EB_Error_Code hook_begin_superscript(EB_Book *book, EB_Appendix*, void*,
                                      EB_Hook_Code, int, const unsigned int*)
 {
-    qDebug() << "9";
     eb_write_text_string(book, "<sup>");
-    qDebug() << "a";
     return 0;
 }
 
 EB_Error_Code hook_end_superscript(EB_Book *book, EB_Appendix*, void*,
                                    EB_Hook_Code, int, const unsigned int*)
 {
-    qDebug() << "b";
     eb_write_text_string(book, "</sup>");
-    qDebug() << "c";
     return 0;
 }
 
 EB_Error_Code hook_begin_emphasize(EB_Book *book, EB_Appendix*, void*,
                                    EB_Hook_Code, int, const unsigned int*)
 {
-    qDebug() << "d";
     eb_write_text_string(book, "<em>");
-    qDebug() << "e";
     return 0;
 }
 
 EB_Error_Code hook_end_emphasize(EB_Book *book, EB_Appendix*, void*,
                                  EB_Hook_Code, int, const unsigned int*)
 {
-    qDebug() << "f";
     eb_write_text_string(book, "</em>");
-    qDebug() << "g";
     return 0;
 }
 
@@ -556,11 +540,9 @@ EB_Error_Code hook_begin_candidate(EB_Book *book, EB_Appendix*,
                                    void *container, EB_Hook_Code, int,
                                    const unsigned int*)
 {
-    qDebug() << "-7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->begin_candidate());
-    qDebug() << "-7";
     return 0;
 }
 
@@ -568,21 +550,17 @@ EB_Error_Code hook_begin_candidate_menu(EB_Book *, EB_Appendix*,
                                    void *, EB_Hook_Code, int,
                                    const unsigned int*)
 {
-    qDebug() << "-7";
     //EbHook *eb = static_cast<EbHook*>(container);
 
     //eb_write_text_string(book, eb->begin_candidate_menu());
-    qDebug() << "-7";
     return 0;
 }
 
 EB_Error_Code hook_end_candidate_leaf(EB_Book *book, EB_Appendix*, void*,
                                       EB_Hook_Code, int, const unsigned int*)
 {
-    qDebug() << "-7";
     qDebug() << "end_candidate_leaf";
     eb_write_text_string(book, "</a>");
-    qDebug() << "-7";
     return 0;
 }
 EB_Error_Code hook_end_candidate_group(EB_Book *book, EB_Appendix*,
@@ -590,11 +568,9 @@ EB_Error_Code hook_end_candidate_group(EB_Book *book, EB_Appendix*,
                                        const unsigned int *argv)
 {
     //qDebug() << "end_candidate_group";
-    qDebug() << "-7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->end_candidate_group(argv[1], argv[2]));
-    qDebug() << "-7";
 
     return 0;
 }
@@ -603,11 +579,9 @@ EB_Error_Code hook_end_candidate_group_menu(EB_Book *, EB_Appendix*,
                                             void *container, EB_Hook_Code,
                                             int, const unsigned int *argv)
 {
-    qDebug() << "-7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb->end_candidate_group_menu(argv[1], argv[2]);
-    qDebug() << "-7";
 
     return 0;
 }
@@ -617,21 +591,17 @@ EB_Error_Code hook_begin_reference(EB_Book *book, EB_Appendix*,
                                    void *container, EB_Hook_Code, int,
                                    const unsigned int*)
 {
-    qDebug() << "-7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->begin_reference());
-    qDebug() << "-7";
     return 0;
 }
 EB_Error_Code hook_end_reference(EB_Book *book, EB_Appendix*, void *container,
                                  EB_Hook_Code, int, const unsigned int *argv)
 {
-    qDebug() << "-7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->end_reference(argv[1], argv[2]));
-    qDebug() << "-7";
 
     return 0;
 }
@@ -656,13 +626,11 @@ EB_Error_Code hook_begin_decoration(EB_Book *book, EB_Appendix*,
                                     void *container, EB_Hook_Code, int argc,
                                     const unsigned int *argv)
 {
-    qDebug() << "-7";
     Q_UNUSED(argc);
     //qDebug() << "begin_decoration" << argc << argv[1];
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->begin_decoration(argv[1]));
-    qDebug() << "-7";
 
     return 0;
 }
@@ -670,11 +638,9 @@ EB_Error_Code hook_end_decoration(EB_Book *book, EB_Appendix*, void *container,
                                   EB_Hook_Code, int, const unsigned int*)
 {
     //qDebug() << "end_decoration" << cnt;
-    qDebug() << "-7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->end_decoration());
-    qDebug() << "-7";
 
     return 0;
 }
@@ -683,12 +649,10 @@ EB_Error_Code hook_begin_mono_graphic(EB_Book *book, EB_Appendix*,
                                       void *container, EB_Hook_Code, int,
                                       const unsigned int *argv)
 {
-    qDebug() << "-7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb->begin_mono_graphic(argv[2], argv[3]);
     eb_write_text_string(book, "\n");
-    qDebug() << "-7";
     return 0;
 }
 
@@ -696,11 +660,9 @@ EB_Error_Code hook_end_mono_graphic(EB_Book *book, EB_Appendix*,
                                     void *container, EB_Hook_Code, int,
                                     const unsigned int *argv)
 {
-    qDebug() << "-7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->end_mono_graphic(argv[1], argv[2]));
-    qDebug() << "-7";
 
     return 0;
 }
@@ -708,33 +670,27 @@ EB_Error_Code hook_begin_color_bmp(EB_Book *book, EB_Appendix*,
                                    void *container, EB_Hook_Code, int,
                                    const unsigned int *argv)
 {
-    qDebug() << "-7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, "\n");
     eb_write_text_string(book, eb->begin_color_bmp(argv[2], argv[3]));
-    qDebug() << "-7";
     return 0;
 }
 EB_Error_Code hook_begin_color_jpeg(EB_Book *book, EB_Appendix*,
                                     void *container, EB_Hook_Code, int,
                                     const unsigned int *argv)
 {
-    qDebug() << "-7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, "\n");
     eb_write_text_string(book, eb->begin_color_jpeg(argv[2], argv[3]));
-    qDebug() << "-7";
 
     return 0;
 }
 EB_Error_Code hook_end_color_graphic(EB_Book *book, EB_Appendix*, void*,
                                      EB_Hook_Code, int, const unsigned int*)
 {
-    qDebug() << "-7";
     eb_write_text_string(book, "</span>\n");
-    qDebug() << "-7";
     return 0;
 }
 
@@ -742,11 +698,9 @@ EB_Error_Code hook_begin_in_color_bmp(EB_Book *book, EB_Appendix*,
                                       void *container, EB_Hook_Code, int,
                                       const unsigned int *argv)
 {
-    qDebug() << "-7";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->begin_color_bmp(argv[2], argv[3]));
-    qDebug() << "-7";
     return 0;
 }
 
@@ -754,43 +708,35 @@ EB_Error_Code hook_begin_in_color_jpeg(EB_Book *book, EB_Appendix*,
                                        void *container, EB_Hook_Code, int,
                                        const unsigned int *argv)
 {
-    qDebug() << "-9";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->begin_color_jpeg(argv[2], argv[3]));
-    qDebug() << "-7";
     return 0;
 }
 
 EB_Error_Code hook_end_in_color_graphic(EB_Book *book, EB_Appendix*, void*,
                                         EB_Hook_Code, int, const unsigned int*)
 {
-    qDebug() << "-8";
     eb_write_text_string(book, "</span>");
-    qDebug() << "-7";
     return 0;
 }
 
 EB_Error_Code hook_begin_mpeg(EB_Book *book, EB_Appendix*, void *container,
                               EB_Hook_Code, int, const unsigned int*)
 {
-    qDebug() << "-6";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->begin_mpeg());
-    qDebug() << "-7";
 
     return 0;
 }
 EB_Error_Code hook_end_mpeg(EB_Book *book, EB_Appendix*, void *container,
                             EB_Hook_Code, int, const unsigned int *argv)
 {
-    qDebug() << "-5";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb->end_mpeg(argv + 2);
     eb_write_text_string(book, "</a>");
-    qDebug() << "-7";
 
     return 0;
 }
@@ -798,43 +744,35 @@ EB_Error_Code hook_end_mpeg(EB_Book *book, EB_Appendix*, void *container,
 EB_Error_Code hook_narrow_font(EB_Book *book, EB_Appendix*, void *container,
                                EB_Hook_Code, int, const unsigned int *argv)
 {
-    qDebug() << "-4";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->narrow_font(argv[0]));
-    qDebug() << "-7";
     return 0;
 }
 
 EB_Error_Code hook_wide_font(EB_Book *book, EB_Appendix*, void *container,
                              EB_Hook_Code, int, const unsigned int *argv)
 {
-    qDebug() << "-3";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->wide_font(argv[0]));
-    qDebug() << "-7";
     return 0;
 }
 
 EB_Error_Code hook_begin_wave(EB_Book *book, EB_Appendix*, void *container,
                               EB_Hook_Code, int, const unsigned int *argv)
 {
-    qDebug() << "-2";
     EbHook *eb = static_cast<EbHook*>(container);
 
     eb_write_text_string(book, eb->begin_wave(argv[2], argv[3],
                                               argv[4], argv[5]));
-    qDebug() << "-7";
 
     return 0;
 }
 EB_Error_Code hook_end_wave(EB_Book *book, EB_Appendix*, void*, EB_Hook_Code,
                             int, const unsigned int*)
 {
-    qDebug() << "-1";
     eb_write_text_string(book, "</a>");
-    qDebug() << "-7";
     return 0;
 }
 
