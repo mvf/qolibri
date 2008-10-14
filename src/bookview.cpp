@@ -1589,7 +1589,6 @@ QString WebPage::setDirectionString(const QString &url, const QString &dstr,
 
 }
 
-
 void WebPage::progressStart()
 {
     loading_ = true;
@@ -1618,14 +1617,17 @@ void WebPage::progressFinished(bool)
 
 void WebPage::openLink(const QUrl &url)
 {
-    QUrl u = QUrl::fromEncoded(url.toEncoded(), QUrl::TolerantMode);
-    qDebug() << url.toEncoded();
-    qDebug() << u.toString();
-    load(u);
+    if (!popupBrowser_) {
+        QUrl u = QUrl::fromEncoded(url.toEncoded(), QUrl::TolerantMode);
+        qDebug() << url.toEncoded();
+        qDebug() << u.toString();
+        load(u);
+    } else {
+        emit linkRequested(CONF->browserProcess + ' ' + url.toString());
+        //emit linkRequested(CONF->browserProcess + ' ' +
+        //                   QString::fromAscii(url.toEncoded()));
+    }
 
-    //emit linkRequested(CONF->browserProcess + ' ' + u.toString());
-    //emit linkRequested(CONF->browserProcess + ' ' +
-    //                   QString::fromAscii(url.toEncoded()));
 }
 
 void WebPage::changeFont(const QFont &font)
@@ -1656,6 +1658,11 @@ void WebPage::zoomOut()
     reload();
 }
 
+void WebPage::setPopupBrowser(bool popup)
+{
+    popupBrowser_ = popup;
+}
+
 BookView::BookView(QWidget *parent)
     : QTabWidget(parent)
 {
@@ -1684,7 +1691,8 @@ BookView::BookView(QWidget *parent)
 }
 
 RET_SEARCH BookView::newPage(QWidget *parent, const QStringList &list,
-                             const SearchMethod &method, bool newTab)
+                             const SearchMethod &method, bool newTab,
+                             bool popup_browser)
 {
     stopFlag = false;
 
@@ -1788,6 +1796,8 @@ RET_SEARCH BookView::newPage(QWidget *parent, const QStringList &list,
                     SIGNAL(processRequested(QString)));
             connect(parent, SIGNAL(viewFontChanged(QFont)), wpage,
                     SLOT(changeFont(QFont)));
+            connect(this, SIGNAL(popupBrowserSet(bool)), wpage,
+                    SLOT(setPopupBrowser(bool)));
             int idx = view->addTab(wpage, QIcon(":/images/web2.png"),
                     book->name());
             wpage->setTabIndex(idx);
@@ -1797,6 +1807,7 @@ RET_SEARCH BookView::newPage(QWidget *parent, const QStringList &list,
             }
         }
     }
+    emit popupBrowserSet(popup_browser);
     if (focus_page) {
         view->setCurrentWidget(focus_page);
     }
@@ -1805,12 +1816,16 @@ RET_SEARCH BookView::newPage(QWidget *parent, const QStringList &list,
     return ret;
 }
 
-RET_SEARCH BookView::newWebPage(const QString &name, const QString &url)
+RET_SEARCH BookView::newWebPage(const QString &name, const QString &url,
+                                bool popup_browser)
 {
     WebPage *wpage = new WebPage(this, url);
     connect(wpage, SIGNAL(loadFinished(bool)), SLOT(webViewFinished(bool)));
     connect(wpage, SIGNAL(linkRequested(QString)), 
             SIGNAL(processRequested(QString)));
+    connect(this, SIGNAL(popupBrowserSet(bool)), wpage,
+            SLOT(setPopupBrowser(bool)));
+    emit popupBrowserSet(popup_browser);
     int idx = addTab(wpage, QIcon(":/images/web2.png"), name);
     wpage->setTabIndex(idx);
     wpage->setTabBar(tabBar());
@@ -2076,4 +2091,9 @@ void BookView::webViewFinished(bool) {
         emit allWebLoaded();
     }
     emit currentChanged(currentIndex());
+}
+
+void BookView::setPopupBrowser(bool popup)
+{
+    emit popupBrowserSet(popup);
 }

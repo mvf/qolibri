@@ -802,8 +802,8 @@ void MainWindow::toggleNewTab(bool check)
 
 void MainWindow::toggleNewBrowser(bool check)
 {
-    qDebug() << "toggleNewBrowser";
-    //bookView->showTabBar(check);
+    //qDebug() << "toggleNewBrowser";
+    bookView->setPopupBrowser(check);
 }
 
 
@@ -1101,7 +1101,8 @@ void MainWindow::setBooks()
 
 void MainWindow::viewWeb(const QString &name, const QString &url)
 {
-    RET_SEARCH ret = bookView->newWebPage(name, url);
+    bool pbrowser = toggleBrowserAct->isChecked();
+    RET_SEARCH ret = bookView->newWebPage(name, url, pbrowser);
     if (ret != NORMAL) {
         showStatus("Error :" + url);
     } else {
@@ -1187,8 +1188,9 @@ void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
     stopAct->setEnabled(true);
 
     bool ntab = toggleTabsAct->isChecked();
+    bool pbrowser = toggleBrowserAct->isChecked();
 
-    RET_SEARCH ret = bookView->newPage(this, list, mthd, ntab);
+    RET_SEARCH ret = bookView->newPage(this, list, mthd, ntab, pbrowser);
     QString sstr = toLogicString(list, mthd);
     groupDock->addHistory(toLogicString(list, mthd), mthd, CONF->historyMax);
 

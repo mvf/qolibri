@@ -355,6 +355,7 @@ private slots:
     void copyHoveredLink(const QString &link, const QString &title,
                          const QString &text);
     void changeFont(const QFont &font);
+    void setPopupBrowser(bool);
 
 signals:
     void linkRequested(const QString& prog);
@@ -369,6 +370,7 @@ private:
     
     QString hoveredLink;
     bool loading_;
+    bool popupBrowser_;
     SearchMethod method_;
     int progressCount_;
     int tabIndex_;
@@ -381,13 +383,16 @@ class BookView : public QTabWidget
 public:
     BookView(QWidget *parent);
     RET_SEARCH newPage(QWidget *parent, const QStringList &slist,
-                       const SearchMethod &method, bool newTab = true);
-    RET_SEARCH newWebPage(const QString &name, const QString &url);
+                       const SearchMethod &method, bool new_tab,
+                       bool popup_browser);
+    RET_SEARCH newWebPage(const QString &name, const QString &url,
+                           bool popup_browser);
     BookType pageType(int index);
     BookType currentPageType();
     SearchMethod pageMethod(int index);
     SearchMethod currentPageMethod();
     void showTabBar(int new_tab);
+    void setPopupBrowser(bool popup);
     QWidget* pageWidget(int index);
     QWidget* currentPageWidget();
 
@@ -404,6 +409,7 @@ signals:
     void soundRequested(const QString&);
     void selectionRequested(const QString&);
     //void linkRequested(const QString& prog);
+    void popupBrowserSet(bool);
 
     void fontChanged(const QFont&);
     void statusRequested(const QString&);
