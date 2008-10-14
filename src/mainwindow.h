@@ -87,6 +87,7 @@ private slots:
     void toggleRuby();
     void toggleDock(bool check);
     void toggleNewTab(bool check);
+    void toggleNewBrowser(bool check);
     void goNext();
     void goPrev();
     void reload();
@@ -179,6 +180,7 @@ private:
     QAction *openBookAct;
     QAction *clearEditAct;
     QAction *toggleTabsAct;
+    QAction *toggleBrowserAct;
     QAction *toggleDockAct;
     QAction *toggleBarAct;
     QAction *toggleRubyAct;

@@ -220,8 +220,8 @@ public:
     void unsetAppendixSubbook() { eb_unset_appendix_subbook(&appendix); }
     bool isHaveStopCode() { return (eb_have_stop_code(&appendix) == 1); }
     EB_Error_Code stopCode(int *stop1, int *stop2);
-    bool haveNarrowAlt() { return (eb_have_narrow_alt(&appendix) == 1); }
-    bool haveWideAlt() { return (eb_have_wide_alt(&appendix) == 1); }
+    bool isHaveNarrowAlt() { return (eb_have_narrow_alt(&appendix) == 1); }
+    bool isHaveWideAlt() { return (eb_have_wide_alt(&appendix) == 1); }
     int narrowAltStart();
     int wideAltStart();
     int narrowAltEnd();

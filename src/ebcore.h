@@ -142,7 +142,7 @@ public:
     bool currentIndent;
     bool ruby;
 
-protected:
+public:
 
     QList <EB_Subbook_Code> subBookList;
     QList <EB_Subbook_Code> subAppendixList;

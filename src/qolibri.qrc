@@ -48,6 +48,6 @@
     <file>images/goprev.png</file>
     <file>images/reload.png</file>
     <file>images/add.png</file>
-    <file>images/new_window.png</file>
+    <file>images/new_browser.png</file>
 </qresource>
 </RCC>

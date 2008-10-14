@@ -762,7 +762,7 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     eb.initHook(bookBrowser_->fontSize(), book->fontList(),
                   CONF->indentOffset,  method.ruby);
 
-    QString mstr = "<b>";
+    QString mstr;
 
     if (eb.isHaveText())
         mstr += QObject::tr("Text") + " ";
@@ -775,10 +775,35 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     if (eb.isHaveCrossSearch())
         mstr += QObject::tr("Cross search") + " ";
 
-    mstr += "</b>";
+    QString astr;
+    EB_Subbook_Code code = eb.subAppendixList[book->bookNo()];
+    if(eb.isHaveAppendixSubbook(code)) {
+        eb.setAppendixSubbook(code);
+        astr += eb.appendixPath() + "/" + eb.appendixSubbookDirectory();
+        int s1, s2;
+        eb.stopCode(&s1, &s2);
+        astr += "\nStop Code=0x" + QString::number(s1,16) + " 0x" +
+            QString::number(s2,16);
+        if (eb.isHaveNarrowAlt()) {
+            int st = eb.narrowAltStart();
+            int en = eb.narrowAltEnd();
+            astr += "\nAlternate Narrow Font=" + QString::number(st) +
+                    " - " + QString::number(en);
+        }
+        if (eb.isHaveWideAlt()) {
+            int st = eb.wideAltStart();
+            int en = eb.wideAltEnd();
+            astr += "\nAlternate Wide Font=" + QString::number(st) +
+                    " - " + QString::number(en);
+        }
+    } else {
+        astr += QObject::tr("No Appendix");
+    }
 
-    QString str = QString(tr("Title: <b>%1</b>\nSearch Method: %2"))
-                          .arg(eb.subbookTitle()).arg(mstr);
+    QString str = "<table><tr><td>Title </td><td> " + eb.subbookTitle() + 
+                  "</td></tr>\n";
+    str += "<tr><td>Search_Method </td><td> " + mstr + "</td></tr>\n";
+    str += "<tr><td>Appendix </td><td> " + astr + "</td></tr></table><br>";
     items.composeHLine(2, "BOOK", eb.path(), str);
 
     if (eb.isHaveMenu()) {

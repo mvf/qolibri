@@ -177,6 +177,11 @@ void MainWindow::createMenus()
                                      this, SLOT(toggleNewTab(bool)));
     toggleTabsAct->setCheckable(true);
     CONNECT_BUSY(toggleTabsAct);
+    toggleBrowserAct = smenu->addAction(QIcon(":/images/new_browser.png"),
+                                     tr("Popup New Browser on/off"),
+                                     this, SLOT(toggleNewBrowser(bool)));
+    toggleBrowserAct->setCheckable(true);
+    CONNECT_BUSY(toggleBrowserAct);
     fontAct = smenu->addAction(QIcon(":/images/font1.png"),
                                tr("Set browser font"),
                                this, SLOT(setViewFont()));
@@ -321,9 +326,10 @@ void MainWindow::createToolBars()
     methodBar->addWidget(limitTotalSpin);
     methodBar->addSeparator();
     methodBar->addAction(booksAct);
-    methodBar->addAction(toggleTabsAct);
     methodBar->addAction(fontAct);
     methodBar->addAction(sSheetAct);
+    methodBar->addAction(toggleTabsAct);
+    methodBar->addAction(toggleBrowserAct);
 
     toggleMethodBarAct = methodBar->toggleViewAction();
     toggleMethodBarAct->setText(tr("Option bar on/off"));
@@ -398,6 +404,8 @@ void MainWindow::readSettings()
     }
     bool tab = settings.value("newtab", 1).toBool();
     toggleTabsAct->setChecked(tab);
+    bool browser = settings.value("newbrowser", 1).toBool();
+    toggleBrowserAct->setChecked(browser);
     int searchsel = settings.value("searchsel", (int)WikipediaSearch).toInt();
     optDirection = (SearchDirection)searchsel;
     foreach(QAction * act, optDirectionMenu->actions()) {
@@ -497,6 +505,7 @@ void MainWindow::writeSettings()
     settings.setValue("method_bar", toggleMethodBarAct->isChecked());
 
     settings.setValue("newtab", toggleTabsAct->isChecked());
+    settings.setValue("newbrowser", toggleBrowserAct->isChecked());
     settings.setValue("searchsel", optDirection);
     writeMethodSetting(method, &settings);
 
@@ -790,6 +799,13 @@ void MainWindow::toggleNewTab(bool check)
 {
     bookView->showTabBar(check);
 }
+
+void MainWindow::toggleNewBrowser(bool check)
+{
+    qDebug() << "toggleNewBrowser";
+    //bookView->showTabBar(check);
+}
+
 
 void MainWindow::setDockOff()
 {
