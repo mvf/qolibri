@@ -69,5 +69,6 @@ void EbCache::init(const QString &title)
     fontCacheList  = QDir(fontCachePath).entryList(QDir::Files);
     imageCacheList = QDir(imageCachePath).entryList(QDir::Files);
     waveCacheList  = QDir(waveCachePath).entryList(QDir::Files);
+    mpegCacheList  = QDir(mpegCachePath).entryList(QDir::Files);
 }
 

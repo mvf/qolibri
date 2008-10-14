@@ -1502,9 +1502,9 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
         QMessageBox::warning(this, Program, tr("Cannot open the book.") );
     }
     eb.initHook(16, NULL);
-    QFile loadf(eb.ebHook.ebCache.fontCachePath + "/loaded");
+    QFile loadf(eb.ebCache.fontCachePath + "/loaded");
     if (loadf.exists()) {
-        return eb.ebHook.ebCache.fontCachePath;
+        return eb.ebCache.fontCachePath;
     }
     emit nowBusy(true);
     //stopAct->setEnabled(true);
@@ -1528,7 +1528,7 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
     out << "All font loaded";
     emit nowBusy(false);
 
-    return eb.ebHook.ebCache.fontCachePath;
+    return eb.ebCache.fontCachePath;
 }
 
 void MainWindow::checkNextSearch()

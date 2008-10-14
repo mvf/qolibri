@@ -42,7 +42,7 @@ public:
     QStringList waveCacheList;
     QStringList fontCacheList;
     QStringList imageCacheList;
-    QStringList mpegList;
+    QStringList mpegCacheList;
 
 };
 

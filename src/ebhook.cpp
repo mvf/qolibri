@@ -20,759 +20,185 @@
 #include <QtCore>
 
 #include <eb/eb.h>
-#include <eb/error.h>
-#include <eb/font.h>
 #include <eb/binary.h>
+#include <eb/text.h>
+#include <eb/font.h>
+#include <eb/appendix.h>
+#include <eb/error.h>
+
 #include "qeb.h"
-#include "ebook.h"
-#include "ebhook.h"
-#include "textcodec.h"
+#include "ebcore.h"
 
-const int ImageBufferSize = 50000;
-
-QByteArray EbHook::begin_decoration(int deco_code)
-{
-    decoStack.push(deco_code);
-    if (deco_code == 1)
-        return "<i>";
-    else if (deco_code == 3)
-        return "<b>";
-    //else
-    //    qWarning() << "Unrecognized decoration code" << deco_code;
-    return "<i>";
-}
-
-QByteArray EbHook::end_decoration()
-{
-    if (!decoStack.isEmpty()) {
-        int deco_code = decoStack.pop();
-        if (deco_code == 1)
-            return "</i>";
-        else if(deco_code == 3)
-            return "</b>";
-        //else
-            //qWarning() << "Unrecognized decoration code" << deco_code;
-    }
-    return "</i>";
-}
-
-QByteArray EbHook::set_indent(int val)
-{
-    QByteArray ret;
-    if (val > 2){
-        int mleft = indentOffset + (val * fontSize);
-        ret += "</pre><pre style=\"margin-left: " +
-               QByteArray::number(mleft) + "px; \">";
-        indented = true;
-    } else {
-        if (indented) {
-            ret = "</pre><pre>";
-            indented = false;
-        }
-    }
-    return ret;
-}
-
-QByteArray EbHook::narrow_font(int code)
-{
-    if (!eb->isHaveNarrowFont()) {
-        qDebug() << "not have narrow font";
-        return errorString("narrow font error");
-    }
-
-    QString fcode = "n" + QString::number(code, 16);
-    if (fontList) {
-        QString afont = fontList->value(fcode);
-        if (!afont.isEmpty())
-            return afont.toAscii();
-    }
-#ifdef USE_GIF_FOR_FONT
-    QByteArray fname = fcode.toAscii() + ".gif";
-#else
-    QByteArray fname = fcode.toAscii() + ".png";
-#endif
-
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache.fontCacheRel) + fname  +
-                     "\"";
-    int h = fontSize;
-    if (h > 17) {
-        out += " height=" + QByteArray::number(h) +
-               " width=" + QByteArray::number(h / 2);
-    }
-    out += " />";
-
-    if (ebCache.fontCacheList.contains(fname))
-        return out;
-
-    QByteArray bitmap = eb->narrowFontCharacterBitmap(code);
-    if (bitmap.isNull())
-        return errorString("narrow font error");
-
-#ifdef USE_GIF_FOR_FONT
-    QByteArray cnv = eb->narrowBitmapToGif(bitmap);
-    if (cnv.isNull())
-        return errorString("narrow font error");
-
-#else
-    QByteArray cnv = eb->narrowBitmapToPng(bitmap);
-    if (cnv.isNull())
-        return errorString("narrow font error");
-#endif
-
-
-    QFile f(ebCache.fontCachePath +  '/' + fname);
-    f.open(QIODevice::WriteOnly);
-    f.write(cnv);
-    f.close();
-    //qDebug() << "Output narrow_font" << fname;
-    ebCache.fontCacheList << fname;
-
-    return out;
-}
-
-QByteArray EbHook::wide_font(int code)
-{
-
-    if (!eb->isHaveWideFont()) {
-        qDebug() << "not have wide font";
-        return errorString("wide font error");
-    }
-
-    QString fcode = "w" + QString::number(code, 16);
-
-    if (fontList) {
-        QString afont = fontList->value(fcode);
-        if (!afont.isEmpty())
-            return afont.toAscii();
-    }
-
-#ifdef USE_GIF_FOR_FONT
-    QByteArray fname = fcode.toAscii() + ".gif";
-#else
-    QByteArray fname = fcode.toAscii() + ".png";
-#endif
-
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache.fontCacheRel) +
-                     fname  + "\"";
-    int h = fontSize;
-    if (h > 17)
-        out += " height=" + QByteArray::number(h) +
-               " width=" + QByteArray::number(h);
-    out += " />";
-
-
-    if (ebCache.fontCacheList.contains(fname)) {
-        return out;
-    }
-
-    QByteArray bitmap = eb->wideFontCharacterBitmap(code);
-    if (bitmap.isNull())
-        return errorString("wide font error");
-
-#ifdef USE_GIF_FOR_FONT
-    QByteArray cnv = eb->wideBitmapToGif(bitmap);
-    if (cnv.isNull()) {
-        return errorString("wide font error");
-    }
-#else
-    QByteArray cnv = eb->wideBitmapToPng(bitmap);
-    if (cnv.isNull()) {
-        return errorString("wide font error");
-    }
-#endif
-
-    QFile f(ebCache.fontCachePath + '/' + fname);
-    f.open(QIODevice::WriteOnly);
-    f.write(cnv);
-    f.close();
-    ebCache.fontCacheList << fname;
-    //qDebug() << "Output wide_font" << xpmFile;
-    return out;
-}
-
-
-QByteArray EbHook::begin_candidate()
-{
-    return "<a class=cnd href=\"<R" +
-           QByteArray::number(refList.count()) +
-           "R>\">";
-}
-
-QByteArray EbHook::begin_candidate_menu()
-{
-    return "<C";
-}
-
-
-QByteArray EbHook::begin_reference()
-{
-    return "<a class=ref href=\"<R" +
-           QByteArray::number(refList.count()) +
-           "R>\">";
-}
-
-QByteArray EbHook::begin_color_jpeg(int page, int offset)
-{
-
-    QByteArray jpgFile = makeFname("jpeg", page, offset);
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache.imageCacheRel) +
-                     jpgFile + "\"><span class=img>";
-
-    if (ebCache.imageCacheList.contains(jpgFile)) {
-        return out;
-    }
-
-    //qDebug() << "Out Image " << jpgFile;
-
-    EB_Position pos;
-    EB_Error_Code err;
-    pos.page = page;
-    pos.offset = offset;
-
-    if ((err = eb->setBinaryColorGraphic(pos)) != EB_SUCCESS) {
-        return errorString("image(jpeg) error");
-    }
-
-    QByteArray b = eb->readBinary();
-    if (b.isNull()) {
-        return errorString("read binary error");
-    }
-    
-    QFile f(ebCache.imageCachePath + '/' + jpgFile);
-    f.open(QIODevice::WriteOnly);
-    f.write(b);
-    f.close();
-
-    ebCache.imageCacheList << jpgFile;
-
-    return out;
-}
-
-QByteArray EbHook::begin_color_bmp(int page, int offset)
-{
-    EB_Error_Code ecode;
-
-    QByteArray bmpFile = makeFname("bmp", page, offset);
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache.imageCacheRel) +
-                     bmpFile + "\" /><span class=img>";
-
-    if (ebCache.imageCacheList.contains(bmpFile))
-        return out;
-
-    //qDebug() << "Output Image " << bmpFile;
-
-    EB_Position pos;
-    pos.page = page;
-    pos.offset = offset;
-
-    if ((ecode = eb->setBinaryColorGraphic(pos)) != EB_SUCCESS) {
-        return errorString("image(bmp) error");
-    }
-
-    QByteArray b = eb->readBinary();
-    if (b.isNull()) {
-        return errorString("read binary error");
-    }
-
-    QFile f(ebCache.imageCachePath + '/' + bmpFile);
-    f.open(QIODevice::WriteOnly);
-    f.write(b);
-    f.close();
-
-    //qDebug() << "Image Size :" << ImageBufferSize * flg;
-    ebCache.imageCacheList << bmpFile;
-
-    return out;
-}
-
-QByteArray EbHook::end_reference(int page, int offset)
-{
-    QByteArray ref = "book?" + QByteArray::number(refPosition) + '?' +
-                     QByteArray::number(page) + '?' +
-                     QByteArray::number(offset);
-
-    refList << ref;
-    return "</a>";
-}
-
-QByteArray EbHook::end_candidate_group(int page, int offset)
-{
-    QByteArray cnd = "menu?" + QByteArray::number(refPosition) + '?' +
-                     QByteArray::number(page) + '?' +
-                     QByteArray::number(offset);
-
-    refList << cnd;
-    return "</a>";
-}
-
-void EbHook::end_candidate_group_menu(int page, int offset)
-{
-    CandItems cItem;
-    cItem.title = eb->currentCandidate();
-    cItem.position.page = page;
-    cItem.position.offset = offset;
-    candList << cItem;
-
-    return;
-}
-
-QByteArray EbHook::begin_mpeg()
-{
-    return "<a class=mpg href=\"<M" + QByteArray::number(mpegList.count()) +
-           "M>\">";
-}
-
-void EbHook::end_mpeg(const unsigned int *p)
-{
-
-    QString path = eb->composeMoviePathName(p);
-    if (path.isEmpty()) {
-        return;
-    }
-    QString dfile = ebCache.mpegCachePath + "/" +
-                    QFileInfo(path).fileName() + ".mpeg";
-    if (!QFile(dfile).exists())
-        QFile::copy(path, dfile);
-    mpegList << "mpeg?" + utfToEuc(dfile);
-}
-
-QByteArray EbHook::end_mono_graphic(int page, int offset)
-{
-    EB_Error_Code ecode;
-
-    QByteArray bmpFile = makeFname("bmp", page, offset);
-
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache.imageCacheRel) +
-                     bmpFile + "\" />\n";
-    
-
-    if (ebCache.imageCacheList.contains(bmpFile)) {
-        return out;
-    }
-
-    EB_Position pos;
-    pos.page = page;
-    pos.offset = offset;
-    //qDebug() << eb->monoWidth << " " << eb->monoHeight;
-    if ((ecode = eb->setBinaryMonoGraphic(pos, monoWidth,
-                                            monoHeight)) != EB_SUCCESS) {
-        return errorString("image(mono) error");
+#define HOOK_FUNC(code,class_name,function) \
+    EB_Error_Code Hook##code(EB_Book *book, EB_Appendix*, \
+        void *classp, EB_Hook_Code, int argc, const unsigned int* argv) \
+    { \
+        class_name *p = static_cast<class_name*>(classp); \
+        QByteArray b =  p->function(argc,argv); \
+        if (!b.isEmpty()) { \
+            return eb_write_text_string(book, b); \
+        } else { \
+            return EB_SUCCESS; \
+        } \
     }
 
 
-    QByteArray b = eb->readBinary();
-    if (b.isNull()) {
-        return errorString("read binary error");
-    }
-
-    QFile f(ebCache.imageCachePath + '/' + bmpFile);
-    f.open(QIODevice::WriteOnly);
-    f.write(b);
-    f.close();
-    ebCache.imageCacheList << bmpFile;
-
-    return out;
-}
-
-QByteArray EbHook::begin_wave(int start_page, int start_offset,
-                              int end_page, int end_offset)
-{
-
-    QString wavFile = QString("%1x%2.wav").arg(start_page).arg(start_offset);
-    QString fname = ebCache.waveCachePath + "/" + wavFile;
-    QString out =  QString("<a class=snd href=\"sound?%1\">").arg(fname);
-
-    if (ebCache.waveCacheList.contains(wavFile))
-        return utfToEuc(out);
-
-    EB_Position spos, epos;
-    spos.page = start_page;
-    spos.offset = start_offset;
-    epos.page = end_page;
-    epos.offset = end_offset;
-    if (eb->setBinaryWave(spos, epos) != EB_SUCCESS) {
-        return errorString("image(wave) error");
-    }
-
-    QByteArray b = eb->readBinary();
-    if (b.isNull()) {
-        return errorString("read binary error");
-    }
-
-    QFile f(fname);
-    f.open(QIODevice::WriteOnly);
-    f.write(b);
-    f.close();
-    ebCache.waveCacheList << wavFile;
-    //qDebug() << "Output wave" << fname;
-    return utfToEuc(out);
-}
-
-/*
-   EB_Error_Code hook_newline(EB_Book *book, EB_Appendix*, void*,
-                           EB_Hook_Code, int, const unsigned int*)
-   {
-    eb_write_text_string(book, "<br>");
-    return 0;
-   }
-
-   EB_Error_Code hook_iso8859_1(EB_Book*, EB_Appendix*, void*, EB_Hook_Code,
-                             int, const unsigned int*)
-   {
-
-    qDebug() << "HOOK ISO8859_1";
-    return 0;
-   }
- */
-
-EB_Error_Code hook_narrow_jisx0208(EB_Book* book, EB_Appendix* appendix,
-                                   void* container, EB_Hook_Code code, int argc,
-                                   const unsigned int *argv)
-{
-    if (*argv == 41443) {
-        eb_write_text_string(book, "&lt;");
-    } else if (*argv == 41444) {
-        eb_write_text_string(book, "&gt;");
-    } else if (*argv == 41461) {
-        eb_write_text_string(book, "&amp;");
-    } else {
-        eb_hook_euc_to_ascii(book, appendix, container, code, argc, argv);
-    }
-    return 0;
-}
-
-/*
-EB_Error_Code hook_wide_jisx0208(EB_Book *book, EB_Appendix*, void*,
-                                    EB_Hook_Code, int,
-                                    const unsigned int *argv)
-{
-    //qDebug() << "HOOK WIDE_JISx0208";
-    return 0;
-}
-   EB_Error_Code hook_gb2312(EB_Book *book, EB_Appendix*, void*, EB_Hook_Code,
-                          int, const unsigned int*)
-   {
-
-    qDebug() << "HOOK gb2312";
-    eb_write_text_string(book,"<em class=err>gb2312</em>");
-    return 0;
-   }
- */
-/*
-   EB_Error_Code hook_begin_narrow(EB_Book*, EB_Appendix*, void*, EB_Hook_Code,
-                                int, const unsigned int*)
-   {
-    //qDebug() << "Begin Narrow";
-    //eb_write_text_string(book, "[Begin Narrow]");
-    //eb_write_text_string(book, "<span>");
-    return 0;
-   }
-
-   EB_Error_Code hook_end_narrow(EB_Book*, EB_Appendix*, void*, EB_Hook_Code,
-   int,
-                              const unsigned int*)
-   {
-    //qDebug() << "End Narrow";
-    //eb_write_text_string(book, "[End Narrow]");
-    //eb_write_text_string(book, "</span>");
-    return 0;
-   }
- */
-
-EB_Error_Code hook_set_indent(EB_Book *book, EB_Appendix*, void *container,
-                                   EB_Hook_Code, int, const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->set_indent(argv[1]));
-    return 0;
-}
-
-EB_Error_Code hook_begin_subscript(EB_Book *book, EB_Appendix*, void *container,
-                                   EB_Hook_Code, int, const unsigned int*)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    //eb_write_text_string(book, "<sub>");
-    eb_write_text_string(book, eb->begin_subscript());
-    return 0;
-}
-
-EB_Error_Code hook_end_subscript(EB_Book *book, EB_Appendix*, void *container,
-                                 EB_Hook_Code, int, const unsigned int*)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    //eb_write_text_string(book, "</sub>");
-    eb_write_text_string(book, eb->end_subscript());
-    return 0;
-}
-
-EB_Error_Code hook_begin_superscript(EB_Book *book, EB_Appendix*, void*,
-                                     EB_Hook_Code, int, const unsigned int*)
-{
-    eb_write_text_string(book, "<sup>");
-    return 0;
-}
-
-EB_Error_Code hook_end_superscript(EB_Book *book, EB_Appendix*, void*,
-                                   EB_Hook_Code, int, const unsigned int*)
-{
-    eb_write_text_string(book, "</sup>");
-    return 0;
-}
-
-EB_Error_Code hook_begin_emphasize(EB_Book *book, EB_Appendix*, void*,
-                                   EB_Hook_Code, int, const unsigned int*)
-{
-    eb_write_text_string(book, "<em>");
-    return 0;
-}
-
-EB_Error_Code hook_end_emphasize(EB_Book *book, EB_Appendix*, void*,
-                                 EB_Hook_Code, int, const unsigned int*)
-{
-    eb_write_text_string(book, "</em>");
-    return 0;
-}
-
-EB_Error_Code hook_begin_candidate(EB_Book *book, EB_Appendix*,
-                                   void *container, EB_Hook_Code, int,
-                                   const unsigned int*)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->begin_candidate());
-    return 0;
-}
-
-EB_Error_Code hook_begin_candidate_menu(EB_Book *, EB_Appendix*,
-                                   void *, EB_Hook_Code, int,
-                                   const unsigned int*)
-{
-    //EbHook *eb = static_cast<EbHook*>(container);
-
-    //eb_write_text_string(book, eb->begin_candidate_menu());
-    return 0;
-}
-
-EB_Error_Code hook_end_candidate_leaf(EB_Book *book, EB_Appendix*, void*,
-                                      EB_Hook_Code, int, const unsigned int*)
-{
-    qDebug() << "end_candidate_leaf";
-    eb_write_text_string(book, "</a>");
-    return 0;
-}
-EB_Error_Code hook_end_candidate_group(EB_Book *book, EB_Appendix*,
-                                       void *container, EB_Hook_Code, int,
-                                       const unsigned int *argv)
-{
-    //qDebug() << "end_candidate_group";
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->end_candidate_group(argv[1], argv[2]));
-
-    return 0;
-}
-
-EB_Error_Code hook_end_candidate_group_menu(EB_Book *, EB_Appendix*,
-                                            void *container, EB_Hook_Code,
-                                            int, const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb->end_candidate_group_menu(argv[1], argv[2]);
-
-    return 0;
-}
-
-
-EB_Error_Code hook_begin_reference(EB_Book *book, EB_Appendix*,
-                                   void *container, EB_Hook_Code, int,
-                                   const unsigned int*)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->begin_reference());
-    return 0;
-}
-EB_Error_Code hook_end_reference(EB_Book *book, EB_Appendix*, void *container,
-                                 EB_Hook_Code, int, const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->end_reference(argv[1], argv[2]));
-
-    return 0;
-}
-/*
-   EB_Error_Code hook_begin_keyword(EB_Book *book, EB_Appendix*, void*,
-                                 EB_Hook_Code, int, const unsigned int*)
-   {
-    Q_UNUSED(book);
-    //eb_write_text_string(book,"<span class=key>");
-    return 0;
-   }
-   EB_Error_Code hook_end_keyword(EB_Book *book, EB_Appendix*, void*,
-                               EB_Hook_Code, int, const unsigned int*)
-   {
-    Q_UNUSED(book);
-    //qDebug() << "End Keyword";
-    //eb_write_text_string(book,"</span>");
-    return 0;
-   }
- */
-EB_Error_Code hook_begin_decoration(EB_Book *book, EB_Appendix*,
-                                    void *container, EB_Hook_Code, int argc,
-                                    const unsigned int *argv)
-{
-    Q_UNUSED(argc);
-    //qDebug() << "begin_decoration" << argc << argv[1];
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->begin_decoration(argv[1]));
-
-    return 0;
-}
-EB_Error_Code hook_end_decoration(EB_Book *book, EB_Appendix*, void *container,
-                                  EB_Hook_Code, int, const unsigned int*)
-{
-    //qDebug() << "end_decoration" << cnt;
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->end_decoration());
-
-    return 0;
-}
-
-EB_Error_Code hook_begin_mono_graphic(EB_Book *book, EB_Appendix*,
-                                      void *container, EB_Hook_Code, int,
-                                      const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb->begin_mono_graphic(argv[2], argv[3]);
-    eb_write_text_string(book, "\n");
-    return 0;
-}
-
-EB_Error_Code hook_end_mono_graphic(EB_Book *book, EB_Appendix*,
-                                    void *container, EB_Hook_Code, int,
-                                    const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->end_mono_graphic(argv[1], argv[2]));
-
-    return 0;
-}
-EB_Error_Code hook_begin_color_bmp(EB_Book *book, EB_Appendix*,
-                                   void *container, EB_Hook_Code, int,
-                                   const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, "\n");
-    eb_write_text_string(book, eb->begin_color_bmp(argv[2], argv[3]));
-    return 0;
-}
-EB_Error_Code hook_begin_color_jpeg(EB_Book *book, EB_Appendix*,
-                                    void *container, EB_Hook_Code, int,
-                                    const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, "\n");
-    eb_write_text_string(book, eb->begin_color_jpeg(argv[2], argv[3]));
-
-    return 0;
-}
-EB_Error_Code hook_end_color_graphic(EB_Book *book, EB_Appendix*, void*,
-                                     EB_Hook_Code, int, const unsigned int*)
-{
-    eb_write_text_string(book, "</span>\n");
-    return 0;
-}
-
-EB_Error_Code hook_begin_in_color_bmp(EB_Book *book, EB_Appendix*,
-                                      void *container, EB_Hook_Code, int,
-                                      const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->begin_color_bmp(argv[2], argv[3]));
-    return 0;
-}
-
-EB_Error_Code hook_begin_in_color_jpeg(EB_Book *book, EB_Appendix*,
-                                       void *container, EB_Hook_Code, int,
-                                       const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->begin_color_jpeg(argv[2], argv[3]));
-    return 0;
-}
-
-EB_Error_Code hook_end_in_color_graphic(EB_Book *book, EB_Appendix*, void*,
-                                        EB_Hook_Code, int, const unsigned int*)
-{
-    eb_write_text_string(book, "</span>");
-    return 0;
-}
-
-EB_Error_Code hook_begin_mpeg(EB_Book *book, EB_Appendix*, void *container,
-                              EB_Hook_Code, int, const unsigned int*)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->begin_mpeg());
-
-    return 0;
-}
-EB_Error_Code hook_end_mpeg(EB_Book *book, EB_Appendix*, void *container,
-                            EB_Hook_Code, int, const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb->end_mpeg(argv + 2);
-    eb_write_text_string(book, "</a>");
-
-    return 0;
-}
-
-EB_Error_Code hook_narrow_font(EB_Book *book, EB_Appendix*, void *container,
-                               EB_Hook_Code, int, const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->narrow_font(argv[0]));
-    return 0;
-}
-
-EB_Error_Code hook_wide_font(EB_Book *book, EB_Appendix*, void *container,
-                             EB_Hook_Code, int, const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->wide_font(argv[0]));
-    return 0;
-}
-
-EB_Error_Code hook_begin_wave(EB_Book *book, EB_Appendix*, void *container,
-                              EB_Hook_Code, int, const unsigned int *argv)
-{
-    EbHook *eb = static_cast<EbHook*>(container);
-
-    eb_write_text_string(book, eb->begin_wave(argv[2], argv[3],
-                                              argv[4], argv[5]));
-
-    return 0;
-}
-EB_Error_Code hook_end_wave(EB_Book *book, EB_Appendix*, void*, EB_Hook_Code,
-                            int, const unsigned int*)
-{
-    eb_write_text_string(book, "</a>");
-    return 0;
-}
+//HOOK_FUNC(BEGIN_NARROW, EbCore, hookBeginNarrow);
+//HOOK_FUNC(END_NARROW, EbCore, hookEndNarrow);
+HOOK_FUNC(BEGIN_SUBSCRIPT, EbCore, hookBeginSubscript);
+HOOK_FUNC(END_SUBSCRIPT, EbCore, hookEndSubscript);
+HOOK_FUNC(SET_INDENT, EbCore, hookSetIndent);
+//HOOK_FUNC(NEWLINE, EbCore, hookNewline);
+HOOK_FUNC(BEGIN_SUPERSCRIPT, EbCore, hookBeginSuperscript);
+HOOK_FUNC(END_SUPERSCRIPT, EbCore, hookEndSuperscript);
+//HOOK_FUNC(BEGIN_NO_NEWLINE, EbCore, hookBeginNoNewline);
+//HOOK_FUNC(END_NO_NEWLINE, EbCore, hookEndNoNewline);
+HOOK_FUNC(BEGIN_EMPHASIS, EbCore, hookBeginEmphasis);
+HOOK_FUNC(END_EMPHASIS, EbCore, hookEndEmphasis);
+HOOK_FUNC(BEGIN_CANDIDATE, EbCore, hookBeginCandidate);
+HOOK_FUNC(END_CANDIDATE_GROUP, EbCore, hookEndCandidateGroup);
+HOOK_FUNC(END_CANDIDATE_GROUP2, EbCore, hookEndCandidateGroupMENU);
+HOOK_FUNC(END_CANDIDATE_LEAF, EbCore, hookEndCandidateLeaf);
+HOOK_FUNC(BEGIN_REFERENCE, EbCore, hookBeginReference);
+HOOK_FUNC(END_REFERENCE, EbCore, hookEndReference);
+//HOOK_FUNC(BEGIN_KEYWORD, EbCore, hookBeginKeyword);
+//HOOK_FUNC(END_KEYWORD, EbCore, hookEndKeyword);
+HOOK_FUNC(NARROW_FONT, EbCore, hookNarrowFont);
+HOOK_FUNC(WIDE_FONT, EbCore, hookWideFont);
+HOOK_FUNC(ISO8859_1, EbCore, hookISO8859_1);
+HOOK_FUNC(NARROW_JISX0208, EbCore, hookNarrowJISX0208);
+//HOOK_FUNC(WIDE_JISX0208, EbCore, hookWideJISX0208);
+HOOK_FUNC(GB2312, EbCore, hookGB2312);
+HOOK_FUNC(BEGIN_MONO_GRAPHIC, EbCore, hookBeginMonoGraphic);
+HOOK_FUNC(END_MONO_GRAPHIC, EbCore, hookEndMonoGraphic);
+HOOK_FUNC(BEGIN_GRAY_GRAPHIC, EbCore, hookBeginGrayGraphic);
+HOOK_FUNC(END_GRAY_GRAPHIC, EbCore, hookEndGrayGraphic);
+HOOK_FUNC(BEGIN_COLOR_BMP, EbCore, hookBeginColorBmp);
+HOOK_FUNC(BEGIN_COLOR_JPEG, EbCore, hookBeginColorJpeg);
+HOOK_FUNC(BEGIN_IN_COLOR_BMP, EbCore, hookBeginInColorBmp);
+HOOK_FUNC(BEGIN_IN_COLOR_JPEG, EbCore, hookBeginInColorJpeg);
+HOOK_FUNC(END_COLOR_GRAPHIC, EbCore, hookEndColorGraphic);
+HOOK_FUNC(END_IN_COLOR_GRAPHIC, EbCore, hookEndInColorGraphic);
+HOOK_FUNC(BEGIN_WAVE, EbCore, hookBeginWave);
+HOOK_FUNC(END_WAVE, EbCore, hookEndWave);
+HOOK_FUNC(BEGIN_MPEG, EbCore, hookBeginMpeg);
+HOOK_FUNC(END_MPEG, EbCore, hookEndMpeg);
+HOOK_FUNC(BEGIN_GRAPHIC_REFERENCE, EbCore, hookBeginGraphicReference);
+HOOK_FUNC(END_GRAPHIC_REFERENCE, EbCore, hookEndGraphicReference);
+HOOK_FUNC(BEGIN_DECORATION, EbCore, hookBeginDecoration);
+HOOK_FUNC(END_DECORATION, EbCore, hookEndDecoration);
+HOOK_FUNC(BEGIN_IMAGE_PAGE, EbCore, hookBeginImagePage);
+HOOK_FUNC(END_IMAGE_PAGE, EbCore, hookEndImagePage);
+HOOK_FUNC(BEGIN_CLICKABLE_AREA, EbCore, hookBeginClickableArea);
+HOOK_FUNC(END_CLICKABLE_AREA, EbCore, hookEndClickableArea);
+
+#define HOOK_S(code) { EB_HOOK_##code, Hook##code }
+
+EB_Hook hooks[] = {
+    //HOOK_S(BEGIN_NARROW),
+    //HOOK_S(END_NARROW),
+    HOOK_S(BEGIN_SUBSCRIPT),
+    HOOK_S(END_SUBSCRIPT),
+    HOOK_S(SET_INDENT),
+    //HOOK_S(NEWLINE),
+    HOOK_S(BEGIN_SUPERSCRIPT),
+    HOOK_S(END_SUPERSCRIPT),
+    //HOOK_S(BEGIN_NO_NEWLINE),
+    //HOOK_S(END_NO_NEWLINE),
+    HOOK_S(BEGIN_EMPHASIS),
+    HOOK_S(END_EMPHASIS),
+    HOOK_S(BEGIN_CANDIDATE),
+    HOOK_S(END_CANDIDATE_GROUP),
+    HOOK_S(END_CANDIDATE_LEAF),
+    HOOK_S(BEGIN_REFERENCE),
+    HOOK_S(END_REFERENCE),
+    //HOOK_S(BEGIN_KEYWORD),
+    //HOOK_S(END_KEYWORD),
+    HOOK_S(NARROW_FONT),
+    HOOK_S(WIDE_FONT),
+    HOOK_S(ISO8859_1),
+    HOOK_S(NARROW_JISX0208),
+    //HOOK_S(WIDE_JISX0208),
+    HOOK_S(GB2312),
+    HOOK_S(BEGIN_MONO_GRAPHIC),
+    HOOK_S(END_MONO_GRAPHIC),
+    HOOK_S(BEGIN_GRAY_GRAPHIC),
+    HOOK_S(END_GRAY_GRAPHIC),
+    HOOK_S(BEGIN_COLOR_BMP),
+    HOOK_S(BEGIN_COLOR_JPEG),
+    HOOK_S(BEGIN_IN_COLOR_BMP),
+    HOOK_S(BEGIN_IN_COLOR_JPEG),
+    HOOK_S(END_COLOR_GRAPHIC),
+    HOOK_S(END_IN_COLOR_GRAPHIC),
+    HOOK_S(BEGIN_WAVE),
+    HOOK_S(END_WAVE),
+    HOOK_S(BEGIN_MPEG),
+    HOOK_S(END_MPEG),
+    HOOK_S(BEGIN_GRAPHIC_REFERENCE),
+    HOOK_S(END_GRAPHIC_REFERENCE),
+    HOOK_S(BEGIN_DECORATION),
+    HOOK_S(END_DECORATION),
+    HOOK_S(BEGIN_IMAGE_PAGE),
+    HOOK_S(END_IMAGE_PAGE),
+    HOOK_S(BEGIN_CLICKABLE_AREA),
+    HOOK_S(END_CLICKABLE_AREA),
+    { EB_HOOK_NULL, NULL }
+};
+EB_Hook hooks_cand[] = {
+    //HOOK_S(BEGIN_NARROW),
+    //HOOK_S(END_NARROW),
+    HOOK_S(BEGIN_SUBSCRIPT),
+    HOOK_S(END_SUBSCRIPT),
+    HOOK_S(SET_INDENT),
+    //HOOK_S(NEWLINE),
+    HOOK_S(BEGIN_SUPERSCRIPT),
+    HOOK_S(END_SUPERSCRIPT),
+    //HOOK_S(BEGIN_NO_NEWLINE),
+    //HOOK_S(END_NO_NEWLINE),
+    HOOK_S(BEGIN_EMPHASIS),
+    HOOK_S(END_EMPHASIS),
+    //HOOK_S(BEGIN_CANDIDATE),
+    //HOOK_S(END_CANDIDATE_GROUP),
+    HOOK_S(END_CANDIDATE_LEAF),
+    HOOK_S(BEGIN_REFERENCE),
+    HOOK_S(END_REFERENCE),
+    //HOOK_S(BEGIN_KEYWORD),
+    //HOOK_S(END_KEYWORD),
+    HOOK_S(NARROW_FONT),
+    HOOK_S(WIDE_FONT),
+    HOOK_S(ISO8859_1),
+    HOOK_S(NARROW_JISX0208),
+    //HOOK_S(WIDE_JISX0208),
+    HOOK_S(GB2312),
+    HOOK_S(BEGIN_MONO_GRAPHIC),
+    HOOK_S(END_MONO_GRAPHIC),
+    HOOK_S(BEGIN_GRAY_GRAPHIC),
+    HOOK_S(END_GRAY_GRAPHIC),
+    HOOK_S(BEGIN_COLOR_BMP),
+    HOOK_S(BEGIN_COLOR_JPEG),
+    HOOK_S(BEGIN_IN_COLOR_BMP),
+    HOOK_S(BEGIN_IN_COLOR_JPEG),
+    HOOK_S(END_COLOR_GRAPHIC),
+    HOOK_S(END_IN_COLOR_GRAPHIC),
+    HOOK_S(BEGIN_WAVE),
+    HOOK_S(END_WAVE),
+    HOOK_S(BEGIN_MPEG),
+    HOOK_S(END_MPEG),
+    HOOK_S(BEGIN_GRAPHIC_REFERENCE),
+    HOOK_S(END_GRAPHIC_REFERENCE),
+    HOOK_S(BEGIN_DECORATION),
+    HOOK_S(END_DECORATION),
+    HOOK_S(BEGIN_IMAGE_PAGE),
+    HOOK_S(END_IMAGE_PAGE),
+    HOOK_S(BEGIN_CLICKABLE_AREA),
+    HOOK_S(END_CLICKABLE_AREA),
+    { EB_HOOK_END_CANDIDATE_GROUP, HookEND_CANDIDATE_GROUP2 },
+    { EB_HOOK_NULL, NULL }
+};
+
+EB_Hook hooks_font[] = {
+    HOOK_S(NARROW_FONT),
+    HOOK_S(WIDE_FONT),
+    { EB_HOOK_NULL, NULL }
+};
 

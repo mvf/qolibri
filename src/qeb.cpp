@@ -99,7 +99,7 @@ QString QEb::subbookTitle()
         dispError("eb_subbook_title", ecode);
         return QString();
     }
-    return toUTF(title);
+    return eucToUtf(title);
 }
 
 QString QEb::subbookTitle2(EB_Subbook_Code code)
@@ -110,7 +110,7 @@ QString QEb::subbookTitle2(EB_Subbook_Code code)
         dispError("eb_subbook_title2", ecode);
         return QString();
     }
-    return toUTF(title);
+    return eucToUtf(title);
 }
 QString QEb::subbookDirectory()
 {
@@ -120,7 +120,7 @@ QString QEb::subbookDirectory()
         dispError("eb_subbook_directory", ecode);
         return QString();
     }
-    return toUTF(dir);
+    return eucToUtf(dir);
 }
 QString QEb::subbookDirectory2(EB_Subbook_Code code)
 {
@@ -130,7 +130,7 @@ QString QEb::subbookDirectory2(EB_Subbook_Code code)
         dispError("eb_subbook_directory2", ecode);
         return QString();
     }
-    return toUTF(dir);
+    return eucToUtf(dir);
 }
 EB_Error_Code QEb::setSubbook(EB_Subbook_Code code)
 {
@@ -175,7 +175,7 @@ QString QEb::multiTitle(EB_Multi_Search_Code mid)
     if (characterCode() == EB_CHARCODE_ISO8859_1)
         return QString::fromLatin1(s);
     else
-        return toUTF(s);
+        return eucToUtf(s);
 }
 QString QEb::multiEntryLabel(EB_Multi_Search_Code mid, int entry)
 {
@@ -188,7 +188,7 @@ QString QEb::multiEntryLabel(EB_Multi_Search_Code mid, int entry)
     if (characterCode() == EB_CHARCODE_ISO8859_1)
         return QString::fromLatin1(s);
     else
-        return toUTF(s);
+        return eucToUtf(s);
     
 }
 EB_Position QEb::multiEntryCandidates(EB_Multi_Search_Code mid, int entry)
@@ -323,8 +323,8 @@ QString QEb::readText(void *para, bool hook_flag)
             b += QByteArray(buff, (int)len);
         if (isTextStopped())
             break;
-        if (len < 1024)
-            break;
+        //if (len < 1024)
+        //    break;
     }
     return eucToUtf(b);
 
@@ -350,8 +350,8 @@ QString QEb::readHeading(void *para, bool hook_flag)
             b += QByteArray(buff, (int)len);
         if (isTextStopped())
             break;
-        if (len < 1024)
-            break;
+        //if (len < 1024)
+        //    break;
     }
     return eucToUtf(b);
 
@@ -435,7 +435,7 @@ QString QEb::currentCandidate()
     if (characterCode() == EB_CHARCODE_ISO8859_1)
         return QString::fromLatin1(s);
     else
-        return toUTF(s);
+        return eucToUtf(s);
 }
 
 EB_Error_Code QEb::setHook(const EB_Hook hook)
@@ -1125,7 +1125,7 @@ QString QEb::composeMovieFileName(const unsigned int *argv)
         dispError("eb_compose_movie_file_name", ecode);
         return QString();
     }
-    return toUTF(name);
+    return eucToUtf(name);
 }
 QString QEb::composeMoviePathName(const unsigned int *argv)
 {
@@ -1135,7 +1135,7 @@ QString QEb::composeMoviePathName(const unsigned int *argv)
         dispError("eb_compose_movie_path_name", ecode);
         return QString();
     }
-    return toUTF(path);
+    return eucToUtf(path);
 }
 EB_Error_Code QEb::decomposeMovieFileName(unsigned int *argv,
                                      const QString &name)
@@ -1161,7 +1161,7 @@ QString QEb::appendixPath()
         dispError("eb_appendix_path", ecode);
         return QString();
     }
-    return toUTF(path);
+    return eucToUtf(path);
 }
 EB_Error_Code QEb::loadAllAppendixSubbooks()
 {
@@ -1200,7 +1200,7 @@ QString QEb::appendixSubbookDirectory()
         dispError("eb_appendix_subbook_directory", ecode);
         return QString();
     }
-    return toUTF(dir);
+    return eucToUtf(dir);
 }
 QString QEb::appendixSubbookDirectory(EB_Subbook_Code code)
 {
@@ -1210,7 +1210,7 @@ QString QEb::appendixSubbookDirectory(EB_Subbook_Code code)
         dispError("eb_appendix_subbook_directory2", ecode);
         return QString();
     }
-    return toUTF(dir);
+    return eucToUtf(dir);
 }
 bool QEb::isHaveAppendixSubbook(EB_Subbook_Code code)
 {
@@ -1293,7 +1293,7 @@ QString QEb::narrowAltCharacterText(int c_num)
     if (characterCode() == EB_CHARCODE_ISO8859_1)
         return QString::fromLatin1(alt);
     else
-        return toUTF(alt);
+        return eucToUtf(alt);
 }
 QString QEb::wideAltCharacterText(int c_num)
 {
@@ -1306,7 +1306,7 @@ QString QEb::wideAltCharacterText(int c_num)
     if (characterCode() == EB_CHARCODE_ISO8859_1)
         return QString::fromLatin1(alt);
     else
-        return toUTF(alt);
+        return eucToUtf(alt);
 }
 int QEb::backwardNarrowAltCharacter(int n, int c_num)
 {
@@ -1374,7 +1374,7 @@ QString QEb::booklistBookName(int idx)
         dispError("eb_booklist_book_name", ecode);
         return QString();
     }
-    return toUTF(name);
+    return eucToUtf(name);
 }
 QString QEb::booklistBookTitle(int idx)
 {
@@ -1384,5 +1384,5 @@ QString QEb::booklistBookTitle(int idx)
         dispError("eb_booklist_book_title", ecode);
         return QString();
     }
-    return toUTF(title);
+    return eucToUtf(title);
 }

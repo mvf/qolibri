@@ -31,7 +31,7 @@
 
 #include "book.h"
 #include "method.h"
-#include "ebhook.h"
+#include "ebcore.h"
 
 class QContextMenuEvent;
 class QUrl;
@@ -295,7 +295,7 @@ private:
     void selectMenuPage(int index);
     void getMenus(EbMenu *eb, const EB_Position &pos, PageItems *items,
                   int count);
-    QList <CandItems> topCands;
+    QList <CandItem> topCands;
     int menuCount;
     bool checkMax;
 };

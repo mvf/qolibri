@@ -20,8 +20,8 @@
 
 #include "book.h"
 #include "bookview.h"
-#include "qeb.h"
-#include "ebcore.h"
+//#include "qeb.h"
+//#include "ebcore.h"
 #include "ebook.h"
 #include "configure.h"
 #include "textcodec.h"
@@ -304,9 +304,9 @@ QString ReferencePopup::browserText(Book *book, const EB_Position &pos)
         "</style>\n"
         "</head>\n"
         "<body>\n"
-        "<h2>" + ttl + "</h2>\n" +
-        "<pre>" + eb.text(pos) + "</pre>\n"
-        "</body>\n"
+        "<h2>" + ttl +
+        "</h2>\n<pre>" + eb.text(pos) + "</pre>" +
+        "\n</body>\n"
         "</html>\n";
     return txt;
 }
@@ -428,8 +428,7 @@ void PageItems::composeHLine(int num, const QString &anchor,
     if (!text.isEmpty())
         str =  "<a name=" + anchor + " />"
                "<h" + snum + ">&nbsp;" + title_t +
-               "</h" + snum + "><pre>" + text +
-               "</pre>";
+               "</h" + snum + "><pre>" + text + "</pre>";
     else
         str =  "<a name=" + anchor + " />"
                "<h" + snum + ">&nbsp;" + title_t + "</h" + snum + ">\n";
@@ -449,8 +448,7 @@ void PageItems::composeHLine(int num, const QString &anchor,
     if (!text.isEmpty())
         str =  "<a name=" + anchor + " />"
                "<h" + snum + ">&nbsp;" + title +
-               "</h" + snum + "><pre>" + text +
-               "</pre>";
+               "</h" + snum + "><pre>" + text + "</pre>";
     else
         str =  "<a name=" + anchor + " />"
                "<h" + snum + ">&nbsp;" + title + "</h" + snum + ">\n";
@@ -955,9 +953,9 @@ void MenuPage::getMenus(EbMenu *eb, const EB_Position &pos, PageItems *items,
         }
     }
     QString c_text;
-    QList <CandItems> list = eb->candidate(pos, &c_text);
+    QList <CandItem> list = eb->candidate(pos, &c_text);
     if (list.count()) {
-        foreach(CandItems i, list) {
+        foreach(CandItem i, list) {
             menuCount++;
             if (checkMax && menuCount >= CONF->limitMenuHit) {
                 retStatus = LIMIT_MENU;

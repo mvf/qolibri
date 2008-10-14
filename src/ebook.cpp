@@ -27,19 +27,18 @@
 #include <eb/error.h>
 
 #include "ebook.h"
-#include "ebhook.h"
 #include "textcodec.h"
 
 const int HitsBufferSize = 10000;
 const int TextBufferSize = 4000;
 const int TextSizeLimit = 2800000;
 
-QList <CandItems> EbMenu::topMenu()
+QList <CandItem> EbMenu::topMenu()
 {
 
     EB_Position pos = menu();
     if (!isValidPosition(pos)) {
-        QList<CandItems> i;
+        QList<CandItem> i;
         return i;
     }
 

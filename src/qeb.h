@@ -37,15 +37,6 @@
 #define toUTF(q_bytearray) \
     QTextCodec::codecForLocale()->toUnicode(q_bytearray)
 
-#define HOOK_DEF(code,class_name,function) \
-    EB_Error_Code function(int argc, unsigned int* argv); \
-    static EB_Error_Code Hook##code(EB_Book*,EB_Appendix*,void *classp, \
-            EB_Hook_Code, int argc, unsigned int* argv) \
-    { \
-        class_name *p = static_cast<class_name*>(classp); \
-        return p->function(argc,argv); \
-    }
-
 class QEb : public QObject
 {
 

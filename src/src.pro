@@ -4,7 +4,6 @@ HEADERS += mainwindow.h \
            qeb.h \
            ebcore.h \
            ebcache.h \
-           ebhook.h \
            ebook.h \
            bookview.h \
            groupdock.h \

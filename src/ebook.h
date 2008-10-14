@@ -34,7 +34,7 @@ public:
     EbMenu() : EbCore(HookMenu) {}
     ~EbMenu() {}
 
-    QList <CandItems> topMenu();
+    QList <CandItem> topMenu();
 };
 
 class EBook : public EbCore

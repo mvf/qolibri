@@ -24,8 +24,30 @@
 
 extern QTextCodec *codecEuc;
 
+// EUC-JP(b) -> UTF-8(s)
 QString eucToUtf(const QByteArray &ba);
 
+// UTF-8(s) -> EUC-JP(b)
 QByteArray utfToEuc(const QString &s);
+
+//
+// UTF-8(s) -> Local Codec(b)
+// QByteArray QString::toLocal8Bit()
+//
+// Local Codec(b) -> UTF-8(s)
+// QString QString::fromLocal8Bit();
+//
+// UTF-8(s) -> Ascii(b)
+// QByteArray QString::toAscii()
+//
+// Ascii(b) -> UTF-8(s)
+// QString QString::fromAscii();
+//
+// UTF-8(s) -> UTF-8(b)
+// QByteArray QString::toUtf8()
+//
+// UTF-8(b) -> UTF-8(s)
+// QString QString::fromUtf8();
+//
 
 #endif
