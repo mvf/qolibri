@@ -394,9 +394,12 @@ GroupDock::GroupDock(QWidget * parent)
 #endif
 {
 #if defined (Q_WS_MAC)
-
+    QTabWidget* tabWidget = this;
+#else
+    tabWidget = new QTabWidget(this);
+#endif
     groupTab = new GroupTab(this);
-    addTab(groupTab, QIcon(":/images/group.png"), tr("Group"));
+    tabWidget->addTab(groupTab, QIcon(":/images/group.png"), tr("Group"));
     connect(groupTab, SIGNAL(bookViewRequested(Book*)),
             SIGNAL(bookViewRequested(Book*)));
     connect(groupTab, SIGNAL(fontViewRequested(Book*)),
@@ -413,7 +416,7 @@ GroupDock::GroupDock(QWidget * parent)
             SIGNAL(webRequested(QString, QString)));
     connect(markTab, SIGNAL(pasteRequested(QString, SearchMethod)),
             SIGNAL(pasteRequested(QString, SearchMethod)));
-    addTab(markTab, QIcon(":/images/bookmark.png"), tr("Mark"));
+    tabWidget->addTab(markTab, QIcon(":/images/bookmark.png"), tr("Mark"));
 
     historyTab = new HistoryTab(this);
     connect(historyTab, SIGNAL(searchRequested(QString, SearchMethod)),
@@ -422,23 +425,11 @@ GroupDock::GroupDock(QWidget * parent)
             SIGNAL(webRequested(QString, QString)));
     connect(historyTab, SIGNAL(pasteRequested(QString, SearchMethod)),
             SIGNAL(pasteRequested(QString, SearchMethod)));
-    addTab(historyTab, QIcon(":/images/history.png"), tr("History"));
-
-    setWindowFlags(Qt::Drawer);
-
-#else
-
-    tabWidget = new QTabWidget(this);
-
-    groupTab = new GroupTab(this);
-    tabWidget->addTab(groupTab, QIcon(":/images/group.png"), tr("Group"));
-
-    markTab = new MarkTab(this);
-    tabWidget->addTab(markTab, QIcon(":/images/marktab.png"), tr("Mark"));
-
-    historyTab = new HistoryTab(this);
     tabWidget->addTab(historyTab, QIcon(":/images/history.png"), tr("History"));
 
+#if defined (Q_WS_MAC)
+    setWindowFlags(Qt::Drawer);
+#else
     QHBoxLayout *h = new QHBoxLayout();
     h->setAlignment(0);
     h->setMargin(0);
@@ -447,7 +438,6 @@ GroupDock::GroupDock(QWidget * parent)
     setLayout(h);
 
     setWindowFlags(Qt::Tool);
-
 #endif
 
     //connect(this, SIGNAL(closed()), parent, SLOT(closedDock()));
