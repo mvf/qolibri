@@ -216,13 +216,15 @@ QByteArray EbCore::fontToHtmlBStr(const QByteArray &fname,
 {
     QByteArray ret = "<img src=\"" + utfToEuc(ebCache.fontCacheRel) + fname  +
                      "\"";
-    
+
+#if 0    
     if (fontSize != 16) {
         int h = fontSize;
         int w = (n_or_w == NarrowCode) ? (h / 2) : h;
         ret += " height=" + numToBStr(h) +
                " width=" + numToBStr(w);
     }
+#endif
     ret += " />";
     return ret;
 }
