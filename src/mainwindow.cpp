@@ -146,10 +146,10 @@ void MainWindow::createMenus()
     toggleBarAct = vmenu->addAction(QIcon(":/images/find_l.png"),
                                     tr("Search/read book"),
                                     this, SLOT(toggleBar()));
-    zoomInAct = vmenu->addAction(QIcon(":/images/zoomin.png"), tr("Zoom &out"),
-                                 bookView, SLOT(zoomIn()), QString("Ctrl+-"));
-    zoomOutAct = vmenu->addAction(QIcon(":/images/zoomout.png"), tr("Zoom &in"),
-                                  bookView, SLOT(zoomOut()), QString("Ctrl++"));
+    zoomInAct = vmenu->addAction(QIcon(":/images/zoomin.png"), tr("Zoom &in"),
+                                 bookView, SLOT(zoomIn()), QString("Ctrl++"));
+    zoomOutAct = vmenu->addAction(QIcon(":/images/zoomout.png"), tr("Zoom &out"),
+                                  bookView, SLOT(zoomOut()), QString("Ctrl+-"));
     goPrevAct = vmenu->addAction(QIcon(":/images/goprev.png"),
                                  tr("Go &Previous"), this, SLOT(goPrev()));
     goNextAct = vmenu->addAction(QIcon(":/images/gonext.png"),
