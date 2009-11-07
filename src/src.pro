@@ -11,9 +11,9 @@ HEADERS += mainwindow.h \
            bookwidget.h \
            configure.h \
            booksetting.h \
+           optiondialog.h \
            fontsetting.h  \
            ssheetsetting.h \
-           configsetting.h \
            ssheet.h \
            titlelabel.h \
            statusbutton.h \
@@ -36,15 +36,16 @@ SOURCES += qolibri.cpp \
            bookwidget.cpp \
            configure.cpp \
            booksetting.cpp \
+           optiondialog.cpp \
            fontsetting.cpp \
            ssheetsetting.cpp \
-           configsetting.cpp \
            statusbutton.cpp \
            textcodec.cpp
 
 QT += network
 QT += webkit
 RESOURCES += qolibri.qrc
+FORMS += optiondialog.ui
 
 TARGET = qolibri
 DESTDIR = ./bin

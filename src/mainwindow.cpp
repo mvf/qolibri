@@ -33,7 +33,7 @@
 #include "fontsetting.h"
 #include "ssheetsetting.h"
 #include "configure.h"
-#include "configsetting.h"
+#include "optiondialog.h"
 
 const char *Program = { "qolibri" };
 
@@ -1486,11 +1486,8 @@ void MainWindow::clearCache()
 
 void MainWindow::setConfig()
 {
-    ConfigSetting dlg(this);
-
-    if (dlg.exec() == QDialog::Accepted) {
-        dlg.update();
-    }
+    OptionDialog dlg(this);
+    dlg.exec();
 }
 
 void MainWindow::changeSearchText(const QString&)

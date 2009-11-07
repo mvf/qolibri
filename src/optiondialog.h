@@ -1,6 +1,6 @@
 /***************************************************************************
 *   Copyright (C) 2007 by BOP                                             *
-*   polepolek@gmail.com                                                   *
+*   Copyright (C) 2009 Fujii Hironori                                     *
 *                                                                         *
 *   This program is free software; you can redistribute it and/or modify  *
 *   it under the terms of the GNU General Public License as published by  *
@@ -17,50 +17,19 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#ifndef CONFIGSETTING_H
-#define CONFIGSETTING_H
+#pragma once
+#include "ui_optiondialog.h"
 
-#include <QDialog>
-
-class QCheckBox;
-class QSpinBox;
-class QLineEdit;
-
-class ConfigSetting : public QDialog
+class OptionDialog : public QDialog, private Ui::OptionDialog
 {
     Q_OBJECT
+
 public:
-    ConfigSetting(QWidget *parent);
+    OptionDialog(QWidget *parent = 0);
 
-    void update();
-
-private slots:
-    void setWaveProcess();
-    void setMpegProcess();
-    void setBrowserProcess();
-    void reset();
-    void defaultReset();
+public slots:
+    void accept();
 
 private:
-    QCheckBox *highlightCheck;
-    QCheckBox *beepSoundCheck;
-    QCheckBox *serverModeCheck;
-    QSpinBox *historyBox;
-    QSpinBox *limitCharBox;
-    QSpinBox *limitMenuBox;
-    QSpinBox *limitMaxBookBox;
-    QSpinBox *limitMaxTotalBox;
-    QSpinBox *indentOffsetBox;
-    QSpinBox *portNoBox;
-    QSpinBox *stepBookHitBox;
-    QSpinBox *stepTotalHitBox;
-    QLineEdit *waveProcEdit;
-    QLineEdit *mpegProcEdit;
-    QLineEdit *browserProcEdit;
-    QLineEdit *googleUrlEdit;
-    QLineEdit *wikipediaUrlEdit;
-    QLineEdit *userDefUrlEdit;
+    void reset();
 };
-
-#endif
-
