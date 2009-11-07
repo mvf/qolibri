@@ -324,12 +324,14 @@ void MainWindow::createToolBars()
     connect(limitTotalSpin, SIGNAL(valueChanged(int)),
             SLOT(changeLimitTotal(int)));
     methodBar->addWidget(limitTotalSpin);
+#if 0
     methodBar->addSeparator();
     methodBar->addAction(booksAct);
     methodBar->addAction(fontAct);
     methodBar->addAction(sSheetAct);
     methodBar->addAction(toggleTabsAct);
     methodBar->addAction(toggleBrowserAct);
+#endif
 
     toggleMethodBarAct = methodBar->toggleViewAction();
     toggleMethodBarAct->setText(tr("Option bar on/off"));
@@ -348,6 +350,7 @@ void MainWindow::createStatusBar()
 
     bar->setStyleSheet(statusBarStyleSheet);
 
+#if 0
     StatusButton *mbutton = new StatusButton(methodCombo, "direction");
     mbutton->setFlat(true);
     bar->addWidget(mbutton);
@@ -363,15 +366,17 @@ void MainWindow::createStatusBar()
     StatusButton *tbutton = new StatusButton(limitTotalSpin, "limit-total");
     tbutton->setFlat(true);
     bar->addWidget(tbutton);
+#endif
 
     processLabel = new QLabel(this);
     processLabel->setObjectName("process");
     bar->addWidget(processLabel, 1);
 
+#if 0
     StatusButton *sbutton = new StatusButton(optDirectionMenu, "search", this);
     sbutton->setFlat(true);
     bar->addWidget(sbutton);
-
+#endif
     optSearchButton = new QPushButton(this);
     optSearchButton->setObjectName("selection");
     optSearchButton->setFlat(true);
