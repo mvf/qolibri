@@ -50,14 +50,14 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
     setWindowTitle(tr("Browser style sheet setting"));
 #endif
 
-#if defined (Q_WS_MAC) || defined (Q_WS_WIN)
-    QString path = QCoreApplication::applicationDirPath();
-    QString fname = (dic) ? "/i18n/qolibri/dictsample_" : "/i18n/qolibri/booksample_";
 
+#if defined(PKGDATADIR)
+    QString path(PKGDATADIR);
 #else
-    QString path = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-    QString fname = (dic) ? "/qolibri/dictsample_" : "/qolibri/booksample_";
+    QString path = QCoreApplication::applicationDirPath();
 #endif
+    QString fname = (dic) ? "/dictsample_" : "/booksample_";
+
     QFile file(path + fname + QLocale::system().name());
     if (!file.exists()) {
         file.setFileName(path + fname);

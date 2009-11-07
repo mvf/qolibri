@@ -117,19 +117,20 @@ int main(int argc, char *argv[])
         }
     }
 
-    QString locale = QLocale::system().name();
-#if defined (Q_WS_MAC) || defined (Q_WS_WIN)
-    QString path = QCoreApplication::applicationDirPath() + "/i18n";
+
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(),
+                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    app.installTranslator(&qtTranslator);
+
+#if defined(PKGDATADIR)
+    QString path(PKGDATADIR "/translations");
 #else
-    QString path = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+    QString path = QCoreApplication::applicationDirPath() + "/translations";
 #endif
     QTranslator trans;
-    trans.load(QString("qolibri_") + locale, path);
+    trans.load(QString("qolibri_") + QLocale::system().name(), path);
     app.installTranslator(&trans);
-
-    //QTranslator transQt;
-    //trans.load(QString("qt_") + locale, path);
-    //app.installTranslator(&transQt);
 
     MainWindow mainWin(searchText);
 

@@ -52,59 +52,30 @@ DESTDIR = ./bin
 OBJECTS_DIR = ./build
 MOC_DIR = ./build/moc
 
+TRANSLATIONS = qolibri_ja_JP.ts
+
 #DEFINES += USE_GIF_FOR_FONT
 #DEFINES += FIXED_POPUP
 #DEFINES += RUBY_ON_TOOLBAR
 
-macx {
-    !exists($$[QT_INSTALL_LIBS]/QtCore.framework) {
-        CONFIG += static
-        QTPLUGIN += qjpcodecs qjpeg
-        DEFINES += USE_STATIC_PLUGIN
-        LIBS += /usr/lib/libeb.a
-        LIBS += -dead_strip
-    } else {
-        LIBS += -leb
-    }
-
-    ICON = qolibri.icns
-
-    i18n.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
-    i18n.extra = cp -rf i18n/*.qm $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n
-    i18n_s.path = $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n/qolibri
-    i18n_s.extra = cp -rf i18n/qolibri/*sample* $$DESTDIR/"$$TARGET".app/Contents/MacOS/i18n/qolibri
-}
-win32 {
-    INCLUDEPATH += "C:\Program Files\EB Library\include"
-    LIBS += -L"C:\Program Files\EB Library\lib"
-    #debug {
-    #    CONFIG += console
-    #}
-    LIBS += -leb
-    RC_FILE = qolibri.rc
-
-    i18n.path = $$DESTDIR/i18n
-    i18n_s.path = $$DESTDIR/i18n/qolibri
-    i18n.files = i18n/*.qm
-    i18n_s.files = i18n/qolibri/*sample*
-
-} 
 unix:!macx {
+    isEmpty(INSTALL_PREFIX):INSTALL_PREFIX=/usr/local
+    isEmpty(INSTALL_BINDIR):INSTALL_BINDIR=$$INSTALL_PREFIX/bin
+    isEmpty(INSTALL_DATADIR):INSTALL_DATADIR=$$INSTALL_PREFIX/share
+    isEmpty(INSTALL_PKGDATADIR):INSTALL_PKGDATADIR=$$INSTALL_DATADIR/$$TARGET
 
+    DEFINES += PKGDATADIR=\\\"$$INSTALL_PKGDATADIR\\\"
     LIBS += -leb
 
-    target.path = /usr/bin
-    target.files = bin/qolibri
+    target.path = $$INSTALL_BINDIR
     INSTALLS += target
-    i18n.path = $$[QT_INSTALL_TRANSLATIONS]
-    i18n.extra = cp -rf i18n/*.qm $$[QT_INSTALL_TRANSLATIONS]
-    i18n_s.path = $$[QT_INSTALL_TRANSLATIONS]/qolibri
-    i18n_s.extra = cp -rf i18n/qolibri/*sample* $$[QT_INSTALL_TRANSLATIONS]/qolibri
+    translations.path = $$INSTALL_PKGDATADIR
+    translations.files = translations
+    samples.path = $$INSTALL_PKGDATADIR
+    samples.files = i18n/qolibri/*
 }
 
-INSTALLS += i18n i18n_s
-
-TRANSLATIONS = qolibri_ja_JP.ts
+INSTALLS += translations samples
 
 isEmpty(QMAKE_LRELEASE) {
     win32:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]\lrelease.exe
@@ -113,17 +84,12 @@ isEmpty(QMAKE_LRELEASE) {
 }
 
 updateqm.input = TRANSLATIONS
-updateqm.output = i18n/${QMAKE_FILE_BASE}.qm
-updateqm.commands = $$QMAKE_LRELEASE -silent ${QMAKE_FILE_IN} -qm i18n/${QMAKE_FILE_BASE}.qm
+updateqm.output = translations/${QMAKE_FILE_BASE}.qm
+updateqm.commands = $$QMAKE_LRELEASE -silent ${QMAKE_FILE_IN} -qm translations/${QMAKE_FILE_BASE}.qm
 updateqm.CONFIG += no_link target_predeps
 QMAKE_EXTRA_COMPILERS += updateqm
 
 message(Version = $$QT_VERSION)
-macx {
-    message(Translations = ./bin/qolibri.app/Contents/MacOS/i18n)
-} else {
-    message(Translations = $$[QT_INSTALL_TRANSLATIONS])
-}
 message(Config = $$CONFIG)
 message(Plugins = $$QTPLUGIN)
 message(Defines  = $$DEFINES)
