@@ -140,6 +140,7 @@ void MainWindow::createMenus()
     toggleDockAct = new QAction(QIcon(":/images/dock_mac.png"),
                                 tr("Dock on/off"), this);
     toggleDockAct->setCheckable(true);
+    toggleDockAct->setIconVisibleInMenu(false);
     connect(toggleDockAct, SIGNAL(triggered(bool)),
             SLOT(toggleDock(bool)));
     vmenu->addAction(toggleDockAct);
@@ -176,11 +177,13 @@ void MainWindow::createMenus()
                                      tr("Tab on/off"),
                                      this, SLOT(toggleNewTab(bool)));
     toggleTabsAct->setCheckable(true);
+    toggleTabsAct->setIconVisibleInMenu(false);
     CONNECT_BUSY(toggleTabsAct);
     toggleBrowserAct = smenu->addAction(QIcon(":/images/new_browser.png"),
                                      tr("Popup New Browser on/off"),
                                      this, SLOT(toggleNewBrowser(bool)));
     toggleBrowserAct->setCheckable(true);
+    toggleBrowserAct->setIconVisibleInMenu(false);
     CONNECT_BUSY(toggleBrowserAct);
     fontAct = smenu->addAction(QIcon(":/images/font1.png"),
                                tr("Set browser font"),
@@ -213,6 +216,7 @@ void MainWindow::createMenus()
                                      tr("&Ruby(subscription) on/off"), this,
                                      SLOT(toggleRuby()));
     toggleRubyAct->setCheckable(true);
+    toggleRubyAct->setIconVisibleInMenu(false);
 
     QMenu *hmenu = menuBar()->addMenu(tr("&Help"));
     hmenu->addAction(tr("about &QT"), qApp, SLOT(aboutQt()));
