@@ -25,6 +25,7 @@
 #include <QAction>
 
 #include "method.h"
+#include "model.h"
 
 class QComboBox;
 class QLineEdit;
@@ -163,9 +164,7 @@ private:
     void moveDock();
 #endif
 
-    QList <Group*> groupList;
-    Group* localBooks;
-    Group* webSites;
+    Model *model;
     SearchMethod method;
     BookMode bookMode;
 

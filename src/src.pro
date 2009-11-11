@@ -13,6 +13,7 @@ HEADERS += mainwindow.h \
            booksetting.h \
            optiondialog.h \
            fontsetting.h  \
+           model.h \
            ssheetsetting.h \
            ssheet.h \
            titlelabel.h \
@@ -38,6 +39,7 @@ SOURCES += qolibri.cpp \
            booksetting.cpp \
            optiondialog.cpp \
            fontsetting.cpp \
+           model.cpp \
            ssheetsetting.cpp \
            statusbutton.cpp \
            textcodec.cpp

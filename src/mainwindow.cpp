@@ -53,6 +53,7 @@ MainWindow::MainWindow(const QString &s_text)
 
     QEb::initialize();
 
+    model = new Model();
     bookView = new BookView(this);
     bookViewSlots();
 
@@ -75,8 +76,8 @@ MainWindow::MainWindow(const QString &s_text)
     setCentralWidget(bookView);
     Group *g = (bookMode == ModeBook) ? method.groupReader : method.group;
 
-    groupDock->changeGroupList(&groupList);
-    changeGroup(groupList.indexOf(g));
+    groupDock->changeGroupList(&model->groupList);
+    changeGroup(model->groupList.indexOf(g));
 
     setTitle();
     qApp->setWindowIcon(QIcon(":/images/title.png"));
@@ -95,7 +96,7 @@ MainWindow::MainWindow(const QString &s_text)
 #endif
 
     sound = NULL;
-    if (groupList[0]->bookList().count() == 0) {
+    if (model->groupList[0]->bookList().count() == 0) {
         QTimer::singleShot(0, this, SLOT(setBooks()));
     } else if (!s_text.isEmpty()) {
         clientText << s_text;
@@ -424,43 +425,8 @@ void MainWindow::readSettings()
         }
     }
 
-    QSettings groups(CONF->settingOrg, "EpwingGroups");
-
-    localBooks = new Group("Local Books");
-    webSites = new Group("Web Sites");
-    int gcnt = groups.beginReadArray("DictionaryGroups");
-    for (int i = 0; i < gcnt; i++) {
-        groups.setArrayIndex(i);
-        QString name = groups.value("name").toString();
-        Group *g;
-        if (i == 0) {
-            g = localBooks;
-        } else if (i == 1) {
-            g = webSites;
-        } else {
-            g = new Group(name);
-            groupList << g;
-        }
-        int dcnt = groups.beginReadArray("Dictionaries");
-        for (int j = 0; j < dcnt; j++) {
-            groups.setArrayIndex(j);
-            name = groups.value("name").toString();
-            int booktype = groups.value("booktype").toInt();
-            QString path = groups.value("path").toString();
-            int subbook = groups.value("subbook").toInt();
-            QString use = groups.value("use").toString();
-            bool bUse = false;
-            if (use == "ON") bUse = true;
-            Book *d = new Book(name, (BookType)booktype, path, subbook, bUse);
-            g->addBook(d);
-        }
-        groups.endArray();
-    }
-    groups.endArray();
-    if (groupList.count() == 0) {
-        groupList << new Group(tr("All books"));
-    }
-
+    model->load();
+    
     method = readMethodSetting(settings);
 
     methodCombo->setCurrentIndex(method.direction);
@@ -518,42 +484,7 @@ void MainWindow::writeSettings()
     settings.setValue("searchsel", optDirection);
     writeMethodSetting(method, &settings);
 
-    QSettings groups(CONF->settingOrg, "EpwingGroups");
-
-    groups.beginWriteArray("DictionaryGroups");
-    for (int i = 0; i < groupList.count()+2 ; i++) {
-        Group *g;
-        if (i == 0) {
-            g = localBooks;
-        } else if (i == 1) {
-            g = webSites;
-        } else {
-            g = groupList[i-2];
-        }
-        groups.setArrayIndex(i);
-        groups.setValue("name", g->name());
-        if (g->checkState() == Qt::Checked) {
-            groups.setValue("use", "ON");
-        } else {
-            groups.setValue("use", "OFF");
-        }
-        groups.beginWriteArray("Dictionaries");
-        for (int j = 0; j < g->bookList().count(); j++) {
-            Book *d = g->bookList()[j];
-            groups.setArrayIndex(j);
-            groups.setValue("booktype", (int)(d->bookType()));
-            groups.setValue("name", d->name());
-            groups.setValue("path", d->path());
-            groups.setValue("subbook", d->bookNo());
-            if (d->checkState() == Qt::Checked) {
-                groups.setValue("use", "ON");
-            } else {
-                groups.setValue("use", "OFF");
-            }
-        }
-        groups.endArray();
-    }
-    groups.endArray();
+    model->save();
 
     QSettings history(CONF->settingOrg, "EpwingHistory");
     history.beginWriteArray("History");
@@ -663,16 +594,16 @@ bool MainWindow::event(QEvent *ev)
 
 Group *MainWindow::groupFromName(const QString &name)
 {
-    if (groupList.count() == 0) {
+    if (model->groupList.count() == 0) {
         return NULL;
     }
-    foreach(Group * g, groupList) {
+    foreach(Group * g, model->groupList) {
         if (g->name() == name) {
             return g;
         }
     }
 
-    return groupList[0];
+    return model->groupList[0];
 }
 
 Book *MainWindow::bookFromName(Group *grp, const QString &name)
@@ -735,7 +666,7 @@ void MainWindow::showStatus(const QString &str)
 
     if (!str.isEmpty()) msg = " :";
     if (!isBusy()) {
-        if (groupList.count() > 0 && groupList[0]->bookList().count() == 0) {
+        if (model->groupList.count() > 0 && model->groupList[0]->bookList().count() == 0) {
             msg += tr(" No search book");
         } else if (bookMode == ModeDictionary &&
                    searchTextEdit->text().isEmpty()) {
@@ -921,7 +852,7 @@ void MainWindow::toggleBar()
         group = method.group;
         toggleBarAct->setIcon(QIcon(":images/find_l.png"));
     }
-    changeGroup(groupList.indexOf(group));
+    changeGroup(model->groupList.indexOf(group));
 }
 
 void MainWindow::toggleRuby()
@@ -931,7 +862,7 @@ void MainWindow::toggleRuby()
 
 void MainWindow::changeGroup(int group_index)
 {
-    if (groupList.count() == 0) {
+    if (model->groupList.count() == 0) {
         method.group = NULL;
         method.groupReader = NULL;
         changeBook(-1);
@@ -942,7 +873,7 @@ void MainWindow::changeGroup(int group_index)
     }
 
     int book_index = 0;
-    Group *group = groupList[group_index];
+    Group *group = model->groupList[group_index];
     if (bookMode == ModeDictionary) {
         method.group = group;
         book_index = group->bookList().indexOf(method.book);
@@ -1035,7 +966,7 @@ void MainWindow::setBookFont(Book *book)
     bool del_flag = true;
     if (dlg.exec() == QDialog::Accepted) {
         QHash <QString, QString> *flist =  dlg.newAlternateFontList();
-        foreach(Group * g, groupList) {
+        foreach(Group * g, model->groupList) {
             foreach(Book * b, g->bookList()) {
                 if (b->path() != book->path() ||
                     b->bookNo() != book->bookNo()) continue;
@@ -1055,52 +986,52 @@ void MainWindow::setBookFont(Book *book)
 void MainWindow::setBooks()
 {
 //    qDebug() << "MainWindow::setBook() " << currentGroup->name;
-    BookSetting dlg(localBooks, webSites, groupList, this);
+    BookSetting dlg(model->localBooks, model->webSites, model->groupList, this);
 
     if (dlg.exec() == QDialog::Accepted) {
 
         QList <Book*> lbook = dlg.localBooks()->bookList();
-        delete localBooks;
-        localBooks = new Group(*dlg.localBooks());
+        delete model->localBooks;
+        model->localBooks = new Group(*dlg.localBooks());
 
-        delete webSites;
-        webSites = new Group(*dlg.webSites());
+        delete model->webSites;
+        model->webSites = new Group(*dlg.webSites());
 
         QList <Group*> grp = dlg.groupList();
 
-        groupList.clear();
+        model->groupList.clear();
         foreach(Group * g, grp) {
-            groupList << new Group(*g);
+            model->groupList << new Group(*g);
         }
 
         int idx = 0;
         Book *book;
         int book_idx = 0;
-        if (groupList.count() == 0) {
+        if (model->groupList.count() == 0) {
             method.group = NULL;
             method.groupReader = NULL;
             book = NULL;
             idx = -1;
             book_idx = -1;
         } else {
-            method.group = groupList[0];
-            method.groupReader = groupList[0];
-            if (groupList[0]->bookList().count() == 0) {
+            method.group = model->groupList[0];
+            method.groupReader = model->groupList[0];
+            if (model->groupList[0]->bookList().count() == 0) {
                 book = NULL;
                 book_idx = -1;
             } else {
-                book = groupList[0]->bookList()[0];
+                book = model->groupList[0]->bookList()[0];
             }
         }
-        groupDock->changeGroupList(&groupList);
+        groupDock->changeGroupList(&model->groupList);
         //qDebug() << method.book->name();
         changeGroup(idx);
         method.book = book;
         method.bookReader = book;
         changeBook(book_idx);
         QString msg;
-        msg = "Group=" + QString::number(groupList.count()) +
-              ", Book=" + QString::number(groupList[0]->bookList().count());
+        msg = "Group=" + QString::number(model->groupList.count()) +
+              ", Book=" + QString::number(model->groupList[0]->bookList().count());
 
         showStatus(msg);
     } else {
@@ -1263,7 +1194,7 @@ void MainWindow::pasteMethod(const QString &str, const SearchMethod &m)
             toggleBar();
         }
         method.bookReader = m.bookReader;
-        changeGroup(groupList.indexOf(m.groupReader));
+        changeGroup(model->groupList.indexOf(m.groupReader));
     } else {
         if (bookMode != ModeDictionary) {
             toggleBar();
@@ -1276,7 +1207,7 @@ void MainWindow::pasteMethod(const QString &str, const SearchMethod &m)
         changeLimitBook(m.limitBook);
         limitTotalSpin->setValue(m.limitTotal);
         changeLimitTotal(m.limitTotal);
-        changeGroup(groupList.indexOf(m.group));
+        changeGroup(model->groupList.indexOf(m.group));
         QStringList list = str.split(QRegExp("\\s+"), QString::SkipEmptyParts);
         searchTextEdit->setText(list.join(" "));
     }
