@@ -25,6 +25,7 @@
 
 #include "bookwidget.h"
 #include "method.h"
+#include "model.h"
 
 class QListWidget;
 class QTabWidget;
@@ -152,7 +153,7 @@ class GroupDock : public QWidget
 {
     Q_OBJECT
 public:
-    GroupDock(QWidget *parent);
+    GroupDock(QWidget *parent, Model *model_);
 
 #if defined (Q_WS_MAC)
     inline void changeCurrentTab(QWidget *w)
@@ -178,12 +179,6 @@ public:
     inline void changeGroup(int index)
     {
         groupTab->changeGroupNoSignal(index);
-    }
-    inline void changeGroupList(QList<Group*> *group_list)
-    {
-        groupTab->changeGroupList(group_list);
-        markTab->changeGroupList(group_list);
-        historyTab->changeGroupList(group_list);
     }
     inline QListWidget *groupWidget() const
     {
@@ -215,6 +210,14 @@ public:
         changeCurrentTab(markTab);
     }
 
+public slots:
+    void changeGroupList()
+    {
+        groupTab->changeGroupList(&model->groupList);
+        markTab->changeGroupList(&model->groupList);
+        historyTab->changeGroupList(&model->groupList);
+    }
+
 protected:
     void closeEvent(QCloseEvent*)
     {
@@ -242,6 +245,7 @@ private:
     GroupTab * groupTab;
     MarkTab *markTab;
     HistoryTab *historyTab;
+    Model *model;
 };
 
 #endif

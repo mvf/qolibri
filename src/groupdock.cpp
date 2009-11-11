@@ -385,14 +385,16 @@ void HistoryTab::addHistory(const QString &str, const SearchMethod &method,
     listWidget_->insertItem(0, new SearchItem(str, method));
 }
 
+GroupDock::GroupDock(QWidget *parent, Model *model_)
 #if defined (Q_WS_MAC)
-GroupDock::GroupDock(QWidget *parent)
     : QTabWidget(parent)
 #else
-GroupDock::GroupDock(QWidget * parent)
     : QWidget(parent)
 #endif
+    , model(model_)
 {
+    connect(model, SIGNAL(dictionaryGroupsChanged()), SLOT(changeGroupList()));
+
 #if defined (Q_WS_MAC)
     QTabWidget* tabWidget = this;
 #else

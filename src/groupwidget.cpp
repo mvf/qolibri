@@ -138,7 +138,7 @@ void GroupWidget::delItem()
     int row = currentRow();
     Group *grp = (Group *)groupListWidget->takeItem(row);
 
-    groupList->takeAt(row + 1);
+    groupList->takeAt(row);
     delete grp;
 //    resetButtons();
 }

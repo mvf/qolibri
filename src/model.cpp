@@ -66,6 +66,7 @@ void Model::load()
     if (groupList.count() == 0) {
         groupList << new Group(tr("All books"));
     }
+    emit dictionaryGroupsChanged();
 }
 
 void Model::save()
@@ -106,4 +107,13 @@ void Model::save()
         groups.endArray();
     }
     groups.endArray();
+}
+
+void Model::setGroupList(const QList <Group*> &groups)
+{
+    groupList.clear();
+    foreach(Group *g, groups) {
+        groupList << new Group(*g);
+    }
+    emit dictionaryGroupsChanged();
 }

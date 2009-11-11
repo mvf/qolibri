@@ -57,7 +57,7 @@ MainWindow::MainWindow(const QString &s_text)
     bookView = new BookView(this);
     bookViewSlots();
 
-    groupDock = new GroupDock(this);
+    groupDock = new GroupDock(this, model);
     groupDockSlots();
 //#if defined (Q_WS_X11) || defined (Q_WS_WIN)
 //    groupDock->hide();
@@ -76,7 +76,6 @@ MainWindow::MainWindow(const QString &s_text)
     setCentralWidget(bookView);
     Group *g = (bookMode == ModeBook) ? method.groupReader : method.group;
 
-    groupDock->changeGroupList(&model->groupList);
     changeGroup(model->groupList.indexOf(g));
 
     setTitle();
@@ -997,12 +996,7 @@ void MainWindow::setBooks()
         delete model->webSites;
         model->webSites = new Group(*dlg.webSites());
 
-        QList <Group*> grp = dlg.groupList();
-
-        model->groupList.clear();
-        foreach(Group * g, grp) {
-            model->groupList << new Group(*g);
-        }
+        model->setGroupList(dlg.groupList());
 
         int idx = 0;
         Book *book;
@@ -1023,7 +1017,6 @@ void MainWindow::setBooks()
                 book = model->groupList[0]->bookList()[0];
             }
         }
-        groupDock->changeGroupList(&model->groupList);
         //qDebug() << method.book->name();
         changeGroup(idx);
         method.book = book;
