@@ -146,19 +146,20 @@ void EpwingFileSetting::setOkButton(const QString&)
     }
 
 }
-BookSetting::BookSetting(Group *lbook, Group *wsite,
-                         const QList<Group*> &grp, QWidget *parent)
-    : QDialog(parent), findStop(false) 
+BookSetting::BookSetting(Model *model_, QWidget *parent)
+    : QDialog(parent)
+    , findStop(false)
+    , model(model_) 
 {
 #ifdef Q_WS_MAC
     setWindowFlags(Qt::Sheet);
 #else
     setWindowTitle(tr("Book and group settings"));
 #endif
-    localBooks_ = new Group(*lbook);
-    webSites_ = new Group(*wsite);
+    localBooks_ = new Group(*(model->localBooks));
+    webSites_ = new Group(*(model->webSites));
 
-    foreach(Group * g, grp) {
+    foreach(Group * g, model->groupList) {
         groupList_ << new Group(*g);
     }
     QVBoxLayout *v1 = new QVBoxLayout();
@@ -310,6 +311,14 @@ BookSetting::BookSetting(Group *lbook, Group *wsite,
 
     if (groupList_.count()  > 0)
         changeGroupSelection(0);
+}
+
+void BookSetting::accept()
+{
+    QDialog::accept();
+    model->setLocalBooks(localBooks_);
+    model->setWebSites(webSites_);
+    model->setGroupList(groupList_);
 }
 
 void BookSetting::searchBook()

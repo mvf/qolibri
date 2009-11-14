@@ -117,3 +117,16 @@ void Model::setGroupList(const QList <Group*> &groups)
     }
     emit dictionaryGroupsChanged();
 }
+
+void Model::setLocalBooks(const Group *g)
+{
+    delete localBooks;
+    localBooks = new Group(*g);
+}
+
+void Model::setWebSites(const Group *g)
+{
+    delete webSites;
+    webSites = new Group(*g);
+}
+    

@@ -24,6 +24,7 @@
 #include <QLabel>
 #include <QEventLoop>
 #include <QLineEdit>
+#include "model.h"
 
 class QLineEdit;
 class QPushButton;
@@ -86,20 +87,10 @@ class BookSetting : public QDialog
 {
     Q_OBJECT
 public:
-    BookSetting(Group *lbook, Group *wsite,
-                const QList<Group*> &grp, QWidget *parent);
-    QList <Group*> groupList()
-    {
-        return groupList_;
-    }
-    Group* localBooks()
-    {
-        return localBooks_;
-    }
-    Group* webSites()
-    {
-        return webSites_;
-    }
+    BookSetting(Model *model, QWidget *parent);
+
+public slots:
+    void accept();
 
 private slots:
     void searchBook();
@@ -134,6 +125,7 @@ private:
     }
 
     bool findStop;
+    Model *model;
     QList <Group*> groupList_;
     Group* localBooks_;
     Group* webSites_;

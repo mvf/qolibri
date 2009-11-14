@@ -32,7 +32,10 @@ public:
     ~Model();
     void load();
     void save();
+
     void setGroupList(const QList <Group*> &groups);
+    void setLocalBooks(const Group *);
+    void setWebSites(const Group *);
 
     QList <Group*> groupList;
     Group* localBooks;

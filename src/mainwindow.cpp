@@ -985,19 +985,9 @@ void MainWindow::setBookFont(Book *book)
 void MainWindow::setBooks()
 {
 //    qDebug() << "MainWindow::setBook() " << currentGroup->name;
-    BookSetting dlg(model->localBooks, model->webSites, model->groupList, this);
+    BookSetting dlg(model, this);
 
     if (dlg.exec() == QDialog::Accepted) {
-
-        QList <Book*> lbook = dlg.localBooks()->bookList();
-        delete model->localBooks;
-        model->localBooks = new Group(*dlg.localBooks());
-
-        delete model->webSites;
-        model->webSites = new Group(*dlg.webSites());
-
-        model->setGroupList(dlg.groupList());
-
         int idx = 0;
         Book *book;
         int book_idx = 0;
