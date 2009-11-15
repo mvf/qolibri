@@ -284,16 +284,18 @@ void MainWindow::createToolBars()
     methodBar->addWidget(new LogicComboBox(this, model));
 
     methodBar->addWidget(new QLabel(tr(" Hit limit (book/total):")));
-    limitBookSpin = new QSpinBox();
+    QSpinBox *limitBookSpin = new QSpinBox();
     limitBookSpin->setRange(CONF->stepBookHitMax, CONF->maxLimitBookHit);
     limitBookSpin->setSingleStep(CONF->stepBookHitMax);
+    limitBookSpin->setValue(model->method.limitBook);
     connect(limitBookSpin, SIGNAL(valueChanged(int)),
             model, SLOT(setLimitBook(int)));
     methodBar->addWidget(limitBookSpin);
     methodBar->addWidget(new QLabel(tr("/")));
-    limitTotalSpin = new QSpinBox();
+    QSpinBox *limitTotalSpin = new QSpinBox();
     limitTotalSpin->setRange(CONF->stepTotalHitMax, CONF->maxLimitTotalHit);
     limitTotalSpin->setSingleStep(CONF->stepTotalHitMax);
+    limitTotalSpin->setValue(model->method.limitTotal);
     connect(limitTotalSpin, SIGNAL(valueChanged(int)),
             model, SLOT(setLimitTotal(int)));
     methodBar->addWidget(limitTotalSpin);

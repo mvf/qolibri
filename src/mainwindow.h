@@ -180,11 +180,6 @@ private:
     QToolBar *webBar;
 
     QLineEdit *searchTextEdit;
-    QComboBox *logicCombo;
-    QComboBox *bookCombo;
-
-    QSpinBox *limitBookSpin;
-    QSpinBox *limitTotalSpin;
 
     QLabel *processLabel;
 
