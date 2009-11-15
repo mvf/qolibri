@@ -90,3 +90,26 @@ void ReaderGroupComboBox::update()
     setCurrentIndex(model->readerGroupIndex());
     blockSignals(false);
 }
+
+ReaderBookComboBox::ReaderBookComboBox(QWidget *parent, Model *model_)
+  : QComboBox(parent)
+  , model(model_)
+{
+    setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    update();
+    connect(this, SIGNAL(currentIndexChanged(int)), model, SLOT(setReaderBookIndex(int)));
+    connect(model, SIGNAL(readerBookIndexChanged(int)), SLOT(setCurrentIndex(int)));
+    connect(model, SIGNAL(readerGroupIndexChanged(int)), SLOT(update()));
+    connect(model, SIGNAL(dictionaryGroupsChanged()), SLOT(update()));
+}
+
+void ReaderBookComboBox::update()
+{
+    blockSignals(true);
+    while (count())
+        removeItem(0);
+    foreach (Book *b, model->method.groupReader->bookList())
+        addItem(b->name());
+    setCurrentIndex(model->readerBookIndex());
+    blockSignals(false);
+}

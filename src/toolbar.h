@@ -71,3 +71,17 @@ public slots:
 private:
     Model *model;
 };
+
+class ReaderBookComboBox : public QComboBox
+{
+    Q_OBJECT
+
+public:
+    ReaderBookComboBox(QWidget *parent, Model *);
+
+public slots:
+    void update();
+
+private:
+    Model *model;
+};

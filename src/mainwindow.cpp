@@ -251,11 +251,7 @@ void MainWindow::createToolBars()
     bookBar = addToolBar("Read Book");
     bookBar->setMovable(false);
     bookBar->addWidget(new ReaderGroupComboBox(this, model));
-
-    StatusButton *bbutton = new StatusButton(groupDock->bookListWidget(),
-                                             "book", this, true);
-    bbutton->setStyleSheet("QPushButton { font-weight:bold;  }");
-    bookBar->addWidget(bbutton);
+    bookBar->addWidget(new ReaderBookComboBox(this, model));
     bookBar->addAction(openBookAct);
     bookBar->hide();
 
