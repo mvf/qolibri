@@ -1,0 +1,7 @@
+/Makefile
+/src/Makefile
+/src/bin
+/src/build
+/src/qrc_qolibri.cpp
+/src/translations
+/src/ui_optiondialog.h
