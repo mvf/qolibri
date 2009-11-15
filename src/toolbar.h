@@ -43,3 +43,31 @@ public:
 private:
     Model *model;
 };
+
+class DictionaryGroupComboBox : public QComboBox
+{
+    Q_OBJECT
+
+public:
+    DictionaryGroupComboBox(QWidget *parent, Model *);
+
+public slots:
+    void update();
+
+private:
+    Model *model;
+};
+
+class ReaderGroupComboBox : public QComboBox
+{
+    Q_OBJECT
+
+public:
+    ReaderGroupComboBox(QWidget *parent, Model *);
+
+public slots:
+    void update();
+
+private:
+    Model *model;
+};

@@ -46,3 +46,47 @@ LogicComboBox::LogicComboBox(QWidget *parent, Model *model_)
     connect(this, SIGNAL(currentIndexChanged(int)), model, SLOT(setLogic(int)));
     connect(model, SIGNAL(logicChanged(int)), SLOT(setCurrentIndex(int)));
 }
+
+DictionaryGroupComboBox::DictionaryGroupComboBox(QWidget *parent, Model *model_)
+  : QComboBox(parent)
+  , model(model_)
+{
+    setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    update();
+    connect(this, SIGNAL(currentIndexChanged(int)), model, SLOT(setDictionaryGroupIndex(int)));
+    connect(model, SIGNAL(dictionaryGroupIndexChanged(int)), SLOT(setCurrentIndex(int)));
+    connect(model, SIGNAL(dictionaryGroupsChanged()), SLOT(update()));
+}
+
+void DictionaryGroupComboBox::update()
+{
+    blockSignals(true);
+    while (count())
+        removeItem(0);
+    foreach (Group *g, model->groupList)
+        addItem(g->name());
+    setCurrentIndex(model->dictionaryGroupIndex());
+    blockSignals(false);
+}
+
+ReaderGroupComboBox::ReaderGroupComboBox(QWidget *parent, Model *model_)
+  : QComboBox(parent)
+  , model(model_)
+{
+    setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    update();
+    connect(this, SIGNAL(currentIndexChanged(int)), model, SLOT(setReaderGroupIndex(int)));
+    connect(model, SIGNAL(readerGroupIndexChanged(int)), SLOT(setCurrentIndex(int)));
+    connect(model, SIGNAL(dictionaryGroupsChanged()), SLOT(update()));
+}
+
+void ReaderGroupComboBox::update()
+{
+    blockSignals(true);
+    while (count())
+        removeItem(0);
+    foreach (Group *g, model->groupList)
+        addItem(g->name());
+    setCurrentIndex(model->readerGroupIndex());
+    blockSignals(false);
+}

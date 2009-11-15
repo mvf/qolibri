@@ -234,10 +234,7 @@ void MainWindow::createToolBars()
     //bar1->addWidget(new QLabel("  "));
     searchBar = addToolBar("Search");
     searchBar->setMovable(false);
-    StatusButton *gbutton1 = new StatusButton(groupDock->groupWidget(),
-                                              "group", this, true);
-    gbutton1->setStyleSheet("QPushButton { font-weight:bold; }");
-    searchBar->addWidget(gbutton1);
+    searchBar->addWidget(new DictionaryGroupComboBox(this, model));
 
     searchBar->addAction(clearEditAct);
     searchTextEdit = new QLineEdit(this);
@@ -253,10 +250,7 @@ void MainWindow::createToolBars()
 
     bookBar = addToolBar("Read Book");
     bookBar->setMovable(false);
-    StatusButton *gbutton2 = new StatusButton(groupDock->groupWidget(),
-                                              "group", this, true);
-    gbutton2->setStyleSheet("QPushButton { font-weight:bold; }");
-    bookBar->addWidget(gbutton2);
+    bookBar->addWidget(new ReaderGroupComboBox(this, model));
 
     StatusButton *bbutton = new StatusButton(groupDock->bookListWidget(),
                                              "book", this, true);

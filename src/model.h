@@ -37,6 +37,9 @@ public:
     void load();
     void save();
 
+    int dictionaryGroupIndex() { return groupList.indexOf(method.group); };
+    int readerGroupIndex() { return groupList.indexOf(method.groupReader); };
+
     void setGroupList(const QList <Group*> &groups);
     void setLocalBooks(const Group *);
     void setWebSites(const Group *);
