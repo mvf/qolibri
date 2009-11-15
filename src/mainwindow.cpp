@@ -27,7 +27,6 @@
 #include "ebook.h"
 #include "book.h"
 #include "bookview.h"
-#include "statusbutton.h"
 #include "toolbar.h"
 #include "groupdock.h"
 #include "booksetting.h"
@@ -324,33 +323,10 @@ void MainWindow::createStatusBar()
 
     bar->setStyleSheet(statusBarStyleSheet);
 
-#if 0
-    StatusButton *mbutton = new StatusButton(methodCombo, "direction");
-    mbutton->setFlat(true);
-    bar->addWidget(mbutton);
-
-    StatusButton *lbutton = new StatusButton(logicCombo, "logic");
-    lbutton->setFlat(true);
-    bar->addWidget(lbutton);
-
-    StatusButton *bbutton = new StatusButton(limitBookSpin, "limit-book");
-    bbutton->setFlat(true);
-    bar->addWidget(bbutton);
-
-    StatusButton *tbutton = new StatusButton(limitTotalSpin, "limit-total");
-    tbutton->setFlat(true);
-    bar->addWidget(tbutton);
-#endif
-
     processLabel = new QLabel(this);
     processLabel->setObjectName("process");
     bar->addWidget(processLabel, 1);
 
-#if 0
-    StatusButton *sbutton = new StatusButton(optDirectionMenu, "search", this);
-    sbutton->setFlat(true);
-    bar->addWidget(sbutton);
-#endif
     optSearchButton = new QPushButton(this);
     optSearchButton->setObjectName("selection");
     optSearchButton->setFlat(true);

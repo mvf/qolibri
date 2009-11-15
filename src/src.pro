@@ -18,7 +18,6 @@ HEADERS += mainwindow.h \
            ssheet.h \
            titlelabel.h \
            toolbar.h \
-           statusbutton.h \
            server.h \
            client.h \
            textcodec.h
@@ -42,7 +41,6 @@ SOURCES += qolibri.cpp \
            fontsetting.cpp \
            model.cpp \
            ssheetsetting.cpp \
-           statusbutton.cpp \
            textcodec.cpp \
            toolbar.cpp
 
