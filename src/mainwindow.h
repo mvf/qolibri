@@ -45,7 +45,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    enum BookMode { ModeDictionary, ModeBook };
     enum DockPosition { DockLeft, DockRight };
 
     MainWindow(const QString &s_text);
@@ -95,24 +94,6 @@ private slots:
     void setWebLoaded();
 
     void changeSearchText(const QString&);
-    void changeDirection(int direction)
-    {
-        method.direction = (SearchDirection)direction;
-    }
-    void changeLogic(int logic)
-    {
-        method.logic = (NarrowingLogic)logic;
-    }
-    void changeGroup(int index);
-    void changeBook(int index);
-    void changeLimitBook(int val)
-    {
-        method.limitBook = val;
-    }
-    void changeLimitTotal(int val)
-    {
-        method.limitTotal = val;
-    }
     void changeOptDirection(QAction*);
     void changeViewTabCount(int tab_count);
     void changeOptSearchButtonText(const QString &str);
@@ -165,8 +146,6 @@ private:
 #endif
 
     Model *model;
-    SearchMethod method;
-    BookMode bookMode;
 
     GroupDock *groupDock;
     BookView *bookView;

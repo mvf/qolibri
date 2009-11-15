@@ -171,15 +171,6 @@ public:
         return groupTab->bookWidget()->bookListWidget();
     }
 
-    inline void setCurrentBook(int index)
-    {
-        groupTab->bookWidget()->setCurrentRow(index);
-    }
-
-    inline void changeGroup(int index)
-    {
-        groupTab->changeGroupNoSignal(index);
-    }
     inline QListWidget *groupWidget() const
     {
         return groupTab->groupWidget();
@@ -216,6 +207,16 @@ public slots:
         groupTab->changeGroupList(&model->groupList);
         markTab->changeGroupList(&model->groupList);
         historyTab->changeGroupList(&model->groupList);
+    }
+
+    inline void setCurrentBook(int index)
+    {
+        groupTab->bookWidget()->setCurrentRow(index);
+    }
+
+    inline void changeGroup(int index)
+    {
+        groupTab->changeGroupNoSignal(index);
     }
 
 protected:

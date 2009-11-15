@@ -21,8 +21,12 @@
 
 #include <QObject>
 #include <QList>
+#include <QSettings>
+#include "method.h"
 #include "book.h"
 #include "configure.h"
+
+enum BookMode { ModeDictionary, ModeBook };
 
 class Model : public QObject {
     Q_OBJECT
@@ -41,9 +45,41 @@ public:
     Group* localBooks;
     Group* webSites;
 
+    BookMode bookMode;
+    SearchMethod method;
+
+public slots:
+    void setBookMode(BookMode);
+    void setMethod(const SearchMethod &);
+    void setDirection(int direction);
+    void setLogic(int logic);
+    void setGroupIndex(int index);
+    void setDictionaryGroupIndex(int index);
+    void setReaderGroupIndex(int index);
+    void setBookIndex(int index);
+    void setDictionaryBookIndex(int index);
+    void setReaderBookIndex(int index);
+    void setLimitBook(int val);
+    void setLimitTotal(int val);
+
 signals:
+    void bookModeChanged(BookMode);
     void dictionaryGroupsChanged();
+    void directionChanged(int direction);
+    void logicChanged(int logic);
+    void groupIndexChanged(int index);
+    void dictionaryGroupIndexChanged(int index);
+    void readerGroupIndexChanged(int index);
+    void bookIndexChanged(int index);
+    void dictionaryBookIndexChanged(int index);
+    void readerBookIndexChanged(int index);
+    void limitBookChanged(int val);
+    void limitTotalChanged(int val);
 
 private:
+    Group *groupFromName(const QString &name);
+    Book *bookFromName(Group* group, const QString &name);
+    SearchMethod readMethodSetting(const QSettings &);
+    void writeMethodSetting(const SearchMethod&, QSettings*);
 };
 

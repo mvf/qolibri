@@ -74,9 +74,6 @@ MainWindow::MainWindow(const QString &s_text)
 
 
     setCentralWidget(bookView);
-    Group *g = (bookMode == ModeBook) ? method.groupReader : method.group;
-
-    changeGroup(model->groupList.indexOf(g));
 
     setTitle();
     qApp->setWindowIcon(QIcon(":/images/title.png"));
@@ -302,7 +299,9 @@ void MainWindow::createToolBars()
     methodCombo->addItem(QObject::tr("Full text search"));
     methodCombo->setCurrentIndex(-1);
     connect(methodCombo, SIGNAL(currentIndexChanged(int)),
-            SLOT(changeDirection(int)));
+            model, SLOT(setDirection(int)));
+    connect(model, SIGNAL(directionChanged(int)),
+            methodCombo, SLOT(setCurrentIndex(int)));
     methodBar->addWidget(methodCombo);
     //methodBar->addWidget(new QLabel(tr(" Logic:")));
     logicCombo = new QComboBox(this);
@@ -311,7 +310,9 @@ void MainWindow::createToolBars()
     logicCombo->addItem(tr("OR"));
     logicCombo->setCurrentIndex(-1);
     connect(logicCombo, SIGNAL(currentIndexChanged(int)),
-            SLOT(changeLogic(int)));
+            model, SLOT(setLogic(int)));
+    connect(model, SIGNAL(logicChanged(int)),
+            logicCombo, SLOT(setCurrentIndex(int)));
     methodBar->addWidget(logicCombo);
 
     methodBar->addWidget(new QLabel(tr(" Hit limit (book/total):")));
@@ -319,14 +320,14 @@ void MainWindow::createToolBars()
     limitBookSpin->setRange(CONF->stepBookHitMax, CONF->maxLimitBookHit);
     limitBookSpin->setSingleStep(CONF->stepBookHitMax);
     connect(limitBookSpin, SIGNAL(valueChanged(int)),
-            SLOT(changeLimitBook(int)));
+            model, SLOT(setLimitBook(int)));
     methodBar->addWidget(limitBookSpin);
     methodBar->addWidget(new QLabel(tr("/")));
     limitTotalSpin = new QSpinBox();
     limitTotalSpin->setRange(CONF->stepTotalHitMax, CONF->maxLimitTotalHit);
     limitTotalSpin->setSingleStep(CONF->stepTotalHitMax);
     connect(limitTotalSpin, SIGNAL(valueChanged(int)),
-            SLOT(changeLimitTotal(int)));
+            model, SLOT(setLimitTotal(int)));
     methodBar->addWidget(limitTotalSpin);
 #if 0
     methodBar->addSeparator();
@@ -402,10 +403,10 @@ void MainWindow::readSettings()
     if (!search_bar) {
         searchBar->hide();
         bookBar->show();
-        bookMode = ModeBook;
+        model->setBookMode(ModeBook);
         toggleBarAct->setIcon(QIcon(":images/book.png"));
     } else {
-        bookMode = ModeDictionary;
+        model->setBookMode(ModeDictionary);
     }
     bool method_bar = settings.value("method_bar", 1).toBool();
     if (!method_bar) {
@@ -426,18 +427,6 @@ void MainWindow::readSettings()
 
     model->load();
     
-    method = readMethodSetting(settings);
-
-    methodCombo->setCurrentIndex(method.direction);
-    changeDirection(method.direction);
-    logicCombo->setCurrentIndex(method.logic);
-    changeLogic((int)method.logic);
-    limitBookSpin->setValue(method.limitBook);
-    changeLimitBook(method.limitBook);
-    limitTotalSpin->setValue(method.limitTotal);
-    changeLimitTotal(method.limitTotal);
-    toggleRubyAct->setChecked(method.ruby);
-
     QSettings hist(CONF->settingOrg, "EpwingHistory");
     int hcnt = hist.beginReadArray("History");
     for (int i = 0; i < hcnt && i < CONF->historyMax; i++) {
@@ -481,7 +470,6 @@ void MainWindow::writeSettings()
     settings.setValue("newtab", toggleTabsAct->isChecked());
     settings.setValue("newbrowser", toggleBrowserAct->isChecked());
     settings.setValue("searchsel", optDirection);
-    writeMethodSetting(method, &settings);
 
     model->save();
 
@@ -517,13 +505,13 @@ void MainWindow::setTitle()
 {
     QString title = Program;
 
-    if (method.group) {
-        if (bookMode == ModeDictionary) {
-            title += " - " + method.group->name();
+    if (model->method.group) {
+        if (model->bookMode == ModeDictionary) {
+            title += " - " + model->method.group->name();
         } else {
-            title += " - " + method.groupReader->name();
-            if (method.bookReader) {
-                title += " - " + method.bookReader->name();
+            title += " - " + model->method.groupReader->name();
+            if (model->method.bookReader) {
+                title += " - " + model->method.bookReader->name();
             }
         }
     }
@@ -667,7 +655,7 @@ void MainWindow::showStatus(const QString &str)
     if (!isBusy()) {
         if (model->groupList.count() > 0 && model->groupList[0]->bookList().count() == 0) {
             msg += tr(" No search book");
-        } else if (bookMode == ModeDictionary &&
+        } else if (model->bookMode == ModeDictionary &&
                    searchTextEdit->text().isEmpty()) {
             //msg += tr(" Input search text");
         } else {
@@ -836,80 +824,22 @@ void MainWindow::showDock()
 
 void MainWindow::toggleBar()
 {
-    Group *group;
-
     if (searchBar->isVisible()) {
         searchBar->hide();
         bookBar->show();
-        bookMode = ModeBook;
-        group = method.groupReader;
+        model->setBookMode(ModeBook);
         toggleBarAct->setIcon(QIcon(":images/book.png"));
     } else {
         searchBar->show();
         bookBar->hide();
-        bookMode = ModeDictionary;
-        group = method.group;
+        model->setBookMode(ModeDictionary);
         toggleBarAct->setIcon(QIcon(":images/find_l.png"));
     }
-    changeGroup(model->groupList.indexOf(group));
 }
 
 void MainWindow::toggleRuby()
 {
-    method.ruby = toggleRubyAct->isChecked();
-}
-
-void MainWindow::changeGroup(int group_index)
-{
-    if (model->groupList.count() == 0) {
-        method.group = NULL;
-        method.groupReader = NULL;
-        changeBook(-1);
-        return;
-    }
-    if (group_index < 0) {
-        group_index = 0;
-    }
-
-    int book_index = 0;
-    Group *group = model->groupList[group_index];
-    if (bookMode == ModeDictionary) {
-        method.group = group;
-        book_index = group->bookList().indexOf(method.book);
-    } else {
-        method.groupReader = group;
-        book_index = group->bookList().indexOf(method.bookReader);
-    }
-    groupDock->changeGroup(group_index);
-    changeBook(book_index);
-}
-
-void MainWindow::changeBook(int index)
-{
-    Group *group = (bookMode == ModeBook) ? method.groupReader : method.group;
-
-    if (!group || group->bookList().count() == 0) {
-        if (bookMode == ModeDictionary) {
-            method.book = NULL;
-        } else {
-            method.bookReader = NULL;
-        }
-        return;
-    }
-
-    if (index < 0) {
-        index = 0;
-    }
-
-    if (bookMode == ModeDictionary) {
-        method.book = group->bookList()[index];
-    } else {
-        method.bookReader = group->bookList()[index];
-    }
-
-    groupDock->setCurrentBook(index);
-
-    setTitle();
+    model->method.ruby = toggleRubyAct->isChecked();
 }
 
 void MainWindow::changeOptSearchButtonText(const QString &str)
@@ -931,7 +861,7 @@ void MainWindow::viewInfo(Book *book)
     //qDebug() << "MainWindow::viewInfo(Book *dic) Name=" << book->name();
     //bookView->newInfoPage(book, toggleTabsAct->isChecked());
     if (book->bookType() == BookLocal) {
-        SearchMethod m = method;
+        SearchMethod m = model->method;
         m.book = book;
         m.direction = BookInfo;
         viewSearch(m.book->name(), m);
@@ -988,30 +918,6 @@ void MainWindow::setBooks()
     BookSetting dlg(model, this);
 
     if (dlg.exec() == QDialog::Accepted) {
-        int idx = 0;
-        Book *book;
-        int book_idx = 0;
-        if (model->groupList.count() == 0) {
-            method.group = NULL;
-            method.groupReader = NULL;
-            book = NULL;
-            idx = -1;
-            book_idx = -1;
-        } else {
-            method.group = model->groupList[0];
-            method.groupReader = model->groupList[0];
-            if (model->groupList[0]->bookList().count() == 0) {
-                book = NULL;
-                book_idx = -1;
-            } else {
-                book = model->groupList[0]->bookList()[0];
-            }
-        }
-        //qDebug() << method.book->name();
-        changeGroup(idx);
-        method.book = book;
-        method.bookReader = book;
-        changeBook(book_idx);
         QString msg;
         msg = "Group=" + QString::number(model->groupList.count()) +
               ", Book=" + QString::number(model->groupList[0]->bookList().count());
@@ -1041,19 +947,19 @@ void MainWindow::viewSearch()
 //        qDebug() << "MassageBox( Input Search Text)";
 //        return;
 //    }
-    viewSearch(str, method );
+    viewSearch(str, model->method);
     searchTextEdit->setFocus();
     searchTextEdit->selectAll();
 }
 
 void MainWindow::viewMenu()
 {
-    SearchMethod m = method;
+    SearchMethod m = model->method;
 
     m.direction = MenuRead;
-    if (bookMode == ModeDictionary) {
-        m.groupReader = method.group;
-        m.bookReader = method.book;
+    if (model->bookMode == ModeDictionary) {
+        m.groupReader = model->method.group;
+        m.bookReader = model->method.book;
     }
     if (m.groupReader == 0){
         qWarning() << "Error: No Group";
@@ -1068,7 +974,7 @@ void MainWindow::viewMenu()
 
     viewSearch(m.bookReader->name(), m);
 
-    if (bookMode == ModeDictionary) {
+    if (model->bookMode == ModeDictionary) {
         searchTextEdit->setFocus();
         searchTextEdit->selectAll();
     }
@@ -1076,12 +982,12 @@ void MainWindow::viewMenu()
 
 void MainWindow::viewFull()
 {
-    SearchMethod m = method;
+    SearchMethod m = model->method;
 
     m.direction = WholeRead;
-    if (bookMode == ModeDictionary) {
-        m.groupReader = method.group;
-        m.bookReader = method.book;
+    if (model->bookMode == ModeDictionary) {
+        m.groupReader = model->method.group;
+        m.bookReader = model->method.book;
     }
     viewSearch(m.bookReader->name(), m);
 
@@ -1171,26 +1077,10 @@ void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
 }
 void MainWindow::pasteMethod(const QString &str, const SearchMethod &m)
 {
+    model->setMethod(m);
     if (m.direction == WholeRead || m.direction == MenuRead ||
         m.direction == BookInfo ) {
-        if (bookMode != ModeBook) {
-            toggleBar();
-        }
-        method.bookReader = m.bookReader;
-        changeGroup(model->groupList.indexOf(m.groupReader));
     } else {
-        if (bookMode != ModeDictionary) {
-            toggleBar();
-        }
-        methodCombo->setCurrentIndex(m.direction);
-        changeDirection(m.direction);
-        logicCombo->setCurrentIndex(m.logic);
-        changeLogic((int)m.logic);
-        limitBookSpin->setValue(m.limitBook);
-        changeLimitBook(m.limitBook);
-        limitTotalSpin->setValue(m.limitTotal);
-        changeLimitTotal(m.limitTotal);
-        changeGroup(model->groupList.indexOf(m.group));
         QStringList list = str.split(QRegExp("\\s+"), QString::SkipEmptyParts);
         searchTextEdit->setText(list.join(" "));
     }
@@ -1227,7 +1117,7 @@ void MainWindow::viewSearch(SearchDirection direction, const QString &text)
 
     toggleTabsAct->setChecked(true);
 
-    SearchMethod m = method;
+    SearchMethod m = model->method;
     m.direction = direction;
     viewSearch(text, m);
 
@@ -1584,8 +1474,6 @@ void MainWindow::groupDockSlots()
             SLOT(setBookFont(Book*)));
     connect(groupDock, SIGNAL(menuRequested()), SLOT(viewMenu()));
     connect(groupDock, SIGNAL(fullRequested()), SLOT(viewFull()));
-    connect(groupDock, SIGNAL(groupChanged(int)), SLOT(changeGroup(int)));
-    connect(groupDock, SIGNAL(bookChanged(int)), SLOT(changeBook(int)));
 }
 
 void MainWindow::setWebLoaded()

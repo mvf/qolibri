@@ -393,6 +393,10 @@ GroupDock::GroupDock(QWidget *parent, Model *model_)
 #endif
     , model(model_)
 {
+    connect(this, SIGNAL(groupChanged(int)), model, SLOT(setGroupIndex(int)));
+    connect(model, SIGNAL(groupIndexChanged(int)), SLOT(changeGroup(int)));
+    connect(this, SIGNAL(bookChanged(int)), model, SLOT(setBookIndex(int)));
+    connect(model, SIGNAL(bookIndexChanged(int)), SLOT(setCurrentBook(int)));
     connect(model, SIGNAL(dictionaryGroupsChanged()), SLOT(changeGroupList()));
 
 #if defined (Q_WS_MAC)
