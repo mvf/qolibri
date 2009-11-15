@@ -150,6 +150,7 @@ private:
     GroupDock *groupDock;
     BookView *bookView;
 
+    QMenu   *vmenu;
     QMenu   *optDirectionMenu;
     QAction *addMarkAct;
     QAction *exitAct;

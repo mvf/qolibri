@@ -134,7 +134,7 @@ void MainWindow::createMenus()
                                     tr("Clear search text"));
 
 
-    QMenu *vmenu = menuBar()->addMenu(tr("&View"));
+    vmenu = menuBar()->addMenu(tr("&View"));
     toggleDockAct = new QAction(QIcon(":/images/dock_mac.png"),
                                 tr("Dock on/off"), this);
     toggleDockAct->setCheckable(true);
@@ -264,6 +264,10 @@ void MainWindow::createToolBars()
     bar2->addAction(addMarkAct);
     bar2->addAction(zoomInAct);
     bar2->addAction(zoomOutAct);
+    bar2->addAction(toggleDockAct);
+#ifdef RUBY_ON_TOOLBAR
+    bar2->addAction(toggleRubyAct);
+#endif
 
     webBar = addToolBar("Web");
     webBar->setMovable(false);
@@ -311,12 +315,8 @@ void MainWindow::createToolBars()
     toggleMethodBarAct = methodBar->toggleViewAction();
     toggleMethodBarAct->setText(tr("Option bar on/off"));
     toggleMethodBarAct->setIcon(QIcon(":/images/configure.png"));
-
-    bar2->addAction(toggleMethodBarAct);
-    bar2->addAction(toggleDockAct);
-#ifdef RUBY_ON_TOOLBAR
-    bar2->addAction(toggleRubyAct);
-#endif
+    toggleMethodBarAct->setIconVisibleInMenu(false);
+    vmenu->addAction(toggleMethodBarAct);
 }
 
 void MainWindow::createStatusBar()
