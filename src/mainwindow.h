@@ -180,7 +180,6 @@ private:
     QToolBar *webBar;
 
     QLineEdit *searchTextEdit;
-    QComboBox *methodCombo;
     QComboBox *logicCombo;
     QComboBox *bookCombo;
 

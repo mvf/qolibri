@@ -28,6 +28,7 @@
 #include "book.h"
 #include "bookview.h"
 #include "statusbutton.h"
+#include "toolbar.h"
 #include "groupdock.h"
 #include "booksetting.h"
 #include "fontsetting.h"
@@ -54,6 +55,7 @@ MainWindow::MainWindow(const QString &s_text)
     QEb::initialize();
 
     model = new Model();
+    model->load();
     bookView = new BookView(this);
     bookViewSlots();
 
@@ -289,31 +291,8 @@ void MainWindow::createToolBars()
     methodBar->setMovable(false);
     //methodBar->addWidget(new QLabel("  "));
 
-    methodCombo = new QComboBox(this);
-    methodCombo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    methodCombo->addItem(QObject::tr("Exact word search"));
-    methodCombo->addItem(QObject::tr("Forward search"));
-    methodCombo->addItem(QObject::tr("Backward search"));
-    methodCombo->addItem(QObject::tr("Keyword search"));
-    methodCombo->addItem(QObject::tr("Cross search"));
-    methodCombo->addItem(QObject::tr("Full text search"));
-    methodCombo->setCurrentIndex(-1);
-    connect(methodCombo, SIGNAL(currentIndexChanged(int)),
-            model, SLOT(setDirection(int)));
-    connect(model, SIGNAL(directionChanged(int)),
-            methodCombo, SLOT(setCurrentIndex(int)));
-    methodBar->addWidget(methodCombo);
-    //methodBar->addWidget(new QLabel(tr(" Logic:")));
-    logicCombo = new QComboBox(this);
-    logicCombo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    logicCombo->addItem(tr("AND"));
-    logicCombo->addItem(tr("OR"));
-    logicCombo->setCurrentIndex(-1);
-    connect(logicCombo, SIGNAL(currentIndexChanged(int)),
-            model, SLOT(setLogic(int)));
-    connect(model, SIGNAL(logicChanged(int)),
-            logicCombo, SLOT(setCurrentIndex(int)));
-    methodBar->addWidget(logicCombo);
+    methodBar->addWidget(new DirectionComboBox(this, model));
+    methodBar->addWidget(new LogicComboBox(this, model));
 
     methodBar->addWidget(new QLabel(tr(" Hit limit (book/total):")));
     limitBookSpin = new QSpinBox();
@@ -425,8 +404,6 @@ void MainWindow::readSettings()
         }
     }
 
-    model->load();
-    
     QSettings hist(CONF->settingOrg, "EpwingHistory");
     int hcnt = hist.beginReadArray("History");
     for (int i = 0; i < hcnt && i < CONF->historyMax; i++) {

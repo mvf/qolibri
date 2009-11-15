@@ -17,6 +17,7 @@ HEADERS += mainwindow.h \
            ssheetsetting.h \
            ssheet.h \
            titlelabel.h \
+           toolbar.h \
            statusbutton.h \
            server.h \
            client.h \
@@ -42,7 +43,8 @@ SOURCES += qolibri.cpp \
            model.cpp \
            ssheetsetting.cpp \
            statusbutton.cpp \
-           textcodec.cpp
+           textcodec.cpp \
+           toolbar.cpp
 
 QT += network
 QT += webkit

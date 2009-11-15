@@ -446,5 +446,6 @@ GroupDock::GroupDock(QWidget *parent, Model *model_)
     setWindowFlags(Qt::Tool);
 #endif
 
+    changeGroupList();
     //connect(this, SIGNAL(closed()), parent, SLOT(closedDock()));
 }
