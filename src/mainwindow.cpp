@@ -103,6 +103,7 @@ MainWindow::MainWindow(const QString &s_text)
 
     connect(this, SIGNAL(searchFinished()), SLOT(checkNextSearch()));
 
+    QTimer::singleShot(0, searchTextEdit, SLOT(setFocus()));
 }
 
 void MainWindow::createMenus()
