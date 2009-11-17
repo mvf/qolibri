@@ -64,6 +64,7 @@ MainWindow::MainWindow(const QString &s_text)
 //    groupDock->hide();
 //#endif
 
+    createActions();
     createMenus();
     createToolBars();
     createStatusBar();
@@ -102,8 +103,19 @@ MainWindow::MainWindow(const QString &s_text)
     statusBar()->setStyleSheet(CONF->statusBarSheet);
 
     connect(this, SIGNAL(searchFinished()), SLOT(checkNextSearch()));
-
+    connectClipboard();
+    connect(model, SIGNAL(scanClipboardChanged(bool)), SLOT(connectClipboard()));
     QTimer::singleShot(0, searchTextEdit, SLOT(setFocus()));
+}
+
+void MainWindow::createActions()
+{
+    toggleScanClipboardAct = new QAction(tr("Scan clipboard"), this);
+    toggleScanClipboardAct->setCheckable(true);
+    toggleScanClipboardAct->setChecked(model->scanClipboard());
+    toggleScanClipboardAct->setIconVisibleInMenu(false);
+    toggleScanClipboardAct->setIcon(QIcon(":/images/paste.png"));
+    model->connect(toggleScanClipboardAct, SIGNAL(toggled(bool)), SLOT(setScanClipboard(bool)));
 }
 
 void MainWindow::createMenus()
@@ -133,7 +145,6 @@ void MainWindow::createMenus()
     QMenu *emenu = menuBar()->addMenu(tr("&Edit"));
     clearEditAct = emenu->addAction(QIcon(":/images/clear.png"),
                                     tr("Clear search text"));
-
 
     vmenu = menuBar()->addMenu(tr("&View"));
     toggleDockAct = new QAction(QIcon(":/images/dock_mac.png"),
@@ -171,6 +182,8 @@ void MainWindow::createMenus()
     addMarkAct = smenu->addAction(QIcon(":/images/bookmark.png"),
                                   tr("Book mark"),
                                   this, SLOT(addMark()));
+    smenu->addAction(toggleScanClipboardAct);
+                             
     CONNECT_BUSY(addMarkAct);
     toggleTabsAct = smenu->addAction(QIcon(":/images/tabs.png"),
                                      tr("Tab on/off"),
@@ -263,8 +276,7 @@ void MainWindow::createToolBars()
 #endif
     //bar2->addAction(booksAct);
     bar2->addAction(addMarkAct);
-    bar2->addAction(zoomInAct);
-    bar2->addAction(zoomOutAct);
+    bar2->addAction(toggleScanClipboardAct);
     bar2->addAction(toggleDockAct);
 #ifdef RUBY_ON_TOOLBAR
     bar2->addAction(toggleRubyAct);
@@ -1329,6 +1341,19 @@ void MainWindow::searchClientText(const QString &str)
     //showStatus("written");
     pasteSearchText(str);
     viewSearch();
+}
+
+void MainWindow::searchClipboardText()
+{
+    searchClientText(QApplication::clipboard()->text(QClipboard::Selection));
+}
+
+void MainWindow::connectClipboard()
+{
+    if (model->scanClipboard())
+        QObject::connect(QApplication::clipboard(), SIGNAL(changed(QClipboard::Mode)), this, SLOT(searchClipboardText()));
+    else
+        QObject::disconnect(QApplication::clipboard(), SIGNAL(changed(QClipboard::Mode)), this, SLOT(searchClipboardText()));
 }
 
 void MainWindow::aboutQolibri()

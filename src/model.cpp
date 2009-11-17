@@ -21,6 +21,7 @@
 #include "model.h"
 
 Model::Model()
+ : m_scanClipboard(false)
 {
 }
 
@@ -67,9 +68,15 @@ void Model::load()
     }
     emit dictionaryGroupsChanged();
 
-    QSettings settings(CONF->settingOrg, "EpwingViewer");
-    method = readMethodSetting(settings);
-    setMethod(method);
+    {
+        QSettings settings(CONF->settingOrg, "EpwingViewer");
+        method = readMethodSetting(settings);
+        setMethod(method);
+    }
+    {
+        QSettings settings(CONF->settingOrg, "option");
+        m_scanClipboard = settings.value("scan_clipboard", true).toBool();
+    }
 }
 
 void Model::save()
@@ -111,8 +118,14 @@ void Model::save()
     }
     groups.endArray();
 
-    QSettings settings(CONF->settingOrg, "EpwingViewer");
-    writeMethodSetting(method, &settings);
+    {
+        QSettings settings(CONF->settingOrg, "EpwingViewer");
+        writeMethodSetting(method, &settings);
+    }
+    {
+        QSettings settings(CONF->settingOrg, "option");
+        settings.setValue("scan_clipboard", m_scanClipboard);
+    }
 }
 
 void Model::setGroupList(const QList <Group*> &groups)
@@ -356,4 +369,17 @@ void Model::writeMethodSetting(const SearchMethod &m, QSettings *set)
     if (m.bookReader) {
         set->setValue("book_reader", m.bookReader->name());
     }
+}
+
+bool Model::scanClipboard()
+{
+    return m_scanClipboard;
+}
+
+void Model::setScanClipboard(bool v)
+{
+    if (m_scanClipboard == v)
+        return;
+    m_scanClipboard = v;
+    scanClipboardChanged(v);
 }

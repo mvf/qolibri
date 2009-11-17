@@ -64,6 +64,7 @@ public slots:
     //void searchClientText(const QString &str);
 
 private slots:
+    void connectClipboard();
     void viewInfo(Book *book);
     void viewMenu();
     void viewFull();
@@ -112,11 +113,13 @@ private slots:
 #endif
     void checkNextSearch();
     void searchClientText(const QString &str);
+    void searchClipboardText();
 
     void aboutQolibri();
 
 
 private:
+    void createActions();
     void createMenus();
     void createToolBars();
     void createStatusBar();
@@ -164,6 +167,7 @@ private:
     QAction *toggleBarAct;
     QAction *toggleRubyAct;
     QAction *toggleMethodBarAct;
+    QAction *toggleScanClipboardAct;
     QAction *booksAct;
     QAction *configAct;
     QAction *sSheetAct;
