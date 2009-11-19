@@ -41,6 +41,7 @@ const char *Program = { "qolibri" };
     connect(this, SIGNAL(nowBusy(bool)), widget, SLOT(setDisabled(bool)))
 
 MainWindow::MainWindow(const QString &s_text)
+    : dockPosition(DockRight)
 {
 #ifdef Q_WS_MAC
     //setUnifiedTitleAndToolBarOnMac(true);
