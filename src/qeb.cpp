@@ -240,7 +240,7 @@ EB_Error_Code QEb::searchKeyword(const QStringList &words)
     EB_Error_Code ecode = eb_search_keyword(&book, wlist);
     if (ecode != EB_SUCCESS)
         dispError("eb_search_keyword", ecode);
-    delete wlist;
+    delete[] wlist;
     return ecode;
 }
 EB_Error_Code QEb::searchCross(const QStringList &words)
@@ -253,7 +253,7 @@ EB_Error_Code QEb::searchCross(const QStringList &words)
     EB_Error_Code ecode = eb_search_cross(&book, wlist);
     if (ecode != EB_SUCCESS)
         dispError("eb_search_cross", ecode);
-    delete wlist;
+    delete[] wlist;
     return ecode;
 }
 EB_Error_Code QEb::searchMulti(EB_Multi_Search_Code mid,
@@ -267,7 +267,7 @@ EB_Error_Code QEb::searchMulti(EB_Multi_Search_Code mid,
     EB_Error_Code ecode = eb_search_multi(&book, mid, wlist);
     if (ecode != EB_SUCCESS)
         dispError("eb_search_multi", ecode);
-    delete wlist;
+    delete[] wlist;
     return ecode;
 }
 QList <EB_Hit> QEb::hitList(int max_count)
@@ -650,12 +650,12 @@ QByteArray QEb::narrowFontCharacterBitmap(int c_num)
     EB_Error_Code ecode = eb_narrow_font_character_bitmap(&book, c_num, bits);
     if (ecode != EB_SUCCESS) {
         dispError("eb_narrow_font_character_bitmap", ecode);
-        delete bits;
+        delete[] bits;
         return QByteArray();
     }
 
     QByteArray b(bits, size);
-    delete bits;
+    delete[] bits;
     return b;
 }
 QByteArray QEb::wideFontCharacterBitmap(int c_num)
@@ -682,12 +682,12 @@ QByteArray QEb::wideFontCharacterBitmap(int c_num)
     EB_Error_Code ecode = eb_wide_font_character_bitmap(&book, c_num, bits);
     if (ecode != EB_SUCCESS) {
         dispError("eb_wide_font_character_bitmap", ecode);
-        delete bits;
+        delete[] bits;
         return QByteArray();
     }
 
     QByteArray b(bits, size);
-    delete bits;
+    delete[] bits;
     return b;
 }
 int QEb::forwardNarrowFontCharacter(int n, int c_num)
@@ -888,7 +888,7 @@ QByteArray QEb::narrowBitmapToXbm(const QByteArray &bitmap)
         dispError("eb_bitmap_to_xbm", ecode);
     else
         b = QByteArray(buff, (int)size);
-    delete buff;
+    delete[] buff;
     return b;
 }
 QByteArray QEb::wideBitmapToXbm(const QByteArray &bitmap)
@@ -907,7 +907,7 @@ QByteArray QEb::wideBitmapToXbm(const QByteArray &bitmap)
         dispError("eb_bitmap_to_xbm", ecode);
     else
         b = QByteArray(buff, (int)size);
-    delete buff;
+    delete[] buff;
     return b;
 }
 QByteArray QEb::narrowBitmapToXpm(const QByteArray &bitmap)
@@ -926,7 +926,7 @@ QByteArray QEb::narrowBitmapToXpm(const QByteArray &bitmap)
         dispError("eb_bitmap_to_xpm", ecode);
     else
         b = QByteArray(buff, (int)size);
-    delete buff;
+    delete[] buff;
     return b;
 }
 QByteArray QEb::wideBitmapToXpm(const QByteArray &bitmap)
@@ -946,7 +946,7 @@ QByteArray QEb::wideBitmapToXpm(const QByteArray &bitmap)
     else
         b = QByteArray(buff, (int)size);
     
-    delete buff;
+    delete[] buff;
     return b;
 }
 QByteArray QEb::narrowBitmapToGif(const QByteArray &bitmap)
@@ -965,7 +965,7 @@ QByteArray QEb::narrowBitmapToGif(const QByteArray &bitmap)
         dispError("eb_bitmap_to_gif", ecode);
     else
         b = QByteArray(buff, (int)size);
-    delete buff;
+    delete[] buff;
     return b;
 }
 QByteArray QEb::wideBitmapToGif(const QByteArray &bitmap)
@@ -984,7 +984,7 @@ QByteArray QEb::wideBitmapToGif(const QByteArray &bitmap)
         dispError("eb_bitmap_to_gif", ecode);
     else
         b = QByteArray(buff, (int)size);
-    delete buff;
+    delete[] buff;
     return b;
 }
 QByteArray QEb::narrowBitmapToBmp(const QByteArray &bitmap)
@@ -1004,7 +1004,7 @@ QByteArray QEb::narrowBitmapToBmp(const QByteArray &bitmap)
     else
         b = QByteArray(buff, (int)size);
     
-    delete buff;
+    delete[] buff;
     return b;
 }
 QByteArray QEb::wideBitmapToBmp(const QByteArray &bitmap)
@@ -1024,7 +1024,7 @@ QByteArray QEb::wideBitmapToBmp(const QByteArray &bitmap)
     else
         b = QByteArray(buff, (int)size);
 
-    delete buff;
+    delete[] buff;
     return b;
 }
 QByteArray QEb::narrowBitmapToPng(const QByteArray &bitmap)
@@ -1044,7 +1044,7 @@ QByteArray QEb::narrowBitmapToPng(const QByteArray &bitmap)
     else
         b = QByteArray(buff, (int)size);
     
-    delete buff;
+    delete[] buff;
     return b;
 }
 QByteArray QEb::wideBitmapToPng(const QByteArray &bitmap)
@@ -1064,7 +1064,7 @@ QByteArray QEb::wideBitmapToPng(const QByteArray &bitmap)
     else
         b = QByteArray(buff, (int)size);
     
-    delete buff;
+    delete[] buff;
     return b;
 }
 
