@@ -21,7 +21,8 @@
 #include "model.h"
 
 Model::Model()
- : m_scanClipboard(false)
+    : bookMode(ModeDictionary)
+    , m_scanClipboard(false)
 {
 }
 
