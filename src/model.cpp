@@ -279,9 +279,9 @@ void Model::setReaderBookIndex(int index)
     else if (index < 0)
         index = 0;
     if (index == -1) {
-        method.book = NULL;
+        method.bookReader = NULL;
     } else {
-        method.book = method.groupReader->bookList()[index];
+        method.bookReader = method.groupReader->bookList()[index];
     }
     emit readerBookIndexChanged(index);
     if (bookMode == ModeBook)

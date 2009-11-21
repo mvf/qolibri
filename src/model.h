@@ -39,7 +39,7 @@ public:
 
     int dictionaryGroupIndex() { return groupList.indexOf(method.group); };
     int readerGroupIndex() { return groupList.indexOf(method.groupReader); };
-    int readerBookIndex() { return method.groupReader->bookList().indexOf(method.book); };
+    int readerBookIndex() { return method.groupReader->bookList().indexOf(method.bookReader); };
 
     void setGroupList(const QList <Group*> &groups);
     void setLocalBooks(const Group *);
