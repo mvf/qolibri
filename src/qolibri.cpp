@@ -73,6 +73,9 @@ int main(int argc, char *argv[])
     CONF->load();
 
     QApplication app(argc, argv);
+
+    Model model;
+    model.load();
     
     codecEuc = QTextCodec::codecForName("EUC-JP");
 
@@ -132,7 +135,7 @@ int main(int argc, char *argv[])
     trans.load(QString("qolibri_") + QLocale::system().name(), path);
     app.installTranslator(&trans);
 
-    MainWindow mainWin(searchText);
+    MainWindow mainWin(&model, searchText);
 
     mainWin.show();
 
@@ -153,6 +156,7 @@ int main(int argc, char *argv[])
     int ret = app.exec();
 
     delete server;
+    model.save();
 
     return ret;
 }

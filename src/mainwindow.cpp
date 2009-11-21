@@ -40,8 +40,9 @@ const char *Program = { "qolibri" };
 #define CONNECT_BUSY(widget) \
     connect(this, SIGNAL(nowBusy(bool)), widget, SLOT(setDisabled(bool)))
 
-MainWindow::MainWindow(const QString &s_text)
-    : dockPosition(DockRight)
+MainWindow::MainWindow(Model *model_, const QString &s_text)
+    : model(model_)
+    , dockPosition(DockRight)
 {
 #ifdef Q_WS_MAC
     //setUnifiedTitleAndToolBarOnMac(true);
@@ -54,8 +55,6 @@ MainWindow::MainWindow(const QString &s_text)
 
     QEb::initialize();
 
-    model = new Model();
-    model->load();
     bookView = new BookView(this);
     bookViewSlots();
 
@@ -429,8 +428,6 @@ void MainWindow::writeSettings()
     settings.setValue("newtab", toggleTabsAct->isChecked());
     settings.setValue("newbrowser", toggleBrowserAct->isChecked());
     settings.setValue("searchsel", optDirection);
-
-    model->save();
 
     QSettings history(CONF->settingOrg, "EpwingHistory");
     history.beginWriteArray("History");

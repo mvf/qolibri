@@ -47,7 +47,7 @@ class MainWindow : public QMainWindow
 public:
     enum DockPosition { DockLeft, DockRight };
 
-    MainWindow(const QString &s_text);
+    MainWindow(Model *, const QString &s_text);
 
 protected:
     void closeEvent(QCloseEvent *event);
