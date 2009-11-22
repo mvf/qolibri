@@ -1235,10 +1235,11 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
 
         eb.unsetSubbook();
     }
+#if 0
     if (totalCount == 0) {
         retStatus = (checkStop()) ? NOT_HIT_INTERRUPTED : NOT_HIT;
-        return;
     }
+#endif
     if (checkStop()) {
         items.composeError("LAST", IntString);
         retStatus = INTERRUPTED;
