@@ -218,6 +218,8 @@ class PageWidget : public QSplitter
 public:
     PageWidget(QWidget *parent, const SearchMethod&);
 
+    virtual RET_SEARCH search(const QStringList&, const SearchMethod&) = 0;
+
     bool isMatch(const QString &str, const QStringList &list,
                  NarrowingLogic logic);
     bool getMatch(EBook *eb, int index, const QStringList &list,
@@ -237,7 +239,6 @@ public:
     {
         return method_;
     }
-    RET_SEARCH retStatus;
 
 protected:
     inline QString toAnchor(const QString &str, int num) const
@@ -276,6 +277,7 @@ class InfoPage : public PageWidget
 {
 public:
     InfoPage(QWidget *parent, const SearchMethod&);
+    RET_SEARCH search(const QStringList&, const SearchMethod&);
 
 private:
     QString convSpecialChar(const QString&) const;
@@ -286,14 +288,15 @@ class MenuPage : public PageWidget
     Q_OBJECT
 public:
     MenuPage(QWidget *parent, const SearchMethod&);
+    RET_SEARCH search(const QStringList&, const SearchMethod&);
 
 private slots:
     void changePage(QTreeWidgetItem*, int column);
 
 private:
-    void fullMenuPage();
+    RET_SEARCH fullMenuPage();
     void selectMenuPage(int index);
-    void getMenus(EbMenu *eb, const EB_Position &pos, PageItems *items,
+    RET_SEARCH getMenus(EbMenu *eb, const EB_Position &pos, PageItems *items,
                   int count);
     QList <CandItem> topCands;
     int menuCount;
@@ -305,7 +308,7 @@ class AllPage : public PageWidget
     Q_OBJECT
 public:
     AllPage(QWidget *parent, const SearchMethod &);
-
+    RET_SEARCH search(const QStringList&, const SearchMethod&);
 
 private slots:
     void changePage(QTreeWidgetItem*, int column);
@@ -321,13 +324,15 @@ private:
 class SearchPage : public PageWidget
 {
 public:
-    SearchPage(QWidget *parent, const QStringList&, const SearchMethod&);
+    SearchPage(QWidget *parent, const SearchMethod&);
+    RET_SEARCH search(const QStringList&, const SearchMethod&);
 };
 
 class SearchWholePage : public PageWidget
 {
 public:
-    SearchWholePage(QWidget *parent, const QStringList&, const SearchMethod&);
+    SearchWholePage(QWidget *parent, const SearchMethod&);
+    RET_SEARCH search(const QStringList&, const SearchMethod&);
 };
 class WebPage : public QWebView
 {

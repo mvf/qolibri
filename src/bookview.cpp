@@ -544,8 +544,6 @@ PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
             SLOT(popupSlide(QPoint)));
 
     totalCount = 0;
-    retStatus = NORMAL;
-
 }
 
 void PageWidget::scrollTo(QTreeWidgetItem *to)
@@ -747,6 +745,10 @@ void PageWidget::zoomOut()
 InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     : PageWidget(parent, method)
 {
+}
+
+RET_SEARCH InfoPage::search(const QStringList&, const SearchMethod &method)
+{
     Book *book = method.book;
 
     PageItems items(CONF->dictSheet);
@@ -756,8 +758,7 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     bookBrowser_->addBookList(book);
     EBook eb;
     if (eb.initBook(book->path(), book->bookNo()) < 0) {
-        retStatus = NO_BOOK;
-        return;
+        return NO_BOOK;
     }
     eb.initHook(bookBrowser_->fontSize(), book->fontList(),
                   CONF->indentOffset,  method.ruby);
@@ -844,7 +845,7 @@ InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     bookTree->insertTopLevelItems(0, items.items());
     bookTree->setCurrentItem(items.items()[0]);
 
-    return;
+    return NORMAL;
 }
 
 QString InfoPage::convSpecialChar(const QString &str) const
@@ -862,29 +863,32 @@ MenuPage::MenuPage(QWidget *parent, const SearchMethod &method)
     bookBrowser_->addBookList(method.bookReader);
     connect(bookTree, SIGNAL(itemActivated(QTreeWidgetItem *, int)),
             SLOT(changePage(QTreeWidgetItem *, int)));
-    fullMenuPage();
+}
+
+RET_SEARCH MenuPage::search(const QStringList&, const SearchMethod &)
+{
+    RET_SEARCH retStatus = fullMenuPage();
 
     if (retStatus == LIMIT_MENU)
         selectMenuPage(-1);
-
-    return;
+    return retStatus;
 }
 
-void MenuPage::fullMenuPage()
+
+RET_SEARCH MenuPage::fullMenuPage()
 {
     checkMax = true;
     EbMenu eb;
     if (eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
         0) {
-        retStatus = NO_BOOK;
+        return NO_BOOK;
     }
     eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList(),
                 CONF->indentOffset, method_.ruby);
 
     EB_Position pos = eb.menu();
     if (!eb.isValidPosition(pos)){
-        retStatus = NO_MENU;
-        return;
+        return NO_MENU;
     }
 
     PageItems items(CONF->bookSheet);
@@ -892,11 +896,11 @@ void MenuPage::fullMenuPage()
     items.addHItem(0, toAnchor("B", 0), method_.bookReader->name());
     menuCount = 0;
 
-    getMenus(&eb, pos, &items, 0);
+    RET_SEARCH retStatus = getMenus(&eb, pos, &items, 0);
     if (retStatus == LIMIT_MENU) {
         //while (!item.item().isEmpty())
         //    delete item.time().takeLast();
-        return;
+        return retStatus;
     }
 
     items.composeTrail();
@@ -907,13 +911,12 @@ void MenuPage::fullMenuPage()
 
     bookBrowser_->setBrowser(items.text());
 
-    return;
+    return retStatus;
 }
 
 void MenuPage::selectMenuPage(int index)
 {
     checkMax = false;
-    retStatus = NORMAL;
     EbMenu eb;
     eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo());
     eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList(),
@@ -966,15 +969,15 @@ void MenuPage::changePage(QTreeWidgetItem *item, int)
     }
 }
 
-void MenuPage::getMenus(EbMenu *eb, const EB_Position &pos, PageItems *items,
-                        int count)
+RET_SEARCH MenuPage::getMenus(EbMenu *eb, const EB_Position &pos, PageItems *items,
+                              int count)
 {
+    RET_SEARCH retStatus = NORMAL;
     count++;
     if ((menuCount % 100) == 0) {
         emit statusRequested(QString("%1").arg(menuCount));
         if (checkStop()) {
-            retStatus = INTERRUPTED;
-            return;
+            return INTERRUPTED;
         }
     }
     QString c_text;
@@ -988,7 +991,7 @@ void MenuPage::getMenus(EbMenu *eb, const EB_Position &pos, PageItems *items,
             }
             EB_Position next = i.position;
             items->composeHLine(count, toAnchor("H", menuCount), i.title);
-            getMenus(eb, next, items, count);
+            retStatus = getMenus(eb, next, items, count);
         }
     } else {
         QString text_v;
@@ -1000,7 +1003,7 @@ void MenuPage::getMenus(EbMenu *eb, const EB_Position &pos, PageItems *items,
         }
         items->addTextStr("<pre>" + text_v + "</pre>\n");
     }
-    return;
+    return retStatus;
 }
 
 AllPage::AllPage(QWidget *parent, const SearchMethod &method)
@@ -1008,14 +1011,18 @@ AllPage::AllPage(QWidget *parent, const SearchMethod &method)
 {
     connect(bookTree, SIGNAL(itemActivated(QTreeWidgetItem *, int)),
             SLOT(changePage(QTreeWidgetItem *, int)));
-    retStatus = initSeqHits();
+}
+
+RET_SEARCH AllPage::search(const QStringList&, const SearchMethod &)
+{
+    RET_SEARCH retStatus = initSeqHits();
     if (retStatus != NORMAL)
-        return;
+        return retStatus;
 
     readPage(0);
-
-    return;
+    return retStatus;
 }
+
 
 RET_SEARCH AllPage::readPage(int page)
 {
@@ -1138,11 +1145,14 @@ RET_SEARCH AllPage::initSeqHits()
 }
 
 
-SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
-                       const SearchMethod &method)
+SearchPage::SearchPage(QWidget *parent, const SearchMethod &method)
     : PageWidget(parent, method)
 {
+}
 
+RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &method)
+{
+    RET_SEARCH retStatus = NORMAL;
     QStringList search_list;
     if (method.direction != KeywordSearch &&
         method.direction != CrossSearch ) {
@@ -1267,13 +1277,17 @@ SearchPage::SearchPage(QWidget *parent, const QStringList &slist,
     bookBrowser_->setBrowser(items.text());
     //qDebug() << items.text();
 
-    return;
+    return retStatus;
 }
 
-SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist, 
-                               const SearchMethod &method)
+SearchWholePage::SearchWholePage(QWidget *parent, const SearchMethod &method)
     : PageWidget(parent, method)
 {
+}
+
+RET_SEARCH SearchWholePage::search(const QStringList &slist, const SearchMethod &method)
+{
+    RET_SEARCH retStatus = NORMAL;
     EbAll eb;
 
     int search_total = 0;
@@ -1368,7 +1382,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
     if (totalCount == 0) {
         delete item.topItem();
         retStatus = (checkStop()) ? NOT_HIT_INTERRUPTED : NOT_HIT;
-        return;
+        return retStatus;
     }
     if (checkStop()) {
         item.composeError("LAST", IntString);
@@ -1398,7 +1412,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const QStringList &slist,
 
     bookBrowser_->setBrowser(item.text());
 
-    return;
+    return retStatus;
 }
 
 WebPage::WebPage(QWidget *parent, const QString &url,
@@ -1707,20 +1721,31 @@ RET_SEARCH BookView::newPage(QWidget *parent, const QStringList &list,
         }
     }
 
-    PageWidget *page;
-
-    if (method.direction == FullTextSearch)
-        page = new SearchWholePage(this, list, method);
-    else if (method.direction == WholeRead)
+    PageWidget *page = 0;
+    switch (method.direction) {
+    case FullTextSearch:
+        page = new SearchWholePage(this, method);
+        break;
+    case WholeRead:
         page = new AllPage(this, method);
-    else if (method.direction == MenuRead)
+        break;
+    case MenuRead:
         page = new MenuPage(this, method);
-    else if (method.direction == BookInfo)
+        break;
+    case BookInfo:
         page = new InfoPage(this, method);
-    else
-        // ExactWordSearch, ForwardSearch, BackwardSearch,
-        // KeywordSearch, CrossSearch,
-        page = new SearchPage(this, list, method);
+        break;
+    case ExactWordSearch:
+    case ForwardSearch:
+    case BackwardSearch:
+    case KeywordSearch:
+    case CrossSearch:
+        page = new SearchPage(this, method);
+        break;
+    default:
+        Q_ASSERT(0);        
+    }
+    RET_SEARCH retStatus = page->search(list, method);
 
     connect(page->bookBrowser(), SIGNAL(statusRequested(QString)),
             SIGNAL(statusRequested(QString)));
@@ -1740,10 +1765,9 @@ RET_SEARCH BookView::newPage(QWidget *parent, const QStringList &list,
     connect(parent, SIGNAL(viewFontChanged(QFont)), page,
             SLOT(changeFont(QFont)));
 
-    RET_SEARCH ret = page->retStatus;
     QWidget *focus_page = 0;
     BookView *view = this;
-    if (ret == NORMAL) {
+    if (retStatus == NORMAL) {
         dcount++;
     }
     if (dcount > 1) {
@@ -1764,10 +1788,10 @@ RET_SEARCH BookView::newPage(QWidget *parent, const QStringList &list,
             emit allWebLoaded();
         }
     }
-    if (ret != NORMAL) {
+    if (retStatus != NORMAL) {
         delete page;
-        if (dcount == 0) return ret;
-        ret = NORMAL;
+        if (dcount == 0) return retStatus;
+        retStatus = NORMAL;
     } else {
         QString tab_title = toLogicString(list, method, false);
         if (dcount > 1 || newTab || view->count() == 0) {
@@ -1814,7 +1838,7 @@ RET_SEARCH BookView::newPage(QWidget *parent, const QStringList &list,
     }
     emit tabChanged(count());
 
-    return ret;
+    return retStatus;
 }
 
 RET_SEARCH BookView::newWebPage(const QString &name, const QString &url,
