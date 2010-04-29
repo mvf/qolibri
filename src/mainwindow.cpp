@@ -180,7 +180,7 @@ void MainWindow::createMenus()
                                  tr("Option setting"), this, SLOT(setConfig()));
     CONNECT_BUSY(configAct);
     addMarkAct = smenu->addAction(QIcon(":/images/bookmark.png"),
-                                  tr("Book mark"),
+                                  tr("Bookmark"),
                                   this, SLOT(addMark()));
     smenu->addAction(toggleScanClipboardAct);
                              
@@ -232,7 +232,7 @@ void MainWindow::createMenus()
 
     QMenu *hmenu = menuBar()->addMenu(tr("&Help"));
     hmenu->addAction(tr("about &QT"), qApp, SLOT(aboutQt()));
-    hmenu->addAction(tr("about q&oribri"), this, SLOT(aboutQolibri()));
+    hmenu->addAction(tr("about q&olibri"), this, SLOT(aboutQolibri()));
 }
 
 void MainWindow::createToolBars()
