@@ -233,11 +233,6 @@ public:
     }
 
 protected:
-    inline QString toAnchor(const QString &str, int num) const
-    {
-        return str + QString::number(num);
-    }
-
     BookBrowser *bookBrowser_;
     QTreeWidget *bookTree;
     SearchMethod method_;

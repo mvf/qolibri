@@ -45,6 +45,10 @@ bool checkStop()
     return stopFlag;
 }
 
+static QString toAnchor(const QString &str, int num)
+{
+    return str + QString::number(num);
+}
 
 BookBrowser::BookBrowser(QWidget *parent)
     : QTextBrowser(parent)
