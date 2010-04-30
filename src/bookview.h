@@ -237,13 +237,10 @@ protected:
     {
         return str + QString::number(num);
     }
-    RET_SEARCH checkLimit(int text_length);
 
     BookBrowser *bookBrowser_;
     QTreeWidget *bookTree;
     SearchMethod method_;
-    int totalCount;
-    int matchCount;
 
 signals:
     void statusRequested(const QString &str);

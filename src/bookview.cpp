@@ -542,8 +542,6 @@ PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
             SLOT(scrollTo(QTreeWidgetItem*,int)));
     connect(bookTree, SIGNAL(customContextMenuRequested(QPoint)),
             SLOT(popupSlide(QPoint)));
-
-    totalCount = 0;
 }
 
 void PageWidget::scrollTo(QTreeWidgetItem *to)
@@ -573,12 +571,12 @@ void PageWidget::popupSlide(const QPoint &pos)
     popup->show();
 }
 
-RET_SEARCH PageWidget::checkLimit(int text_length)
+static RET_SEARCH checkLimit(const SearchMethod &method, int totalCount, int matchCount, int text_length)
 {
 
-    if (totalCount >= method_.limitTotal)
+    if (totalCount >= method.limitTotal)
         return LIMIT_TOTAL;
-    if (matchCount >= method_.limitBook)
+    if (matchCount >= method.limitBook)
         return LIMIT_BOOK;
     if (text_length >= CONF->limitBrowserChar)
         return LIMIT_CHAR;
@@ -1017,6 +1015,8 @@ SearchPage::SearchPage(QWidget *parent, const SearchMethod &method)
 RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &method)
 {
     RET_SEARCH retStatus = NORMAL;
+    int totalCount = 0;
+    int matchCount = 0;
     QStringList highlightWords;
     if (CONF->highlightMatch) {
         highlightWords = slist;
@@ -1080,7 +1080,7 @@ RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &meth
             }
             items.composeHLine(2, toAnchor("H", totalCount), head_i, head_v, text_v);
 
-            RET_SEARCH chk = checkLimit(items.textLength());
+            RET_SEARCH chk = checkLimit(method, totalCount, matchCount, items.textLength());
             if (chk != NORMAL) {
                 items.composeError(toAnchor("CUT", totalCount), CutString);
                 if (chk != LIMIT_BOOK) {
@@ -1146,6 +1146,8 @@ RET_SEARCH SearchWholePage::search(const QStringList &slist, const SearchMethod 
 
     int search_total = 0;
     int book_count = 0;
+    int totalCount = 0;
+    int matchCount = 0;
 
     QStringList highlightWords;
     if (CONF->highlightMatch) {
@@ -1209,7 +1211,7 @@ RET_SEARCH SearchWholePage::search(const QStringList &slist, const SearchMethod 
                 }
                 item.composeHLine(2, toAnchor("H", totalCount), head_i,
                                   head_v, text_v);
-                break_check = checkLimit(item.textLength());
+                break_check = checkLimit(method, totalCount, matchCount, item.textLength());
                 if (break_check != NORMAL) {
                     item.composeError(toAnchor("C", totalCount), CutString);
                     break;
