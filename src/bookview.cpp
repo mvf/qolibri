@@ -1032,6 +1032,18 @@ RET_SEARCH SearchPageBuilder::search(const QStringList &slist, const SearchMetho
     int req_cnt = method.limitBook;
     bool break_flag = false;
 
+    SearchType type;
+    switch (method.direction) {
+    case KeywordSearch:   type = SearchKeyWord; break; 
+    case CrossSearch:     type = SearchCrossWord; break; 
+    case ExactWordSearch: type = SearchExactWord; break; 
+    case ForwardSearch:   type = SearchWord; break; 
+    case BackwardSearch:  type = SearchEndWord; break; 
+    default:
+        Q_ASSERT(0);
+        qWarning() << "Invalid Search Method" << method.direction;
+    }
+
     foreach(Book *book, method.group->bookList()) {
         if (book->bookType() != BookLocal) continue;
         if (book->checkState() != Qt::Checked) continue;
@@ -1046,19 +1058,7 @@ RET_SEARCH SearchPageBuilder::search(const QStringList &slist, const SearchMetho
                       CONF->indentOffset, method.ruby);
 
         int hit_num = 0;
-        if (method.direction == KeywordSearch) {
-            hit_num = eb.hitMultiWord(req_cnt, slist, SearchKeyWord);
-        } else if (method.direction == CrossSearch) {
-            hit_num = eb.hitMultiWord(req_cnt, slist, SearchCrossWord);
-        } else if (method.direction == ExactWordSearch) {
-            hit_num = eb.hitWord(req_cnt, slist[0], SearchExactWord);
-        } else if (method.direction == ForwardSearch) {
-            hit_num = eb.hitWord(req_cnt, slist[0], SearchWord);
-        } else if (method.direction == BackwardSearch) {
-            hit_num = eb.hitWord(req_cnt, slist[0], SearchEndWord);
-        } else {
-            qWarning() << "Invalid Search Method" << method.direction;
-        }
+        hit_num = eb.searchQuery(req_cnt, slist, type);
         if (hit_num <= 0) {
             eb.unsetSubbook();
             continue;

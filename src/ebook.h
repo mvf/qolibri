@@ -43,6 +43,8 @@ public:
     EBook(HookMode hmode = HookText);
     ~EBook();
 
+    int searchQuery(int maxcnt, const QStringList &word_list, SearchType type);
+
     // return number of Sub Book
     QString hitText(int index, bool hook = true)
     {
@@ -54,8 +56,6 @@ public:
         return EbCore::heading(hits[index].heading, hook);
     }
 
-    int hitWord(int maxcnt, const QString &word, SearchType type);
-    int hitMultiWord(int maxcnt, const QStringList &word_list, SearchType type);
     inline EB_Hit hit(int index)
     {
         return hits[index];
@@ -67,6 +67,10 @@ public:
 protected:
 
     QList <EB_Hit> hits;
+
+private:
+    int hitWord(int maxcnt, const QString &word, SearchType type);
+    int hitMultiWord(int maxcnt, const QStringList &word_list, SearchType type);
 
 };
 

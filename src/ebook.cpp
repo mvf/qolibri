@@ -56,6 +56,17 @@ EBook::~EBook()
 {
 }
 
+int EBook::searchQuery(int maxcnt, const QStringList &word_list, SearchType type)
+{
+    switch (type) {
+    case SearchKeyWord:
+    case SearchCrossWord:
+        return hitMultiWord(maxcnt, word_list, type);
+    default:
+        return hitWord(maxcnt, word_list[0], type);
+    }
+}
+
 int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
 {
     hits.clear();
