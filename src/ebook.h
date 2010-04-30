@@ -61,7 +61,7 @@ public:
         return hits[index];
     }
 
-    void getMatch(int index, QString *head_l, QString *head_v, QString *text, QStringList highlightWords);
+    void getMatch(int index, QString *head_l, QString *head_v, QString *text, bool highlightMatches);
     void getText(int lndex, QString *head_l, QString *head_v, QString *text);
 
 protected:
@@ -69,6 +69,7 @@ protected:
     QList <EB_Hit> hits;
 
 private:
+    QStringList words;
     int hitWord(int maxcnt, const QString &word, SearchType type);
     int hitMultiWord(int maxcnt, const QStringList &word_list, SearchType type);
 

@@ -1020,10 +1020,6 @@ SearchPageBuilder::SearchPageBuilder(BookBrowser *browser)
 RET_SEARCH SearchPageBuilder::search(const Query& query)
 {
     RET_SEARCH retStatus = NORMAL;
-    QStringList highlightWords;
-    if (CONF->highlightMatch) {
-        highlightWords << query.query;
-    }
 
     items.addHItem(0, "TOP", "tmp");
 
@@ -1071,7 +1067,7 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
             QString head_i;
             QString head_v;
             QString text_v;
-            eb.getMatch(i, &head_i, &head_v, &text_v, highlightWords);
+            eb.getMatch(i, &head_i, &head_v, &text_v, CONF->highlightMatch);
             totalCount++;
             matchCount++;
 
@@ -1184,11 +1180,6 @@ RET_SEARCH SearchWholePage::search(const Query& query)
     int totalCount = 0;
     int matchCount = 0;
 
-    QStringList highlightWords;
-    if (CONF->highlightMatch) {
-        highlightWords << query.query;
-    }
-
     PageItems item(CONF->dictSheet);
     item.addHItem(0, "TOP", "tmp");
 
@@ -1235,7 +1226,7 @@ RET_SEARCH SearchWholePage::search(const Query& query)
                 QString head_i;
                 QString head_v;
                 QString text_v;
-                eb.getMatch(i, &head_i, &head_v, &text_v, highlightWords);
+                eb.getMatch(i, &head_i, &head_v, &text_v, CONF->highlightMatch);
                 totalCount++;
                 matchCount++;
 

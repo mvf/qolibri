@@ -62,11 +62,11 @@ int EBook::searchQuery(int maxcnt, const QString& query, SearchType type)
     case SearchKeyWord:
     case SearchCrossWord:
     {
-        QStringList list;
-        list = query.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-        return hitMultiWord(maxcnt, list, type);
+        words = query.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+        return hitMultiWord(maxcnt, words, type);
     }
     default:
+        words = QStringList(query);
         return hitWord(maxcnt, query, type);
     }
 }
@@ -219,12 +219,14 @@ static QString emphasize(const QString &str, const QString &word)
     return ret;
 }
 
-void EBook::getMatch(int index, QString *head_l, QString *head_v, QString *text, QStringList highlightWords)
+void EBook::getMatch(int index, QString *head_l, QString *head_v, QString *text, bool highlightMatches)
 {
     getText(index, head_l, head_v, text);
-    foreach(QString s, highlightWords) {
-        *head_v = emphasize(*head_v, s);
-        *text = emphasize(*text, s);
+    if (highlightMatches) {
+        foreach(QString s, words) {
+            *head_v = emphasize(*head_v, s);
+            *text = emphasize(*text, s);
+        }
     }
 }
 
