@@ -42,7 +42,7 @@ void addDirectionMenu(QMenu *menu)
 }
 
 Query::Query(QString query_, SearchMethod method_)
-    : query(query_)
+    : query(query_.simplified())
     , method(method_)
 {
 }
