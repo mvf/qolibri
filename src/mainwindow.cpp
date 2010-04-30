@@ -975,9 +975,10 @@ void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
     bool ntab = toggleTabsAct->isChecked();
     bool pbrowser = toggleBrowserAct->isChecked();
 
-    RET_SEARCH ret = bookView->newPage(this, list, mthd, ntab, pbrowser);
-    QString sstr = toLogicString(list, mthd);
-    groupDock->addHistory(toLogicString(list, mthd), mthd, CONF->historyMax);
+    Query query(list, mthd);
+    RET_SEARCH ret = bookView->newPage(this, query, ntab, pbrowser);
+    QString sstr = query.toLogicString();
+    groupDock->addHistory(query.toLogicString(), mthd, CONF->historyMax);
 
     emit nowBusy(false);
     //stopAct->setEnabled(false);

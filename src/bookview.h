@@ -214,7 +214,7 @@ class PageWidget : public QSplitter
 public:
     PageWidget(QWidget *parent, const SearchMethod&);
 
-    virtual RET_SEARCH search(const QStringList&, const SearchMethod&) = 0;
+    virtual RET_SEARCH search(const Query&) = 0;
 
     void zoomIn();
     void zoomOut();
@@ -257,7 +257,7 @@ class InfoPage : public PageWidget
 {
 public:
     InfoPage(QWidget *parent, const SearchMethod&);
-    RET_SEARCH search(const QStringList&, const SearchMethod&);
+    RET_SEARCH search(const Query&);
 
 private:
     QString convSpecialChar(const QString&) const;
@@ -268,7 +268,7 @@ class MenuPage : public PageWidget
     Q_OBJECT
 public:
     MenuPage(QWidget *parent, const SearchMethod&);
-    RET_SEARCH search(const QStringList&, const SearchMethod&);
+    RET_SEARCH search(const Query&);
 
 private slots:
     void changePage(QTreeWidgetItem*, int column);
@@ -288,7 +288,7 @@ class AllPage : public PageWidget
     Q_OBJECT
 public:
     AllPage(QWidget *parent, const SearchMethod &);
-    RET_SEARCH search(const QStringList&, const SearchMethod&);
+    RET_SEARCH search(const Query&);
 
 private slots:
     void changePage(QTreeWidgetItem*, int column);
@@ -305,14 +305,14 @@ class SearchPage : public PageWidget
 {
 public:
     SearchPage(QWidget *parent, const SearchMethod&);
-    RET_SEARCH search(const QStringList&, const SearchMethod&);
+    RET_SEARCH search(const Query&);
 };
 
 class SearchWholePage : public PageWidget
 {
 public:
     SearchWholePage(QWidget *parent, const SearchMethod&);
-    RET_SEARCH search(const QStringList&, const SearchMethod&);
+    RET_SEARCH search(const Query&);
 };
 class WebPage : public QWebView
 {
@@ -367,9 +367,8 @@ class BookView : public QTabWidget
     Q_OBJECT
 public:
     BookView(QWidget *parent);
-    RET_SEARCH newPage(QWidget *parent, const QStringList &slist,
-                       const SearchMethod &method, bool new_tab,
-                       bool popup_browser);
+    RET_SEARCH newPage(QWidget *parent, const Query& query,
+                       bool new_tab, bool popup_browser);
     RET_SEARCH newWebPage(const QString &name, const QString &url,
                            bool popup_browser);
     BookType pageType(int index);
@@ -417,7 +416,7 @@ class SearchPageBuilder : public QObject
     Q_OBJECT
 public:
     SearchPageBuilder(BookBrowser *browser);
-    RET_SEARCH search(const QStringList &slist, const SearchMethod &method);
+    RET_SEARCH search(const Query& query);
     QList <QTreeWidgetItem*> treeItems();
     QString text();
     int textLength();

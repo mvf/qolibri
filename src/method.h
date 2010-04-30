@@ -20,6 +20,8 @@
 #ifndef METHOD_H
 #define METHOD_H
 
+#include <QStringList>
+
 enum SearchDirection { ExactWordSearch = 0, ForwardSearch, BackwardSearch,
                        KeywordSearch, CrossSearch, FullTextSearch,
                        WholeRead, MenuRead, BookInfo,
@@ -44,10 +46,14 @@ struct SearchMethod {
     bool            ruby;
 };
 
-QString toLogicString(const QStringList& list, const SearchMethod &method,
-                      bool and_flg = true);
-
 void addDirectionMenu(QMenu *menu);
+
+struct Query {
+    Query(QStringList list_, SearchMethod method_);
+    QStringList list;
+    SearchMethod method;
+    QString toLogicString() const;
+};
 
 #define IGNORE_SEEK_HEADING
 

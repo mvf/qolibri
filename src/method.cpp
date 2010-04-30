@@ -21,45 +21,6 @@
 
 #include "method.h"
 
-QString toLogicString(const QStringList &list, const SearchMethod &method,
-                      bool and_flag)
-{
-
-    if (list.count() <= 0) {
-        qWarning() << "No Search String List";
-        return QString();
-    }
-    QString str = list[0];
-    if (list.count() == 1) {
-        return str;
-    }
-    bool narrow = (method.direction == KeywordSearch ||
-                   method.direction == CrossSearch) ? false : true;
-
-    QString slogic = " | ";
-
-    if (!narrow || method.logic == LogicAND) {
-        if (and_flag) {
-            slogic = " & ";
-        } else {
-            slogic = " && ";
-        }
-    }
-
-    if (narrow && method.direction != FullTextSearch) {
-        str += " ( " + list[1];
-        for (int i = 2; i < list.count(); i++) {
-            str += slogic + list[i];
-        }
-        str += " )";
-    } else {
-        for (int i = 1; i < list.count(); i++) {
-            str += slogic + list[i];
-        }
-    }
-
-    return str;
-}
 
 void addDirectionAct(QMenu *menu, QString title, SearchDirection direc)
 {
@@ -78,4 +39,23 @@ void addDirectionMenu(QMenu *menu)
     addDirectionAct(menu, QObject::tr("&WikiPedia search"), WikipediaSearch);
     addDirectionAct(menu, QObject::tr("&User defined URL search"),
                     Option1Search);
+}
+
+Query::Query(QStringList list_, SearchMethod method_)
+    : list(list_)
+    , method(method_)
+{
+}
+
+QString Query::toLogicString() const
+{
+    if (list.count() <= 0) {
+        qWarning() << "No Search String List";
+        return QString();
+    }
+    QString str = list[0];
+    for (int i = 1; i < list.count(); i++) {
+        str += " " + list[i];
+    }
+    return str;
 }
