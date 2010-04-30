@@ -61,7 +61,7 @@ public:
         return hits[index];
     }
 
-    void getMatch(int index, QString *head_l, QString *head_v, QString *text);
+    void getMatch(int index, QString *head_l, QString *head_v, QString *text, QStringList highlightWords);
     void getText(int lndex, QString *head_l, QString *head_v, QString *text);
 
 protected:

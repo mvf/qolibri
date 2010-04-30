@@ -573,54 +573,6 @@ void PageWidget::popupSlide(const QPoint &pos)
     popup->show();
 }
 
-static QString emphasize(const QString &str, const QString &word)
-{
-    enum { NO_SKIP=0, SKIP_TAG=0x01, SKIP_ENT=0x02 };
-    QString ret;
-    int slen = str.length();
-    int wlen = word.length();
-    unsigned int skip = NO_SKIP;
-
-    for (int i = 0; i < slen; i++) {
-        QChar a = str[i];
-        if ((slen - i) < wlen) {
-            ret += a;
-            continue;
-        }
-        if (a == '<') {
-            skip |= SKIP_TAG;
-            ret += a;
-            continue;
-        }
-        if (a == '&') {
-            skip |= SKIP_ENT;
-            ret += a;
-            continue;
-        }
-        if (skip) {
-            if (a == '>')
-                skip &= ~SKIP_TAG;
-	    else if (a == ';')
-		skip &= ~SKIP_ENT;
-            ret += a;
-            continue;
-        }
-        if (a.isSpace()) {
-            ret += a;
-            continue;
-        }
-        QString cmp = str.mid(i, wlen);
-        if (!QString::compare(cmp, word, Qt::CaseInsensitive)) {
-            ret += "<span class=sel>" + cmp + "</span>";
-            i += wlen - 1;
-        } else {
-            ret += a;
-        }
-    }
-
-    return ret;
-}
-
 RET_SEARCH PageWidget::checkLimit(int text_length)
 {
 
@@ -1071,6 +1023,10 @@ RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &meth
         search_list = slist;
         search_list.removeFirst();
     }
+    QStringList highlightWords;
+    if (CONF->highlightMatch) {
+        highlightWords = slist;
+    }
 
     PageItems items(CONF->dictSheet);
     items.addHItem(0, "TOP", "tmp");
@@ -1122,7 +1078,7 @@ RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &meth
             QString head_i;
             QString head_v;
             QString text_v;
-            eb.getMatch(i, &head_i, &head_v, &text_v);
+            eb.getMatch(i, &head_i, &head_v, &text_v, highlightWords);
             totalCount++;
             matchCount++;
 
@@ -1130,12 +1086,6 @@ RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &meth
                 bookBrowser_->addBookList(book);
                 book_count++;
                 items.composeHLine(1, toAnchor("B", book_count), book->name());
-            }
-            if (CONF->highlightMatch) {
-                foreach(QString s, slist) {
-                    head_v = emphasize(head_v, s);
-                    text_v = emphasize(text_v, s);
-                }
             }
             items.composeHLine(2, toAnchor("H", totalCount), head_i, head_v, text_v);
 
@@ -1206,6 +1156,11 @@ RET_SEARCH SearchWholePage::search(const QStringList &slist, const SearchMethod 
     int search_total = 0;
     int book_count = 0;
 
+    QStringList highlightWords;
+    if (CONF->highlightMatch) {
+        highlightWords = slist;
+    }
+
     PageItems item(CONF->dictSheet);
     item.addHItem(0, "TOP", "tmp");
 
@@ -1252,7 +1207,7 @@ RET_SEARCH SearchWholePage::search(const QStringList &slist, const SearchMethod 
                 QString head_i;
                 QString head_v;
                 QString text_v;
-                eb.getMatch(i, &head_i, &head_v, &text_v);
+                eb.getMatch(i, &head_i, &head_v, &text_v, highlightWords);
                 totalCount++;
                 matchCount++;
 
@@ -1260,12 +1215,6 @@ RET_SEARCH SearchWholePage::search(const QStringList &slist, const SearchMethod 
 
                     item.composeHLine(1, toAnchor("B", book_count),
                                       book->name());
-                }
-                if (CONF->highlightMatch) {
-                    foreach(QString s, slist) {
-                        head_v = emphasize(head_v, s);
-                        text_v = emphasize(text_v, s);
-                    }
                 }
                 item.composeHLine(2, toAnchor("H", totalCount), head_i,
                                   head_v, text_v);

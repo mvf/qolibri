@@ -156,9 +156,61 @@ int EBook::hitWord(int maxcnt, const QString &word, SearchType type)
     return count;
 }
 
-void EBook::getMatch(int index, QString *head_l, QString *head_v, QString *text)
+static QString emphasize(const QString &str, const QString &word)
+{
+    enum { NO_SKIP=0, SKIP_TAG=0x01, SKIP_ENT=0x02 };
+    QString ret;
+    int slen = str.length();
+    int wlen = word.length();
+    unsigned int skip = NO_SKIP;
+
+    for (int i = 0; i < slen; i++) {
+        QChar a = str[i];
+        if ((slen - i) < wlen) {
+            ret += a;
+            continue;
+        }
+        if (a == '<') {
+            skip |= SKIP_TAG;
+            ret += a;
+            continue;
+        }
+        if (a == '&') {
+            skip |= SKIP_ENT;
+            ret += a;
+            continue;
+        }
+        if (skip) {
+            if (a == '>')
+                skip &= ~SKIP_TAG;
+	    else if (a == ';')
+		skip &= ~SKIP_ENT;
+            ret += a;
+            continue;
+        }
+        if (a.isSpace()) {
+            ret += a;
+            continue;
+        }
+        QString cmp = str.mid(i, wlen);
+        if (!QString::compare(cmp, word, Qt::CaseInsensitive)) {
+            ret += "<span class=sel>" + cmp + "</span>";
+            i += wlen - 1;
+        } else {
+            ret += a;
+        }
+    }
+
+    return ret;
+}
+
+void EBook::getMatch(int index, QString *head_l, QString *head_v, QString *text, QStringList highlightWords)
 {
     getText(index, head_l, head_v, text);
+    foreach(QString s, highlightWords) {
+        *head_v = emphasize(*head_v, s);
+        *text = emphasize(*text, s);
+    }
 }
 
 void EBook::getText(int index, QString *head_l, QString *head_v, QString *text)
