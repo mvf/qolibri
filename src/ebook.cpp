@@ -156,6 +156,55 @@ int EBook::hitWord(int maxcnt, const QString &word, SearchType type)
     return count;
 }
 
+void EBook::getMatch(int index, QString *head_l, QString *head_v, QString *text)
+{
+    getText(index, head_l, head_v, text);
+}
+
+void EBook::getText(int index, QString *head_l, QString *head_v, QString *text)
+{
+    QString t_v = hitText(index);
+    QString h_v = hitHeading(index);
+
+    int p = t_v.indexOf('\n');
+    if (h_v.isEmpty()) {
+        h_v = t_v.left(p);
+        t_v = t_v.mid(p+1);
+    } else if (h_v == t_v.left(p)) {
+        t_v = t_v.mid(p+1);
+    }
+    QString h_l = h_v;
+
+    if (h_l.contains('<')) {
+        h_l.replace(QRegExp("<img[^>]+>"), "?");
+        //h_l.replace(regRep1, "?");
+        if (h_l.contains('<')) {
+            h_l.replace(QRegExp("<[^>]+>"), "");
+            //h_l.replace(regRep2, "");
+	}
+    }
+
+    int sp = 0;
+    while((sp = h_l.indexOf('&', sp)) >= 0) {
+	if (h_l.mid(sp+1, 3) == "lt;") 
+            h_l.replace(sp, 4, '<');
+        else if (h_l.mid(sp+1, 3) == "gt;")
+            h_l.replace(sp, 4, '>');
+        else if(h_l.mid(sp+1, 4) == "amp;")
+            h_l.replace(sp, 5, '&');
+        else {
+            int ep = h_l.indexOf(';', sp+1);
+            if (ep < 0) break;
+            h_l.replace(sp, ep-sp+1, '?');
+        }
+        sp++;
+    }
+
+    *head_l = h_l;
+    *head_v = h_v;
+    *text = t_v;
+}
+
 int EbAll::hitFull(int maxcnt)
 {
     hits.clear();

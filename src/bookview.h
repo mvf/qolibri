@@ -220,14 +220,6 @@ public:
 
     virtual RET_SEARCH search(const QStringList&, const SearchMethod&) = 0;
 
-    bool isMatch(const QString &str, const QStringList &list,
-                 NarrowingLogic logic);
-    bool getMatch(EBook *eb, int index, const QStringList &list,
-                  NarrowingLogic logic,
-                  QString *head_l, QString *head_v, QString *text);
-    bool getText(EBook *eb, int lndex, QString *head_l, QString *head_v,
-                 QString *text);
-    QString emphasize(const QString &str, const QString &word);
     void zoomIn();
     void zoomOut();
     BookBrowser* bookBrowser()

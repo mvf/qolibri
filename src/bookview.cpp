@@ -573,7 +573,7 @@ void PageWidget::popupSlide(const QPoint &pos)
     popup->show();
 }
 
-QString PageWidget::emphasize(const QString &str, const QString &word)
+static QString emphasize(const QString &str, const QString &word)
 {
     enum { NO_SKIP=0, SKIP_TAG=0x01, SKIP_ENT=0x02 };
     QString ret;
@@ -619,94 +619,6 @@ QString PageWidget::emphasize(const QString &str, const QString &word)
     }
 
     return ret;
-}
-
-bool PageWidget::isMatch( const QString &str, const QStringList &list,
-                          NarrowingLogic logic )
-{
-    if (list.count() == 1)
-        return (str.contains(list[0], Qt::CaseInsensitive));
-
-    foreach(QString s, list) {
-        if (str.contains(s, Qt::CaseInsensitive)) {
-            if (logic == LogicOR)
-                return true;
-        } else {
-            if (logic == LogicAND)
-                return false;
-        }
-    }
-
-    return (logic == LogicAND);
-}
-
-//QRegExp regRep1("<img[^>]+>");
-//QRegExp regRep2("<[^>]+>");
-
-bool PageWidget::getText(EBook *eb, int index, QString *head_l, QString *head_v,
-                         QString *text)
-{
-    QString t_v = eb->hitText(index);
-    QString h_v = eb->hitHeading(index);
-
-    int p = t_v.indexOf('\n');
-    if (h_v.isEmpty()) {
-        h_v = t_v.left(p);
-        t_v = t_v.mid(p+1);
-    } else if (h_v == t_v.left(p)) {
-        t_v = t_v.mid(p+1);
-    }
-    QString h_l = h_v;
-
-    if (h_l.contains('<')) {
-        h_l.replace(QRegExp("<img[^>]+>"), "?");
-        //h_l.replace(regRep1, "?");
-        if (h_l.contains('<')) {
-            h_l.replace(QRegExp("<[^>]+>"), "");
-            //h_l.replace(regRep2, "");
-	}
-    }
-
-    int sp = 0;
-    while((sp = h_l.indexOf('&', sp)) >= 0) {
-	if (h_l.mid(sp+1, 3) == "lt;") 
-            h_l.replace(sp, 4, '<');
-        else if (h_l.mid(sp+1, 3) == "gt;")
-            h_l.replace(sp, 4, '>');
-        else if(h_l.mid(sp+1, 4) == "amp;")
-            h_l.replace(sp, 5, '&');
-        else {
-            int ep = h_l.indexOf(';', sp+1);
-            if (ep < 0) break;
-            h_l.replace(sp, ep-sp+1, '?');
-        }
-        sp++;
-    }
-
-    *head_l = h_l;
-    *head_v = h_v;
-    *text = t_v;
-
-    return !(t_v.isEmpty());
-
-}
-
-bool PageWidget::getMatch(EBook *eb, int index, const QStringList &slist,
-                          NarrowingLogic logic, 
-                          QString *head_l, QString *head_v, QString *text)
-{
-
-    if (slist.count()) {
-        QString t_i = eb->hitText(index, false);
-        if (!isMatch(t_i, slist, logic))
-            return false;
-    }
-    getText(eb, index, head_l, head_v, text);
-    totalCount++;
-    matchCount++;
-
-    return true;
-
 }
 
 RET_SEARCH PageWidget::checkLimit(int text_length)
@@ -1075,7 +987,7 @@ RET_SEARCH AllPage::readPage(int page)
                 QString head_l;
                 QString head_v;
                 QString text_v;
-                getText(&eb, j, &head_l, &head_v, &text_v);
+                eb.getText(j, &head_l, &head_v, &text_v);
                 item.composeHLine(2, toAnchor("H", j), head_l, head_v, text_v);
                 if (item.textLength() > CONF->limitBrowserChar) {
                     item.composeError(toAnchor("CUT", 1), CutString);
@@ -1210,8 +1122,9 @@ RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &meth
             QString head_i;
             QString head_v;
             QString text_v;
-            if (!getMatch(&eb, i, search_list, method.logic,
-                             &head_i, &head_v, &text_v)) continue;
+            eb.getMatch(i, &head_i, &head_v, &text_v);
+            totalCount++;
+            matchCount++;
 
             if (matchCount == 1) {
                 bookBrowser_->addBookList(book);
@@ -1339,8 +1252,9 @@ RET_SEARCH SearchWholePage::search(const QStringList &slist, const SearchMethod 
                 QString head_i;
                 QString head_v;
                 QString text_v;
-                if (!getMatch(&eb, i, slist, method.logic,
-                                 &head_i, &head_v, &text_v)) continue;
+                eb.getMatch(i, &head_i, &head_v, &text_v);
+                totalCount++;
+                matchCount++;
 
                 if (matchCount == 1) {
 

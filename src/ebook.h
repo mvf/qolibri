@@ -61,6 +61,8 @@ public:
         return hits[index];
     }
 
+    void getMatch(int index, QString *head_l, QString *head_v, QString *text);
+    void getText(int lndex, QString *head_l, QString *head_v, QString *text);
 
 protected:
 
