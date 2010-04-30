@@ -951,31 +951,20 @@ void MainWindow::viewFull()
     searchTextEdit->selectAll();
 }
 
-void MainWindow::viewSearch(const QString &name, const SearchMethod &mthd)
+void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
 {
     QTime pTime;
 
     pTime.start();
 
-    QStringList list;
-    if ( mthd.direction == WholeRead || mthd.direction == BookInfo ||
-        mthd.direction == MenuRead ) {
-       list << name;
-    } else {
-        list = name.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-        if (list.count() == 0) {
-            showStatus("<b><font color=#993333>Input search word</font></b>");
-            return;
-        }
-    }
-    optSearchButton->setText(list[0]);
+    optSearchButton->setText(queryStr);
     emit nowBusy(true);
     stopAct->setEnabled(true);
 
     bool ntab = toggleTabsAct->isChecked();
     bool pbrowser = toggleBrowserAct->isChecked();
 
-    Query query(list, mthd);
+    Query query(queryStr, mthd);
     RET_SEARCH ret = bookView->newPage(this, query, ntab, pbrowser);
     QString sstr = query.toLogicString();
     groupDock->addHistory(query.toLogicString(), mthd, CONF->historyMax);

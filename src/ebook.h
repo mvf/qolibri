@@ -43,7 +43,7 @@ public:
     EBook(HookMode hmode = HookText);
     ~EBook();
 
-    int searchQuery(int maxcnt, const QStringList &word_list, SearchType type);
+    int searchQuery(int maxcnt, const QString &query, SearchType type);
 
     // return number of Sub Book
     QString hitText(int index, bool hook = true)

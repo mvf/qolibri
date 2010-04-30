@@ -318,8 +318,7 @@ class WebPage : public QWebView
 {
     Q_OBJECT
 public:
-    WebPage(QWidget *parent, const QString &url, const SearchMethod &meth,
-            const QStringList &list); 
+    WebPage(QWidget *parent, const QString &url, const Query& query); 
     WebPage(QWidget *parent, const QString &url); 
     void zoomIn();
     void zoomOut();
@@ -348,7 +347,7 @@ signals:
 private:
     QByteArray encString(const QString &url);
     QString setSearchString(const QString &url, const QByteArray &enc, 
-                            const QStringList &slist);
+                            const QString &query);
     QString directionString(const QString &url);
     QString setDirectionString(const QString &url, const QString &dstr,
                                SearchDirection &direc);

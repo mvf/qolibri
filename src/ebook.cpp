@@ -56,14 +56,18 @@ EBook::~EBook()
 {
 }
 
-int EBook::searchQuery(int maxcnt, const QStringList &word_list, SearchType type)
+int EBook::searchQuery(int maxcnt, const QString& query, SearchType type)
 {
     switch (type) {
     case SearchKeyWord:
     case SearchCrossWord:
-        return hitMultiWord(maxcnt, word_list, type);
+    {
+        QStringList list;
+        list = query.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+        return hitMultiWord(maxcnt, list, type);
+    }
     default:
-        return hitWord(maxcnt, word_list[0], type);
+        return hitWord(maxcnt, query, type);
     }
 }
 

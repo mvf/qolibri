@@ -49,8 +49,8 @@ struct SearchMethod {
 void addDirectionMenu(QMenu *menu);
 
 struct Query {
-    Query(QStringList list_, SearchMethod method_);
-    QStringList list;
+    Query(QString query_, SearchMethod method_);
+    QString query;
     SearchMethod method;
     QString toLogicString() const;
 };

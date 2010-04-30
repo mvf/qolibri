@@ -1022,7 +1022,7 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
     RET_SEARCH retStatus = NORMAL;
     QStringList highlightWords;
     if (CONF->highlightMatch) {
-        highlightWords = query.list;
+        highlightWords << query.query;
     }
 
     items.addHItem(0, "TOP", "tmp");
@@ -1058,7 +1058,7 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
                       CONF->indentOffset, query.method.ruby);
 
         int hit_num = 0;
-        hit_num = eb.searchQuery(req_cnt, query.list, type);
+        hit_num = eb.searchQuery(req_cnt, query.query, type);
         if (hit_num <= 0) {
             eb.unsetSubbook();
             continue;
@@ -1186,7 +1186,7 @@ RET_SEARCH SearchWholePage::search(const Query& query)
 
     QStringList highlightWords;
     if (CONF->highlightMatch) {
-        highlightWords = query.list;
+        highlightWords << query.query;
     }
 
     PageItems item(CONF->dictSheet);
@@ -1306,10 +1306,8 @@ RET_SEARCH SearchWholePage::search(const Query& query)
     return retStatus;
 }
 
-WebPage::WebPage(QWidget *parent, const QString &url,
-                 const SearchMethod &meth,
-                 const QStringList &slist)
-    : QWebView(parent), method_(meth)
+WebPage::WebPage(QWidget *parent, const QString &url, const Query& query)
+    : QWebView(parent), method_(query.method)
 {
     loading_ = true;
     setObjectName("webpage");
@@ -1324,7 +1322,7 @@ WebPage::WebPage(QWidget *parent, const QString &url,
     //connect(this, SIGNAL(linkRequested(QString)), SLOT(execProcess(QString)));
 
     QByteArray enc = encString(url);
-    QString ustr = setSearchString(url, enc, slist);
+    QString ustr = setSearchString(url, enc, query.query);
     QString sdir = directionString(url);
     if (!sdir.isEmpty()) {
         ustr = setDirectionString(ustr, sdir, method_.direction);
@@ -1410,20 +1408,13 @@ QByteArray WebPage::encString(const QString &url)
 }
 
 QString WebPage::setSearchString(const QString &url, const QByteArray &enc,
-                                 const QStringList &slist)
+                                 const QString &query)
 {
-    QString str;
-    for (int i=0; i<slist.count(); i++) {
-        str += slist[i];
-        if (i < (slist.count() - 1)){
-            str += " ";
-        }
-    }
     QByteArray bstr;
     if (enc.isEmpty()) {
-        bstr = str.toUtf8();
+        bstr = query.toUtf8();
     } else {
-        bstr = QTextCodec::codecForName(enc)->fromUnicode(str);
+        bstr = QTextCodec::codecForName(enc)->fromUnicode(query);
     }
     QString fstr("");
     foreach(const char c, bstr) {
@@ -1704,7 +1695,7 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
     foreach(Book *book, query.method.group->bookList()) {
         if (book->bookType() == BookWeb &&
                 book->checkState() == Qt::Checked) {
-            WebPage *wpage = new WebPage(this, book->path(), query.method, query.list);
+            WebPage *wpage = new WebPage(this, book->path(), query);
             connect(wpage, SIGNAL(loadFinished(bool)),
                     SLOT(webViewFinished(bool)));
             connect(wpage, SIGNAL(linkRequested(QString)),

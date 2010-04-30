@@ -41,21 +41,13 @@ void addDirectionMenu(QMenu *menu)
                     Option1Search);
 }
 
-Query::Query(QStringList list_, SearchMethod method_)
-    : list(list_)
+Query::Query(QString query_, SearchMethod method_)
+    : query(query_)
     , method(method_)
 {
 }
 
 QString Query::toLogicString() const
 {
-    if (list.count() <= 0) {
-        qWarning() << "No Search String List";
-        return QString();
-    }
-    QString str = list[0];
-    for (int i = 1; i < list.count(); i++) {
-        str += " " + list[i];
-    }
-    return str;
+    return query;
 }
