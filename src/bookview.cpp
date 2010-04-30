@@ -1017,12 +1017,6 @@ SearchPage::SearchPage(QWidget *parent, const SearchMethod &method)
 RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &method)
 {
     RET_SEARCH retStatus = NORMAL;
-    QStringList search_list;
-    if (method.direction != KeywordSearch &&
-        method.direction != CrossSearch ) {
-        search_list = slist;
-        search_list.removeFirst();
-    }
     QStringList highlightWords;
     if (CONF->highlightMatch) {
         highlightWords = slist;
@@ -1034,9 +1028,6 @@ RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &meth
     EBook eb;
     int book_count = 0;
     int req_cnt = method.limitBook;
-    if (search_list.count())
-        req_cnt = -1;
-
     bool break_flag = false;
 
     foreach(Book *book, method.group->bookList()) {
