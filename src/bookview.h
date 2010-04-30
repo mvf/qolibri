@@ -64,10 +64,6 @@ public:
         return document()->defaultFont().pointSize();
     }
 
-    inline QList <Book*> bookList() const
-    {
-        return bookList_;
-    }
     inline void addBookList(Book *book)
     {
         bookList_ << book;
@@ -414,6 +410,27 @@ private slots:
     void zoomOut();
     void viewTabChanged(int index);
     void webViewFinished(bool);
+};
+
+class SearchPageBuilder : public QObject
+{
+    Q_OBJECT
+public:
+    SearchPageBuilder(BookBrowser *browser);
+    RET_SEARCH search(const QStringList &slist, const SearchMethod &method);
+    QList <QTreeWidgetItem*> treeItems();
+    QString text();
+    int textLength();
+    void expand();
+
+signals:
+    void statusRequested(const QString &str);
+
+private:
+    int totalCount;
+    int matchCount;
+    PageItems items;
+    BookBrowser *bookBrowser_;
 };
 
 #endif

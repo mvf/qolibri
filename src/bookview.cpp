@@ -1010,23 +1010,21 @@ RET_SEARCH AllPage::initSeqHits()
     return NORMAL;
 }
 
-
-SearchPage::SearchPage(QWidget *parent, const SearchMethod &method)
-    : PageWidget(parent, method)
+SearchPageBuilder::SearchPageBuilder(BookBrowser *browser)
+    : totalCount(0)
+    , items(CONF->dictSheet)
+    , bookBrowser_(browser)
 {
 }
 
-RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &method)
+RET_SEARCH SearchPageBuilder::search(const QStringList &slist, const SearchMethod &method)
 {
     RET_SEARCH retStatus = NORMAL;
-    int totalCount = 0;
-    int matchCount = 0;
     QStringList highlightWords;
     if (CONF->highlightMatch) {
         highlightWords = slist;
     }
 
-    PageItems items(CONF->dictSheet);
     items.addHItem(0, "TOP", "tmp");
 
     EBook eb;
@@ -1121,18 +1119,51 @@ RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &meth
     QString top_title = toLogicString(slist, method);
     top_item->setText(0, QString("%1(%2)").arg(top_title).arg(totalCount));
 
-    bookTree->insertTopLevelItems(0, items.items());
+    return retStatus;
+}
+
+QList <QTreeWidgetItem*> SearchPageBuilder::treeItems()
+{
+    return items.items();
+}
+    
+QString SearchPageBuilder::text()
+{
+    return items.text();
+}
+
+int SearchPageBuilder::textLength()
+{
+    return items.textLength();
+}
+
+void SearchPageBuilder::expand()
+{
+    QTreeWidgetItem *top_item = items.topItem();
     if (totalCount <= 100 || top_item->childCount() == 1) {
         items.expand(1);
     } else {
         items.expand(0);
     }
-    bookTree->setCurrentItem(top_item);
-    emit statusRequested(QString("Browser (%1 character)")
-                         .arg(items.textLength()));
-    checkStop();
+}
 
-    bookBrowser_->setBrowser(items.text());
+SearchPage::SearchPage(QWidget *parent, const SearchMethod &method)
+    : PageWidget(parent, method)
+{
+}
+
+RET_SEARCH SearchPage::search(const QStringList &slist, const SearchMethod &method)
+{
+    SearchPageBuilder builder(bookBrowser_);
+    connect(&builder, SIGNAL(statusRequested(const QString&)), SIGNAL(statusRequested(const QString&)));
+    RET_SEARCH retStatus = builder.search(slist, method);
+
+    bookTree->insertTopLevelItems(0, builder.treeItems());
+    bookTree->setCurrentItem(bookTree->topLevelItem(0));
+    builder.expand();
+    emit statusRequested(QString("Browser (%1 character)").arg(builder.textLength()));
+
+    bookBrowser_->setBrowser(builder.text());
     //qDebug() << items.text();
 
     return retStatus;
