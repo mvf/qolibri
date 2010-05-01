@@ -1009,7 +1009,21 @@ SearchPageBuilder::SearchPageBuilder(BookBrowser *browser)
 
 RET_SEARCH SearchPageBuilder::search(const Query& query)
 {
-    return search1(query);
+    QStringList queries;
+    queries << query.query;
+    switch (query.method.direction) {
+    case ExactWordSearch:
+    case ForwardSearch:
+        queries << stemWords(query.query);
+        break;
+    default:
+        break;
+    }
+    RET_SEARCH ret;
+    foreach (QString q, queries) {
+        ret = search1(Query(q, query.method));
+    }
+    return ret;
 }
 
 RET_SEARCH SearchPageBuilder::search1(const Query& query)
