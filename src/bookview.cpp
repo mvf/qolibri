@@ -1000,7 +1000,8 @@ RET_SEARCH AllPage::initSeqHits()
 }
 
 SearchPageBuilder::SearchPageBuilder(BookBrowser *browser)
-    : totalCount(0)
+    : bookIndex(0)
+    , itemIndex(0)
     , items(CONF->dictSheet)
     , bookBrowser_(browser)
 {
@@ -1008,12 +1009,16 @@ SearchPageBuilder::SearchPageBuilder(BookBrowser *browser)
 
 RET_SEARCH SearchPageBuilder::search(const Query& query)
 {
+    return search1(query);
+}
+
+RET_SEARCH SearchPageBuilder::search1(const Query& query)
+{
     RET_SEARCH retStatus = NORMAL;
 
     items.addHItem(0, "TOP", "tmp");
 
     EBook eb;
-    int book_count = 0;
     int req_cnt = query.method.limitBook;
     bool break_flag = false;
 
@@ -1029,15 +1034,17 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
         qWarning() << "Invalid Search Method" << query.method.direction;
     }
 
+    int totalMatchCount = 0;
+
     foreach(Book *book, query.method.group->bookList()) {
         if (book->bookType() != BookLocal) continue;
         if (book->checkState() != Qt::Checked) continue;
 
         emit statusRequested(book->name() + ":(" +
-                             QString::number(totalCount) + ")");
+                             QString::number(itemIndex) + ")");
         if (checkStop() || break_flag) break;
 
-        if ( eb.initBook(book->path(), book->bookNo(), book_count) < 0) continue;
+        if ( eb.initBook(book->path(), book->bookNo(), bookIndex) < 0) continue;
 
         eb.initHook(bookBrowser_->fontSize(), book->fontList(),
                       CONF->indentOffset, query.method.ruby);
@@ -1049,7 +1056,7 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
             continue;
         }
 
-        matchCount = 0;
+        int matchCount = 0;
         for (int i = 0; i < hit_num; i++) {
             if (checkStop()) break;
 
@@ -1057,19 +1064,19 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
             QString head_v;
             QString text_v;
             eb.getMatch(i, &head_i, &head_v, &text_v, CONF->highlightMatch);
-            totalCount++;
+            itemIndex++;
             matchCount++;
 
             if (matchCount == 1) {
                 bookBrowser_->addBookList(book);
-                book_count++;
-                items.composeHLine(1, toAnchor("B", book_count), book->name());
+                bookIndex++;
+                items.composeHLine(1, toAnchor("B", bookIndex), book->name());
             }
-            items.composeHLine(2, toAnchor("H", totalCount), head_i, head_v, text_v);
+            items.composeHLine(2, toAnchor("H", itemIndex), head_i, head_v, text_v);
 
-            RET_SEARCH chk = checkLimit(query.method, totalCount, matchCount, items.textLength());
+            RET_SEARCH chk = checkLimit(query.method, itemIndex, matchCount, items.textLength());
             if (chk != NORMAL) {
-                items.composeError(toAnchor("CUT", totalCount), CutString);
+                items.composeError(toAnchor("CUT", itemIndex), CutString);
                 if (chk != LIMIT_BOOK) {
                     break_flag = true;
                     retStatus = chk;
@@ -1085,9 +1092,10 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
                                   QString::number(matchCount)  + ')');
 
         eb.unsetSubbook();
+        totalMatchCount += matchCount;
     }
 #if 0
-    if (totalCount == 0) {
+    if (totalMatchCount == 0) {
         retStatus = (checkStop()) ? NOT_HIT_INTERRUPTED : NOT_HIT;
     }
 #endif
@@ -1097,12 +1105,12 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
     }
     items.composeTrail();
 
-    emit statusRequested(QString("List (%1 items)").arg(totalCount));
+    emit statusRequested(QString("List (%1 items)").arg(itemIndex));
     checkStop();
 
     QTreeWidgetItem *top_item = items.item(0);
     QString top_title = query.toLogicString();
-    top_item->setText(0, QString("%1(%2)").arg(top_title).arg(totalCount));
+    top_item->setText(0, QString("%1(%2)").arg(top_title).arg(totalMatchCount));
 
     return retStatus;
 }
@@ -1124,7 +1132,7 @@ int SearchPageBuilder::textLength()
 
 void SearchPageBuilder::expand()
 {
-    if (totalCount <= 100 || items.topItems().count() == 1) {
+    if (itemIndex <= 100 || items.topItems().count() == 1) {
         items.expand(1);
     } else {
         items.expand(0);

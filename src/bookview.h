@@ -419,8 +419,10 @@ signals:
     void statusRequested(const QString &str);
 
 private:
-    int totalCount;
-    int matchCount;
+    RET_SEARCH search1(const Query& query);
+
+    int bookIndex;
+    int itemIndex;
     PageItems items;
     BookBrowser *bookBrowser_;
 };
