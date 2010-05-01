@@ -55,6 +55,8 @@ struct Query {
     QString toLogicString() const;
 };
 
+QStringList stemWords(QString);
+
 #define IGNORE_SEEK_HEADING
 
 #endif
