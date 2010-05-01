@@ -177,31 +177,25 @@ public:
 
     void composeHeader(const QString &ssheet);
     void composeError(const QString &anchor, const QString &text);
-    void composeHLine(int num, const QString &anchor, const QString &title_l,
+    QTreeWidgetItem* composeHLine(int num, const QString &anchor, const QString &title_l,
                       const QString &title_t, const QString &text);
-    void composeHLine(int num, const QString &anchor, const QString &title,
+    QTreeWidgetItem* composeHLine(int num, const QString &anchor, const QString &title,
                       const QString &text = QString());
     void composeTrail();
-#ifdef TEST_MODE
-    void addHItem(int num, const QString &anchor, const QString &title,
-                  int hp, int ho, int tp, int to);
-#else
-    void addHItem(int num, const QString &anchor, const QString &title);
-#endif
+    QTreeWidgetItem* addHItem(int num, const QString &anchor, const QString &title);
     void addHtmlStr(const QString &html) { text_ += html; }
     void addTextStr(const QString &str) { text_ += str; }
     void expand(int level);
     QTreeWidgetItem* curItem() { return curItem_; }
     QTreeWidgetItem* item(int level) { return itemP_[level]; } 
-    QTreeWidgetItem* topItem() { return itemP_[0]; } 
 
     QString text() { return text_; }
-    QList <QTreeWidgetItem*> items() { return items_; }
+    QList <QTreeWidgetItem*> topItems() { return topItems_; }
     int textLength() { return textLength_; }
 
 private:
     QString text_;
-    QList <QTreeWidgetItem*> items_;
+    QList <QTreeWidgetItem*> topItems_;
     QTreeWidgetItem* itemP_[7];
     QTreeWidgetItem* curItem_;
     int textLength_;

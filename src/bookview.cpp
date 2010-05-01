@@ -423,7 +423,8 @@ void PageItems::composeHeader(const QString &ssheet)
             "<body>\n";
     textLength_ = text_.length();
 }
-void PageItems::composeHLine(int num, const QString &anchor,
+
+QTreeWidgetItem* PageItems::composeHLine(int num, const QString &anchor,
                              const QString &title_l, const QString &title_t,
                              const QString &text)
 {
@@ -440,11 +441,10 @@ void PageItems::composeHLine(int num, const QString &anchor,
     textLength_ += str.length();
     text_ += str;
 
-    addHItem(num, anchor, title_l);
-
+    return addHItem(num, anchor, title_l);
 }
 
-void PageItems::composeHLine(int num, const QString &anchor,
+QTreeWidgetItem* PageItems::composeHLine(int num, const QString &anchor,
                                  const QString &title, const QString &text)
 {
     QString snum = QString::number(num);
@@ -460,8 +460,7 @@ void PageItems::composeHLine(int num, const QString &anchor,
     textLength_ += str.length();
     text_ += str;
 
-    addHItem(num, anchor, title);
-
+    return addHItem(num, anchor, title);
 }
 
 void PageItems::composeError(const QString &anchor,
@@ -471,21 +470,21 @@ void PageItems::composeError(const QString &anchor,
 	          "</em></p>";
     textLength_ += str.length();
     text_ += str;
-    QTreeWidgetItem *i = new QTreeWidgetItem(items_[0],
+    QTreeWidgetItem *i = new QTreeWidgetItem(itemP_[0],
 	                        QStringList() << text << anchor);
     i->setForeground(0, QColor("#886666"));
-    items_ << i;
-
 }
 
-void PageItems::addHItem(int num, const QString &anchor, const QString &title)
+QTreeWidgetItem* PageItems::addHItem(int num, const QString &anchor, const QString &title)
 {
 
     QTreeWidgetItem *parent = (num > 0) ? itemP_[num-1] : 0;
     curItem_ = new QTreeWidgetItem(parent, QStringList() << title << anchor);
 
-    items_ << curItem_;
+    if (num == 0)
+        topItems_ << curItem_;
     itemP_[num] = curItem_;
+    return curItem_;
 }
 
 void PageItems::composeTrail()
@@ -496,19 +495,9 @@ void PageItems::composeTrail()
 
 void PageItems::expand(int level)
 {
-    /*
-       level = 0 : expand top only
-       level = 1 : expand top and first children
-       level = 2 : expand all
-    */
-    if (level == 2) {
-        foreach(QTreeWidgetItem * i, items_) {
-            i->setExpanded(true);
-        }
-    } else {
-        QTreeWidgetItem *ip = items_[0];
+    foreach(QTreeWidgetItem *ip, topItems_) {
         ip->setExpanded(true);
-        if (level == 1) {
+        if (level >= 1) {
             for (int i = 0; i < ip->childCount(); i++) {
                 ip->child(i)->setExpanded(true);
             }
@@ -708,8 +697,8 @@ RET_SEARCH InfoPage::search(const Query& query)
     bookBrowser_->setBrowser(items.text());
     bookBrowser_->setSearchPaths(QStringList() << book->path() << 
                                 EbCache::cachePath);
-    bookTree->insertTopLevelItems(0, items.items());
-    bookTree->setCurrentItem(items.items()[0]);
+    bookTree->insertTopLevelItems(0, items.topItems());
+    bookTree->setCurrentItem(bookTree->topLevelItem(0));
 
     return NORMAL;
 }
@@ -770,10 +759,10 @@ RET_SEARCH MenuPage::fullMenuPage()
     }
 
     items.composeTrail();
-    bookTree->insertTopLevelItems(0, items.items());
+    bookTree->insertTopLevelItems(0, items.topItems());
     items.expand(2);
 
-    bookTree->setCurrentItem(items.topItem());
+    bookTree->setCurrentItem(bookTree->topLevelItem(0));
 
     bookBrowser_->setBrowser(items.text());
 
@@ -812,7 +801,7 @@ void MenuPage::selectMenuPage(int index)
 
     items.composeTrail();
     bookTree->clear();
-    bookTree->insertTopLevelItems(0, items.items());
+    bookTree->insertTopLevelItems(0, items.topItems());
     items.expand(1);
 
     if (next) {
@@ -967,7 +956,7 @@ RET_SEARCH AllPage::readPage(int page)
     item.composeTrail();
 
     bookTree->clear();
-    bookTree->insertTopLevelItems(0, item.items());
+    bookTree->insertTopLevelItems(0, item.topItems());
     item.expand(1);
 
     bookTree->setCurrentItem(current_item);
@@ -1111,7 +1100,7 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
     emit statusRequested(QString("List (%1 items)").arg(totalCount));
     checkStop();
 
-    QTreeWidgetItem *top_item = items.topItem();
+    QTreeWidgetItem *top_item = items.item(0);
     QString top_title = query.toLogicString();
     top_item->setText(0, QString("%1(%2)").arg(top_title).arg(totalCount));
 
@@ -1120,7 +1109,7 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
 
 QList <QTreeWidgetItem*> SearchPageBuilder::treeItems()
 {
-    return items.items();
+    return items.topItems();
 }
     
 QString SearchPageBuilder::text()
@@ -1135,8 +1124,7 @@ int SearchPageBuilder::textLength()
 
 void SearchPageBuilder::expand()
 {
-    QTreeWidgetItem *top_item = items.topItem();
-    if (totalCount <= 100 || top_item->childCount() == 1) {
+    if (totalCount <= 100 || items.topItems().count() == 1) {
         items.expand(1);
     } else {
         items.expand(0);
@@ -1262,7 +1250,7 @@ RET_SEARCH SearchWholePage::search(const Query& query)
                                  .arg(book->name()).arg(matchCount));
     }
     if (totalCount == 0) {
-        delete item.topItem();
+        delete item.topItems()[0];
         retStatus = (checkStop()) ? NOT_HIT_INTERRUPTED : NOT_HIT;
         return retStatus;
     }
@@ -1275,9 +1263,9 @@ RET_SEARCH SearchWholePage::search(const Query& query)
     emit statusRequested(QString("List (%1 items)").arg(totalCount));
     checkStop();
 
-    bookTree->insertTopLevelItems(0, item.items());
+    bookTree->insertTopLevelItems(0, item.topItems());
     QString top_title = query.toLogicString();
-    QTreeWidgetItem *top_tree = item.topItem();
+    QTreeWidgetItem *top_tree = item.item(0);
     top_tree->setText(0, QString("%1(%2)").arg(top_title).arg(totalCount));
     if (totalCount <= 100 || top_tree->childCount() == 1) {
         item.expand(1);
