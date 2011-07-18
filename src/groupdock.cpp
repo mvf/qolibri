@@ -442,8 +442,6 @@ GroupDock::GroupDock(QWidget *parent, Model *model_)
     h->setSpacing(0);
     h->addWidget(tabWidget);
     setLayout(h);
-
-    setWindowFlags(Qt::Tool);
 #endif
 
     changeGroupList();

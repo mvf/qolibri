@@ -45,15 +45,10 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    enum DockPosition { DockLeft, DockRight };
-
     MainWindow(Model *, const QString &s_text);
 
 protected:
     void closeEvent(QCloseEvent *event);
-#if defined (Q_WS_X11) || defined (Q_WS_WIN)
-    bool event(QEvent *event);
-#endif
 
 signals:
     void searchFinished();
@@ -108,9 +103,6 @@ private slots:
     void clearCache();
     void setDockOff();
 
-#if defined (Q_WS_X11) || defined (Q_WS_WIN)
-    void showDock();
-#endif
     void checkNextSearch();
     void searchClientText(const QString &str);
     void searchClipboardText();
@@ -142,14 +134,9 @@ private:
     void writeMethodSetting(const SearchMethod&, QSettings*);
     QString loadAllExternalFont(Book *pbook);
 
-#if defined (Q_WS_X11) || defined (Q_WS_WIN)
-    void setDockPosition();
-    void resizeDock();
-    void moveDock();
-#endif
-
     Model *model;
 
+    QDockWidget *dock;
     GroupDock *groupDock;
     BookView *bookView;
 
@@ -195,9 +182,7 @@ private:
     QTimer *timer;
     QStringList  clientText;
 
-#if defined (Q_WS_X11) || defined (Q_WS_WIN)
-    DockPosition dockPosition;
-#endif
+    Qt::DockWidgetArea dockPosition;
 };
 
 #endif

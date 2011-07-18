@@ -42,7 +42,6 @@ const char *Program = { "qolibri" };
 
 MainWindow::MainWindow(Model *model_, const QString &s_text)
     : model(model_)
-    , dockPosition(DockRight)
 {
 #ifdef Q_WS_MAC
     //setUnifiedTitleAndToolBarOnMac(true);
@@ -58,11 +57,15 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
     bookView = new BookView(this);
     bookViewSlots();
 
-    groupDock = new GroupDock(this, model);
+    dock = new QDockWidget(this);
+    groupDock = new GroupDock(dock, model);
     groupDockSlots();
 //#if defined (Q_WS_X11) || defined (Q_WS_WIN)
 //    groupDock->hide();
 //#endif
+
+    dock->setWidget(groupDock);
+    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
     createActions();
     createMenus();
@@ -82,16 +85,10 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
 
     changeViewTabCount(0);
 
-
-#if defined (Q_WS_X11)
-    QTimer::singleShot(0,this, SLOT(showDock()));
-#elif defined (Q_WS_WIN)
-    showDock();
-#elif defined (Q_WS_MAC)
+    addDockWidget(dockPosition, dock);
     if (!toggleDockAct->isChecked()) {
-        groupDock->hide();
+        dock->hide();
     }
-#endif
 
     sound = NULL;
     if (model->groupList[0]->bookList().count() == 0) {
@@ -358,6 +355,7 @@ void MainWindow::readSettings()
     resize(size);
     bool dock = settings.value("dock", 1).toBool();
     toggleDockAct->setChecked(dock);
+    dockPosition = (Qt::DockWidgetArea) settings.value("dockarea", Qt::RightDockWidgetArea).toInt();
 
     bool search_bar = settings.value("search_bar", 1).toBool();
     if (!search_bar) {
@@ -422,6 +420,7 @@ void MainWindow::writeSettings()
 
     settings.setValue("size", size());
     settings.setValue("dock", toggleDockAct->isChecked());
+    settings.setValue("dockarea", dockWidgetArea(dock));
     settings.setValue("search_bar", searchBar->isVisible());
     settings.setValue("method_bar", toggleMethodBarAct->isChecked());
 
@@ -494,46 +493,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     event->accept();
 }
-
-#if defined (Q_WS_X11) || defined (Q_WS_WIN)
-
-bool MainWindow::event(QEvent *ev)
-{
-    if (ev->type() == QEvent::WindowActivate) {
-        setDockPosition();
-        moveDock();
-        groupDock->raise();
-        return false;
-    } else if (ev->type() == QEvent::Move) {
-        moveDock();
-        return false;
-    } else if (ev->type() == QEvent::Resize) {
-        resizeDock();
-        moveDock();
-        return false;
-    } else if (ev->type() == QEvent::WindowStateChange) {
-        if (windowState() & Qt::WindowMinimized) {
-            groupDock->hide();
-        } else if (windowState() & Qt::WindowActive) {
-            setDockPosition();
-            moveDock();
-            if (toggleDockAct->isChecked()) {
-                groupDock->show();
-            } else {
-            }
-        } else if (windowState() == Qt::WindowNoState) {
-            if (toggleDockAct->isChecked()) {
-                groupDock->show();
-            }
-        }
-        return true;
-    }
-    return QWidget::event(ev);
-}
-
-
-#endif
-
 
 Group *MainWindow::groupFromName(const QString &name)
 {
@@ -665,16 +624,9 @@ void MainWindow::showTabInfo(int index)
 void MainWindow::toggleDock(bool check)
 {
     if (check) {
-#if !defined (Q_WS_MAC)
-        DockPosition p = dockPosition;
-        setDockPosition();
-        if (p != dockPosition) {
-            moveDock();
-        }
-#endif
-        groupDock->show();
+        dock->show();
     } else {
-        groupDock->hide();
+        dock->hide();
     }
 }
 
@@ -695,88 +647,6 @@ void MainWindow::setDockOff()
     toggleDockAct->setChecked(false);
 }
 
-
-#if defined (Q_WS_X11) || defined (Q_WS_WIN)
-//static int screenWidth = QDesktopWidget().screenGeometry().width();
-
-void MainWindow::setDockPosition()
-{
-    int left = mapToGlobal(QPoint(0, 0)).x();
-    //int right = screenWidth - width() - left - 2;
-
-    int right = QDesktopWidget().screenGeometry(1).width() - width() -
-                left - 2;
-
-    //
-    //qDebug() << "left" << left << "right" << right
-    //         << "width" << width() << "screen width"
-    //         << QDesktopWidget().screenGeometry(this).width();
-    //
-    // "screenGeometry()" returns wrong desktop size(width),
-    // when gave parameter ("this") or ("-1").
-    // Possibly this occurred on linux workstation of macbook.
-    //
-    dockPosition =  (left > right) ? DockLeft : DockRight;
-
-}
-void MainWindow::resizeDock()
-{
-    int height = size().height() -
-                 (frameSize().height() - size().height());
-    //int height = size().height() -
-    //             ( groupDock->frameSize().height() - groupDock->size().height());
-    //int width = 280 +
-    //             ( groupDock->frameSize().width() - groupDock->size().width());
-    //qDebug() << "frameSize width" << groupDock->frameSize().width()
-    //         << "width" << groupDock->size().width();
-    //qDebug() << "frameSize height" << groupDock->frameSize().height()
-    //         << "height" << groupDock->size().height();
-
-    QSize sz(270, height);
-
-    //QSize sz = groupDock->size();
-    //sz.setHeight(size().height());
-    //sz.setWidth(280);
-    groupDock->resize(sz);
-}
-void MainWindow::moveDock()
-{
-    QPoint pnt;
-
-    if (dockPosition == DockLeft) {
-        int w = 280 + (groupDock->frameSize().width() - groupDock->size().width());
-        pnt = mapToGlobal(QPoint(-w, 0));
-        if (pnt.x() < 0) {
-            pnt.setX(0);
-        }
-    } else {
-        pnt = mapToGlobal(QPoint(width(), 0));
-    }
-    groupDock->move(pnt);
-}
-
-void MainWindow::showDock()
-{
-    //
-    // qDebug() << ((isVisible()) ? "Visible" : "Unvisible");
-    //
-    // Delay resizing (after MainWindow shown?).
-    // This stupid code is meant to get real MainWindow height.
-    // And this may not get acurate size yet.
-    //
-    setDockPosition();
-    resizeDock();
-    //connect(toggleDockAct, SIGNAL(triggered(bool)),
-    //        this, SLOT(toggleDock(bool)));
-    moveDock();
-    if (!toggleDockAct->isChecked()) {
-        groupDock->hide();
-    } else {
-        groupDock->show();
-    }
-}
-
-#endif
 
 void MainWindow::toggleBar()
 {
