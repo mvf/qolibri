@@ -234,7 +234,7 @@ void MainWindow::createMenus()
 
 void MainWindow::createToolBars()
 {
-    setIconSize(QSize(32, 32));
+    setIconSize(QSize(16, 16));
     QToolBar *bar1 = addToolBar("Search/Read Book");
     bar1->setMovable(false);
     bar1->addAction(toggleBarAct);
