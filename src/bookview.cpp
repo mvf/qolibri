@@ -1019,7 +1019,7 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
     default:
         break;
     }
-    RET_SEARCH ret;
+    RET_SEARCH ret = NOT_HIT;
     foreach (QString q, queries) {
         ret = search1(Query(q, query.method));
     }
@@ -1036,7 +1036,7 @@ RET_SEARCH SearchPageBuilder::search1(const Query& query)
     int req_cnt = query.method.limitBook;
     bool break_flag = false;
 
-    SearchType type;
+    SearchType type = SearchExactWord;
     switch (query.method.direction) {
     case KeywordSearch:   type = SearchKeyWord; break; 
     case CrossSearch:     type = SearchCrossWord; break; 

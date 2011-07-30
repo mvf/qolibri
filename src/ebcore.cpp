@@ -212,7 +212,7 @@ QByteArray EbCore::fontToBStr(int code, NarrowOrWide n_or_w)
         return QByteArray();
 }
 QByteArray EbCore::fontToHtmlBStr(const QByteArray &fname,
-                                    NarrowOrWide n_or_w)
+                                    NarrowOrWide)
 {
     QByteArray ret = "<img src=\"" + utfToEuc(ebCache.fontCacheRel) + fname  +
                      "\"";
