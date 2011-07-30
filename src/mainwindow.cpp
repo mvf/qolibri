@@ -265,6 +265,30 @@ void MainWindow::createToolBars()
     bookBar->addAction(openBookAct);
     bookBar->hide();
 
+    methodBar = addToolBar(tr("Search methods"));
+    methodBar->setMovable(false);
+    //methodBar->addWidget(new QLabel("  "));
+
+    methodBar->addWidget(new DirectionComboBox(this, model));
+    methodBar->addWidget(new LogicComboBox(this, model));
+
+    methodBar->addWidget(new QLabel(tr(" Hits per book/total:")));
+    QSpinBox *limitBookSpin = new QSpinBox();
+    limitBookSpin->setRange(CONF->stepBookHitMax, CONF->maxLimitBookHit);
+    limitBookSpin->setSingleStep(CONF->stepBookHitMax);
+    limitBookSpin->setValue(model->method.limitBook);
+    connect(limitBookSpin, SIGNAL(valueChanged(int)),
+            model, SLOT(setLimitBook(int)));
+    methodBar->addWidget(limitBookSpin);
+    methodBar->addWidget(new QLabel(tr("/")));
+    QSpinBox *limitTotalSpin = new QSpinBox();
+    limitTotalSpin->setRange(CONF->stepTotalHitMax, CONF->maxLimitTotalHit);
+    limitTotalSpin->setSingleStep(CONF->stepTotalHitMax);
+    limitTotalSpin->setValue(model->method.limitTotal);
+    connect(limitTotalSpin, SIGNAL(valueChanged(int)),
+            model, SLOT(setLimitTotal(int)));
+    methodBar->addWidget(limitTotalSpin);
+
     QToolBar *bar2 = addToolBar("Options 1");
 
     bar2->setMovable(false);
@@ -288,31 +312,6 @@ void MainWindow::createToolBars()
     webBar->addAction(reloadAct);
     webBar->hide();
 
-
-    addToolBarBreak();
-    methodBar = addToolBar(tr("Search methods"));
-    methodBar->setMovable(false);
-    //methodBar->addWidget(new QLabel("  "));
-
-    methodBar->addWidget(new DirectionComboBox(this, model));
-    methodBar->addWidget(new LogicComboBox(this, model));
-
-    methodBar->addWidget(new QLabel(tr(" Hit limit (book/total):")));
-    QSpinBox *limitBookSpin = new QSpinBox();
-    limitBookSpin->setRange(CONF->stepBookHitMax, CONF->maxLimitBookHit);
-    limitBookSpin->setSingleStep(CONF->stepBookHitMax);
-    limitBookSpin->setValue(model->method.limitBook);
-    connect(limitBookSpin, SIGNAL(valueChanged(int)),
-            model, SLOT(setLimitBook(int)));
-    methodBar->addWidget(limitBookSpin);
-    methodBar->addWidget(new QLabel(tr("/")));
-    QSpinBox *limitTotalSpin = new QSpinBox();
-    limitTotalSpin->setRange(CONF->stepTotalHitMax, CONF->maxLimitTotalHit);
-    limitTotalSpin->setSingleStep(CONF->stepTotalHitMax);
-    limitTotalSpin->setValue(model->method.limitTotal);
-    connect(limitTotalSpin, SIGNAL(valueChanged(int)),
-            model, SLOT(setLimitTotal(int)));
-    methodBar->addWidget(limitTotalSpin);
 #if 0
     methodBar->addSeparator();
     methodBar->addAction(booksAct);
