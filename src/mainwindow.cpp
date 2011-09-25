@@ -28,6 +28,7 @@
 #include "book.h"
 #include "bookview.h"
 #include "toolbar.h"
+#include "globaleventfilter.h"
 #include "groupdock.h"
 #include "booksetting.h"
 #include "fontsetting.h"
@@ -103,6 +104,10 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
     connectClipboard();
     connect(model, SIGNAL(scanClipboardChanged(bool)), SLOT(connectClipboard()));
     QTimer::singleShot(0, searchTextEdit, SLOT(setFocus()));
+
+    GlobalEventFilter *gef = new GlobalEventFilter();
+    qApp->installEventFilter(gef);
+    connect(gef, SIGNAL(focusSearch()), this, SLOT(focusSearch()));
 }
 
 void MainWindow::createActions()
@@ -773,6 +778,11 @@ void MainWindow::viewSearch()
 //        return;
 //    }
     viewSearch(str, model->method);
+    focusSearch();
+}
+
+void MainWindow::focusSearch()
+{
     searchTextEdit->setFocus();
     searchTextEdit->selectAll();
 }
@@ -800,8 +810,7 @@ void MainWindow::viewMenu()
     viewSearch(m.bookReader->name(), m);
 
     if (model->bookMode == ModeDictionary) {
-        searchTextEdit->setFocus();
-        searchTextEdit->selectAll();
+        focusSearch();
     }
 }
 
@@ -815,9 +824,7 @@ void MainWindow::viewFull()
         m.bookReader = model->method.book;
     }
     viewSearch(m.bookReader->name(), m);
-
-    searchTextEdit->setFocus();
-    searchTextEdit->selectAll();
+    focusSearch();
 }
 
 void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)

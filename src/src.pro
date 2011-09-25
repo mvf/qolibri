@@ -6,6 +6,7 @@ HEADERS += mainwindow.h \
            ebcache.h \
            ebook.h \
            bookview.h \
+           globaleventfilter.h \
            groupdock.h \
            groupwidget.h \
            bookwidget.h \
@@ -32,6 +33,7 @@ SOURCES += qolibri.cpp \
            ebhook.cpp \
            ebook.cpp \
            bookview.cpp \
+           globaleventfilter.cpp \
            groupdock.cpp \
            groupwidget.cpp \
            bookwidget.cpp \

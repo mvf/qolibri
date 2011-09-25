@@ -88,6 +88,7 @@ private slots:
     void goPrev();
     void reload();
     void setWebLoaded();
+    void focusSearch();
 
     void changeSearchText(const QString&);
     void changeOptDirection(QAction*);
