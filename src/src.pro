@@ -55,6 +55,7 @@ TARGET = qolibri
 DESTDIR = ./bin
 OBJECTS_DIR = ./build
 MOC_DIR = ./build/moc
+LIBS += -leb
 
 TRANSLATIONS = qolibri_ja_JP.ts
 
@@ -69,7 +70,6 @@ unix:!macx {
     isEmpty(INSTALL_PKGDATADIR):INSTALL_PKGDATADIR=$$INSTALL_DATADIR/$$TARGET
 
     DEFINES += PKGDATADIR=\\\"$$INSTALL_PKGDATADIR\\\"
-    LIBS += -leb
 
     target.path = $$INSTALL_BINDIR
     INSTALLS += target
