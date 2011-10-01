@@ -1223,8 +1223,10 @@ void MainWindow::connectClipboard()
 void MainWindow::aboutQolibri()
 {
     QString msg = tr("<h2>qolibri</h2>"
-                  "<p>EPWING Dictionary/Book Viewer</p>"
-                  "<p><a href='http://github.com/cybersphinx/qolibri'>http://github.com/cybersphinx/qolibri</a></p>");
+                  "<h3>EPWING Dictionary/Book Viewer</h3><p>"
+                  "<p><a href='http://github.com/cybersphinx/qolibri'>http://github.com/cybersphinx/qolibri</a></p>"
+                  "<p>Based on <a href='http://github.com/fujii/qolibri'>http://github.com/fujii/qolibri</a>,<br>"
+                  "based on <a href='http://qolibri.sourceforge.jp'>http://qolibri.sourceforge.jp</a>.");
 
     QMessageBox::about(this, "qolibri", msg );
 }
