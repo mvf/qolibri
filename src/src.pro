@@ -51,6 +51,8 @@ QT += webkit
 RESOURCES += qolibri.qrc
 FORMS += optiondialog.ui
 
+include("config")
+
 TARGET = qolibri
 DESTDIR = ./bin
 OBJECTS_DIR = ./build
