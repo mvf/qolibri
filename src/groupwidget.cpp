@@ -117,8 +117,8 @@ void GroupWidget::upItem()
     Group *grp = (Group*)groupListWidget->takeItem(row);
 
     groupListWidget->insertItem(row - 1, grp);
-    groupList->takeAt(row + 1);
-    groupList->insert(row, grp);
+    groupList->takeAt(row);
+    groupList->insert(row -1, grp);
     groupListWidget->setCurrentItem(grp);
 }
 
@@ -128,8 +128,8 @@ void GroupWidget::downItem()
     Group *grp = (Group*)groupListWidget->takeItem(row);
 
     groupListWidget->insertItem(row + 1, grp);
-    groupList->takeAt(row + 1);
-    groupList->insert(row + 2, grp);
+    groupList->takeAt(row);
+    groupList->insert(row + 1, grp);
     groupListWidget->setCurrentItem(grp);
 }
 
