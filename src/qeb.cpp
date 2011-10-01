@@ -281,6 +281,7 @@ QList <EB_Hit> QEb::hitList(int max_count)
     else
         for (int i = 0; i < cnt; i++) 
             hits << harray[i];
+    delete[] harray;
     return hits;
 }
 
