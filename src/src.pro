@@ -95,6 +95,12 @@ updateqm.commands = $$QMAKE_LRELEASE -silent ${QMAKE_FILE_IN} -qm translations/$
 updateqm.CONFIG += no_link target_predeps
 QMAKE_EXTRA_COMPILERS += updateqm
 
+gitversion.target = gitversion.h
+gitversion.commands = ./gitversion.sh > gitversion.h
+gitversion.depends = ${SOURCES} ${HEADERS}
+QMAKE_EXTRA_TARGETS += gitversion
+PRE_TARGETDEPS += gitversion.h
+
 message(Version = $$QT_VERSION)
 message(Config = $$CONFIG)
 message(Plugins = $$QTPLUGIN)
