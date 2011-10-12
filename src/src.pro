@@ -56,7 +56,9 @@ include("config")
 TARGET = qolibri
 DESTDIR = ./bin
 OBJECTS_DIR = ./build
-MOC_DIR = ./build/moc
+MOC_DIR = ./build
+RCC_DIR = ./build
+UI_DIR = ./build
 LIBS += -leb
 
 TRANSLATIONS = qolibri_ja_JP.ts
