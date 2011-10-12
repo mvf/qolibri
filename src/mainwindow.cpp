@@ -175,12 +175,12 @@ void MainWindow::createMenus()
     reloadAct->setEnabled(false);
 
 
-    QMenu *smenu = menuBar()->addMenu(tr("&Setting"));
-    booksAct = smenu->addAction(QIcon(":/images/books.png"), tr("Group set"),
+    QMenu *smenu = menuBar()->addMenu(tr("&Settings"));
+    booksAct = smenu->addAction(QIcon(":/images/books.png"), tr("Book and group settings..."),
                                 this, SLOT(setBooks()));
     CONNECT_BUSY(booksAct);
     configAct = smenu->addAction(QIcon(":/images/setting.png"),
-                                 tr("Option setting"), this, SLOT(setConfig()));
+                                 tr("Options..."), this, SLOT(setConfig()));
     CONNECT_BUSY(configAct);
     addMarkAct = smenu->addAction(QIcon(":/images/bookmark.png"),
                                   tr("Bookmark"),
@@ -189,7 +189,7 @@ void MainWindow::createMenus()
                              
     CONNECT_BUSY(addMarkAct);
     toggleTabsAct = smenu->addAction(QIcon(":/images/tabs.png"),
-                                     tr("Tab on/off"),
+                                     tr("Search result tabs on/off"),
                                      this, SLOT(toggleNewTab(bool)));
     toggleTabsAct->setCheckable(true);
     toggleTabsAct->setIconVisibleInMenu(false);
@@ -201,21 +201,21 @@ void MainWindow::createMenus()
     toggleBrowserAct->setIconVisibleInMenu(false);
     CONNECT_BUSY(toggleBrowserAct);
     fontAct = smenu->addAction(QIcon(":/images/font1.png"),
-                               tr("Set browser font"),
+                               tr("Set browser font..."),
                                this, SLOT(setViewFont()));
 
     QMenu *ms = smenu->addMenu(QIcon(":/images/stylesheet.png"),
-                               tr("Style sheet"));
+                               tr("Edit style sheet"));
     sSheetAct = ms->menuAction();
     connect(sSheetAct, SIGNAL(triggered(bool)), SLOT(setDictSheet()));
     ms->addAction(QIcon(":/images/stylesheet.png"),
-                  tr("Dictionary style sheet"), this, SLOT(setDictSheet()));
+                  tr("Dictionary style sheet..."), this, SLOT(setDictSheet()));
     ms->addAction(QIcon(":/images/stylesheet2.png"),
-                  tr("Book style sheet"), this, SLOT(setBookSheet()));
+                  tr("Book style sheet..."), this, SLOT(setBookSheet()));
     ms->addAction(QIcon(":/images/stylesheet3.png"),
-                  tr("Internal style sheet 1"), this, SLOT(setStatusBarSheet()));
+                  tr("Internal style sheet 1..."), this, SLOT(setStatusBarSheet()));
     optDirectionMenu = smenu->addMenu(QIcon(":/images/find_l.png"),
-                                   tr("Option search"));
+                                   tr("Search options"));
     addDirectionMenu(optDirectionMenu);
     QActionGroup *actg = new QActionGroup(this);
     foreach(QAction * a, optDirectionMenu->actions()) {
@@ -234,8 +234,8 @@ void MainWindow::createMenus()
     toggleRubyAct->setIconVisibleInMenu(false);
 
     QMenu *hmenu = menuBar()->addMenu(tr("&Help"));
-    hmenu->addAction(tr("about &QT"), qApp, SLOT(aboutQt()));
-    hmenu->addAction(tr("about q&olibri"), this, SLOT(aboutQolibri()));
+    hmenu->addAction(QIcon(":/trolltech/qmessagebox/images/qtlogo-64.png"), tr("About &QT..."), qApp, SLOT(aboutQt()));
+    hmenu->addAction(QIcon(":/images/title.png"), tr("About q&olibri..."), this, SLOT(aboutQolibri()));
 }
 
 void MainWindow::createToolBars()
@@ -1230,7 +1230,7 @@ void MainWindow::aboutQolibri()
                   "<p>Based on <a href='http://github.com/fujii/qolibri'>http://github.com/fujii/qolibri</a>,<br>"
                   "based on <a href='http://qolibri.sourceforge.jp'>http://qolibri.sourceforge.jp</a>.");
 
-    QMessageBox::about(this, "qolibri", msg );
+    QMessageBox::about(this, "About qolibri", msg );
 }
 
 void MainWindow::goPrev()
