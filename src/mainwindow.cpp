@@ -877,7 +877,7 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
                        QString::number(CONF->limitBrowserChar) + "])";
                 break;
             case LIMIT_TOTAL:
-                msg += tr("Stopped (Item iimit[") +
+                msg += tr("Stopped (Item limit[") +
                        QString::number(mthd.limitTotal) + "])";
                 break;
             default:
