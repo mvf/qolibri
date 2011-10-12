@@ -37,7 +37,7 @@ public:
         //    port = 5626;
     
         if (!listen(QHostAddress::Any, port)) {
-            qWarning() << "Server Listen Error : port =" << port;
+            qWarning() << "Server Listen Error: port =" << port;
             return;
         }
     

@@ -82,7 +82,7 @@ void BookBrowser::setSource(const QUrl &name)
             int index = args[1].toInt();
             if (index >= bookList_.count()) {
                 qWarning() << "Invalid book index" << args[1];
-                emit statusRequested("ERROR : Invalid book index: " + args[1]);
+                emit statusRequested("ERROR: Invalid book index: " + args[1]);
                 return;
             }
             bool mflag = (args[0] == "menu") ? true : false;

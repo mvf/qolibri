@@ -34,7 +34,7 @@ WebSetting::WebSetting(QWidget *parent, const QString &name, const QString &url)
 
    QHBoxLayout *h1 = new QHBoxLayout; 
    {
-       h1->addWidget(new QLabel(tr("Name :")));
+       h1->addWidget(new QLabel(tr("Name:")));
        nameEdit_ = new QLineEdit(name, this);
        connect(nameEdit_, SIGNAL(textChanged(const QString&)),
                SLOT(setOkButton(const QString&)));
@@ -44,7 +44,7 @@ WebSetting::WebSetting(QWidget *parent, const QString &name, const QString &url)
    }
    QHBoxLayout *h2 = new QHBoxLayout; 
    {
-       h2->addWidget(new QLabel(tr("URL :")));
+       h2->addWidget(new QLabel(tr("URL:")));
        urlEdit_ = new QLineEdit(url, this);
        connect(urlEdit_, SIGNAL(textChanged(const QString&)),
                SLOT(setOkButton(const QString&)));
@@ -87,7 +87,7 @@ EpwingFileSetting::EpwingFileSetting(QWidget *parent, const QString &name,
 
    QHBoxLayout *h1 = new QHBoxLayout; 
    {
-       h1->addWidget(new QLabel(tr("Name :")));
+       h1->addWidget(new QLabel(tr("Name:")));
        nameEdit_ = new QLineEdit(name, this);
        connect(nameEdit_, SIGNAL(textChanged(const QString&)),
                SLOT(setOkButton(const QString&)));
@@ -97,7 +97,7 @@ EpwingFileSetting::EpwingFileSetting(QWidget *parent, const QString &name,
    }
    QHBoxLayout *h2 = new QHBoxLayout; 
    {
-       h2->addWidget(new QLabel(tr("Path :")));
+       h2->addWidget(new QLabel(tr("Path:")));
        pathEdit_ = new QLineEdit(path, this);
        connect(pathEdit_, SIGNAL(textChanged(const QString&)),
                SLOT(setOkButton(const QString&)));
@@ -107,7 +107,7 @@ EpwingFileSetting::EpwingFileSetting(QWidget *parent, const QString &name,
    }
    QHBoxLayout *h3 = new QHBoxLayout; 
    {
-       h3->addWidget(new QLabel(tr("Book No :")));
+       h3->addWidget(new QLabel(tr("Book No:")));
        bookNoEdit_ = new QLineEdit(QString::number(book_no), this);
        bookNoEdit_->setInputMask("9");
        connect(bookNoEdit_, SIGNAL(textChanged(const QString&)),
@@ -190,7 +190,7 @@ BookSetting::BookSetting(Model *model_, QWidget *parent)
             h2->addWidget(cancelButton);
             h2->addStretch();
         }
-        QLabel *l = new QLabel(tr("<b>SEARCH BOOKS :</b>"));
+        QLabel *l = new QLabel(tr("<b>Search books:</b>"));
         findPaths = new QLabel();
         findPaths->setFrameShape(QFrame::StyledPanel);
         //findPaths->setFixedWidth(290);
@@ -203,10 +203,10 @@ BookSetting::BookSetting(Model *model_, QWidget *parent)
     }
     QVBoxLayout *v2 = new QVBoxLayout();
     {
-        QLabel *l = new QLabel(tr("<b>Internet Search :</b>"));
+        QLabel *l = new QLabel(tr("<b>Internet Search:</b>"));
         QHBoxLayout *h1 = new QHBoxLayout();
         {
-            QLabel *n = new QLabel(tr("Name :"));
+            QLabel *n = new QLabel(tr("Name:"));
             webNameEdit = new QLineEdit("",this);
             connect(webNameEdit, SIGNAL(textChanged(QString)),
                     SLOT(webNameChanged(QString)));
@@ -215,7 +215,7 @@ BookSetting::BookSetting(Model *model_, QWidget *parent)
         }
         QHBoxLayout *h2 = new QHBoxLayout();
         {
-            QLabel *s = new QLabel(tr("Site :"));
+            QLabel *s = new QLabel(tr("Site:"));
             webSiteEdit = new QLineEdit("http://",this);
             connect(webSiteEdit, SIGNAL(textChanged(QString)),
                     SLOT(webSiteChanged(QString)));

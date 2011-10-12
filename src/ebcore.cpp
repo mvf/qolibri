@@ -233,11 +233,11 @@ bool EbCore::makeBinaryFile(const QString &fname, const QByteArray &data)
 {
     QFile f(fname);
     if (!f.open(QIODevice::WriteOnly)) {
-        qWarning() << "File Open Error :" << fname << "code :" << f.error();
+        qWarning() << "File Open Error: " << fname << " code: " << f.error();
         return false;
     }
     if (f.write(data) == -1) {
-        qWarning() << "File Write Error :" << fname << "code :" << f.error();
+        qWarning() << "File Write Error: " << fname << " code: " << f.error();
         return false;
     }
     return true;

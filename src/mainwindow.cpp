@@ -571,18 +571,18 @@ void MainWindow::showStatus(const QString &str)
 {
     QString msg;
 
-    if (!str.isEmpty()) msg = " :";
+    if (!str.isEmpty()) msg = ": ";
     if (!isBusy()) {
         if (model->groupList.count() > 0 && model->groupList[0]->bookList().count() == 0) {
-            msg += tr(" No search book");
+            msg += tr("No search book");
         } else if (model->bookMode == ModeDictionary &&
                    searchTextEdit->text().isEmpty()) {
             //msg += tr(" Input search text");
         } else {
-            msg += tr(" ready");
+            msg += tr("ready");
         }
     } else {
-        msg += tr(" retrieving . . .");
+        msg += tr("retrieving . . .");
     }
     processLabel->setText(str + msg);
 }
@@ -764,7 +764,7 @@ void MainWindow::viewWeb(const QString &name, const QString &url)
     bool pbrowser = toggleBrowserAct->isChecked();
     RET_SEARCH ret = bookView->newWebPage(name, url, pbrowser);
     if (ret != NORMAL) {
-        showStatus("Error :" + url);
+        showStatus("Error: " + url);
     } else {
         showStatus(url);
     }
@@ -851,7 +851,7 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
     QString msg;
     QString msg_b;
     if (ret == NORMAL) {
-        msg = "OK : ";
+        msg = "OK: ";
     } else {
         msg = "<b><font color=#993333>";
         switch (ret) {
@@ -885,7 +885,7 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
                 qWarning() << "Unrecognized Error Code" << ret;
                 break;
         }
-        msg += "</font></b> : ";
+        msg += "</font></b>: ";
     }
     if (CONF->beepSound) {
         qApp->beep();
@@ -962,7 +962,7 @@ void MainWindow::execProcess(const QString &prog)
             SLOT(execError(QProcess::ProcessError)));
     proc->start(prog);
 
-    QString msg = "Execute :" + prog;
+    QString msg = "Execute: " + prog;
     showStatus(msg);
 }
 void MainWindow::execError(QProcess::ProcessError e)
