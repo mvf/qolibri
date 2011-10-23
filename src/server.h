@@ -35,12 +35,12 @@ public:
 
         //if (port == 0)
         //    port = 5626;
-    
+
         if (!listen(QHostAddress::Any, port)) {
             qWarning() << "Server Listen Error: port =" << port;
             return;
         }
-    
+
         connect(this, SIGNAL(newConnection()), SLOT(getClientText()));
 
     }
@@ -53,26 +53,26 @@ public:
     void slotShowStatus(const QObject *receiver, const char *member)
     {
         connect(this, SIGNAL(statusRequested(const QString&)),
-                receiver, member); 
+                receiver, member);
     }
 
     void slotSearchText(const QObject *receiver, const char *member)
     {
         connect(this, SIGNAL(searchRequested(const QString&)),
-                receiver, member); 
+                receiver, member);
     }
 
     void showStatus(const QString &str)
     {
         emit statusRequested(str);
     }
-    
+
 signals:
     void searchRequested(const QString &str);
     void statusRequested(const QString &msg);
 
 private slots:
-    
+
     void getClientText()
     {
 

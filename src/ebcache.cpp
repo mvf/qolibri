@@ -36,7 +36,7 @@ void EbCache::init(const QString &title)
         rootDir.mkdir("wave");
         rootDir.mkdir("mpeg");
     }
-    
+
     if (!QFile::exists(cachePath + "/sound")) {
         {
             QFile f(cachePath + "/sound");

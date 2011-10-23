@@ -64,7 +64,7 @@ public:
     EB_Disc_Code discType();
     EB_Character_Code characterCode();
 
-    // Error 
+    // Error
     QString errorString(EB_Error_Code error)
         { return toUTF(eb_error_string(error)); }
     QString errorMessage(EB_Error_Code error)

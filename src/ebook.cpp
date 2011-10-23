@@ -255,7 +255,7 @@ void EBook::getText(int index, QString *head_l, QString *head_v, QString *text)
 
     int sp = 0;
     while((sp = h_l.indexOf('&', sp)) >= 0) {
-	if (h_l.mid(sp+1, 3) == "lt;") 
+	if (h_l.mid(sp+1, 3) == "lt;")
             h_l.replace(sp, 4, '<');
         else if (h_l.mid(sp+1, 3) == "gt;")
             h_l.replace(sp, 4, '>');
@@ -293,7 +293,7 @@ int EbAll::hitFull(int maxcnt)
     EB_Hit hit;
     hit.heading = position;
     hit.text = position;
-    hits << hit; 
+    hits << hit;
     count++;
     while (count <= maxcnt) {
         ecode = seekText(position);
@@ -332,7 +332,7 @@ int EbAll::hitFull(int maxcnt)
             EB_Hit hit;
             hit.heading = position;
             hit.text = position;
-            hits << hit; 
+            hits << hit;
         }
         count++;
     }

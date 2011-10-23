@@ -163,10 +163,10 @@ void GTab::delCurrent()
 
 void GTab::delAll()
 {
-    if (QMessageBox::question(this, "qolibri",                        
+    if (QMessageBox::question(this, "qolibri",
                               tr("Are you sure you want to remove all list?"),
                               QMessageBox::Yes | QMessageBox::No) ==
-            QMessageBox::Yes) {  
+            QMessageBox::Yes) {
         listWidget_->clear();
     }
 }

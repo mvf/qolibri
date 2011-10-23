@@ -57,7 +57,7 @@ const char *usage =
     "   -s                Client/Server mode\n"
     "   -p <port-no>      Server Port no (default:5626)\n"
     "   -c <session name> Configuration session name\n"
-    "   -h  or  --help    Print Help (this message) and exit\n" 
+    "   -h  or  --help    Print Help (this message) and exit\n"
     "   --version         Print version information and exit";
 
 const char *version =
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 
     Model model;
     model.load();
-    
+
     codecEuc = QTextCodec::codecForName("EUC-JP");
 
     QString searchText;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
         if (str == "-c" && (i+1) < argc) {
             CONF->settingOrg = QString::fromLocal8Bit(argv[i+1]);
             i++;
-       
+
         } else if (str == "-p" && (i+1) < argc) {
             bool ok;
             port = QString::fromLocal8Bit(argv[i+1]).toInt(&ok);

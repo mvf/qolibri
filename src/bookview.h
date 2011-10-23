@@ -68,7 +68,7 @@ public:
     {
         bookList_ << book;
     }
-    void setBrowser(const QString str) 
+    void setBrowser(const QString str)
     {
         QApplication::setOverrideCursor(Qt::WaitCursor);
         setHtml(str);
@@ -130,7 +130,7 @@ class ReferencePopup : public QWidget
 {
     Q_OBJECT
 public:
-    ReferencePopup(Book *pbook, const EB_Position &pos, QWidget *parent, 
+    ReferencePopup(Book *pbook, const EB_Position &pos, QWidget *parent,
                    bool menu_flag=false);
 
     QString browserText(Book *pbook, const EB_Position &pos);
@@ -187,7 +187,7 @@ public:
     void addTextStr(const QString &str) { text_ += str; }
     void expand(int level);
     QTreeWidgetItem* curItem() { return curItem_; }
-    QTreeWidgetItem* item(int level) { return itemP_[level]; } 
+    QTreeWidgetItem* item(int level) { return itemP_[level]; }
 
     QString text() { return text_; }
     QList <QTreeWidgetItem*> topItems() { return topItems_; }
@@ -312,8 +312,8 @@ class WebPage : public QWebView
 {
     Q_OBJECT
 public:
-    WebPage(QWidget *parent, const QString &url, const Query& query); 
-    WebPage(QWidget *parent, const QString &url); 
+    WebPage(QWidget *parent, const QString &url, const Query& query);
+    WebPage(QWidget *parent, const QString &url);
     void zoomIn();
     void zoomOut();
     void setTabIndex(int index) { tabIndex_ = index; }
@@ -340,12 +340,12 @@ signals:
 
 private:
     QByteArray encString(const QString &url);
-    QString setSearchString(const QString &url, const QByteArray &enc, 
+    QString setSearchString(const QString &url, const QByteArray &enc,
                             const QString &query);
     QString directionString(const QString &url);
     QString setDirectionString(const QString &url, const QString &dstr,
                                SearchDirection &direc);
-    
+
     QString hoveredLink;
     bool loading_;
     bool popupBrowser_;

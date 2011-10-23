@@ -32,7 +32,7 @@ WebSetting::WebSetting(QWidget *parent, const QString &name, const QString &url)
     : QDialog(parent)
 {
 
-   QHBoxLayout *h1 = new QHBoxLayout; 
+   QHBoxLayout *h1 = new QHBoxLayout;
    {
        h1->addWidget(new QLabel(tr("Name:")));
        nameEdit_ = new QLineEdit(name, this);
@@ -42,7 +42,7 @@ WebSetting::WebSetting(QWidget *parent, const QString &name, const QString &url)
                SLOT(setOkButton(const QString&)));
        h1->addWidget(nameEdit_);
    }
-   QHBoxLayout *h2 = new QHBoxLayout; 
+   QHBoxLayout *h2 = new QHBoxLayout;
    {
        h2->addWidget(new QLabel(tr("URL:")));
        urlEdit_ = new QLineEdit(url, this);
@@ -85,7 +85,7 @@ EpwingFileSetting::EpwingFileSetting(QWidget *parent, const QString &name,
     : QDialog(parent)
 {
 
-   QHBoxLayout *h1 = new QHBoxLayout; 
+   QHBoxLayout *h1 = new QHBoxLayout;
    {
        h1->addWidget(new QLabel(tr("Name:")));
        nameEdit_ = new QLineEdit(name, this);
@@ -95,7 +95,7 @@ EpwingFileSetting::EpwingFileSetting(QWidget *parent, const QString &name,
                SLOT(setOkButton(const QString&)));
        h1->addWidget(nameEdit_);
    }
-   QHBoxLayout *h2 = new QHBoxLayout; 
+   QHBoxLayout *h2 = new QHBoxLayout;
    {
        h2->addWidget(new QLabel(tr("Path:")));
        pathEdit_ = new QLineEdit(path, this);
@@ -105,7 +105,7 @@ EpwingFileSetting::EpwingFileSetting(QWidget *parent, const QString &name,
                SLOT(setOkButton(const QString&)));
        h2->addWidget(pathEdit_);
    }
-   QHBoxLayout *h3 = new QHBoxLayout; 
+   QHBoxLayout *h3 = new QHBoxLayout;
    {
        h3->addWidget(new QLabel(tr("Book No:")));
        bookNoEdit_ = new QLineEdit(QString::number(book_no), this);
@@ -149,7 +149,7 @@ void EpwingFileSetting::setOkButton(const QString&)
 BookSetting::BookSetting(Model *model_, QWidget *parent)
     : QDialog(parent)
     , findStop(false)
-    , model(model_) 
+    , model(model_)
 {
 #ifdef Q_WS_MAC
     setWindowFlags(Qt::Sheet);
@@ -385,7 +385,7 @@ void BookSetting::findCategory(const QString &name)
     //findPaths->setText("Searching ..." + name.right(28));
 
     QDir dir(name);
-    if (dir.entryList(QStringList() << "CATALOG" << "CATALOGS", 
+    if (dir.entryList(QStringList() << "CATALOG" << "CATALOGS",
                       QDir::Files).size() > 0) {
         bookDirs << dir.absoluteFilePath(name);
     } else {
@@ -499,7 +499,7 @@ void BookSetting::setPath()
 void BookSetting::keyPressEvent(QKeyEvent *event)
 {
     QString cname =  focusWidget()->metaObject()->className();
-    
+
     if (cname == "QLineEdit")
         return;
 

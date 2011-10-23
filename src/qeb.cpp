@@ -90,7 +90,7 @@ EB_Subbook_Code QEb::subbook()
         dispError("eb_subbook_list", ecode);
     return code;
 }
-    
+
 QString QEb::subbookTitle()
 {
     char title[EB_MAX_TITLE_LENGTH+1];
@@ -189,7 +189,7 @@ QString QEb::multiEntryLabel(EB_Multi_Search_Code mid, int entry)
         return QString::fromLatin1(s);
     else
         return eucToUtf(s);
-    
+
 }
 EB_Position QEb::multiEntryCandidates(EB_Multi_Search_Code mid, int entry)
 {
@@ -279,7 +279,7 @@ QList <EB_Hit> QEb::hitList(int max_count)
     if (ecode != EB_SUCCESS)
         dispError("eb_hit_list", ecode);
     else
-        for (int i = 0; i < cnt; i++) 
+        for (int i = 0; i < cnt; i++)
             hits << harray[i];
     delete[] harray;
     return hits;
@@ -877,7 +877,7 @@ QByteArray QEb::narrowBitmapToXbm(const QByteArray &bitmap)
 {
     QSize sz = narrowFontQSize();
     QByteArray b;
-    if (sz.width() == 0) 
+    if (sz.width() == 0)
         return b;
 
     int image_size= narrowFontXbmSize(font());
@@ -896,7 +896,7 @@ QByteArray QEb::wideBitmapToXbm(const QByteArray &bitmap)
 {
     QSize sz = wideFontQSize();
     QByteArray b;
-    if (sz.width() == 0) 
+    if (sz.width() == 0)
         return b;
 
     int image_size= wideFontXbmSize(font());
@@ -915,7 +915,7 @@ QByteArray QEb::narrowBitmapToXpm(const QByteArray &bitmap)
 {
     QSize sz = narrowFontQSize();
     QByteArray b;
-    if (sz.width() == 0) 
+    if (sz.width() == 0)
         return b;
 
     int image_size= narrowFontXpmSize(font());
@@ -934,7 +934,7 @@ QByteArray QEb::wideBitmapToXpm(const QByteArray &bitmap)
 {
     QSize sz = wideFontQSize();
     QByteArray b;
-    if (sz.width() == 0) 
+    if (sz.width() == 0)
         return b;
 
     int image_size= wideFontXpmSize(font());
@@ -946,7 +946,7 @@ QByteArray QEb::wideBitmapToXpm(const QByteArray &bitmap)
         dispError("eb_bitmap_to_xpm", ecode);
     else
         b = QByteArray(buff, (int)size);
-    
+
     delete[] buff;
     return b;
 }
@@ -954,7 +954,7 @@ QByteArray QEb::narrowBitmapToGif(const QByteArray &bitmap)
 {
     QSize sz = narrowFontQSize();
     QByteArray b;
-    if (sz.width() == 0) 
+    if (sz.width() == 0)
         return b;
 
     int image_size= narrowFontGifSize(font());
@@ -973,7 +973,7 @@ QByteArray QEb::wideBitmapToGif(const QByteArray &bitmap)
 {
     QSize sz = wideFontQSize();
     QByteArray b;
-    if (sz.width() == 0) 
+    if (sz.width() == 0)
         return b;
 
     int image_size= wideFontGifSize(font());
@@ -992,7 +992,7 @@ QByteArray QEb::narrowBitmapToBmp(const QByteArray &bitmap)
 {
     QSize sz = narrowFontQSize();
     QByteArray b;
-    if (sz.width() == 0) 
+    if (sz.width() == 0)
         return b;
 
     int image_size= narrowFontBmpSize(font());
@@ -1004,7 +1004,7 @@ QByteArray QEb::narrowBitmapToBmp(const QByteArray &bitmap)
         dispError("eb_bitmap_to_bmp", ecode);
     else
         b = QByteArray(buff, (int)size);
-    
+
     delete[] buff;
     return b;
 }
@@ -1012,7 +1012,7 @@ QByteArray QEb::wideBitmapToBmp(const QByteArray &bitmap)
 {
     QSize sz = wideFontQSize();
     QByteArray b;
-    if (sz.width() == 0) 
+    if (sz.width() == 0)
         return b;
 
     int image_size= wideFontBmpSize(font());
@@ -1032,7 +1032,7 @@ QByteArray QEb::narrowBitmapToPng(const QByteArray &bitmap)
 {
     QSize sz = narrowFontQSize();
     QByteArray b;
-    if (sz.width() == 0) 
+    if (sz.width() == 0)
         return b;
 
     int image_size= narrowFontPngSize(font());
@@ -1044,7 +1044,7 @@ QByteArray QEb::narrowBitmapToPng(const QByteArray &bitmap)
         dispError("eb_bitmap_to_png", ecode);
     else
         b = QByteArray(buff, (int)size);
-    
+
     delete[] buff;
     return b;
 }
@@ -1052,7 +1052,7 @@ QByteArray QEb::wideBitmapToPng(const QByteArray &bitmap)
 {
     QSize sz = wideFontQSize();
     QByteArray b;
-    if (sz.width() == 0) 
+    if (sz.width() == 0)
         return b;
 
     int image_size= wideFontPngSize(font());
@@ -1064,7 +1064,7 @@ QByteArray QEb::wideBitmapToPng(const QByteArray &bitmap)
         dispError("eb_bitmap_to_png", ecode);
     else
         b = QByteArray(buff, (int)size);
-    
+
     delete[] buff;
     return b;
 }

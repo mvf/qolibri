@@ -35,7 +35,7 @@ const char* IntString = "----- interrupted -----";
 //#define FIXED_POPUP
 
 #define SJIStoUTF(q_bytearray) \
-    QTextCodec::codecForName("Shift-JIS")->toUnicode(q_bytearray)         
+    QTextCodec::codecForName("Shift-JIS")->toUnicode(q_bytearray)
 
 #define FONT_RESTORE_DURING_ZOOM
 
@@ -89,7 +89,7 @@ void BookBrowser::setSource(const QUrl &name)
             EB_Position pos;
             pos.page = args[2].toInt();
             pos.offset = args[3].toInt();
-             
+
             ReferencePopup *popup =
                 new ReferencePopup(bookList_[index], pos, this, mflag);
             connect(popup->bookBrowser(), SIGNAL(statusRequested(QString)),
@@ -656,7 +656,7 @@ RET_SEARCH InfoPage::search(const Query& query)
         astr += QObject::tr("No Appendix");
     }
 
-    QString str = "<table><tr><td>Title </td><td> " + eb.subbookTitle() + 
+    QString str = "<table><tr><td>Title </td><td> " + eb.subbookTitle() +
                   "</td></tr>\n";
     str += "<tr><td>Search_Method </td><td> " + mstr + "</td></tr>\n";
     str += "<tr><td>Appendix </td><td> " + astr + "</td></tr></table><br>";
@@ -695,7 +695,7 @@ RET_SEARCH InfoPage::search(const Query& query)
     items.composeTrail();
     //qDebug() << txt;
     bookBrowser_->setBrowser(items.text());
-    bookBrowser_->setSearchPaths(QStringList() << book->path() << 
+    bookBrowser_->setSearchPaths(QStringList() << book->path() <<
                                 EbCache::cachePath);
     bookTree->insertTopLevelItems(0, items.topItems());
     bookTree->setCurrentItem(bookTree->topLevelItem(0));
@@ -780,7 +780,7 @@ void MenuPage::selectMenuPage(int index)
         topCands = eb.topMenu();
         index = 0;
     }
-   
+
     PageItems items(CONF->bookSheet);
 
     QString name = method_.bookReader->name();
@@ -1038,11 +1038,11 @@ RET_SEARCH SearchPageBuilder::search1(const Query& query)
 
     SearchType type = SearchExactWord;
     switch (query.method.direction) {
-    case KeywordSearch:   type = SearchKeyWord; break; 
-    case CrossSearch:     type = SearchCrossWord; break; 
-    case ExactWordSearch: type = SearchExactWord; break; 
-    case ForwardSearch:   type = SearchWord; break; 
-    case BackwardSearch:  type = SearchEndWord; break; 
+    case KeywordSearch:   type = SearchKeyWord; break;
+    case CrossSearch:     type = SearchCrossWord; break;
+    case ExactWordSearch: type = SearchExactWord; break;
+    case ForwardSearch:   type = SearchWord; break;
+    case BackwardSearch:  type = SearchEndWord; break;
     default:
         Q_ASSERT(0);
         qWarning() << "Invalid Search Method" << query.method.direction;
@@ -1133,7 +1133,7 @@ QList <QTreeWidgetItem*> SearchPageBuilder::treeItems()
 {
     return items.topItems();
 }
-    
+
 QString SearchPageBuilder::text()
 {
     return items.text();
@@ -1225,7 +1225,7 @@ RET_SEARCH SearchWholePage::search(const Query& query)
                                  QString::number(search_count) + ") Total:(" +
                                  QString::number(totalCount) + '/' +
                                  QString::number(search_total) + ')');
-            
+
             if (checkStop() || break_flag) break;
 
             int hit_num = eb.hitFull(3000);
@@ -1477,7 +1477,7 @@ QString WebPage::setDirectionString(const QString &url, const QString &dstr,
         }
 
     }
-    
+
     if (udirec.isEmpty()) {
         qWarning() << "Url Search Type Error" << dstr;
         return url;
@@ -1625,7 +1625,7 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
         page = new SearchPage(this, query.method);
         break;
     default:
-        Q_ASSERT(0);        
+        Q_ASSERT(0);
     }
     RET_SEARCH retStatus = page->search(query);
 
@@ -1728,7 +1728,7 @@ RET_SEARCH BookView::newWebPage(const QString &name, const QString &url,
 {
     WebPage *wpage = new WebPage(this, url);
     connect(wpage, SIGNAL(loadFinished(bool)), SLOT(webViewFinished(bool)));
-    connect(wpage, SIGNAL(linkRequested(QString)), 
+    connect(wpage, SIGNAL(linkRequested(QString)),
             SIGNAL(processRequested(QString)));
     connect(this, SIGNAL(popupBrowserSet(bool)), wpage,
             SLOT(setPopupBrowser(bool)));
@@ -1752,7 +1752,7 @@ void BookView::showTabBarMenu(const QPoint& pnt)
             break;
     }
     QMenu menu("", bar);
-    QAction *close_other_page = 0; 
+    QAction *close_other_page = 0;
     QAction *close_left_page = 0;
     QAction *close_right_page = 0;
     QAction *close_all_page = 0;

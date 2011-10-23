@@ -208,7 +208,7 @@ void FontSetting::load()
 
     if (fname.isEmpty())
         return;
-    
+
     QFile file(fname);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return;

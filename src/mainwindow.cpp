@@ -186,7 +186,7 @@ void MainWindow::createMenus()
                                   tr("Bookmark"),
                                   this, SLOT(addMark()));
     smenu->addAction(toggleScanClipboardAct);
-                             
+
     CONNECT_BUSY(addMarkAct);
     toggleTabsAct = smenu->addAction(QIcon(":/images/tabs.png"),
                                      tr("Search result tabs on/off"),

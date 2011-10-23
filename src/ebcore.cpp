@@ -61,7 +61,7 @@ int EbCore::initBook(const QString& path, int subbook, int refpos)
 {
     EB_Error_Code ecode;
 
-    ecode = bind(path);                           
+    ecode = bind(path);
     if (ecode != EB_SUCCESS) {
         return -1;
     }
@@ -139,12 +139,12 @@ QString EbCore::getMenu()
     return text(position);
 }
 
-QList <CandItem> EbCore::candidate(const EB_Position &pos, QString *txt)          
-{                                                                         
+QList <CandItem> EbCore::candidate(const EB_Position &pos, QString *txt)
+{
    candList.clear();
    *txt = text(pos);
    return candList;
-} 
+}
 
 QString EbCore::text(const EB_Position &pos, bool hflag)
 {
@@ -206,7 +206,7 @@ QByteArray EbCore::fontToBStr(int code, NarrowOrWide n_or_w)
     QChar c = (n_or_w == NarrowCode) ? 'n' : 'w';
     QString afont = fontList->value(c + numToStr(code, 16));
 
-    if (!afont.isEmpty()) 
+    if (!afont.isEmpty())
         return afont.toAscii();
     else
         return QByteArray();
@@ -217,7 +217,7 @@ QByteArray EbCore::fontToHtmlBStr(const QByteArray &fname,
     QByteArray ret = "<img src=\"" + utfToEuc(ebCache.fontCacheRel) + fname  +
                      "\"";
 
-#if 0    
+#if 0
     if (fontSize != 16) {
         int h = fontSize;
         int w = (n_or_w == NarrowCode) ? (h / 2) : h;
@@ -343,7 +343,7 @@ QByteArray EbCore::hookEndCandidateLeaf(int, const unsigned int*)
 }
 QByteArray EbCore::hookBeginReference(int, const unsigned int*)
 {
-    return "<a class=ref href=\"<R" + numToBStr(refList.count()) + 
+    return "<a class=ref href=\"<R" + numToBStr(refList.count()) +
            "R>\">";
 }
 QByteArray EbCore::hookEndReference(int, const unsigned int *argv)
@@ -365,7 +365,7 @@ QByteArray EbCore::hookNarrowFont(int, const unsigned int *argv)
 {
     if (!isHaveNarrowFont())
         return errorBStr("No Narrow Font");
-    
+
     int fcode = argv[0];
     QByteArray fstr = fontToBStr(fcode, NarrowCode);
     if (!fstr.isEmpty())
@@ -403,7 +403,7 @@ QByteArray EbCore::hookWideFont(int, const unsigned int *argv)
 {
     if (!isHaveWideFont())
         return errorBStr("No Wide Font");
-    
+
     int fcode = argv[0];
     QByteArray fstr = fontToBStr(fcode, WideCode);
     if (!fstr.isEmpty())
@@ -453,7 +453,7 @@ QByteArray EbCore::hookNarrowJISX0208(int argc, const unsigned int *argv)
                              EB_HOOK_NARROW_JISX0208, argc, argv);
         return QByteArray();
     }
- 
+
 }
 QByteArray EbCore::hookWideJISX0208(int, const unsigned int*)
 {
@@ -484,7 +484,7 @@ QByteArray EbCore::hookEndMonoGraphic(int, const unsigned int *argv)
         return errorBStr("Image(Mono) Error");
 
     QByteArray image = readBinary();
-    if (image.isEmpty()) 
+    if (image.isEmpty())
         return errorBStr("Image(Mono) Error");
 
     if(!makeBinaryFile(ebCache.imageCachePath + '/' + fname, image))
@@ -517,7 +517,7 @@ QByteArray EbCore::hookBeginColorBmp(int, const unsigned int *argv)
         return errorBStr("Image(bmp) Error") + "<span class=img>";
 
     QByteArray image = readBinary();
-    if (image.isEmpty()) 
+    if (image.isEmpty())
         return errorBStr("Image(bmp) Error") + "<span class=img>";
 
     if(!makeBinaryFile(ebCache.imageCachePath + '/' + fname, image))
@@ -526,7 +526,7 @@ QByteArray EbCore::hookBeginColorBmp(int, const unsigned int *argv)
     ebCache.imageCacheList << fname;
 
     return out;
-   
+
 }
 QByteArray EbCore::hookBeginColorJpeg(int, const unsigned int *argv)
 {
@@ -543,7 +543,7 @@ QByteArray EbCore::hookBeginColorJpeg(int, const unsigned int *argv)
         return errorBStr("Image(jpeg) Error") + "<span class=img>";
 
     QByteArray image = readBinary();
-    if (image.isEmpty()) 
+    if (image.isEmpty())
         return errorBStr("Image(jpeg) Error") + "<span class=img>";
 
     if(!makeBinaryFile(ebCache.imageCachePath + '/' + fname, image))
@@ -595,7 +595,7 @@ QByteArray EbCore::hookBeginWave(int, const unsigned int *argv)
         return errorBStr("Image(wave) Error") + "<a>";
 
     QByteArray image = readBinary();
-    if (image.isEmpty()) 
+    if (image.isEmpty())
         return errorBStr("Image(wave) Error") + "<a>";
 
     if(!makeBinaryFile(ebCache.waveCachePath + '/' + fname, image))
@@ -617,7 +617,7 @@ QByteArray EbCore::hookBeginMpeg(int, const unsigned int*)
 QByteArray EbCore::hookEndMpeg(int, const unsigned int *argv)
 {
     QString path = composeMoviePathName(argv+2);
-    if (path.isEmpty()) 
+    if (path.isEmpty())
         return errorBStr("Image(mpeg) Error");
 
     QString fname = QFileInfo(path).fileName() + ".mpeg";
@@ -643,7 +643,7 @@ QByteArray EbCore::hookGraphicReference(int, const unsigned int*)
 {
     return errorBStr("HOOK_GRAPHIC_REFERECE Not Supported");
 }
-QByteArray EbCore::hookBeginDecoration(int, const unsigned int* argv) 
+QByteArray EbCore::hookBeginDecoration(int, const unsigned int* argv)
 {
     int code = argv[1];
     decorationStack.push(code);
