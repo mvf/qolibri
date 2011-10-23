@@ -57,7 +57,7 @@ const char* googleUrl_Def =
     "http://www.google.com/search?rls=ja-jp&ie=UTF-8&oe=UTF-8&q=";
 const char* wikipediaUrl_Def = "http://ja.wikipedia.org/wiki/";
 const char* userDefUrl_Def = "http://en.wikipedia.org/wiki/";
-const char* settingOrg_Def = "QOLIBRI_1_0";
+const char* settingOrg_Def = "qolibri";
 
 static Configure *configure_s = new Configure();
 
