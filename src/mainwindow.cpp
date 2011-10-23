@@ -851,7 +851,7 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
     QString msg;
     QString msg_b;
     if (ret == NORMAL) {
-        msg = "OK: ";
+        msg = "OK ";
     } else {
         msg = "<b><font color=#993333>";
         switch (ret) {
@@ -885,13 +885,13 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
                 qWarning() << "Unrecognized Error Code" << ret;
                 break;
         }
-        msg += "</font></b>: ";
+        msg += "</font></b> ";
     }
     if (CONF->beepSound) {
         qApp->beep();
     }
     int etime = pTime.elapsed();
-    msg += QString::number((double)etime / 1000.0, 'f', 2);
+    msg += "(" + QString::number((double)etime / 1000.0, 'f', 1) + " seconds)";
     showStatus(msg);
     if (!msg_b.isEmpty()) {
         QMessageBox::warning(this, Program, msg_b);
