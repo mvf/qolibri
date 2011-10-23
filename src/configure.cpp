@@ -47,7 +47,7 @@ const char* mpegProcess_Def =
 #elif defined (Q_OS_LINUX)
 const char* waveProcess_Def = "play";
 const char* mpegProcess_Def = "";
-const char* browserProcess_Def = "konqueror";
+const char* browserProcess_Def = "xdg-open";
 #else
 const char* waveProcess_Def = "";
 const char* mpegProcess_Def = "";
