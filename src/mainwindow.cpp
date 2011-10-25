@@ -869,8 +869,7 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
                 break;
             case NOT_HIT_INTERRUPTED:
             case INTERRUPTED:
-                msg_b = tr("Interrupted.");
-                msg += msg_b;
+                msg += tr("Interrupted.");
                 break;
             case LIMIT_CHAR:
                 msg += tr("Stopped (Character size limit[") +
