@@ -395,7 +395,7 @@ void BookSetting::findCategory(const QString &name)
             findCategory(dir.absoluteFilePath(file));
         }
     }
-    QString msg = QString("%1 founded | %2")
+    QString msg = QString("Found %1 books [%2]")
                   .arg(bookDirs.size()).arg(dir.dirName().right(20));
     findPaths->setText(msg);
 }
