@@ -10,8 +10,10 @@ bool GlobalEventFilter::eventFilter(QObject *obj, QEvent *event)
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
 		if (keyEvent->key() == Qt::Key_Backspace
 		    && qApp->focusWidget()
-		    && !qApp->focusWidget()->inherits("QLineEdit"))
+		    && !(qApp->focusWidget()->inherits("QLineEdit")
+		         || qApp->focusWidget()->inherits("QTextEdit")))
 		{
+//			qWarning("%s", qApp->focusWidget()->metaObject()->className());
 			emit(focusSearch());
 			return true;
 		}
