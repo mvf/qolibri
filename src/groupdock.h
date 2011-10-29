@@ -20,6 +20,7 @@
 #ifndef GROUPDOCK_H
 #define GROUPDOCK_H
 
+#include <QDockWidget>
 #include <QListWidgetItem>
 #include <QPushButton>
 
@@ -148,7 +149,7 @@ public:
 #if defined (Q_WS_MAC)
 class GroupDock : public QTabWidget
 #else
-class GroupDock : public QWidget
+class GroupDock : public QDockWidget
 #endif
 {
     Q_OBJECT

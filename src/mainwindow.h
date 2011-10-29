@@ -137,7 +137,6 @@ private:
 
     Model *model;
 
-    QDockWidget *dock;
     GroupDock *groupDock;
     BookView *bookView;
 

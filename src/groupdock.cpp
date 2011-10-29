@@ -389,7 +389,7 @@ GroupDock::GroupDock(QWidget *parent, Model *model_)
 #if defined (Q_WS_MAC)
     : QTabWidget(parent)
 #else
-    : QWidget(parent)
+    : QDockWidget(parent)
 #endif
     , model(model_)
 {
@@ -436,12 +436,7 @@ GroupDock::GroupDock(QWidget *parent, Model *model_)
 #if defined (Q_WS_MAC)
     setWindowFlags(Qt::Drawer);
 #else
-    QHBoxLayout *h = new QHBoxLayout();
-    h->setAlignment(0);
-    h->setMargin(0);
-    h->setSpacing(0);
-    h->addWidget(tabWidget);
-    setLayout(h);
+    setWidget(tabWidget);
 #endif
 
     changeGroupList();

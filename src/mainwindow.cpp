@@ -59,15 +59,13 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
     bookView = new BookView(this);
     bookViewSlots();
 
-    dock = new QDockWidget(this);
-    groupDock = new GroupDock(dock, model);
+    groupDock = new GroupDock(this, model);
     groupDockSlots();
 //#if defined (Q_WS_X11) || defined (Q_WS_WIN)
 //    groupDock->hide();
 //#endif
 
-    dock->setWidget(groupDock);
-    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    groupDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
     createActions();
     createMenus();
@@ -87,9 +85,9 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
 
     changeViewTabCount(0);
 
-    addDockWidget(dockPosition, dock);
+    addDockWidget(dockPosition, groupDock);
     if (!toggleDockAct->isChecked()) {
-        dock->hide();
+        groupDock->hide();
     }
 
     sound = NULL;
@@ -425,7 +423,7 @@ void MainWindow::writeSettings()
 
     settings.setValue("size", size());
     settings.setValue("dock", toggleDockAct->isChecked());
-    settings.setValue("dockarea", dockWidgetArea(dock));
+    settings.setValue("dockarea", dockWidgetArea(groupDock));
     settings.setValue("search_bar", searchBar->isVisible());
     settings.setValue("method_bar", toggleMethodBarAct->isChecked());
 
@@ -629,9 +627,9 @@ void MainWindow::showTabInfo(int index)
 void MainWindow::toggleDock(bool check)
 {
     if (check) {
-        dock->show();
+        groupDock->show();
     } else {
-        dock->hide();
+        groupDock->hide();
     }
 }
 
