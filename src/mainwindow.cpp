@@ -1224,8 +1224,8 @@ void MainWindow::aboutQolibri()
 {
     QString msg = tr("<h2>qolibri</h2>"
                   "<h3>EPWING Dictionary/Book Viewer</h3><p>"
-                  "(" GITTIME ", <a href='https://github.com/cybersphinx/qolibri/commit/" GITHASH "'>" GITHASH "</a>)</p>"
                   "<p><a href='http://github.com/cybersphinx/qolibri'>http://github.com/cybersphinx/qolibri</a></p>"
+                  "Compiled from commit <a href='https://github.com/cybersphinx/qolibri/commit/" GITHASH "'>" GITHASH "</a> (" GITTIME ")</p>"
                   "<p>Based on <a href='http://github.com/fujii/qolibri'>http://github.com/fujii/qolibri</a>,<br>"
                   "based on <a href='http://qolibri.sourceforge.jp'>http://qolibri.sourceforge.jp</a>.");
 
