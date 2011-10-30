@@ -11,7 +11,7 @@ bool GlobalEventFilter::eventFilter(QObject *obj, QEvent *event)
 		if (keyEvent->key() == Qt::Key_Backspace
 		    && qApp->focusWidget()
 		    && !(qApp->focusWidget()->inherits("QLineEdit")
-		         || qApp->focusWidget()->inherits("QTextEdit")))
+		         || qApp->focusWidget()->metaObject()->className() == QString("QTextEdit")))
 		{
 //			qWarning("%s", qApp->focusWidget()->metaObject()->className());
 			emit(focusSearch());
