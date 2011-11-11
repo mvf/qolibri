@@ -107,6 +107,7 @@ private slots:
     void checkNextSearch();
     void searchClientText(const QString &str);
     void searchClipboardText();
+    void startClipboardSearchTimer();
 
     void aboutQolibri();
 
@@ -180,6 +181,7 @@ private:
     QSound *sound;
     SearchDirection optDirection;
     QTimer *timer;
+    QTimer *clipboardsearchtimer;
     QStringList  clientText;
 
     Qt::DockWidgetArea dockPosition;

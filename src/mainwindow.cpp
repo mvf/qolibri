@@ -104,6 +104,10 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
     connect(model, SIGNAL(scanClipboardChanged(bool)), SLOT(connectClipboard()));
     QTimer::singleShot(0, searchTextEdit, SLOT(setFocus()));
 
+    clipboardsearchtimer = new QTimer;
+    clipboardsearchtimer->setSingleShot(true);
+    connect(clipboardsearchtimer, SIGNAL(timeout()), this, SLOT(searchClipboardText()));
+
     GlobalEventFilter *gef = new GlobalEventFilter();
     qApp->installEventFilter(gef);
     connect(gef, SIGNAL(focusSearch()), this, SLOT(focusSearch()));
@@ -1193,12 +1197,17 @@ void MainWindow::searchClipboardText()
     searchClientText(QApplication::clipboard()->text(QClipboard::Selection));
 }
 
+void MainWindow::startClipboardSearchTimer()
+{
+	clipboardsearchtimer->start(300);
+}
+
 void MainWindow::connectClipboard()
 {
     if (model->scanClipboard())
-        QObject::connect(QApplication::clipboard(), SIGNAL(changed(QClipboard::Mode)), this, SLOT(searchClipboardText()));
+        QObject::connect(QApplication::clipboard(), SIGNAL(changed(QClipboard::Mode)), this, SLOT(startClipboardSearchTimer()));
     else
-        QObject::disconnect(QApplication::clipboard(), SIGNAL(changed(QClipboard::Mode)), this, SLOT(searchClipboardText()));
+        QObject::disconnect(QApplication::clipboard(), SIGNAL(changed(QClipboard::Mode)), this, SLOT(startClipboardSearchTimer()));
 }
 
 void MainWindow::aboutQolibri()
