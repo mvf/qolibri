@@ -841,8 +841,7 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
         msg = "<b><font color=#993333>";
         switch (ret) {
             case NOT_HIT:
-                msg_b = tr("Word not found.");
-                msg += msg_b;
+                msg += tr("No results for \"%1\".").arg(queryStr);
                 break;
             case NO_MENU:
                 msg_b = tr("Not have menu data.");

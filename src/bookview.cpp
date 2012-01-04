@@ -1108,12 +1108,10 @@ RET_SEARCH SearchPageBuilder::search1(const Query& query)
         eb.unsetSubbook();
         totalMatchCount += matchCount;
     }
-#if 0
     if (totalMatchCount == 0) {
         retStatus = (checkStop()) ? NOT_HIT_INTERRUPTED : NOT_HIT;
     }
-#endif
-    if (checkStop()) {
+    else if (checkStop()) {
         items.composeError("LAST", IntString);
         retStatus = INTERRUPTED;
     }
