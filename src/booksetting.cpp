@@ -370,7 +370,7 @@ void BookSetting::searchBook()
     groupWidget->setEnabled(true);
     buttonBox->setEnabled(true);
     cancelButton->setEnabled(false);
-    QString msg = QString("%1 books(%2 subbook) found: %3 books added")
+    QString msg = QString("%1 books (%2 subbooks) found: %3 books added")
                   .arg(bookDirs.size())
                   .arg(subbook_count).arg(add_count);
     findPaths->setText(msg);
