@@ -59,7 +59,7 @@ OBJECTS_DIR = ./build
 MOC_DIR = ./build
 RCC_DIR = ./build
 UI_DIR = ./build
-LIBS += -leb
+LIBS += -leb -lz
 
 TRANSLATIONS = qolibri_ja_JP.ts
 
