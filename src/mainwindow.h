@@ -106,8 +106,10 @@ private slots:
 
     void checkNextSearch();
     void searchClientText(const QString &str);
-    void searchClipboardText();
-    void startClipboardSearchTimer();
+    void searchClipboard();
+    void searchClipboardSelection();
+    void searchClipboardFindbuffer();
+    void startClipboardSelectionTimer();
 
     void aboutQolibri();
 

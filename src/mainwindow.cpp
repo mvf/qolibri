@@ -106,7 +106,7 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
 
     clipboardsearchtimer = new QTimer;
     clipboardsearchtimer->setSingleShot(true);
-    connect(clipboardsearchtimer, SIGNAL(timeout()), this, SLOT(searchClipboardText()));
+    connect(clipboardsearchtimer, SIGNAL(timeout()), this, SLOT(searchClipboardSelection()));
 
     GlobalEventFilter *gef = new GlobalEventFilter();
     qApp->installEventFilter(gef);
@@ -1191,22 +1191,40 @@ void MainWindow::searchClientText(const QString &str)
     viewSearch();
 }
 
-void MainWindow::searchClipboardText()
+void MainWindow::searchClipboard()
+{
+    searchClientText(QApplication::clipboard()->text(QClipboard::Clipboard));
+}
+
+void MainWindow::searchClipboardSelection()
 {
     searchClientText(QApplication::clipboard()->text(QClipboard::Selection));
 }
 
-void MainWindow::startClipboardSearchTimer()
+void MainWindow::searchClipboardFindbuffer()
 {
-	clipboardsearchtimer->start(300);
+    searchClientText(QApplication::clipboard()->text(QClipboard::FindBuffer));
+}
+
+void MainWindow::startClipboardSelectionTimer()
+{
+        clipboardsearchtimer->start(300);
 }
 
 void MainWindow::connectClipboard()
 {
     if (model->scanClipboard())
-        QObject::connect(QApplication::clipboard(), SIGNAL(changed(QClipboard::Mode)), this, SLOT(startClipboardSearchTimer()));
+    {
+        connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(searchClipboard()));
+        connect(QApplication::clipboard(), SIGNAL(selectionChanged()), this, SLOT(startClipboardSelectionTimer()));
+        connect(QApplication::clipboard(), SIGNAL(findBufferChanged()), this, SLOT(searchClipboardFindbuffer()));
+    }
     else
-        QObject::disconnect(QApplication::clipboard(), SIGNAL(changed(QClipboard::Mode)), this, SLOT(startClipboardSearchTimer()));
+    {
+        disconnect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(searchClipboard()));
+        disconnect(QApplication::clipboard(), SIGNAL(selectionChanged()), this, SLOT(startClipboardSelectionTimer()));
+        disconnect(QApplication::clipboard(), SIGNAL(findBufferChanged()), this, SLOT(searchClipboardFindbuffer()));
+    }
 }
 
 void MainWindow::aboutQolibri()
