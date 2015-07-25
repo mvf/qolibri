@@ -26,7 +26,17 @@
 #include <QTreeWidgetItem>
 #include <QLineEdit>
 #include <QSplitter>
+#if QT_VERSION >= 0x050000
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QToolBar>
+#include <QSound>
+#include <QFontDialog>
+#include <QtWebKitWidgets/QWebView>
+#else
 #include <QWebView>
+#endif
 #include <eb/eb.h>
 
 #include "book.h"

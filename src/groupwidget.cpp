@@ -18,6 +18,12 @@
 ***************************************************************************/
 
 #include <QtGui>
+#if QT_VERSION >= 0x050000
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
+#endif
 
 #include "book.h"
 #include "groupwidget.h"

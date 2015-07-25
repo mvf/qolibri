@@ -48,6 +48,7 @@ SOURCES += qolibri.cpp \
 
 QT += network
 QT += webkit
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets multimedia
 RESOURCES += qolibri.qrc
 FORMS += optiondialog.ui
 

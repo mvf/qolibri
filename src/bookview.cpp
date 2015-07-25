@@ -17,6 +17,14 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 #include <QtGui>
+#if QT_VERSION >= 0x050000
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QScrollBar>
+#include <QtWidgets/QDesktopWidget>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QToolButton>
+#include <QAudioDeviceInfo>
+#endif
 
 #include "book.h"
 #include "bookview.h"
@@ -68,7 +76,11 @@ void BookBrowser::setSource(const QUrl &name)
         // args[1] : wave file
         if (!CONF->waveProcess.isEmpty()) {
             emit processRequested(CONF->waveProcess + ' ' + args[1]);
+#if QT_VERSION >= 0x050000
+	} else if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) {
+#else
         } else if (QSound::isAvailable()) {
+#endif
             emit soundRequested(args[1]);
         } else {
             qWarning() << "Can't play sound" << CONF->waveProcess << args[1];
@@ -1332,7 +1344,7 @@ WebPage::WebPage(QWidget *parent, const QString &url, const Query& query)
     ws->setAttribute(QWebSettings::JavaEnabled, true);
     ws->setAttribute(QWebSettings::PluginsEnabled, true);
     if (enc.isEmpty()) {
-        load(QUrl::fromEncoded(ustr.toAscii()));
+        load(QUrl::fromEncoded(ustr.toLatin1()));
     } else {
         load(QUrl::fromEncoded(QTextCodec::codecForName(enc)->fromUnicode(ustr)));
     }
@@ -1402,7 +1414,7 @@ QByteArray WebPage::encString(const QString &url)
         QString w1 = url.mid(url.indexOf('{')+1);
         QString w2 = w1.left(w1.indexOf('}'));
         w2.trimmed();
-        return w2.toAscii();
+        return w2.toLatin1();
     }
 }
 

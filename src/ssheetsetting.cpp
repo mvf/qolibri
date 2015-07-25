@@ -18,6 +18,13 @@
 ***************************************************************************/
 
 #include <QtGui>
+#if QT_VERSION >= 0x050000
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QSplitter>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QFileDialog>
+#endif
 
 #include "ssheetsetting.h"
 #ifdef Q_WS_MAC

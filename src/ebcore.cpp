@@ -207,7 +207,7 @@ QByteArray EbCore::fontToBStr(int code, NarrowOrWide n_or_w)
     QString afont = fontList->value(c + numToStr(code, 16));
 
     if (!afont.isEmpty())
-        return afont.toAscii();
+        return afont.toLatin1();
     else
         return QByteArray();
 }
