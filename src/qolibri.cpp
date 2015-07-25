@@ -70,9 +70,9 @@ int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(qolibri);
 
-    CONF->load();
-
     QApplication app(argc, argv);
+
+    CONF->load();
 
     Model model;
     model.load();
