@@ -1,11 +1,9 @@
 /Makefile
+/qolibri
 /src/Makefile
-/src/bin
-/src/build
+/src/.build
 /src/qrc_qolibri.cpp
 /src/translations
 /src/ui_optiondialog.h
 /src/gitversion.h
 /src/config
-cscope.out
-.*.swp
