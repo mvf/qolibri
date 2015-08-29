@@ -556,17 +556,19 @@ void MainWindow::showStatus(const QString &str)
 {
     QString msg;
 
-    if (!str.isEmpty()) msg = ": ";
     if (!isBusy()) {
         if (model->groupList.count() > 0 && model->groupList[0]->bookList().count() == 0) {
+            if (!str.isEmpty()) msg = ": ";
             msg += tr("No search book");
         } else if (model->bookMode == ModeDictionary &&
                    searchTextEdit->text().isEmpty()) {
             //msg += tr(" Input search text");
         } else {
+            if (!str.isEmpty()) msg = ": ";
             msg += tr("ready");
         }
     } else {
+        if (!str.isEmpty()) msg = ": ";
         msg += tr("retrieving . . .");
     }
     processLabel->setText(str + msg);
