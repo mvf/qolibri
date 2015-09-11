@@ -1,13 +1,13 @@
 body {
-        color:#666666;
-        background-color: #F0F0F0;
+        color:#000000;
+        background-color: #FFFFFF;
         margin-left: 0px;
         margin-right: 0px;
         margin-top: 0px;
         margin-bottom: 0px;
 }
 h1 {
-        background-color: #C0C0E0;
+        background-color: #D0D0F0;
         font-weight: bold;
         font-size: x-large;
         margin-left: 0px;
@@ -16,7 +16,7 @@ h1 {
         margin-bottom: 3px;
 }
 h2 {
-        background-color: #E0E0E0;
+        background-color: #E7E7E7;
         font-size: large;
         margin-left: 0px;
         margin-right: 0px;
@@ -24,7 +24,7 @@ h2 {
         margin-bottom: 0px;
 }
 pre {
-        background-color: #F0F0F0;
+        background-color: #FFFFFF;
         margin-left: 5px;
         margin-right: 0px;
         margin-top: 7px;
