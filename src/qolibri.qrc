@@ -49,5 +49,13 @@
     <file>images/reload.png</file>
     <file>images/add.png</file>
     <file>images/new_browser.png</file>
+    <file>data/book-style.html</file>
+    <file>data/dict-style.html</file>
 </qresource>
+<!--
+<qresource lang="jp">
+    <file alias="data/book-style.html">data/book-style_jp.html</file>
+    <file alias="data/dict-style.html">data/dict-style_jp.html</file>
+</qresource>
+-->
 </RCC>

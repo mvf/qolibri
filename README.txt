@@ -3,7 +3,7 @@ Hummingbird EB Viewer
 
 ::: Requirement :::
 
-This software requires following libraries for building and runnning.
+This software requires following libraries for building and running.
 
 Qt4   - C++ class library and tools for cross-platform development and
         internationalization

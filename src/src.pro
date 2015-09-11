@@ -55,11 +55,11 @@ FORMS += optiondialog.ui
 include("config")
 
 TARGET = qolibri
-DESTDIR = ./bin
-OBJECTS_DIR = ./build
-MOC_DIR = ./build
-RCC_DIR = ./build
-UI_DIR = ./build
+DESTDIR = ..
+OBJECTS_DIR = ./.build
+MOC_DIR = ./.build
+RCC_DIR = ./.build
+UI_DIR = ./.build
 LIBS += -leb -lz
 
 TRANSLATIONS = qolibri_ja_JP.ts

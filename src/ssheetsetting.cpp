@@ -57,24 +57,11 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
     setWindowTitle(tr("Browser style sheet setting"));
 #endif
 
+    QFile file((dic) ? ":/data/dict-style.html" : ":/data/book-style.html");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QTextStream in(&file);
+    testText = in.readAll();
 
-#if defined(PKGDATADIR)
-    QString path(PKGDATADIR);
-#else
-    QString path = QCoreApplication::applicationDirPath();
-#endif
-    QString fname = (dic) ? "/dictsample_" : "/booksample_";
-
-    QFile file(path + fname + QLocale::system().name());
-    if (!file.exists()) {
-        file.setFileName(path + fname);
-    }
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&file);
-        testText = in.readAll();
-    } else {
-        testText = tr("<body>Cannot open sample file</body>");
-    }
     QVBoxLayout *v = new QVBoxLayout;
 #ifdef Q_WS_MAC
     TitleLabel *l = new TitleLabel(tr("Browser style sheet setting"));

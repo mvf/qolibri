@@ -556,17 +556,19 @@ void MainWindow::showStatus(const QString &str)
 {
     QString msg;
 
-    if (!str.isEmpty()) msg = ": ";
     if (!isBusy()) {
         if (model->groupList.count() > 0 && model->groupList[0]->bookList().count() == 0) {
+            if (!str.isEmpty()) msg = ": ";
             msg += tr("No search book");
         } else if (model->bookMode == ModeDictionary &&
                    searchTextEdit->text().isEmpty()) {
             //msg += tr(" Input search text");
         } else {
+            if (!str.isEmpty()) msg = ": ";
             msg += tr("ready");
         }
     } else {
+        if (!str.isEmpty()) msg = ": ";
         msg += tr("retrieving . . .");
     }
     processLabel->setText(str + msg);
@@ -954,7 +956,7 @@ void MainWindow::execError(QProcess::ProcessError e)
     if (e == QProcess::FailedToStart) {
         msg = tr("Failed to start process.");
     } else {
-        msg = QString(tr("Error occured during staring process(code=%1)."))
+        msg = QString(tr("Error occurred during staring process(code=%1)."))
                       .arg((int)e);
     }
     showStatus(msg);
@@ -1032,9 +1034,9 @@ void MainWindow::setDictSheet()
     dlg.resize(sz);
     if (dlg.exec() == QDialog::Accepted) {
         CONF->dictSheet = dlg.text();
-        showStatus("Stylesheet Changed");
+        showStatus("Stylesheet changed");
     } else {
-        showStatus("Cancelled StyleSheel");
+        showStatus("Stylesheet unchanged");
     }
 }
 
@@ -1046,9 +1048,9 @@ void MainWindow::setBookSheet()
     dlg.resize(sz);
     if (dlg.exec() == QDialog::Accepted) {
         CONF->bookSheet = dlg.text();
-        showStatus("Stylesheet Changed");
+        showStatus("Stylesheet changed");
     } else {
-        showStatus("Cancelled StyleSheel");
+        showStatus("Stylesheet unchanged");
     }
 }
 
@@ -1060,9 +1062,9 @@ void MainWindow::setStatusBarSheet()
     if (dlg.exec() == QDialog::Accepted) {
         CONF->statusBarSheet = dlg.text();
         statusBar()->setStyleSheet(CONF->statusBarSheet);
-        showStatus("Stylesheet Changed");
+        showStatus("Stylesheet changed");
     } else {
-        showStatus("Cancelled StyleSheel");
+        showStatus("Stylesheet unchanged");
     }
 }
 
