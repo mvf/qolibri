@@ -317,6 +317,7 @@ QString ReferencePopup::browserText(Book *book, const EB_Position &pos)
         "<meta http-equiv=\"Content-Type\""
         " content=\"text/html; charset=utf-8\" />\n"
         "<style type=\"text/css\">\n" + CONF->dictSheet +
+        "pre { font-family: " + CONF->browserFont.family() + "; }\n"
         "</style>\n"
         "</head>\n"
         "<body>\n"
@@ -430,6 +431,7 @@ void PageItems::composeHeader(const QString &ssheet)
             "<meta http-equiv=\"Content-Type\""
             " content=\"text/html; charset=utf-8\" />\n"
             "<style type=\"text/css\">\n" + ssheet +
+            "pre { font-family: " + CONF->browserFont.family() + "; }\n"
             "</style>\n"
             "</head>\n"
             "<body>\n";
