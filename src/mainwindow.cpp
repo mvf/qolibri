@@ -23,7 +23,6 @@
 //#include <stdio.h>
 
 #include "mainwindow.h"
-#include "ssheet.h"
 #include "ebook.h"
 #include "book.h"
 #include "bookview.h"
@@ -97,7 +96,6 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
         clientText << s_text;
         QTimer::singleShot(0, this, SLOT(checkNextSearch()));
     }
-    statusBar()->setStyleSheet(CONF->statusBarSheet);
 
     connect(this, SIGNAL(searchFinished()), SLOT(checkNextSearch()));
     connectClipboard();
@@ -323,7 +321,7 @@ void MainWindow::createStatusBar()
 {
     QStatusBar *bar = statusBar();
 
-    bar->setStyleSheet(statusBarStyleSheet);
+    bar->setStyleSheet(CONF->statusBarSheet);
 
     processLabel = new QLabel(this);
     processLabel->setObjectName("process");
@@ -1028,7 +1026,7 @@ void MainWindow::addMark()
 
 void MainWindow::setDictSheet()
 {
-    SSheetSetting dlg(CONF->dictSheet, dictStyleSheet, true, this);
+    SSheetSetting dlg(CONF->dictSheet, CONF->defDictStyle, true, this);
     QSize sz = size() - QSize(50, 50);
 
     dlg.resize(sz);
@@ -1042,7 +1040,7 @@ void MainWindow::setDictSheet()
 
 void MainWindow::setBookSheet()
 {
-    SSheetSetting dlg(CONF->bookSheet, bookStyleSheet, false, this);
+    SSheetSetting dlg(CONF->bookSheet, CONF->defBookStyle, false, this);
     QSize sz = size() - QSize(50, 50);
 
     dlg.resize(sz);
@@ -1056,7 +1054,7 @@ void MainWindow::setBookSheet()
 
 void MainWindow::setStatusBarSheet()
 {
-    SSheetOptSetting dlg(CONF->statusBarSheet, statusBarStyleSheet, this);
+    SSheetOptSetting dlg(CONF->statusBarSheet, CONF->defStatusbarStyle, this);
 
     dlg.resize(QSize(450, 550));
     if (dlg.exec() == QDialog::Accepted) {

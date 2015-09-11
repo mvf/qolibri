@@ -1,0 +1,50 @@
+QPushButton {
+        padding: 0px;
+        margin: 0px;
+        font-weight:bold;
+}
+QPushButton:hover {
+        padding: 0px;
+        margin: 0px;
+        font-weight:bold;
+        background-color:
+        #DDDDDD;
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 3px;
+}
+QPushButton:pressed {
+        padding: 0px;
+        margin: 0px;
+        font-weight:bold;
+        background-color: #BBBB77;
+}
+QPushButton#direction {
+        color: #752020;
+        min-width: 57px;
+}
+QPushButton#logic {
+        color: #556b2f;
+        min-width: 21px;
+}
+QPushButton#limit-book {
+        color: #008b8b;
+}
+QPushButton#limit-total {
+        color: #483d70;
+}
+QPushButton#search {
+        color: #9900d3;
+        min-width: 21px;
+}
+QPushButton#selection {
+        color: #006400;
+}
+QLabel {
+        padding: 0px;
+        margin: 0px;
+        font-weight:bold;
+}
+QLabel#process {
+        color: #555555;
+}

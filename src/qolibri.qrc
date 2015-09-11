@@ -49,8 +49,11 @@
     <file>images/reload.png</file>
     <file>images/add.png</file>
     <file>images/new_browser.png</file>
+    <file>data/book-style.css</file>
     <file>data/book-style.html</file>
+    <file>data/dict-style.css</file>
     <file>data/dict-style.html</file>
+    <file>data/statusbar-style.css</file>
 </qresource>
 <!--
 <qresource lang="jp">

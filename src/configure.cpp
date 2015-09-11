@@ -19,7 +19,6 @@
 #include <QtGui>
 
 #include "configure.h"
-#include "ssheet.h"
 
 const bool highlightMatch_Def = true;
 const bool beepSound_Def = true;
@@ -96,10 +95,24 @@ void Configure::load()
     QVariant vfont = conf.value("browser_font", qApp->font());
     browserFont = vfont.value<QFont>();
 
+    QFile file(":/data/book-style.css");
+    QTextStream stream(&file);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    defBookStyle = stream.readAll();
+    file.close();
+    file.setFileName(":/data/dict-style.css");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    defDictStyle = stream.readAll();
+    file.close();
+    file.setFileName(":/data/statusbar-style.css");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    defStatusbarStyle = stream.readAll();
+    file.close();
+
     QSettings ssheets(CONF->settingOrg, "EpwingStyleSheet");
-    dictSheet = ssheets.value("dictionary", dictStyleSheet).toString();
-    bookSheet = ssheets.value("book", bookStyleSheet).toString();
-    statusBarSheet = ssheets.value("widgets1", statusBarStyleSheet).toString();
+    dictSheet = ssheets.value("dictionary", defDictStyle).toString();
+    bookSheet = ssheets.value("book", defBookStyle).toString();
+    statusBarSheet = ssheets.value("widgets1", defStatusbarStyle).toString();
 }
 
 void Configure::save()

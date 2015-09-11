@@ -48,6 +48,9 @@ public:
     QString dictSheet;
     QString bookSheet;
     QString statusBarSheet;
+    QString defDictStyle;
+    QString defBookStyle;
+    QString defStatusbarStyle;
     QString waveProcess;
     QString mpegProcess;
     QString browserProcess;
