@@ -815,6 +815,9 @@ void MainWindow::viewFull()
 
 void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
 {
+    if (queryStr.isEmpty())
+        return;
+
     QTime pTime;
 
     pTime.start();
