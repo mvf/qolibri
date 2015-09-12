@@ -207,14 +207,14 @@ QByteArray EbCore::fontToBStr(int code, NarrowOrWide n_or_w)
     QString afont = fontList->value(c + numToStr(code, 16));
 
     if (!afont.isEmpty())
-        return afont.toLatin1();
+        return afont.toUtf8();
     else
         return QByteArray();
 }
 QByteArray EbCore::fontToHtmlBStr(const QByteArray &fname,
                                     NarrowOrWide)
 {
-    QByteArray ret = "<img src=\"" + utfToEuc(ebCache.fontCacheRel) + fname  +
+    QByteArray ret = "<img src=\"" + ebCache.fontCacheRel.toUtf8() + fname  +
                      "\"";
 
 #if 0
@@ -448,6 +448,9 @@ QByteArray EbCore::hookNarrowJISX0208(int argc, const unsigned int *argv)
         return "&gt;";
     } else if (*argv == 41461) {
         return "&amp;";
+    } else if (*argv == 41382) {
+        // gets converted to garbage otherwise
+        return "·";
     } else {
         eb_hook_euc_to_ascii(&book, &appendix, (void*)this,
                              EB_HOOK_NARROW_JISX0208, argc, argv);
@@ -455,9 +458,13 @@ QByteArray EbCore::hookNarrowJISX0208(int argc, const unsigned int *argv)
     }
 
 }
-QByteArray EbCore::hookWideJISX0208(int, const unsigned int*)
+QByteArray EbCore::hookWideJISX0208(int, const unsigned int *argv)
 {
-    return QByteArray();
+    char code[3];
+    code[0] = argv[0] >> 8;
+    code[1] = argv[0] & 0xff;
+    code[2] = '\0';
+    return QByteArray(eucToUtf(code).toUtf8());
 }
 QByteArray EbCore::hookGB2312(int, const unsigned int*)
 {
@@ -472,7 +479,7 @@ QByteArray EbCore::hookBeginMonoGraphic(int, const unsigned int *argv)
 QByteArray EbCore::hookEndMonoGraphic(int, const unsigned int *argv)
 {
     QByteArray fname = binaryFname("bmp", argv[1], argv[2]);
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache.imageCacheRel) +
+    QByteArray out = "<img src=\"" + ebCache.imageCacheRel.toUtf8() +
                      fname + "\" />\n";
     if (ebCache.imageCacheList.contains(fname))
         return out;
@@ -505,7 +512,7 @@ QByteArray EbCore::hookEndGrayGraphic(int, const unsigned int*)
 QByteArray EbCore::hookBeginColorBmp(int, const unsigned int *argv)
 {
     QByteArray fname = binaryFname("bmp", argv[2], argv[3]);
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache.imageCacheRel) +
+    QByteArray out = "<img src=\"" + ebCache.imageCacheRel.toUtf8() +
                      fname + "\" /><span class=img>";
     if (ebCache.imageCacheList.contains(fname))
         return out;
@@ -531,7 +538,7 @@ QByteArray EbCore::hookBeginColorBmp(int, const unsigned int *argv)
 QByteArray EbCore::hookBeginColorJpeg(int, const unsigned int *argv)
 {
     QByteArray fname = binaryFname("jpeg", argv[2], argv[3]);
-    QByteArray out = "<img src=\"" + utfToEuc(ebCache.imageCacheRel) +
+    QByteArray out = "<img src=\"" + ebCache.imageCacheRel.toUtf8() +
                      fname + "\" /><span class=img>";
     if (ebCache.imageCacheList.contains(fname))
         return out;
@@ -581,7 +588,7 @@ QByteArray EbCore::hookBeginWave(int, const unsigned int *argv)
     // argv[5] : end offset
     QByteArray fname = binaryFname("wav", argv[2], argv[3]);
     QByteArray out = "<a class=snd href=\"sound?" +
-                     utfToEuc(ebCache.waveCachePath) + "\">";
+                     ebCache.waveCachePath.toUtf8() + "\">";
     if (ebCache.waveCacheList.contains(fname))
         return out;
 
@@ -623,12 +630,12 @@ QByteArray EbCore::hookEndMpeg(int, const unsigned int *argv)
     QString fname = QFileInfo(path).fileName() + ".mpeg";
     QString dst_file = ebCache.mpegCachePath + '/' + fname;
 
-    if (!ebCache.mpegCacheList.contains(utfToEuc(fname))) {
+    if (!ebCache.mpegCacheList.contains(fname)) {
         if (!QFile(dst_file).exists())
             QFile::copy(path, dst_file);
-        ebCache.mpegCacheList << utfToEuc(fname);
+        ebCache.mpegCacheList << fname;
     }
-    mpegList << utfToEuc(dst_file);
+    mpegList << dst_file.toUtf8();
     return QByteArray();
 }
 QByteArray EbCore::hookBeginGraphicReference(int, const unsigned int*)

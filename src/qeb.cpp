@@ -327,7 +327,7 @@ QString QEb::readText(void *para, bool hook_flag)
         //if (len < 1024)
         //    break;
     }
-    return eucToUtf(b);
+    return b;
 
 }
 QString QEb::readHeading(void *para, bool hook_flag)
@@ -354,7 +354,7 @@ QString QEb::readHeading(void *para, bool hook_flag)
         //if (len < 1024)
         //    break;
     }
-    return eucToUtf(b);
+    return b;
 
 }
 EB_Error_Code QEb::forwardText()
