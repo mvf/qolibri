@@ -48,6 +48,7 @@ public:
     EbCore(HookMode hmode=HookText);
     ~EbCore();
 
+    void initializeEucWideToUtfNarrow();
     QString getCopyright();
     QString getMenu();
     int initBook(const QString &path, int subbook=-1, int refpos=0);

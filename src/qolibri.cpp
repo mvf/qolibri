@@ -78,6 +78,9 @@ int main(int argc, char *argv[])
     model.load();
 
     codecEuc = QTextCodec::codecForName("EUC-JP");
+#if QT_VERSION <= 0x050000
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+#endif
 
     QString searchText;
     qint16 port = CONF->portNo;

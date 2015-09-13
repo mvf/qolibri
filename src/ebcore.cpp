@@ -18,6 +18,10 @@
 ***************************************************************************/
 
 #include <QtCore>
+// for Qt::escape()
+#if QT_VERSION <= 0x050000
+#include <QTextDocument>
+#endif
 
 #include <eb/eb.h>
 #include <eb/binary.h>
@@ -30,11 +34,14 @@
 #include "ebcore.h"
 #include "textcodec.h"
 
+static QMap<uint,QString> eucWideToUtfNarrow;
+
 EbCore::EbCore(HookMode hmode) : QEb()
 {
     initializeBook();
     initializeAppendix();
     initializeHookset();
+    initializeEucWideToUtfNarrow();
     switch(hmode) {
         case HookText :
             setHooks(hooks);
@@ -55,6 +62,24 @@ EbCore::~EbCore()
     finalizeHookset();
     finalizeAppendix();
     finalizeBook();
+}
+
+void EbCore::initializeEucWideToUtfNarrow()
+{
+    QFile file(":/data/euc-wide-to-utf-narrow");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QTextStream in(&file);
+    in.setCodec("UTF-8");
+    QString line = in.readLine();
+    while (!line.isNull()) {
+        QStringList list = line.remove('\n').split(' ');
+        if (list.count() == 2) {
+            eucWideToUtfNarrow.insert(list[0].toUInt(NULL, 16), list[1]);
+        }
+        line = in.readLine();
+    }
+    // special case for space since the file is space separated
+    eucWideToUtfNarrow.insert(0xa1a1, " ");
 }
 
 int EbCore::initBook(const QString& path, int subbook, int refpos)
@@ -440,23 +465,31 @@ QByteArray EbCore::hookISO8859_1(int, const unsigned int*)
     qWarning() << "HOOK_ISO08858_1";
     return QByteArray();
 }
-QByteArray EbCore::hookNarrowJISX0208(int argc, const unsigned int *argv)
+QByteArray EbCore::hookNarrowJISX0208(int, const unsigned int *argv)
 {
-    if (*argv == 41443) {
-        return "&lt;";
-    } else if (*argv == 41444) {
-        return "&gt;";
-    } else if (*argv == 41461) {
-        return "&amp;";
-    } else if (*argv == 41382) {
-        // gets converted to garbage otherwise
-        return "·";
-    } else {
-        eb_hook_euc_to_ascii(&book, &appendix, (void*)this,
-                             EB_HOOK_NARROW_JISX0208, argc, argv);
-        return QByteArray();
+    QString str;
+
+    if (eucWideToUtfNarrow.contains(argv[0]))
+        str = eucWideToUtfNarrow.value(argv[0]);
+
+    if (!str.isNull())
+    {
+#if QT_VERSION >= 0x050000
+        str = str.toHtmlEscaped();
+#else
+        str = Qt::escape(str);
+#endif
+        return QByteArray(str.toUtf8());
     }
 
+    char code[3];
+    code[0] = argv[0] >> 8;
+    code[1] = argv[0] & 0xff;
+    code[2] = '\0';
+
+    str = eucToUtf(code);
+    //qDebug() << "Not narrowed:" << str << QString::number(argv[0],16);
+    return str.toUtf8();
 }
 QByteArray EbCore::hookWideJISX0208(int, const unsigned int *argv)
 {
