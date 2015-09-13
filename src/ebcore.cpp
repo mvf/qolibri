@@ -363,13 +363,13 @@ QByteArray EbCore::hookEndKeyword(int, const unsigned int*)
 }
 QByteArray EbCore::hookNarrowFont(int, const unsigned int *argv)
 {
-    if (!isHaveNarrowFont())
-        return errorBStr("No Narrow Font");
-
     int fcode = argv[0];
     QByteArray fstr = fontToBStr(fcode, NarrowCode);
     if (!fstr.isEmpty())
         return fstr;
+
+    if (!isHaveNarrowFont())
+        return errorBStr("No Narrow Font");
 
 #ifdef USE_GIF_FOR_FONT
     QByteArray fname = 'n' + numToBStr(fcode,16) + ".gif";
@@ -401,13 +401,13 @@ QByteArray EbCore::hookNarrowFont(int, const unsigned int *argv)
 
 QByteArray EbCore::hookWideFont(int, const unsigned int *argv)
 {
-    if (!isHaveWideFont())
-        return errorBStr("No Wide Font");
-
     int fcode = argv[0];
     QByteArray fstr = fontToBStr(fcode, WideCode);
     if (!fstr.isEmpty())
         return fstr;
+
+    if (!isHaveWideFont())
+        return errorBStr("No Wide Font");
 
 #ifdef USE_GIF_FOR_FONT
     QByteArray fname = 'w' + numToBStr(fcode,16) + ".gif";
