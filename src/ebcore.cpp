@@ -393,13 +393,14 @@ QByteArray EbCore::hookNarrowFont(int, const unsigned int *argv)
     if (!fstr.isEmpty())
         return fstr;
 
+    QByteArray fname = 'n' + numToBStr(fcode,16);
     if (!isHaveNarrowFont())
-        return errorBStr("No Narrow Font");
+        return errorBStr("外字(" + fname + ")");
 
 #ifdef USE_GIF_FOR_FONT
-    QByteArray fname = 'n' + numToBStr(fcode,16) + ".gif";
+    fname += ".gif";
 #else
-    QByteArray fname = 'n' + numToBStr(fcode,16) + ".png";
+    fname += ".png";
 #endif
 
     QByteArray bitmap = narrowFontCharacterBitmap(fcode);
@@ -431,13 +432,14 @@ QByteArray EbCore::hookWideFont(int, const unsigned int *argv)
     if (!fstr.isEmpty())
         return fstr;
 
+    QByteArray fname = 'w' + numToBStr(fcode,16);
     if (!isHaveWideFont())
-        return errorBStr("No Wide Font");
+        return errorBStr("外字(" + fname + ")");
 
 #ifdef USE_GIF_FOR_FONT
-    QByteArray fname = 'w' + numToBStr(fcode,16) + ".gif";
+    fname += ".gif";
 #else
-    QByteArray fname = 'w' + numToBStr(fcode,16) + ".png";
+    fname += ".png";
 #endif
 
     QByteArray bitmap = wideFontCharacterBitmap(fcode);
@@ -497,7 +499,7 @@ QByteArray EbCore::hookWideJISX0208(int, const unsigned int *argv)
     code[0] = argv[0] >> 8;
     code[1] = argv[0] & 0xff;
     code[2] = '\0';
-    return QByteArray(eucToUtf(code).toUtf8());
+    return eucToUtf(code).toUtf8();
 }
 QByteArray EbCore::hookGB2312(int, const unsigned int*)
 {
