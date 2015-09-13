@@ -20,7 +20,7 @@
 
 #include "book.h"
 
-const char *FontFile = { "afonts_" };
+const char *FontFile = { "gaiji-table_" };
 
 void Book::loadAlterFont()
 {
