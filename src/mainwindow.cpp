@@ -1144,22 +1144,83 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
         return eb.ebCache.fontCachePath;
     }
     emit nowBusy(true);
-    //stopAct->setEnabled(true);
-    int total = 0;
-    for(;;) {
-        int hit_num = eb.hitFull(1000);
-        total += hit_num;
-        QString msg = QString("Please wait... "
-                              "Loading all external fonts (%1).").arg(total);
-        showStatus(msg);
-        for(int i = 0; i < hit_num; i++){
-            eb.hitText(i);
+
+    if (eb.isHaveNarrowFont())
+    {
+        for (int i = eb.narrowFontStart(); i < eb.narrowFontEnd(); i = eb.forwardNarrowFontCharacter(1, i))
+        {
+            QByteArray fname = 'n' + eb.numToBStr(i, 16);
+
+#ifdef USE_GIF_FOR_FONT
+            fname += ".gif";
+#else
+            fname += ".png";
+#endif
+
+            QByteArray bitmap = eb.narrowFontCharacterBitmap(i);
+            if (bitmap.isEmpty())
+            {
+                qDebug() << "Font Extract Error" << fname;
+                continue;
+            }
+
+#ifdef USE_GIF_FOR_FONT
+            QByteArray cnv = eb.narrowBitmapToGif(bitmap);
+#else
+            QByteArray cnv = eb.narrowBitmapToPng(bitmap);
+#endif
+            if (cnv.isEmpty())
+            {
+                qDebug() << "Font Conversion Error" << fname;
+                continue;
+            }
+
+            if(!eb.makeBinaryFile(eb.ebCache.fontCachePath + '/' + fname, cnv)) {
+                qDebug() << "Font Write Error" << fname;
+                continue;
+            }
+            eb.ebCache.fontCacheList << fname;
         }
-
-        QEventLoop().processEvents();
-
-        if (hit_num < 1000) break;
     }
+
+    if (eb.isHaveWideFont())
+    {
+        for (int i = eb.wideFontStart(); i < eb.wideFontEnd(); i = eb.forwardWideFontCharacter(1, i))
+        {
+            QByteArray fname = 'w' + eb.numToBStr(i, 16);
+
+#ifdef USE_GIF_FOR_FONT
+            fname += ".gif";
+#else
+            fname += ".png";
+#endif
+
+            QByteArray bitmap = eb.wideFontCharacterBitmap(i);
+            if (bitmap.isEmpty())
+            {
+                qDebug() << "Font Extract Error" << fname;
+                continue;
+            }
+
+#ifdef USE_GIF_FOR_FONT
+            QByteArray cnv = eb.wideBitmapToGif(bitmap);
+#else
+            QByteArray cnv = eb.wideBitmapToPng(bitmap);
+#endif
+            if (cnv.isEmpty())
+            {
+                qDebug() << "Font Conversion Error" << fname;
+                continue;
+            }
+
+            if(!eb.makeBinaryFile(eb.ebCache.fontCachePath + '/' + fname, cnv)) {
+                qDebug() << "Font Write Error" << fname;
+                continue;
+            }
+            eb.ebCache.fontCacheList << fname;
+        }
+    }
+
     loadf.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream out(&loadf);
     out << "All font loaded";
