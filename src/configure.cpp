@@ -92,8 +92,7 @@ void Configure::load()
     maxLimitTotalHit = conf.value("limit_total", maxLimitTotalHit_Def).toInt();
     stepBookHitMax = conf.value("step_book", stepBookHitMax_Def).toInt();
     stepTotalHitMax = conf.value("step_total", stepTotalHitMax_Def).toInt();
-    QVariant vfont = conf.value("browser_font", qApp->font());
-    browserFont = vfont.value<QFont>();
+    browserFont.fromString(conf.value("browser_font", qApp->font()).toString());
 
     QFile file(":/data/book-style.css");
     QTextStream stream(&file);
@@ -137,7 +136,7 @@ void Configure::save()
     conf.setValue("port_no", portNo);
     conf.setValue("step_book", stepBookHitMax);
     conf.setValue("step_total", stepTotalHitMax);
-    conf.setValue("browser_font", browserFont);
+    conf.setValue("browser_font", browserFont.toString());
 
     QSettings ssheets(settingOrg, "EpwingStyleSheet");
     ssheets.setValue("dictionary", dictSheet);
