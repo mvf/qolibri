@@ -140,7 +140,6 @@ public:
     int indentOffset;
     int monoWidth;
     int monoHeight;
-    bool currentIndent;
     bool ruby;
 
 public:

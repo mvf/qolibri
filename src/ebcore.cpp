@@ -180,11 +180,8 @@ QString EbCore::text(const EB_Position &pos, bool hflag)
         return QString();
     }
 
-    currentIndent = false;
     QString str = readText((void*)this,hflag);
     if (hflag) {
-        if (currentIndent)
-            str = str + "</pre>";
         for (int i = 0; i < refList.count(); i++) {
             QString f = "<R" + numToStr(i) + "R>";
             str.replace(f, refList[i]);
@@ -206,7 +203,6 @@ QString EbCore::heading(const EB_Position &pos, bool hflag)
         return QString();
     }
 
-    currentIndent = false;
     QString str = readHeading((void*)this, hflag);
     if (hflag) {
         for (int i = 0; i < refList.count(); i++) {
@@ -295,20 +291,10 @@ QByteArray EbCore::hookEndSubscript(int, const unsigned int*)
 QByteArray EbCore::hookSetIndent(int, const unsigned int* argv)
 {
     int indent = argv[1];
-    QByteArray ret;
-    if (indent > 1) {
-        if (currentIndent)
-            ret = "</pre>";
-        int left = (indent-1) * fontSize;
-        ret = ret + "<pre style=\"margin-left:" + numToBStr(left) + "px;\">";
-        currentIndent = true;
-    } else {
-        if (currentIndent) {
-            ret = "</pre>";
-        }
-        currentIndent = false;
-    }
-
+    QByteArray ret = "<span>";
+    for (int i = 1; i < indent; i++)
+	ret += "&nbsp;&nbsp;";
+    ret += "</span>";
     return ret;
 }
 
