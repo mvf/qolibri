@@ -689,11 +689,14 @@ QByteArray EbCore::hookBeginDecoration(int, const unsigned int* argv)
 {
     int code = argv[1];
     decorationStack.push(code);
-    if (code == 1) {
+    switch (code) {
+    case 1:
+    case 0x1101:
         return "<i>";
-    } else if (code == 3) {
+    case 3:
+    case 0x1103:
         return "<b>";
-    } else {
+    default:
         qWarning() << "Unrecognized Decoration Code" << code;
         return "<i>";
     }
@@ -704,11 +707,14 @@ QByteArray EbCore::hookEndDecoration(int, const unsigned int*)
         return QByteArray();
     }
     int code = decorationStack.pop();
-    if (code == 1) {
+    switch (code) {
+    case 1:
+    case 0x1101:
         return "</i>";
-    } else if (code == 3) {
+    case 3:
+    case 0x1103:
         return "</b>";
-    } else {
+    default:
         return "</i>";
     }
 }
