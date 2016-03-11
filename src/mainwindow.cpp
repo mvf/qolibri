@@ -234,7 +234,13 @@ void MainWindow::createMenus()
     toggleRubyAct->setIconVisibleInMenu(false);
 
     QMenu *hmenu = menuBar()->addMenu(tr("&Help"));
-    hmenu->addAction(QIcon(":/trolltech/qmessagebox/images/qtlogo-64.png"), tr("About &QT..."), qApp, SLOT(aboutQt()));
+    hmenu->addAction(QIcon(
+#if QT_VERSION >= 0x050000
+        ":/qt-project.org/"
+#else
+        ":/trolltech/"
+#endif
+        "qmessagebox/images/qtlogo-64.png"), tr("About &QT..."), qApp, SLOT(aboutQt()));
     hmenu->addAction(QIcon(":/images/title.png"), tr("About q&olibri..."), this, SLOT(aboutQolibri()));
 }
 
