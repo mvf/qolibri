@@ -16,7 +16,6 @@ HEADERS += mainwindow.h \
            fontsetting.h  \
            model.h \
            ssheetsetting.h \
-           ssheet.h \
            titlelabel.h \
            toolbar.h \
            server.h \
