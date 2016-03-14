@@ -173,7 +173,7 @@ BookSetting::BookSetting(Model *model_, QWidget *parent)
         QHBoxLayout *h1 = new QHBoxLayout();
         {
             //QLabel *l = new QLabel(tr("Search directory"));
-            searchPath = new QLineEdit(QDir::homePath(), this);
+            searchPath = new QLineEdit(CONF->dictionarySearchPath, this);
             connect(searchPath, SIGNAL(textChanged(QString)),
                     SLOT(searchPathChanged(QString)));
             //h1->addWidget(l);
@@ -342,6 +342,7 @@ void BookSetting::searchBook()
     bookDirs.clear();
     findCategory(searchPath->text());
 
+    CONF->dictionarySearchPath = searchPath->text();
 
     int subbook_count = 0;
     int add_count = 0;

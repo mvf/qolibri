@@ -45,6 +45,7 @@ public:
     int limitMenuHit;
     int indentOffset;
     int portNo;
+    QString dictionarySearchPath;
     QString dictSheet;
     QString bookSheet;
     QString statusBarSheet;

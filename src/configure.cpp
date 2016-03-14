@@ -93,6 +93,7 @@ void Configure::load()
     stepBookHitMax = conf.value("step_book", stepBookHitMax_Def).toInt();
     stepTotalHitMax = conf.value("step_total", stepTotalHitMax_Def).toInt();
     browserFont.fromString(conf.value("browser_font", qApp->font()).toString());
+    dictionarySearchPath = conf.value("dictionary_search_path", QDir::homePath()).toString();
 
     QFile file(":/data/book-style.css");
     QTextStream stream(&file);
@@ -137,6 +138,7 @@ void Configure::save()
     conf.setValue("step_book", stepBookHitMax);
     conf.setValue("step_total", stepTotalHitMax);
     conf.setValue("browser_font", browserFont.toString());
+    conf.setValue("dictionary_search_path", dictionarySearchPath);
 
     QSettings ssheets(settingOrg, "EpwingStyleSheet");
     ssheets.setValue("dictionary", dictSheet);
