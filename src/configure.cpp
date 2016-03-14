@@ -23,6 +23,7 @@
 const bool highlightMatch_Def = true;
 const bool beepSound_Def = true;
 const bool serverMode_Def = false;
+const bool convertFullwidth_Def = true;
 const int stepBookHitMax_Def = 10;
 const int stepTotalHitMax_Def = 100;
 const int maxLimitBookHit_Def = 15000;
@@ -77,6 +78,7 @@ void Configure::load()
     highlightMatch = conf.value("highlight_match", highlightMatch_Def).toBool();
     beepSound = conf.value("beep_sound", beepSound_Def).toBool();
     serverMode = conf.value("server_mode", serverMode_Def).toBool();
+    convertFullwidth = conf.value("convert_fullwidth", convertFullwidth_Def).toBool();
     historyMax = conf.value("hist_max", historyMax_Def).toInt();
     waveProcess = conf.value("wave_proc", waveProcess_Def).toString();
     mpegProcess = conf.value("mpeg_proc", mpegProcess_Def).toString();
@@ -122,6 +124,7 @@ void Configure::save()
     conf.setValue("hightlight_match", highlightMatch);
     conf.setValue("beep_sound", beepSound);
     conf.setValue("server_mode", serverMode);
+    conf.setValue("convert_fullwidth", convertFullwidth);
     conf.setValue("hist_max", historyMax);
     conf.setValue("wave_proc", waveProcess);
     conf.setValue("mpeg_proc", mpegProcess);

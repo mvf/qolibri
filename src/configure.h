@@ -36,6 +36,7 @@ public:
     bool highlightMatch;
     bool beepSound;
     bool serverMode;
+    bool convertFullwidth;
     int stepBookHitMax;
     int stepTotalHitMax;
     int maxLimitBookHit;

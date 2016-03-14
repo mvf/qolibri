@@ -327,6 +327,18 @@ void BookSetting::accept()
     model->setGroupList(groupList_);
 }
 
+static QString unicodeFullwidthAsciiToHalfwidth(QString str)
+{
+    for (int i = 0; i < str.length(); ++i) {
+        int u = str[i].unicode();
+        if (u >= 0xff01 && u <= 0xff5e)
+            str[i] = QChar(u - 0xfee0);
+        if (u == 0x3000)
+            str[i] = QChar(' ');
+    }
+    return str;
+}
+
 void BookSetting::searchBook()
 {
     searchPath->setEnabled(false);
@@ -355,7 +367,10 @@ void BookSetting::searchBook()
         for (int i = 0; i < subbooks; i++) {
             eb.initSubBook(i);
             if (eb.isHaveText() /* && eb.isHaveWordSearch() */) {
-                if (allDicWidget->addBook(eb.subbookTitle(), BookLocal,
+                QString title = eb.subbookTitle();
+                if (CONF->convertFullwidth)
+                    title = unicodeFullwidthAsciiToHalfwidth(title);
+                if (allDicWidget->addBook(title, BookLocal,
                                           dir, i)) {
                     add_count++;
                 }

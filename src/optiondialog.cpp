@@ -34,6 +34,7 @@ void OptionDialog::reset()
     highlightCheck->setChecked(d->highlightMatch);
     beepSoundCheck->setChecked(d->beepSound);
     serverModeCheck->setChecked(d->serverMode);
+    convertFullwidthCheck->setChecked(d->convertFullwidth);
     historyBox->setValue(d->historyMax);
     indentOffsetBox->setValue(d->indentOffset);
     portNoBox->setValue(d->portNo);
@@ -59,6 +60,7 @@ void OptionDialog::accept()
     d->highlightMatch = highlightCheck->isChecked();
     d->beepSound = beepSoundCheck->isChecked();
     d->serverMode = serverModeCheck->isChecked();
+    d->convertFullwidth = convertFullwidthCheck->isChecked();
     d->historyMax = historyBox->value();
     d->indentOffset = indentOffsetBox->value();
     d->portNo = portNoBox->value();
