@@ -1126,7 +1126,7 @@ QString QEb::composeMovieFileName(const unsigned int *argv)
         dispError("eb_compose_movie_file_name", ecode);
         return QString();
     }
-    return eucToUtf(name);
+    return name;
 }
 QString QEb::composeMoviePathName(const unsigned int *argv)
 {
@@ -1136,7 +1136,7 @@ QString QEb::composeMoviePathName(const unsigned int *argv)
         dispError("eb_compose_movie_path_name", ecode);
         return QString();
     }
-    return eucToUtf(path);
+    return path;
 }
 EB_Error_Code QEb::decomposeMovieFileName(unsigned int *argv,
                                      const QString &name)
