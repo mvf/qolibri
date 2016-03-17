@@ -29,6 +29,7 @@ public:
     EbCache() {}
     ~EbCache() {}
 
+    static void initialize();
     void init(const QString &title);
 
     static QString cachePath;

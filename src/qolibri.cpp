@@ -40,6 +40,7 @@ Q_IMPORT_PLUGIN(qjpeg)
 Q_IMPORT_PLUGIN(qgif)
 #endif
 
+#include "ebcache.h"
 #include "mainwindow.h"
 #include "configure.h"
 #include "method.h"
@@ -73,6 +74,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     CONF->load();
+    EbCache::initialize();
 
     Model model;
     model.load();
