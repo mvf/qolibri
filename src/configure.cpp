@@ -45,7 +45,7 @@ const char* browserProcess_Def =
 const char* mpegProcess_Def =
     "\"C:/Program Files/Windows Media Player/wmplayer.exe\"";
 #elif defined (Q_OS_LINUX)
-const char* waveProcess_Def = "play";
+const char* waveProcess_Def = "";
 const char* mpegProcess_Def = "";
 const char* browserProcess_Def = "xdg-open";
 #else

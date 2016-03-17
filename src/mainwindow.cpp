@@ -90,6 +90,7 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
     }
 
     sound = NULL;
+    timer = NULL;
     if (model->groupList[0]->bookList().count() == 0) {
         QTimer::singleShot(0, this, SLOT(setBooks()));
     } else if (!s_text.isEmpty()) {

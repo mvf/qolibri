@@ -609,7 +609,7 @@ QByteArray EbCore::hookBeginWave(int, const unsigned int *argv)
     // argv[5] : end offset
     QByteArray fname = binaryFname("wav", argv[2], argv[3]);
     QByteArray out = "<a class=snd href=\"sound?" +
-                     ebCache.waveCachePath.toUtf8() + "\">";
+                     ebCache.waveCachePath.toUtf8() + "/" + fname + "\">";
     if (ebCache.waveCacheList.contains(fname))
         return out;
 
