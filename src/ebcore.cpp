@@ -530,7 +530,7 @@ QByteArray EbCore::hookEndGrayGraphic(int, const unsigned int*)
 {
     return errorBStr("HOOK_END_GRAY_GRAPHIC Not Supported");
 }
-QByteArray EbCore::hookBeginColorBmp(int, const unsigned int *argv)
+QByteArray EbCore::hookBeginInColorBmp(int, const unsigned int *argv)
 {
     QByteArray fname = binaryFname("bmp", argv[2], argv[3]);
     QByteArray out = "<img src=\"" + ebCache.imageCacheRel.toUtf8() +
@@ -556,7 +556,7 @@ QByteArray EbCore::hookBeginColorBmp(int, const unsigned int *argv)
     return out;
 
 }
-QByteArray EbCore::hookBeginColorJpeg(int, const unsigned int *argv)
+QByteArray EbCore::hookBeginInColorJpeg(int, const unsigned int *argv)
 {
     QByteArray fname = binaryFname("jpeg", argv[2], argv[3]);
     QByteArray out = "<img src=\"" + ebCache.imageCacheRel.toUtf8() +
@@ -581,25 +581,21 @@ QByteArray EbCore::hookBeginColorJpeg(int, const unsigned int *argv)
 
     return out;
 }
-QByteArray EbCore::hookBeginInColorBmp(int argc, const unsigned int *argv)
+QByteArray EbCore::hookBeginColorBmp(int argc, const unsigned int *argv)
 {
-    QByteArray b = hookBeginColorBmp(argc, argv);
-
-    return '\n' + b;
+    return "<br>" + hookBeginInColorBmp(argc, argv);
 }
-QByteArray EbCore::hookBeginInColorJpeg(int argc, const unsigned int *argv)
+QByteArray EbCore::hookBeginColorJpeg(int argc, const unsigned int *argv)
 {
-    QByteArray b = hookBeginColorJpeg(argc, argv);
-
-    return '\n' + b;
+    return "<br>" + hookBeginInColorJpeg(argc, argv);
 }
 QByteArray EbCore::hookEndColorGraphic(int, const unsigned int*)
 {
-    return "</span>\n";
+    return "</span><br>";
 }
 QByteArray EbCore::hookEndInColorGraphic(int, const unsigned int*)
 {
-    return "</span>\n";
+    return "</span>";
 }
 QByteArray EbCore::hookBeginWave(int, const unsigned int *argv)
 {
