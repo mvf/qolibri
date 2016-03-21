@@ -493,8 +493,8 @@ QByteArray EbCore::hookGB2312(int, const unsigned int*)
 }
 QByteArray EbCore::hookBeginMonoGraphic(int, const unsigned int *argv)
 {
-    monoWidth = argv[2];
-    monoHeight = argv[3];
+    monoHeight = argv[2];
+    monoWidth = argv[3];
     return "\n";
 }
 QByteArray EbCore::hookEndMonoGraphic(int, const unsigned int *argv)
