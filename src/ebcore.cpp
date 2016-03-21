@@ -657,15 +657,15 @@ QByteArray EbCore::hookEndMpeg(int, const unsigned int *argv)
 }
 QByteArray EbCore::hookBeginGraphicReference(int, const unsigned int*)
 {
-    return errorBStr("HOOK_BEGIN_GRAPHIC_REFERECE Not Supported");
+    return errorBStr("HOOK_BEGIN_GRAPHIC_REFERENCE Not Supported");
 }
 QByteArray EbCore::hookEndGraphicReference(int, const unsigned int*)
 {
-    return errorBStr("HOOK_END_GRAPHIC_REFERECE Not Supported");
+    return errorBStr("HOOK_END_GRAPHIC_REFERENCE Not Supported");
 }
 QByteArray EbCore::hookGraphicReference(int, const unsigned int*)
 {
-    return errorBStr("HOOK_GRAPHIC_REFERECE Not Supported");
+    return errorBStr("HOOK_GRAPHIC_REFERENCE Not Supported");
 }
 QByteArray EbCore::hookBeginDecoration(int, const unsigned int* argv)
 {
