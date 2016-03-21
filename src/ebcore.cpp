@@ -476,7 +476,7 @@ QByteArray EbCore::hookNarrowJISX0208(int, const unsigned int *argv)
     code[2] = '\0';
 
     str = eucToUtf(code);
-    //qDebug() << "Not narrowed:" << str << QString::number(argv[0],16);
+    qDebug() << subbookTitle() << "Not narrowed:" << str << QString::number(argv[0],16);
     return str.toUtf8();
 }
 QByteArray EbCore::hookWideJISX0208(int, const unsigned int *argv)
@@ -679,8 +679,8 @@ QByteArray EbCore::hookBeginDecoration(int, const unsigned int* argv)
     case 0x1103:
         return "<b>";
     default:
-        qWarning() << "Unrecognized Decoration Code" << code;
-        return "<i>";
+        qWarning() << subbookTitle() << "Unrecognized Decoration Code" << code;
+        return "<i class=\"decoration0x" + numToBStr(code, 16) + "\">";
     }
 }
 QByteArray EbCore::hookEndDecoration(int, const unsigned int*)
