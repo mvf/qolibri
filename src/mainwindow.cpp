@@ -1154,7 +1154,8 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
 
     if (eb.isHaveNarrowFont())
     {
-        for (int i = eb.narrowFontStart(); i < eb.narrowFontEnd(); i = eb.forwardNarrowFontCharacter(1, i))
+        int i = eb.narrowFontStart();
+        while (i >= 0)
         {
             QByteArray fname = 'n' + eb.numToBStr(i, 16);
 
@@ -1187,12 +1188,17 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
                 continue;
             }
             eb.ebCache.fontCacheList << fname;
+
+            if (i == eb.narrowFontEnd())
+                break;
+            i = eb.forwardNarrowFontCharacter(1, i);
         }
     }
 
     if (eb.isHaveWideFont())
     {
-        for (int i = eb.wideFontStart(); i < eb.wideFontEnd(); i = eb.forwardWideFontCharacter(1, i))
+        int i = eb.wideFontStart();
+        while (i >= 0)
         {
             QByteArray fname = 'w' + eb.numToBStr(i, 16);
 
@@ -1225,6 +1231,10 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
                 continue;
             }
             eb.ebCache.fontCacheList << fname;
+
+            if (i == eb.wideFontEnd())
+                break;
+            i = eb.forwardWideFontCharacter(1, i);
         }
     }
 
