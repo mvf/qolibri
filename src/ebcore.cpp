@@ -182,13 +182,17 @@ QString EbCore::text(const EB_Position &pos, bool hflag)
 
     QString str = readText((void*)this,hflag);
     if (hflag) {
+        int x = 0;
         for (int i = 0; i < refList.count(); i++) {
-            QString f = "<R" + numToStr(i) + "R>";
-            str.replace(f, refList[i]);
+            const QString f = "<R" + numToStr(i) + "R>";
+            x = str.indexOf(f, x);
+            str.replace(x, f.length(), refList[i]);
         }
+        x = 0;
         for (int i = 0; i < mpegList.count(); i++) {
-            QString f = "<M" + numToStr(i) + "M>";
-            str.replace(f, mpegList[i]);
+            const QString f = "<M" + numToStr(i) + "M>";
+            x = str.indexOf(f, x);
+            str.replace(x, f.length(), mpegList[i]);
         }
     }
     str = str.trimmed();
@@ -467,7 +471,7 @@ QByteArray EbCore::hookNarrowJISX0208(int, const unsigned int *argv)
 #else
         str = Qt::escape(str);
 #endif
-        return QByteArray(str.toUtf8());
+        return str.toUtf8();
     }
 
     char code[3];
