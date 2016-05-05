@@ -873,6 +873,10 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
                 msg += tr("Stopped (Item limit[") +
                        QString::number(mthd.limitTotal) + "])";
                 break;
+            case LIMIT_MENU:
+                msg += tr("Stopped (Menu limit[") +
+                       QString::number(CONF->limitMenuHit) + "])";
+                break;
             default:
                 msg += "Error";
                 qWarning() << "Unrecognized Error Code" << ret;
