@@ -1415,8 +1415,7 @@ QByteArray WebPage::encString(const QString &url)
     } else {
         QString w1 = url.mid(url.indexOf('{')+1);
         QString w2 = w1.left(w1.indexOf('}'));
-        w2.trimmed();
-        return w2.toLatin1();
+        return w2.trimmed().toLatin1();
     }
 }
 
@@ -1449,8 +1448,7 @@ QString WebPage::directionString(const QString &url)
     } else {
         QString w1 = url.mid(url.indexOf('[')+1);
         QString w2 = w1.left(w1.indexOf(']'));
-        w2.trimmed();
-        return w2;
+        return w2.trimmed();
     }
 }
 QString WebPage::setDirectionString(const QString &url, const QString &dstr,

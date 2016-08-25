@@ -30,8 +30,6 @@
 #include "textcodec.h"
 
 const int HitsBufferSize = 10000;
-const int TextBufferSize = 4000;
-const int TextSizeLimit = 2800000;
 
 QList <CandItem> EbMenu::topMenu()
 {

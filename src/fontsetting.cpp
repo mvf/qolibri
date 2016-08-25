@@ -201,8 +201,7 @@ void FontSetting::save()
     QTextStream out(&file);
     for (int i = 0; i < fontTreeWidget->topLevelItemCount(); i++) {
         QTreeWidgetItem *w = fontTreeWidget->topLevelItem(i);
-        QString f = w->text(2);
-        f.trimmed();
+        QString f = w->text(2).trimmed();
         if (!f.isEmpty()) {
             out << w->text(1) << " " << f << "\n";
         }

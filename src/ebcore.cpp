@@ -195,9 +195,8 @@ QString EbCore::text(const EB_Position &pos, bool hflag)
             str.replace(x, f.length(), mpegList[i]);
         }
     }
-    str = str.trimmed();
 
-    return str;
+    return str.trimmed();
 }
 
 QString EbCore::heading(const EB_Position &pos, bool hflag)
