@@ -55,7 +55,6 @@
     <file>data/dict-style.html</file>
     <file>data/statusbar-style.css</file>
     <file>data/euc-wide-to-utf-narrow</file>
-    <file>translations/qolibri_ja_JP.qm</file>
 </qresource>
 <!--
 <qresource lang="jp">

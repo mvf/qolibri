@@ -131,9 +131,14 @@ int main(int argc, char *argv[])
                       QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     app.installTranslator(&qtTranslator);
 
-    QTranslator qolibriTranslator;
-    qolibriTranslator.load("qolibri_" + QLocale::system().name(), ":/translations/");
-    app.installTranslator(&qolibriTranslator);
+#if defined(PKGDATADIR)
+    QString path(PKGDATADIR "/translations");
+#else
+    QString path = QCoreApplication::applicationDirPath() + "/translations";
+#endif
+    QTranslator trans;
+    trans.load(QString("qolibri_") + QLocale::system().name(), path);
+    app.installTranslator(&trans);
 
     MainWindow mainWin(&model, searchText);
 
