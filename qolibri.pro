@@ -45,7 +45,7 @@ SOURCES += src/qolibri.cpp \
            src/textcodec.cpp \
            src/toolbar.cpp
 
-RESOURCES += src/qolibri.qrc
+RESOURCES += qolibri.qrc
 
 FORMS += src/optiondialog.ui
 
@@ -63,7 +63,7 @@ RCC_DIR = src/.build
 UI_DIR = src/.build
 LIBS += -leb -lz
 
-TRANSLATIONS = src/qolibri_ja_JP.ts
+TRANSLATIONS = translations/qolibri_ja_JP.ts
 
 #DEFINES += USE_GIF_FOR_FONT
 #DEFINES += FIXED_POPUP
@@ -94,8 +94,8 @@ isEmpty(QMAKE_LRELEASE) {
 }
 
 updateqm.input = TRANSLATIONS
-updateqm.output = src/translations/${QMAKE_FILE_BASE}.qm
-updateqm.commands = $$QMAKE_LRELEASE -silent ${QMAKE_FILE_IN} -qm src/translations/${QMAKE_FILE_BASE}.qm
+updateqm.output = translations/${QMAKE_FILE_BASE}.qm
+updateqm.commands = $$QMAKE_LRELEASE -silent ${QMAKE_FILE_IN} -qm translations/${QMAKE_FILE_BASE}.qm
 updateqm.CONFIG += no_link target_predeps
 QMAKE_EXTRA_COMPILERS += updateqm
 
