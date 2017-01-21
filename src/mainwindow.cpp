@@ -1309,6 +1309,26 @@ void MainWindow::connectClipboard()
     }
 }
 
+void MainWindow::aboutQolibri()
+{
+    const QString gitCommitDate(QDateTime::fromString(QOLIBRI_GIT_COMMIT_DATE, Qt::ISODate).toString(Qt::DefaultLocaleShortDate));
+    const QUrl website(QOLIBRI_WEBSITE, QUrl::StrictMode);
+    QString msg(tr("<h2>qolibri</h2>"
+                   "<h3>EPWING Dictionary/Book Viewer</h3>"
+                   "<h4>Version %1</h4>").arg(QOLIBRI_VERSION_STR));
+
+    if (!gitCommitDate.isEmpty())
+        msg += tr("<p>Commit date: %1</p>").arg(gitCommitDate);
+   
+    if (website.isValid())
+        msg += QString("<p><a href='%1'>%1</a></p>").arg(website.toString());
+    
+    msg += tr("<p>Based on <a href='%1'>%1</a></p>").arg("http://qolibri.sourceforge.jp");
+    msg += tr("<p>Compiled against Qt version %1</p>").arg(QT_VERSION_STR);
+
+    QMessageBox::about(this, tr("About qolibri"), msg);
+}
+
 void MainWindow::goPrev()
 {
     WebPage *w = (WebPage*)bookView->currentPageWidget();

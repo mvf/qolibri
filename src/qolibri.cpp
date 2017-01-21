@@ -60,7 +60,8 @@ const char * const usage =
     "   -h  or  --help    Print Help (this message) and exit\n"
     "   --version         Print version information and exit";
 
-extern const char * const version;
+const char *version =
+    "qolibri - EPWING Dictionary/Book Viewer " QOLIBRI_VERSION_STR;
 
 QoServer *server;
 

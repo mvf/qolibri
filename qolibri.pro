@@ -24,7 +24,6 @@ HEADERS += src/mainwindow.h \
 
 SOURCES += src/qolibri.cpp \
            src/mainwindow.cpp \
-           src/mainwindow-about.cpp \
            src/method.cpp \
            src/book.cpp \
            src/qeb.cpp \
@@ -72,6 +71,10 @@ defineReplace(defStr) {
     return(QOLIBRI_$$1='"\\\"$$2\\\""')
 }
 
+defineReplace(git) {
+    return($$system(git --git-dir "$$PWD/.git" --work-tree "$$PWD" $$1))
+}
+
 TRANSLATIONS = translations/qolibri_ja_JP.ts
 
 #DEFINES += USE_GIF_FOR_FONT
@@ -108,11 +111,21 @@ updateqm.commands = $$QMAKE_LRELEASE -silent ${QMAKE_FILE_IN} -qm translations/$
 updateqm.CONFIG += no_link target_predeps
 QMAKE_EXTRA_COMPILERS += updateqm
 
-gitversion.target = src/gitversion.h
-gitversion.commands = src/gitversion.sh > src/gitversion.h
-gitversion.depends = ${SOURCES} ${HEADERS}
-QMAKE_EXTRA_TARGETS += gitversion
-PRE_TARGETDEPS += src/gitversion.h
+# This #defines the following preprocessor string tokens with the empty string as a fallback:
+# QOLIBRI_GIT_COMMIT_DATE - HEAD's commit date in ISO format, e.g. "2017-01-13 13:52:55 +0100"
+# QOLIBRI_VERSION_STR     - Version name, e.g. 1.0.4-3-g4dead, or the hard-coded version number
+# QOLIBRI_WEBSITE         - The contents of the WEBSITE variable
+
+VERSION_STR = $$git(describe --always --tags)
+
+isEmpty(VERSION_STR) {
+    DEFINES += $$defStr(VERSION_STR, 1.0.4)
+} else {
+    DEFINES += $$defStr(VERSION_STR, $$VERSION_STR)
+}
+
+DEFINES += $$defStr(GIT_COMMIT_DATE, $$git(log -1 --format=%ci))
+DEFINES += $$defStr(WEBSITE, $$WEBSITE)
 
 message(Version = $$QT_VERSION)
 message(Config = $$CONFIG)
@@ -122,3 +135,6 @@ message(Libs = $$LIBS)
 message(Include Path = $$INCLUDEPATH)
 message(Installs = $$INSTALLS)
 message(Target  = $$TARGET)
+equals(WEBSITE, "") {
+    message("Define the WEBSITE variable to put a hyperlink into the about dialog.")
+}

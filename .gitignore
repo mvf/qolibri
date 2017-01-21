@@ -4,7 +4,6 @@
 /qolibri
 /src/.build
 /src/Makefile
-/src/gitversion.h
 /src/qrc_qolibri.cpp
 /src/ui_optiondialog.h
 /translations
