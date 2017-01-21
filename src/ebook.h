@@ -31,7 +31,6 @@ enum SearchType { SearchWord, SearchEndWord, SearchExactWord,
 
 class EbMenu : public EbCore
 {
-    Q_OBJECT
 public:
     EbMenu() : EbCore(HookMenu) {}
     ~EbMenu() {}
@@ -41,7 +40,6 @@ public:
 
 class EBook : public EbCore
 {
-    Q_OBJECT
 public:
     EBook(HookMode hmode = HookText);
     ~EBook();
@@ -80,7 +78,6 @@ private:
 
 class EbAll : public EBook
 {
-    Q_OBJECT
 public:
     EbAll(HookMode mode=HookText) : EBook(mode) {}
     ~EbAll() {}

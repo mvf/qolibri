@@ -24,7 +24,6 @@
 
 #include <QDebug>
 #include <QList>
-#include <QObject>
 
 #include <eb/eb.h>
 #include <eb/text.h>
@@ -37,9 +36,8 @@
 #define toUTF(q_bytearray) \
     QTextCodec::codecForLocale()->toUnicode(q_bytearray)
 
-class QEb : public QObject
+class QEb
 {
-    Q_OBJECT
 protected:
     EB_Book book;
     EB_Appendix appendix;

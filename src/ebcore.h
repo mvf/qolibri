@@ -24,7 +24,6 @@
 #include "ebcache.h"
 
 #include <QStack>
-#include <QObject>
 
 #include <eb/eb.h>
 #include <eb/text.h>
@@ -44,7 +43,6 @@ struct CandItem
 
 class EbCore : public QEb
 {
-    Q_OBJECT
 public:
     EbCore(HookMode hmode=HookText);
     ~EbCore();

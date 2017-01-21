@@ -20,12 +20,11 @@
 #ifndef EBCACHE_H
 #define EBCACHE_H
 
-#include <QObject>
+#include <QString>
 #include <QStringList>
 
-class EbCache : public QObject
+class EbCache
 {
-    Q_OBJECT
 public:
     EbCache() {}
     ~EbCache() {}

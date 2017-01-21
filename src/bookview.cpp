@@ -422,7 +422,6 @@ void TreeScrollPopup::expand(QTreeWidgetItem *item,
 }
 
 PageItems::PageItems(const QString &ssheet)
-    : QObject()
 {
     composeHeader(ssheet);
     itemP_[0] = itemP_[1] = itemP_[2] = itemP_[3] = itemP_[4] =

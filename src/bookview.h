@@ -170,9 +170,8 @@ private:
     QTreeWidgetItem *topItem;
 };
 
-class PageItems : public QObject
+class PageItems
 {
-    Q_OBJECT
 public:
     PageItems(const QString &ssheet);
 
