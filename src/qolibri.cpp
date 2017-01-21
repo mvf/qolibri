@@ -132,8 +132,8 @@ int main(int argc, char *argv[])
                       QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     app.installTranslator(&qtTranslator);
 
-#if defined(PKGDATADIR)
-    QString path(PKGDATADIR "/translations");
+#if defined(QOLIBRI_PKGDATADIR)
+    QString path(QOLIBRI_PKGDATADIR "/translations");
 #else
     QString path = QCoreApplication::applicationDirPath() + "/translations";
 #endif

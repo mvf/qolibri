@@ -68,6 +68,10 @@ RCC_DIR = src/.build
 UI_DIR = src/.build
 LIBS += -leb -lz
 
+defineReplace(defStr) {
+    return(QOLIBRI_$$1='"\\\"$$2\\\""')
+}
+
 TRANSLATIONS = translations/qolibri_ja_JP.ts
 
 #DEFINES += USE_GIF_FOR_FONT
@@ -80,7 +84,7 @@ unix:!macx {
     isEmpty(INSTALL_DATADIR):INSTALL_DATADIR=$$INSTALL_PREFIX/share
     isEmpty(INSTALL_PKGDATADIR):INSTALL_PKGDATADIR=$$INSTALL_DATADIR/$$TARGET
 
-    DEFINES += PKGDATADIR=\\\"$$INSTALL_PKGDATADIR\\\"
+    DEFINES += $$defStr(PKGDATADIR, $$INSTALL_PKGDATADIR)
 
     target.path = $$INSTALL_BINDIR
     INSTALLS += target
