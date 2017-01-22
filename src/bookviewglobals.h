@@ -13,9 +13,6 @@ extern QWidget *mainWin;
 extern const char CutString[];
 extern const char IntString[];
 
-#define SJIStoUTF(q_bytearray) \
-    QTextCodec::codecForName("Shift-JIS")->toUnicode(q_bytearray)
-
 bool checkStop();
 QString toAnchor(const QString &str, int num);
 

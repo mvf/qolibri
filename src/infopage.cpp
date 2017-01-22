@@ -89,7 +89,7 @@ RET_SEARCH InfoPage::search(const Query& query)
         QString fname = resultFiles[i];
         QFile file(book->path() + "/" + fname);
         file.open(QIODevice::ReadOnly);
-        QString str = SJIStoUTF(file.readAll());
+        QString str(QTextCodec::codecForName("Shift-JIS")->toUnicode(file.readAll()));
         str.remove("\r");
         if (!fname.rightRef(4).compare(QStringLiteral(".htm"), Qt::CaseInsensitive) ||
             !fname.rightRef(5).compare(QStringLiteral(".html"), Qt::CaseInsensitive)) {
