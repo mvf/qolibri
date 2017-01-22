@@ -20,9 +20,10 @@
 #ifndef BOOKWIDGET_H
 #define BOOKWIDGET_H
 
+#include "book.h"
+
 #include <QPushButton>
 #include <QLabel>
-#include "book.h"
 
 class QPushButton;
 

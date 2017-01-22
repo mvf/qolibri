@@ -17,20 +17,15 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <QtGui>
-#if QT_VERSION >= 0x050000
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QSplitter>
-#include <QtWidgets/QDialogButtonBox>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QFileDialog>
-#endif
-
 #include "ssheetsetting.h"
-#ifdef Q_WS_MAC
 #include "titlelabel.h"
-#endif
 
+#include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QPushButton>
+#include <QSplitter>
+#include <QTextStream>
+#include <QVBoxLayout>
 
 const char *view1 =
     "<html>\n"

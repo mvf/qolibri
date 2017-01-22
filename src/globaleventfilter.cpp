@@ -1,8 +1,8 @@
+#include "globaleventfilter.h"
+
 #include <QApplication>
 #include <QKeyEvent>
 #include <QWidget>
-
-#include "globaleventfilter.h"
 
 bool GlobalEventFilter::eventFilter(QObject *obj, QEvent *event)
 {

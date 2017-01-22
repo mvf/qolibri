@@ -20,13 +20,13 @@
 #ifndef GROUPDOCK_H
 #define GROUPDOCK_H
 
-#include <QDockWidget>
-#include <QListWidgetItem>
-#include <QPushButton>
-
 #include "bookwidget.h"
 #include "method.h"
 #include "model.h"
+
+#include <QDockWidget>
+#include <QListWidgetItem>
+#include <QPushButton>
 
 class QListWidget;
 class QTabWidget;

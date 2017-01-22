@@ -17,7 +17,9 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#pragma once
+#ifndef OPTIONDIALOG_H
+#define OPTIONDIALOG_H
+
 #include "ui_optiondialog.h"
 
 class OptionDialog : public QDialog, private Ui::OptionDialog
@@ -33,3 +35,5 @@ public slots:
 private:
     void reset();
 };
+
+#endif // OPTIONDIALOG_H

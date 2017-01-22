@@ -16,17 +16,16 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <QtGui>
-#if QT_VERSION >= 0x050000
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QMenu>
-#endif
 
 #include "groupdock.h"
 #include "book.h"
 #include "groupwidget.h"
+
+#include <QDebug>
+#include <QHBoxLayout>
+#include <QMenu>
+#include <QMessageBox>
+#include <QVBoxLayout>
 
 SearchItem::SearchItem(const QString &str, const SearchMethod &method)
     : QListWidgetItem(), searchStr_(str), method_(method)

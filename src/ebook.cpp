@@ -17,7 +17,8 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <QtCore>
+#include "ebook.h"
+#include "textcodec.h"
 
 #include <eb/eb.h>
 #include <eb/binary.h>
@@ -25,9 +26,6 @@
 #include <eb/font.h>
 #include <eb/appendix.h>
 #include <eb/error.h>
-
-#include "ebook.h"
-#include "textcodec.h"
 
 const int HitsBufferSize = 10000;
 

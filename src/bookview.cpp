@@ -16,23 +16,28 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#include <QtGui>
-#if QT_VERSION >= 0x050000
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QScrollBar>
-#include <QtWidgets/QDesktopWidget>
-#include <QtWidgets/QHeaderView>
-#include <QtWidgets/QToolButton>
-#include <QAudioDeviceInfo>
-#endif
 
 #include "book.h"
 #include "bookview.h"
-//#include "qeb.h"
-//#include "ebcore.h"
 #include "ebook.h"
 #include "configure.h"
 #include "textcodec.h"
+
+#include <QContextMenuEvent>
+#include <QDesktopWidget>
+#include <QDir>
+#include <QHeaderView>
+#include <QMenu>
+#include <QMouseEvent>
+#include <QScrollBar>
+#include <QTimer>
+#include <QToolButton>
+#include <QVBoxLayout>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QAudioDeviceInfo>
+#else
+#include <QSound>
+#endif
 
 static bool stopFlag = false;
 static QWidget *mainWin = 0;
@@ -76,7 +81,7 @@ void BookBrowser::setSource(const QUrl &name)
         // args[1] : wave file
         if (!CONF->waveProcess.isEmpty()) {
             emit processRequested(CONF->waveProcess + ' ' + args[1]);
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 	} else if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) {
 #else
         } else if (QSound::isAvailable()) {

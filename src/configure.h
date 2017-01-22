@@ -20,6 +20,7 @@
 #ifndef CONFIGURE_H
 #define CONFIGURE_H
 
+#include <QFont>
 #include <QString>
 
 #define CONF (static_cast<Configure *>(Configure::configure()))

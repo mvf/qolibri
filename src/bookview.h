@@ -20,28 +20,19 @@
 #ifndef BOOKVIEW_H
 #define BOOKVIEW_H
 
-#include <QApplication>
-#include <QTabWidget>
-#include <QTextBrowser>
-#include <QTreeWidgetItem>
-#include <QLineEdit>
-#include <QSplitter>
-#if QT_VERSION >= 0x050000
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QStatusBar>
-#include <QtWidgets/QMenuBar>
-#include <QtWidgets/QToolBar>
-#include <QSound>
-#include <QFontDialog>
-#include <QtWebKitWidgets/QWebView>
-#else
-#include <QWebView>
-#endif
-#include <eb/eb.h>
-
 #include "book.h"
 #include "method.h"
 #include "ebcore.h"
+
+#include <QApplication>
+#include <QLineEdit>
+#include <QSplitter>
+#include <QTabWidget>
+#include <QTextBrowser>
+#include <QTreeWidgetItem>
+#include <QWebView>
+
+#include <eb/eb.h>
 
 class QContextMenuEvent;
 class QUrl;

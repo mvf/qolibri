@@ -17,16 +17,23 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
+#include "ebcache.h"
+#include "mainwindow.h"
+#include "configure.h"
+#include "method.h"
+#include "server.h"
+#include "client.h"
+#include "textcodec.h"
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
 #include <QApplication>
-#include <QTranslator>
-#include <QLocale>
 #include <QLibraryInfo>
+#include <QLocale>
 #include <QTextCodec>
-//#include <QtCore>
+#include <QTranslator>
 #ifdef USE_STATIC_PLUGIN
 #include <QtPlugin>
 #endif
@@ -39,14 +46,6 @@ Q_IMPORT_PLUGIN(qjpeg)
 #if defined (USE_STATIC_PLUGIN) && defined (USE_GIF_FOR_FONT)
 Q_IMPORT_PLUGIN(qgif)
 #endif
-
-#include "ebcache.h"
-#include "mainwindow.h"
-#include "configure.h"
-#include "method.h"
-#include "server.h"
-#include "client.h"
-#include "textcodec.h"
 
 const char * const usage =
     "\n"
@@ -81,7 +80,7 @@ int main(int argc, char *argv[])
     model.load();
 
     codecEuc = QTextCodec::codecForName("EUC-JP");
-#if QT_VERSION <= 0x050000
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 #endif
 

@@ -1,3 +1,6 @@
+#ifndef GLOBALEVENTFILTER_H
+#define GLOBALEVENTFILTER_H
+
 #include <QEvent>
 #include <QObject>
 
@@ -12,3 +15,4 @@ signals:
 	void focusSearch();
 };
 
+#endif // GLOBALEVENTFILTER_H

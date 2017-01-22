@@ -20,11 +20,12 @@
 #ifndef BOOKSETTING_H
 #define BOOKSETTING_H
 
+#include "model.h"
+
 #include <QDialog>
 #include <QLabel>
 #include <QEventLoop>
 #include <QLineEdit>
-#include "model.h"
 
 class QLineEdit;
 class QPushButton;

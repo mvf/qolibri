@@ -16,9 +16,13 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#include <QtGui>
 
 #include "configure.h"
+
+#include <QApplication>
+#include <QDir>
+#include <QSettings>
+#include <QTextStream>
 
 const bool highlightMatch_Def = true;
 const bool beepSound_Def = true;

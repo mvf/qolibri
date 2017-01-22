@@ -17,10 +17,11 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <QtCore>
-
 #include "qeb.h"
 #include "textcodec.h"
+
+#include <QSize>
+#include <QStringList>
 
 EB_Error_Code QEb::bind(const QString &path)
 {

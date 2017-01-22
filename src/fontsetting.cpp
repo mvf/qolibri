@@ -16,21 +16,19 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#include <QtGui>
-#if QT_VERSION >= 0x050000
-#include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QTreeWidget>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QLineEdit>
-#include <QtWidgets/QDialogButtonBox>
-#include <QtWidgets/QFileDialog>
-#endif
-
 
 #include "book.h"
 #include "fontsetting.h"
 #include "configure.h"
+
+#include <QDebug>
+#include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QTreeWidget>
 
 #ifdef Q_WS_MAC
 FontSetting::FontSetting(Book *pbook, QWidget *parent)

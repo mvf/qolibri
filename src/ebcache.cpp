@@ -17,15 +17,22 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <QtCore>
-
 #include "ebcache.h"
+
+#include <QDir>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QStandardPaths>
+#endif
 
 QString EbCache::cachePath = "uninitialized";
 
 void EbCache::initialize()
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     cachePath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+#else
+    cachePath = QDir::homePath() + "/.ebcache";
+#endif
 }
 
 void EbCache::init(const QString &title)

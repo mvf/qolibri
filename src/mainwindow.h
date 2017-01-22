@@ -20,12 +20,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "method.h"
+#include "model.h"
+
 #include <QMainWindow>
 #include <QProcess>
 #include <QAction>
-
-#include "method.h"
-#include "model.h"
 
 class QComboBox;
 class QLineEdit;

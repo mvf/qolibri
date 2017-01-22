@@ -16,11 +16,10 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#include <QtCore>
-#include <QMenu>
 
 #include "method.h"
 
+#include <QMenu>
 
 void addDirectionAct(QMenu *menu, const QString &title, SearchDirection direc)
 {

@@ -20,14 +20,14 @@
 #ifndef EBCORE_H
 #define EBCORE_H
 
+#include "qeb.h"
+#include "ebcache.h"
+
 #include <QStack>
 #include <QObject>
 
 #include <eb/eb.h>
 #include <eb/text.h>
-
-#include "qeb.h"
-#include "ebcache.h"
 
 extern EB_Hook hooks[];
 extern EB_Hook hooks_cand[];

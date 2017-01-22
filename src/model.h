@@ -17,14 +17,16 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#pragma once
+#ifndef MODEL_H
+#define MODEL_H
+
+#include "method.h"
+#include "book.h"
+#include "configure.h"
 
 #include <QObject>
 #include <QList>
 #include <QSettings>
-#include "method.h"
-#include "book.h"
-#include "configure.h"
 
 enum BookMode { ModeDictionary, ModeBook };
 
@@ -92,3 +94,4 @@ private:
     bool m_scanClipboard;
 };
 
+#endif // MODEL_H

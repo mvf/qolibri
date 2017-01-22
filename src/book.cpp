@@ -16,9 +16,12 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#include <QtCore>
 
 #include "book.h"
+
+#include <QDebug>
+#include <QFile>
+#include <QTextStream>
 
 const char *FontFile = { "gaiji-table_" };
 

@@ -17,11 +17,6 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <QtGui>
-#include <QWebHistory>
-//#include <stdlib.h>
-//#include <stdio.h>
-
 #include "mainwindow.h"
 #include "ebook.h"
 #include "book.h"
@@ -34,6 +29,17 @@
 #include "ssheetsetting.h"
 #include "configure.h"
 #include "optiondialog.h"
+
+#include <QClipboard>
+#include <QCloseEvent>
+#include <QFontDialog>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QSound>
+#include <QStatusBar>
+#include <QTimer>
+#include <QToolBar>
+#include <QWebHistory>
 
 const char *Program = { "qolibri" };
 
@@ -235,7 +241,7 @@ void MainWindow::createMenus()
 
     QMenu *hmenu = menuBar()->addMenu(tr("&Help"));
     hmenu->addAction(QIcon(
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
         ":/qt-project.org/"
 #else
         ":/trolltech/"

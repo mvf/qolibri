@@ -20,9 +20,11 @@
 #ifndef QEB_H
 #define QEB_H
 
-#include <QtCore>
-#include <QObject>
+#include "textcodec.h"
+
+#include <QDebug>
 #include <QList>
+#include <QObject>
 
 #include <eb/eb.h>
 #include <eb/text.h>
@@ -31,8 +33,6 @@
 #include <eb/appendix.h>
 #include <eb/booklist.h>
 #include <eb/error.h>
-
-#include "textcodec.h"
 
 #define toUTF(q_bytearray) \
     QTextCodec::codecForLocale()->toUnicode(q_bytearray)

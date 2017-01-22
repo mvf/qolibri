@@ -20,8 +20,9 @@
 #ifndef GROUPWIDGET_H
 #define GROUPWIDGET_H
 
-#include <QListWidget>
 #include "book.h"
+
+#include <QListWidget>
 
 class QLineEdit;
 class QPushButton;

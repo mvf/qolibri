@@ -20,9 +20,9 @@
 #ifndef FONTSETTING_H
 #define FONTSETTING_H
 
-#include <QDialog>
-
 #include "book.h"
+
+#include <QDialog>
 
 class QTreeWidget;
 class QTreeWidgetItem;

@@ -17,10 +17,12 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#pragma once
+#ifndef TOOLBAR_H
+#define TOOLBAR_H
+
+#include "model.h"
 
 #include <QComboBox>
-#include "model.h"
 
 class DirectionComboBox : public QComboBox
 {
@@ -85,3 +87,5 @@ public slots:
 private:
     Model *model;
 };
+
+#endif // TOOLBAR_H

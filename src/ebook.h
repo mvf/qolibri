@@ -20,10 +20,11 @@
 #ifndef EBOOK_H
 #define EBOOK_H
 
-#include <QTextCodec>
-#include <eb/eb.h>
-
 #include "ebcore.h"
+
+#include <QTextCodec>
+
+#include <eb/eb.h>
 
 enum SearchType { SearchWord, SearchEndWord, SearchExactWord,
                   SearchKeyWord, SearchCrossWord };

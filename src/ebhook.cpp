@@ -17,7 +17,8 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <QtCore>
+#include "qeb.h"
+#include "ebcore.h"
 
 #include <eb/eb.h>
 #include <eb/binary.h>
@@ -25,9 +26,6 @@
 #include <eb/font.h>
 #include <eb/appendix.h>
 #include <eb/error.h>
-
-#include "qeb.h"
-#include "ebcore.h"
 
 #define HOOK_FUNC(code,class_name,function) \
     EB_Error_Code Hook##code(EB_Book *book, EB_Appendix*, \
