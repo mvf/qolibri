@@ -29,6 +29,7 @@
 #include "ssheetsetting.h"
 #include "configure.h"
 #include "optiondialog.h"
+#include "webpage.h"
 
 #include <QClipboard>
 #include <QCloseEvent>

@@ -1,7 +1,11 @@
 HEADERS += \
+           src/allpage.h \
            src/book.h \
+           src/bookbrowser.h \
+           src/bookbrowserpopup.h \
            src/booksetting.h \
            src/bookview.h \
+           src/bookviewglobals.h \
            src/bookwidget.h \
            src/client.h \
            src/configure.h \
@@ -12,21 +16,35 @@ HEADERS += \
            src/globaleventfilter.h \
            src/groupdock.h \
            src/groupwidget.h \
+           src/infopage.h \
            src/mainwindow.h \
+           src/menupage.h \
            src/method.h \
            src/model.h \
            src/optiondialog.h \
+           src/pageitems.h \
+           src/pagewidget.h \
            src/qeb.h \
+           src/referencepopup.h \
+           src/searchpage.h \
+           src/searchpagebuilder.h \
+           src/searchwholepage.h \
            src/server.h \
            src/ssheetsetting.h \
            src/textcodec.h \
            src/titlelabel.h \
            src/toolbar.h \
+           src/treescrollpopup.h \
+           src/webpage.h \
 
 SOURCES += \
+           src/allpage.cpp \
            src/book.cpp \
+           src/bookbrowser.cpp \
+           src/bookbrowserpopup.cpp \
            src/booksetting.cpp \
            src/bookview.cpp \
+           src/bookviewglobals.cpp \
            src/bookwidget.cpp \
            src/configure.cpp \
            src/ebcache.cpp \
@@ -37,15 +55,25 @@ SOURCES += \
            src/globaleventfilter.cpp \
            src/groupdock.cpp \
            src/groupwidget.cpp \
+           src/infopage.cpp \
            src/mainwindow.cpp \
+           src/menupage.cpp \
            src/method.cpp \
            src/model.cpp \
            src/optiondialog.cpp \
+           src/pageitems.cpp \
+           src/pagewidget.cpp \
            src/qeb.cpp \
            src/qolibri.cpp \
+           src/referencepopup.cpp \
+           src/searchpage.cpp \
+           src/searchpagebuilder.cpp \
+           src/searchwholepage.cpp \
            src/ssheetsetting.cpp \
            src/textcodec.cpp \
            src/toolbar.cpp \
+           src/treescrollpopup.cpp \
+           src/webpage.cpp \
 
 RESOURCES += qolibri.qrc
 

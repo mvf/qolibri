@@ -22,6 +22,10 @@
 
 #include <QStringList>
 
+enum RET_SEARCH
+{ NORMAL = 0, SEARCH_ERROR, NO_BOOK, NOT_HIT, INTERRUPTED, NOT_HIT_INTERRUPTED,
+  NO_MENU, LIMIT_CHAR, LIMIT_BOOK, LIMIT_TOTAL, LIMIT_MENU };
+
 enum SearchDirection { ExactWordSearch = 0, ForwardSearch, BackwardSearch,
                        KeywordSearch, CrossSearch, FullTextSearch,
                        WholeRead, MenuRead, BookInfo,
@@ -44,6 +48,8 @@ struct SearchMethod {
     int             limitTotal;
     int             limitBook;
     bool            ruby;
+
+    RET_SEARCH checkLimit(int totalCount, int matchCount, int textLength) const;
 };
 
 void addDirectionMenu(QMenu *menu);

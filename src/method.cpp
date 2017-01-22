@@ -18,6 +18,7 @@
 ***************************************************************************/
 
 #include "method.h"
+#include "configure.h"
 
 #include <QMenu>
 
@@ -25,6 +26,18 @@ void addDirectionAct(QMenu *menu, const QString &title, SearchDirection direc)
 {
     QAction *act =  menu->addAction(title);
     act->setData(direc);
+}
+
+RET_SEARCH SearchMethod::checkLimit(int totalCount, int matchCount, int textLength) const
+{
+    if (totalCount >= limitTotal)
+        return LIMIT_TOTAL;
+    if (matchCount >= limitBook)
+        return LIMIT_BOOK;
+    if (textLength >= CONF->limitBrowserChar)
+        return LIMIT_CHAR;
+
+    return NORMAL;
 }
 
 void addDirectionMenu(QMenu *menu)
