@@ -1,49 +1,51 @@
-HEADERS += src/mainwindow.h \
-           src/method.h \
+HEADERS += \
            src/book.h \
-           src/qeb.h \
-           src/ebcore.h \
-           src/ebcache.h \
-           src/ebook.h \
+           src/booksetting.h \
            src/bookview.h \
+           src/bookwidget.h \
+           src/client.h \
+           src/configure.h \
+           src/ebcache.h \
+           src/ebcore.h \
+           src/ebook.h \
+           src/fontsetting.h  \
            src/globaleventfilter.h \
            src/groupdock.h \
            src/groupwidget.h \
-           src/bookwidget.h \
-           src/configure.h \
-           src/booksetting.h \
-           src/optiondialog.h \
-           src/fontsetting.h  \
+           src/mainwindow.h \
+           src/method.h \
            src/model.h \
+           src/optiondialog.h \
+           src/qeb.h \
+           src/server.h \
            src/ssheetsetting.h \
+           src/textcodec.h \
            src/titlelabel.h \
            src/toolbar.h \
-           src/server.h \
-           src/client.h \
-           src/textcodec.h
 
-SOURCES += src/qolibri.cpp \
-           src/mainwindow.cpp \
-           src/method.cpp \
+SOURCES += \
            src/book.cpp \
-           src/qeb.cpp \
-           src/ebcore.cpp \
+           src/booksetting.cpp \
+           src/bookview.cpp \
+           src/bookwidget.cpp \
+           src/configure.cpp \
            src/ebcache.cpp \
+           src/ebcore.cpp \
            src/ebhook.cpp \
            src/ebook.cpp \
-           src/bookview.cpp \
+           src/fontsetting.cpp \
            src/globaleventfilter.cpp \
            src/groupdock.cpp \
            src/groupwidget.cpp \
-           src/bookwidget.cpp \
-           src/configure.cpp \
-           src/booksetting.cpp \
-           src/optiondialog.cpp \
-           src/fontsetting.cpp \
+           src/mainwindow.cpp \
+           src/method.cpp \
            src/model.cpp \
+           src/optiondialog.cpp \
+           src/qeb.cpp \
+           src/qolibri.cpp \
            src/ssheetsetting.cpp \
            src/textcodec.cpp \
-           src/toolbar.cpp
+           src/toolbar.cpp \
 
 RESOURCES += qolibri.qrc
 
