@@ -45,8 +45,6 @@ static QWidget *mainWin = 0;
 const char* CutString = "----- cut -----";
 const char* IntString = "----- interrupted -----";
 
-//#define FIXED_POPUP
-
 #define SJIStoUTF(q_bytearray) \
     QTextCodec::codecForName("Shift-JIS")->toUnicode(q_bytearray)
 
@@ -217,7 +215,7 @@ ReferencePopup::ReferencePopup(Book *book, const EB_Position &pos,
 #ifdef FIXED_POPUP
     QToolButton *close_button = new QToolButton(this);
     close_button->setIcon(QIcon(":images/closetab.png"));
-    bookBrowser_->setCornerWidget(close_button, Qt::TopRightCorner);
+    bookBrowser_->setCornerWidget(close_button);
     connect(close_button, SIGNAL(clicked()), SLOT(close()));
 
 #endif
@@ -249,8 +247,10 @@ ReferencePopup::ReferencePopup(Book *book, const EB_Position &pos,
 void ReferencePopup::showEvent(QShowEvent*)
 {
 #ifdef FIXED_POPUP
-    move(parent->mapToGlobal(QPoint(0, 0)));
-    resize(parent->size() - QSize(0, 0));
+    if (QWidget *p = qobject_cast<QWidget *>(parent())) {
+        move(p->mapToGlobal(QPoint(0, 0)));
+        resize(p->size() - QSize(0, 0));
+    }
 #else
 
     QSize sz = bookBrowser_->size();
