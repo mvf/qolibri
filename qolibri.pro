@@ -59,8 +59,6 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     DEFINES += QStringLiteral=QString::fromUtf8
 }
 
-include("config")
-
 TARGET = qolibri
 DESTDIR = .
 OBJECTS_DIR = src/.build
