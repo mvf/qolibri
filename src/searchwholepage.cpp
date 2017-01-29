@@ -1,7 +1,6 @@
 #include "searchwholepage.h"
 #include "book.h"
 #include "bookbrowser.h"
-#include "bookviewglobals.h"
 #include "ebook.h"
 #include "configure.h"
 #include "pageitems.h"

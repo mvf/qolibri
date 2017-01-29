@@ -1,10 +1,15 @@
 #include "pagewidget.h"
 #include "bookbrowser.h"
-#include "bookviewglobals.h"
+#include "configure.h"
 #include "treescrollpopup.h"
 
 #include <QApplication>
 #include <QHeaderView>
+
+bool stopFlag = false;
+
+const QString PageWidget::CutString("----- cut -----");
+const QString PageWidget::IntString("----- interrupted -----");
 
 PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
     : QSplitter(parent), method_(method)
@@ -33,6 +38,17 @@ PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
             SLOT(scrollTo(QTreeWidgetItem*,int)));
     connect(bookTree, SIGNAL(customContextMenuRequested(QPoint)),
             SLOT(popupSlide(QPoint)));
+}
+
+bool PageWidget::checkStop()
+{
+    QEventLoop().processEvents();
+    return stopFlag;
+}
+
+QString PageWidget::toAnchor(const QString &str, int num)
+{
+    return str + QString::number(num);
 }
 
 void PageWidget::scrollTo(QTreeWidgetItem *to)

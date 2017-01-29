@@ -1,7 +1,6 @@
 #include "menupage.h"
 #include "book.h"
 #include "bookbrowser.h"
-#include "bookviewglobals.h"
 #include "configure.h"
 #include "ebook.h"
 #include "pageitems.h"

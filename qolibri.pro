@@ -5,7 +5,6 @@ HEADERS += \
            src/bookbrowserpopup.h \
            src/booksetting.h \
            src/bookview.h \
-           src/bookviewglobals.h \
            src/bookwidget.h \
            src/client.h \
            src/configure.h \
@@ -43,7 +42,6 @@ SOURCES += \
            src/bookbrowserpopup.cpp \
            src/booksetting.cpp \
            src/bookview.cpp \
-           src/bookviewglobals.cpp \
            src/bookwidget.cpp \
            src/configure.cpp \
            src/ebcache.cpp \

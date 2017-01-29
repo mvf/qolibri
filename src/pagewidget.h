@@ -33,6 +33,12 @@ protected:
     QTreeWidget *bookTree;
     SearchMethod method_;
 
+    static const QString CutString;
+    static const QString IntString;
+
+    static bool checkStop();
+    static QString toAnchor(const QString &str, int num);
+
 signals:
     void statusRequested(const QString &str);
     void selectionRequested(const QString& str);

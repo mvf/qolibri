@@ -18,7 +18,6 @@
 ***************************************************************************/
 #include "bookview.h"
 #include "bookbrowser.h"
-#include "bookviewglobals.h"
 #include "configure.h"
 #include "searchwholepage.h"
 #include "allpage.h"
