@@ -27,7 +27,6 @@ HEADERS += \
            src/qeb.h \
            src/referencepopup.h \
            src/searchpage.h \
-           src/searchpagebuilder.h \
            src/searchwholepage.h \
            src/server.h \
            src/ssheetsetting.h \
@@ -67,7 +66,6 @@ SOURCES += \
            src/qolibri.cpp \
            src/referencepopup.cpp \
            src/searchpage.cpp \
-           src/searchpagebuilder.cpp \
            src/searchwholepage.cpp \
            src/ssheetsetting.cpp \
            src/textcodec.cpp \
