@@ -5,6 +5,8 @@
 
 class InfoPage : public PageWidget
 {
+    Q_OBJECT
+
 public:
     InfoPage(QWidget *parent, const SearchMethod&);
     RET_SEARCH search(const Query&);

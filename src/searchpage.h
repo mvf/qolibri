@@ -5,6 +5,8 @@
 
 class SearchPage : public PageWidget
 {
+    Q_OBJECT
+
 public:
     SearchPage(QWidget *parent, const SearchMethod&);
     RET_SEARCH search(const Query&);

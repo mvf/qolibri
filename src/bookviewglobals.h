@@ -6,9 +6,6 @@
 // It will eventually be refactored away.
 
 class QString;
-class QWidget;
-
-extern QWidget *mainWin;
 
 extern const char CutString[];
 extern const char IntString[];

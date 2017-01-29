@@ -48,7 +48,6 @@ extern bool stopFlag;
 BookView::BookView(QWidget *parent)
     : QTabWidget(parent)
 {
-    mainWin = parent;
     setObjectName("bookview");
     setUsesScrollButtons(true);
     QToolButton *close_button = new QToolButton(this);
@@ -111,8 +110,9 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
     default:
         Q_ASSERT(0);
     }
-    RET_SEARCH retStatus = page->search(query);
 
+    connect(page, SIGNAL(statusRequested(QString)),
+            SIGNAL(statusRequested(QString)));
     connect(page->bookBrowser(), SIGNAL(statusRequested(QString)),
             SIGNAL(statusRequested(QString)));
     connect(page->bookBrowser(),
@@ -130,6 +130,8 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
             SIGNAL(selectionRequested(QString)));
     connect(parent, SIGNAL(viewFontChanged(QFont)), page,
             SLOT(changeFont(QFont)));
+
+    RET_SEARCH retStatus = page->search(query);
 
     QWidget *focus_page = 0;
     BookView *view = this;

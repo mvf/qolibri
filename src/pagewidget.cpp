@@ -25,8 +25,6 @@ PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
     addWidget(bookBrowser_);
     setStretchFactor(indexOf(bookBrowser_), 1);
 
-    connect(this, SIGNAL(statusRequested(QString)),
-            mainWin, SLOT(showStatus(QString)));
     connect(bookTree,
             SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
             SLOT(scrollTo(QTreeWidgetItem*,QTreeWidgetItem*)));

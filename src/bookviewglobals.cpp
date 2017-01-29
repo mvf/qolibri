@@ -4,7 +4,6 @@
 #include <QEventLoop>
 
 bool stopFlag = false;
-QWidget *mainWin = 0;
 
 const char CutString[] = "----- cut -----";
 const char IntString[] = "----- interrupted -----";
