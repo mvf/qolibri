@@ -61,6 +61,7 @@ public:
         fontSize = fsize;
         fontList = flist;
         ruby = rub;
+        current_indent = 0;
     }
 
 
@@ -138,6 +139,7 @@ public:
     int refPosition;
     int fontSize;
     int indentOffset;
+    int current_indent;
     int monoWidth;
     int monoHeight;
     bool ruby;

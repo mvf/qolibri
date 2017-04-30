@@ -293,11 +293,14 @@ QByteArray EbCore::hookEndSubscript(int, const unsigned int*)
 }
 QByteArray EbCore::hookSetIndent(int, const unsigned int* argv)
 {
-    int indent = argv[1];
+    const int new_indent = argv[1];
+    if (new_indent <= current_indent)
+        current_indent = 0;
     QByteArray ret = "<span>";
-    for (int i = 1; i < indent; i++)
-	ret += "&nbsp;&nbsp;";
+    for (int i = 0; i < (new_indent - current_indent); i++)
+        ret += "&nbsp;&nbsp;&nbsp;";
     ret += "</span>";
+    current_indent = new_indent;
     return ret;
 }
 
