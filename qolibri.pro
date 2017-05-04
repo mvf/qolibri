@@ -24,6 +24,7 @@ HEADERS += src/mainwindow.h \
 
 SOURCES += src/qolibri.cpp \
            src/mainwindow.cpp \
+           src/mainwindow-about.cpp \
            src/method.cpp \
            src/book.cpp \
            src/qeb.cpp \
