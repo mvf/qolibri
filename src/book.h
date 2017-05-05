@@ -39,7 +39,7 @@ public:
             setCheckState(Qt::Unchecked);
         }
         if (btype == BookWeb) {
-            setForeground(QColor("#6666ff"));
+            setForeground(QColor(0x6666ff));
         }
         loadAlterFont();
     }

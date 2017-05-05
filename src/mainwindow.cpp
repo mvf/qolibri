@@ -596,7 +596,6 @@ void MainWindow::showTabInfo(int index)
         showStatus(i.text());
     } else if (t == BookWeb) {
         WebPage *w = (WebPage*)(bookView->pageWidget(index));
-        QString u = w->url().toString();
         showStatus(w->url().toString());
         webBar->show();
         reloadAct->setEnabled(true);
@@ -837,7 +836,6 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
 
     Query query(queryStr, mthd);
     RET_SEARCH ret = bookView->newPage(this, query, ntab, pbrowser);
-    QString sstr = query.toLogicString();
     groupDock->addHistory(query.toLogicString(), mthd, CONF->historyMax);
 
     emit nowBusy(false);

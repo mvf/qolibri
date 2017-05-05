@@ -486,7 +486,7 @@ void PageItems::composeError(const QString &anchor,
     text_ += str;
     QTreeWidgetItem *i = new QTreeWidgetItem(itemP_[0],
 	                        QStringList() << text << anchor);
-    i->setForeground(0, QColor("#886666"));
+    i->setForeground(0, QColor(0x886666));
 }
 
 QTreeWidgetItem* PageItems::addHItem(int num, const QString &anchor, const QString &title)
@@ -694,8 +694,8 @@ RET_SEARCH InfoPage::search(const Query& query)
         file.open(QIODevice::ReadOnly);
         QString str = SJIStoUTF(file.readAll());
         str.remove("\r");
-        if (!fname.right(4).compare(".htm", Qt::CaseInsensitive) ||
-            !fname.right(5).compare(".html", Qt::CaseInsensitive)) {
+        if (!fname.rightRef(4).compare(".htm", Qt::CaseInsensitive) ||
+            !fname.rightRef(5).compare(".html", Qt::CaseInsensitive)) {
             QRegExp reg("(<body[^>]*>|</body>)", Qt::CaseInsensitive);
             QStringList list = str.split(reg);
             if (list.count() < 3) continue;
@@ -809,7 +809,7 @@ void MenuPage::selectMenuPage(int index)
             getMenus(&eb, topCands[i].position, &items, 1);
         } else {
 	    items.addHItem(1, toAnchor("P", i), topCands[i].title);
-	    items.curItem()->setForeground(0, QColor("#666688"));
+	    items.curItem()->setForeground(0, QColor(0x666688));
         }
     }
 
@@ -832,7 +832,7 @@ void MenuPage::changePage(QTreeWidgetItem *item, int)
     QString anc = item->text(1);
 
     if (anc.at(0) == 'P') {
-        int page = anc.mid(1).toInt();
+        int page = anc.midRef(1).toInt();
         bookTree->setCurrentItem(NULL);
         selectMenuPage(page);
     }
@@ -984,7 +984,7 @@ void AllPage::changePage(QTreeWidgetItem *item, int)
     QString anc = item->text(1);
 
     if (anc.at(0) == 'P') {
-        int page = anc.mid(1).toInt();
+        int page = anc.midRef(1).toInt();
         readPage(page);
     }
 }
@@ -1326,7 +1326,6 @@ WebPage::WebPage(QWidget *parent, const QString &url, const Query& query)
     setObjectName("webpage");
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     tabBar_ = 0;
-    QString str = url;
     connect(this, SIGNAL(loadStarted()), SLOT(progressStart()));
     connect(this, SIGNAL(loadFinished(bool)), SLOT(progressFinished(bool)));
     connect(this, SIGNAL(loadProgress(int)), SLOT(progress(int)));
