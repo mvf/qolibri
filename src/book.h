@@ -54,11 +54,11 @@ public:
     {
         return text();
     }
-    inline void setName(const QString name)
+    inline void setName(const QString &name)
     {
         setText(name);
     }
-    inline void setPath(const QString pth)
+    inline void setPath(const QString &pth)
     {
         path_ = pth;
     }
@@ -120,7 +120,7 @@ public:
     {
         return text();
     }
-    inline void setName(const QString name)
+    inline void setName(const QString &name)
     {
         setText(name);
     }

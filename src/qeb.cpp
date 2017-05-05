@@ -1147,7 +1147,7 @@ EB_Error_Code QEb::decomposeMovieFileName(unsigned int *argv,
     return ecode;
 }
 
-EB_Error_Code QEb::bindAppendix(QString path)
+EB_Error_Code QEb::bindAppendix(const QString &path)
 {
     EB_Error_Code ecode = eb_bind_appendix(&appendix, path.toLocal8Bit());
     if (ecode != EB_SUCCESS)

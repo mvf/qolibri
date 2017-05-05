@@ -49,13 +49,13 @@ struct SearchMethod {
 void addDirectionMenu(QMenu *menu);
 
 struct Query {
-    Query(QString query_, SearchMethod method_);
+    Query(const QString &query_, const SearchMethod &method_);
     QString query;
     SearchMethod method;
     QString toLogicString() const;
 };
 
-QStringList stemWords(QString);
+QStringList stemWords(const QString &);
 
 #define IGNORE_SEEK_HEADING
 

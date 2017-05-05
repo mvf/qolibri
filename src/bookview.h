@@ -78,7 +78,7 @@ public:
     {
         bookList_ << book;
     }
-    void setBrowser(const QString str)
+    void setBrowser(const QString &str)
     {
         QApplication::setOverrideCursor(Qt::WaitCursor);
         setHtml(str);

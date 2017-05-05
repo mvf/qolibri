@@ -207,7 +207,7 @@ public:
     // Appendix
     void initializeAppendix() { eb_initialize_appendix(&appendix); }
     void finalizeAppendix() { eb_finalize_appendix(&appendix); }
-    EB_Error_Code bindAppendix(QString path);
+    EB_Error_Code bindAppendix(const QString &path);
     bool isAppendixBound() { return (eb_is_appendix_bound(&appendix) == 1); }
     QString appendixPath();
     EB_Error_Code loadAllAppendixSubbooks();

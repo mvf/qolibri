@@ -22,7 +22,7 @@
 #include "method.h"
 
 
-void addDirectionAct(QMenu *menu, QString title, SearchDirection direc)
+void addDirectionAct(QMenu *menu, const QString &title, SearchDirection direc)
 {
     QAction *act =  menu->addAction(title);
     act->setData(direc);
@@ -41,7 +41,7 @@ void addDirectionMenu(QMenu *menu)
                     Option1Search);
 }
 
-Query::Query(QString query_, SearchMethod method_)
+Query::Query(const QString &query_, const SearchMethod &method_)
     : query(query_.simplified())
     , method(method_)
 {
@@ -52,7 +52,7 @@ QString Query::toLogicString() const
     return query;
 }
 
-QStringList stemWords(QString words)
+QStringList stemWords(const QString &words)
 {
     struct {
         const char* suffix;
