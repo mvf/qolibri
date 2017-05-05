@@ -47,7 +47,7 @@ public:
     }
     inline Book *currentBook() const
     {
-        return group->bookList()[currentRow()];
+        return group->bookList().at(currentRow());
     }
     QList <QListWidgetItem*> selectedBooks() const
     {
@@ -81,7 +81,7 @@ private slots:
     void delItem();
     void viewItem()
     {
-        emit bookViewRequested(group->bookList()[currentRow()]);
+        emit bookViewRequested(group->bookList().at(currentRow()));
     }
     void editItem(QListWidgetItem* item)
     {

@@ -14,7 +14,7 @@ bool GlobalEventFilter::eventFilter(QObject *obj, QEvent *event)
 		         || qApp->focusWidget()->metaObject()->className() == QString("QTextEdit")))
 		{
 //			qWarning("%s", qApp->focusWidget()->metaObject()->className());
-			emit(focusSearch());
+			emit focusSearch();
 			return true;
 		}
 	}

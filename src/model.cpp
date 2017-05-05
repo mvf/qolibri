@@ -103,7 +103,7 @@ void Model::save()
         }
         groups.beginWriteArray("Dictionaries");
         for (int j = 0; j < g->bookList().count(); j++) {
-            Book *d = g->bookList()[j];
+            Book *d = g->bookList().at(j);
             groups.setArrayIndex(j);
             groups.setValue("booktype", (int)(d->bookType()));
             groups.setValue("name", d->name());
@@ -265,7 +265,7 @@ void Model::setDictionaryBookIndex(int index)
     if (index == -1) {
         method.book = NULL;
     } else {
-        method.book = method.group->bookList()[index];
+        method.book = method.group->bookList().at(index);
     }
     emit dictionaryBookIndexChanged(index);
     if (bookMode == ModeDictionary)
@@ -281,7 +281,7 @@ void Model::setReaderBookIndex(int index)
     if (index == -1) {
         method.bookReader = NULL;
     } else {
-        method.bookReader = method.groupReader->bookList()[index];
+        method.bookReader = method.groupReader->bookList().at(index);
     }
     emit readerBookIndexChanged(index);
     if (bookMode == ModeBook)
@@ -328,7 +328,7 @@ Book *Model::bookFromName(Group *grp, const QString &name)
             return b;
         }
     }
-    return grp->bookList()[0];
+    return grp->bookList().at(0);
 }
 
 SearchMethod Model::readMethodSetting(const QSettings &set)
@@ -382,5 +382,5 @@ void Model::setScanClipboard(bool v)
     if (m_scanClipboard == v)
         return;
     m_scanClipboard = v;
-    scanClipboardChanged(v);
+    emit scanClipboardChanged(v);
 }

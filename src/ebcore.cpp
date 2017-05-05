@@ -34,7 +34,6 @@
 #include "ebcore.h"
 #include "textcodec.h"
 
-static QMap<uint,QString> eucWideToUtfNarrow;
 
 EbCore::EbCore(HookMode hmode) : QEb()
 {

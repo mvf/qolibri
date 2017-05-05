@@ -39,7 +39,7 @@
 
 class QEb : public QObject
 {
-
+    Q_OBJECT
 protected:
     EB_Book book;
     EB_Appendix appendix;

@@ -126,6 +126,7 @@ private:
 
 class MarkTab : public GTab
 {
+    Q_OBJECT
 public:
     MarkTab(QWidget *parent) : GTab(parent) {}
     void addMark(const QString &str, const SearchMethod &method);
@@ -135,6 +136,7 @@ public:
 
 class HistoryTab : public GTab
 {
+    Q_OBJECT
 public:
     HistoryTab(QWidget *parent) : GTab(parent)
     {

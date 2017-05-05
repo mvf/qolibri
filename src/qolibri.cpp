@@ -66,6 +66,7 @@ const char *version =
 
 QoServer *server;
 
+extern Configure *configure_s;
 
 int main(int argc, char *argv[])
 {
@@ -73,6 +74,7 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
+    configure_s = new Configure();
     CONF->load();
     EbCache::initialize();
 

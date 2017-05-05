@@ -59,7 +59,7 @@ const char* wikipediaUrl_Def = "http://ja.wikipedia.org/wiki/";
 const char* userDefUrl_Def = "http://en.wikipedia.org/wiki/";
 const char* settingOrg_Def = "qolibri";
 
-static Configure *configure_s = new Configure();
+Configure *configure_s;
 
 Configure::Configure()
 {

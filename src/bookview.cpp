@@ -852,7 +852,7 @@ RET_SEARCH MenuPage::getMenus(EbMenu *eb, const EB_Position &pos, PageItems *ite
     QString c_text;
     QList <CandItem> list = eb->candidate(pos, &c_text);
     if (list.count()) {
-        foreach(CandItem i, list) {
+        foreach(const CandItem &i, list) {
             menuCount++;
             if (checkMax && menuCount >= CONF->limitMenuHit) {
                 retStatus = LIMIT_MENU;
@@ -1034,7 +1034,7 @@ RET_SEARCH SearchPageBuilder::search(const Query& query)
         break;
     }
     RET_SEARCH ret = NOT_HIT;
-    foreach (QString q, queries) {
+    foreach (const QString &q, queries) {
         ret = search1(Query(q, query.method));
     }
     return ret;
@@ -1284,7 +1284,7 @@ RET_SEARCH SearchWholePage::search(const Query& query)
                                  .arg(book->name()).arg(matchCount));
     }
     if (totalCount == 0) {
-        delete item.topItems()[0];
+        delete item.topItems().at(0);
         retStatus = (checkStop()) ? NOT_HIT_INTERRUPTED : NOT_HIT;
         return retStatus;
     }

@@ -44,6 +44,7 @@ struct CandItem
 
 class EbCore : public QEb
 {
+    Q_OBJECT
 public:
     EbCore(HookMode hmode=HookText);
     ~EbCore();
@@ -132,6 +133,7 @@ public:
 
     EbCache ebCache;
     QStack <int> decorationStack;
+    QMap<uint,QString> eucWideToUtfNarrow;
     QHash<QString, QString> *fontList;
     QList <QByteArray> refList;
     QList <QByteArray> mpegList;

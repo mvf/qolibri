@@ -181,7 +181,7 @@ private:
 
 class PageItems : public QObject
 {
-
+    Q_OBJECT
 public:
     PageItems(const QString &ssheet);
 
@@ -259,6 +259,7 @@ private slots:
 
 class InfoPage : public PageWidget
 {
+    Q_OBJECT
 public:
     InfoPage(QWidget *parent, const SearchMethod&);
     RET_SEARCH search(const Query&);
@@ -307,6 +308,7 @@ private:
 
 class SearchPage : public PageWidget
 {
+    Q_OBJECT
 public:
     SearchPage(QWidget *parent, const SearchMethod&);
     RET_SEARCH search(const Query&);
@@ -314,6 +316,7 @@ public:
 
 class SearchWholePage : public PageWidget
 {
+    Q_OBJECT
 public:
     SearchWholePage(QWidget *parent, const SearchMethod&);
     RET_SEARCH search(const Query&);

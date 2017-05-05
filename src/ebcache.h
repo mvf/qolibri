@@ -25,6 +25,7 @@
 
 class EbCache : public QObject
 {
+    Q_OBJECT
 public:
     EbCache() {}
     ~EbCache() {}

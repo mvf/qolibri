@@ -512,7 +512,7 @@ Book *MainWindow::bookFromName(Group *grp, const QString &name)
             return b;
         }
     }
-    return grp->bookList()[0];
+    return grp->bookList().at(0);
 }
 
 SearchMethod MainWindow::readMethodSetting(const QSettings &set)

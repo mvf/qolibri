@@ -126,7 +126,7 @@ int FontSetting::setupTreeWidget(const QString &font_path)
     if (flist.count() < 1) {
         return 0;
     }
-    foreach(QString s, flist) {
+    foreach(const QString &s, flist) {
         QStringList nlist = s.split(QChar('.'));
         QStringList tlist = QStringList() << QString() << nlist[0];
 

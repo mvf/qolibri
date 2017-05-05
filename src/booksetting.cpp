@@ -413,7 +413,7 @@ void BookSetting::findCategory(const QString &name)
     } else {
         QStringList flist = dir.entryList(QStringList() << "*",
                                           QDir::Dirs | QDir::NoDotAndDotDot);
-        foreach(QString file, flist) {
+        foreach(const QString &file, flist) {
             findCategory(dir.absoluteFilePath(file));
         }
     }
