@@ -26,7 +26,7 @@ EB_Error_Code QEb::bind(const QString &path)
 {
     EB_Error_Code ecode = eb_bind(&book, path.toLocal8Bit());
     if (ecode != EB_SUCCESS)
-        dispError("eb_bind", ecode);
+        dispError("eb_bind(" + path + ")", ecode);
     return ecode;
 }
 QString QEb::path()
