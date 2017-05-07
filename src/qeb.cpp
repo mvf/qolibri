@@ -79,7 +79,7 @@ EB_Error_Code QEb::loadAllSubbooks()
 {
     EB_Error_Code ecode = eb_load_all_subbooks(&book);
     if (ecode != EB_SUCCESS)
-        dispError("eb_subbook_list", ecode);
+        dispError("eb_load_all_subbooks", ecode);
     return ecode;
 }
 EB_Subbook_Code QEb::subbook()
@@ -87,7 +87,7 @@ EB_Subbook_Code QEb::subbook()
     EB_Subbook_Code code;
     EB_Error_Code ecode = eb_subbook(&book, &code);
     if (ecode != EB_SUCCESS)
-        dispError("eb_subbook_list", ecode);
+        dispError("eb_subbook", ecode);
     return code;
 }
 
@@ -159,7 +159,7 @@ int QEb::multiEntryCount(EB_Multi_Search_Code mid)
     int cnt;
     EB_Error_Code ecode = eb_multi_entry_count(&book, mid, &cnt);
     if (ecode != EB_SUCCESS) {
-        dispError("eb_multi_search_list", ecode);
+        dispError("eb_multi_entry_count", ecode);
         return 0;
     }
     return cnt;
@@ -300,7 +300,7 @@ EB_Error_Code QEb::seekText(const EB_Position &pos)
 {
     EB_Error_Code ecode = eb_seek_text(&book, &pos);
     if (ecode != EB_SUCCESS)
-        dispError("eb_text", ecode);
+        dispError("eb_seek_text", ecode);
     return ecode;
 }
 QString QEb::readText(void *para, bool hook_flag)
@@ -443,7 +443,7 @@ EB_Error_Code QEb::setHook(const EB_Hook hook)
 {
     EB_Error_Code ecode = eb_set_hook(&hookset, &hook);
     if (ecode != EB_SUCCESS)
-        dispError("eb_set_hooks", ecode);
+        dispError("eb_set_hook", ecode);
     return ecode;
 }
 EB_Error_Code QEb::setHooks(const EB_Hook *hooks)
@@ -542,7 +542,7 @@ int QEb::narrowFontWidth(EB_Font_Code font)
     int width;
     EB_Error_Code ecode = eb_narrow_font_width2(font, &width);
     if (ecode != EB_SUCCESS) {
-        dispError("eb_narrow_font_width", ecode);
+        dispError("eb_narrow_font_width2", ecode);
         return 0;
     }
     return width;
@@ -1108,7 +1108,7 @@ QByteArray QEb::readBinary()
     for(;;) {
         EB_Error_Code ecode = eb_read_binary(&book, 1024, buff, &len);
         if (ecode != EB_SUCCESS) {
-            dispError("eb_", ecode);
+            dispError("eb_read_binary", ecode);
             return b;
         }
         if (len > 0 )
@@ -1354,7 +1354,7 @@ EB_Error_Code  QEb::bindBooklist(const QString &path)
 {
     EB_Error_Code ecode = eb_bind_booklist(&bookList, utfToEuc(path));
     if (ecode != EB_SUCCESS)
-        dispError("eb_bind_boollist", ecode);
+        dispError("eb_bind_booklist", ecode);
     return ecode;
 }
 EB_Error_Code QEb::booklistBookCount()
@@ -1362,7 +1362,7 @@ EB_Error_Code QEb::booklistBookCount()
     int cnt;
     EB_Error_Code ecode = eb_booklist_book_count(&bookList, &cnt);
     if (ecode != EB_SUCCESS) {
-        dispError("eb_bind_boollist", ecode);
+        dispError("eb_booklist_book_count", ecode);
         return -1;
     }
     return cnt;
