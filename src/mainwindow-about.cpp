@@ -3,6 +3,13 @@
 #include "mainwindow.h"
 #include "gitversion.h"
 
+extern const char * const version =
+    "qolibri - EPWING Dictionary/Book Viewer " GITDESCRIBE
+#ifdef GITMODIFIED
+    "*"
+#endif
+    ;
+
 void MainWindow::aboutQolibri()
 {
     QString msg = tr("<h2>qolibri " GITDESCRIBE

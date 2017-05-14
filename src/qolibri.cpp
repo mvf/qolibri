@@ -48,8 +48,7 @@ Q_IMPORT_PLUGIN(qgif)
 #include "client.h"
 #include "textcodec.h"
 
-const char *usage =
-    "qolibri - EPWING Dictionary/Book Viewer 1.0.3\n"
+const char * const usage =
     "\n"
     "Usage:\n"
     "   qolibri [argument] [search text...] \n"
@@ -61,8 +60,7 @@ const char *usage =
     "   -h  or  --help    Print Help (this message) and exit\n"
     "   --version         Print version information and exit";
 
-const char *version =
-    "qolibri - EPWING Dictionary/Book Viewer 1.0.3";
+extern const char * const version;
 
 QoServer *server;
 
@@ -107,6 +105,7 @@ int main(int argc, char *argv[])
         } else if (str == "-s") {
             qserv = true;
         } else if (str == "-h" || str == "--help") {
+            qDebug() << version;
             qDebug() << usage;
             return 1;
         } else if (str == "--version") {
