@@ -694,8 +694,8 @@ RET_SEARCH InfoPage::search(const Query& query)
         file.open(QIODevice::ReadOnly);
         QString str = SJIStoUTF(file.readAll());
         str.remove("\r");
-        if (!fname.rightRef(4).compare(".htm", Qt::CaseInsensitive) ||
-            !fname.rightRef(5).compare(".html", Qt::CaseInsensitive)) {
+        if (!fname.rightRef(4).compare(QStringLiteral(".htm"), Qt::CaseInsensitive) ||
+            !fname.rightRef(5).compare(QStringLiteral(".html"), Qt::CaseInsensitive)) {
             QRegExp reg("(<body[^>]*>|</body>)", Qt::CaseInsensitive);
             QStringList list = str.split(reg);
             if (list.count() < 3) continue;

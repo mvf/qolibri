@@ -52,7 +52,11 @@ FORMS += src/optiondialog.ui
 
 QT += network
 QT += webkit
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets multimedia
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += widgets webkitwidgets multimedia
+} else {
+    DEFINES += QStringLiteral=QString::fromUtf8
+}
 
 include("config")
 
