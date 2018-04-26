@@ -58,9 +58,9 @@ const char* mpegProcess_Def = "";
 const char* browserProcess_Def = "";
 #endif
 const char* googleUrl_Def =
-    "http://www.google.com/search?rls=ja-jp&ie=UTF-8&oe=UTF-8&q=";
-const char* wikipediaUrl_Def = "http://ja.wikipedia.org/wiki/";
-const char* userDefUrl_Def = "http://en.wikipedia.org/wiki/";
+    "https://www.google.com/search?rls=ja-jp&ie=UTF-8&oe=UTF-8&q=";
+const char* wikipediaUrl_Def = "https://ja.wikipedia.org/wiki/";
+const char* userDefUrl_Def = "https://en.wikipedia.org/wiki/";
 const char* settingOrg_Def = "qolibri";
 
 Configure *configure_s;
