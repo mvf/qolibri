@@ -1,14 +1,13 @@
 QPushButton {
         padding: 0px;
         margin: 0px;
-        font-weight:bold;
+        font-weight: bold;
 }
 QPushButton:hover {
         padding: 0px;
         margin: 0px;
-        font-weight:bold;
-        background-color:
-        #DDDDDD;
+        font-weight: bold;
+        background-color: #DDDDDD;
         border-width: 2px;
         border-style: solid;
         border-radius: 3px;
@@ -16,7 +15,7 @@ QPushButton:hover {
 QPushButton:pressed {
         padding: 0px;
         margin: 0px;
-        font-weight:bold;
+        font-weight: bold;
         background-color: #BBBB77;
 }
 QPushButton#direction {
@@ -43,7 +42,7 @@ QPushButton#selection {
 QLabel {
         padding: 0px;
         margin: 0px;
-        font-weight:bold;
+        font-weight: bold;
 }
 QLabel#process {
         color: #555555;
