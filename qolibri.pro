@@ -75,13 +75,9 @@ RESOURCES += qolibri.qrc
 
 FORMS += src/optiondialog.ui
 
-QT += network
-QT += webkit
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets webkitwidgets multimedia
-} else {
-    DEFINES += QStringLiteral=QString::fromUtf8
-}
+lessThan(QT_MAJOR_VERSION, 5): error("Qt 5 or later required")
+
+QT += multimedia network webkit webkitwidgets widgets
 
 TARGET = qolibri
 DESTDIR = .

@@ -23,10 +23,6 @@
 
 #include <QFile>
 #include <QFileInfo>
-// for Qt::escape()
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-#include <QTextDocument>
-#endif
 
 #include <eb/eb.h>
 #include <eb/binary.h>
@@ -468,11 +464,7 @@ QByteArray EbCore::hookNarrowJISX0208(int, const unsigned int *argv)
 
     if (!str.isNull())
     {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
         str = str.toHtmlEscaped();
-#else
-        str = Qt::escape(str);
-#endif
         return str.toUtf8();
     }
 

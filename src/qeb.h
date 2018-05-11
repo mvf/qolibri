@@ -20,10 +20,9 @@
 #ifndef QEB_H
 #define QEB_H
 
-#include "textcodec.h"
-
 #include <QDebug>
 #include <QList>
+#include <QTextCodec>
 
 #include <eb/eb.h>
 #include <eb/text.h>

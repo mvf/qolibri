@@ -36,11 +36,6 @@
 #include <QTimer>
 #include <QToolButton>
 #include <QVBoxLayout>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#include <QAudioDeviceInfo>
-#else
-#include <QSound>
-#endif
 
 extern bool stopFlag;
 

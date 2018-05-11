@@ -32,7 +32,6 @@
 #include <QApplication>
 #include <QLibraryInfo>
 #include <QLocale>
-#include <QTextCodec>
 #include <QTranslator>
 #ifdef USE_STATIC_PLUGIN
 #include <QtPlugin>
@@ -78,11 +77,6 @@ int main(int argc, char *argv[])
 
     Model model;
     model.load();
-
-    codecEuc = QTextCodec::codecForName("EUC-JP");
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-#endif
 
     QString searchText;
     qint16 port = CONF->portNo;

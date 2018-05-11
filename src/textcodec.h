@@ -20,9 +20,8 @@
 #ifndef TEXTCODEC_H
 #define TEXTCODEC_H
 
-#include <QTextCodec>
-
-extern QTextCodec *codecEuc;
+#include <QByteArray>
+#include <QString>
 
 // EUC-JP(b) -> UTF-8(s)
 QString eucToUtf(const QByteArray &ba);

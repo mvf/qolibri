@@ -33,6 +33,7 @@
 
 #include <QClipboard>
 #include <QCloseEvent>
+#include <QDir>
 #include <QFontDialog>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -242,11 +243,7 @@ void MainWindow::createMenus()
 
     QMenu *hmenu = menuBar()->addMenu(tr("&Help"));
     hmenu->addAction(QIcon(
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
         ":/qt-project.org/"
-#else
-        ":/trolltech/"
-#endif
         "qmessagebox/images/qtlogo-64.png"), tr("About &QT..."), qApp, SLOT(aboutQt()));
     hmenu->addAction(QIcon(":/images/title.png"), tr("About q&olibri..."), this, SLOT(aboutQolibri()));
 }
@@ -1112,12 +1109,8 @@ void MainWindow::clearCache()
                                     QMessageBox::Yes | QMessageBox::No);
 
     if (ret == QMessageBox::Yes) {
-        QByteArray d = QString(EbCache::cachePath).toLocal8Bit();
-#ifdef Q_WS_WIN
-        execProcess("cmd.exe /c rmdir /s /q \"" + d);
-#else
-        execProcess("rm -rf " + d);
-#endif
+        QDir dir(EbCache::cachePath);
+        dir.removeRecursively();
     }
 }
 

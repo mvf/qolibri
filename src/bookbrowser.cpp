@@ -4,14 +4,10 @@
 #include "referencepopup.h"
 
 #include <QApplication>
+#include <QAudioDeviceInfo>
 #include <QContextMenuEvent>
 #include <QDebug>
 #include <QMenu>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#include <QAudioDeviceInfo>
-#else
-#include <QSound>
-#endif
 
 #include <eb/eb.h>
 
@@ -33,11 +29,7 @@ void BookBrowser::setSource(const QUrl &name)
         // args[1] : wave file
         if (!CONF->waveProcess.isEmpty()) {
             emit processRequested(CONF->waveProcess + ' ' + args[1]);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
         } else if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) {
-#else
-        } else if (QSound::isAvailable()) {
-#endif
             emit soundRequested(args[1]);
         } else {
             qWarning() << "Can't play sound" << CONF->waveProcess << args[1];
