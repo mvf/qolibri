@@ -36,7 +36,7 @@ private slots:
     void setPopupBrowser(bool);
 
 signals:
-    void linkRequested(const QString& prog);
+    void processRequested(const QString &program, const QStringList &arguments);
 
 private:
     QByteArray encString(const QString &url);

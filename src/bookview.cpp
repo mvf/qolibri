@@ -114,8 +114,8 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
             SIGNAL(searchRequested(SearchDirection,QString)));
     connect(page->bookBrowser(), SIGNAL(pasteRequested(QString)),
             SIGNAL(pasteRequested(QString)));
-    connect(page->bookBrowser(), SIGNAL(processRequested(QString)),
-            SIGNAL(processRequested(QString)));
+    connect(page->bookBrowser(), SIGNAL(processRequested(QString, QStringList)),
+            SIGNAL(processRequested(QString, QStringList)));
     connect(page->bookBrowser(), SIGNAL(soundRequested(QString)),
             SIGNAL(soundRequested(QString)));
     connect(page, SIGNAL(selectionRequested(QString)),
@@ -179,8 +179,8 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
             WebPage *wpage = new WebPage(this, book->path(), query);
             connect(wpage, SIGNAL(loadFinished(bool)),
                     SLOT(webViewFinished(bool)));
-            connect(wpage, SIGNAL(linkRequested(QString)),
-                    SIGNAL(processRequested(QString)));
+            connect(wpage, SIGNAL(processRequested(QString, QStringList)),
+                    SIGNAL(processRequested(QString, QStringList)));
             connect(parent, SIGNAL(viewFontChanged(QFont)), wpage,
                     SLOT(changeFont(QFont)));
             connect(this, SIGNAL(popupBrowserSet(bool)), wpage,
@@ -208,8 +208,8 @@ RET_SEARCH BookView::newWebPage(const QString &name, const QString &url,
 {
     WebPage *wpage = new WebPage(this, url);
     connect(wpage, SIGNAL(loadFinished(bool)), SLOT(webViewFinished(bool)));
-    connect(wpage, SIGNAL(linkRequested(QString)),
-            SIGNAL(processRequested(QString)));
+    connect(wpage, SIGNAL(processRequested(QString, QStringList)),
+            SIGNAL(processRequested(QString, QStringList)));
     connect(this, SIGNAL(popupBrowserSet(bool)), wpage,
             SLOT(setPopupBrowser(bool)));
     emit popupBrowserSet(popup_browser);

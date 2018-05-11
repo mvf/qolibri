@@ -52,10 +52,9 @@ private:
 signals:
     void searchRequested(SearchDirection, const QString&);
     void pasteRequested(const QString&);
-    void processRequested(const QString&);
+    void processRequested(const QString &program, const QStringList &arguments);
     void soundRequested(const QString&);
     void selectionRequested(const QString&);
-    //void linkRequested(const QString& prog);
     void popupBrowserSet(bool);
 
     void fontChanged(const QFont&);

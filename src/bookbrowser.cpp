@@ -22,37 +22,36 @@ BookBrowser::BookBrowser(QWidget *parent)
 
 void BookBrowser::setSource(const QUrl &name)
 {
+    const QString path = name.path();
+    const QStringList args = name.query().split('?');
 
-    QStringList args = name.toString().split('?');
-
-    if (args[0] == "sound") {
-        // args[1] : wave file
+    if (path == "sound") {
+        // args[0] : wave file
         if (!CONF->waveProcess.isEmpty()) {
-            emit processRequested(CONF->waveProcess + ' ' + args[1]);
+            emit processRequested(CONF->waveProcess, args);
         } else if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) {
-            emit soundRequested(args[1]);
+            emit soundRequested(args[0]);
         } else {
-            qWarning() << "Can't play sound" << CONF->waveProcess << args[1];
+            qWarning() << "Can't play sound" << CONF->waveProcess << args[0];
             emit statusRequested("Can't play sound");
         }
-    } else if (args[0] == "book" || args[0] == "menu") {
-        // args[1] : book index
-        // args[2] : page
-        // args[3] : offset
-        if ( args.count() == 4) {
-            int index = args[1].toInt();
+    } else if (path == "book" || path == "menu") {
+        // args[0] : book index
+        // args[1] : page
+        // args[2] : offset
+        if (args.count() == 3) {
+            const int index = args[0].toInt();
             if (index >= bookList_.count()) {
-                qWarning() << "Invalid book index" << args[1];
-                emit statusRequested("ERROR: Invalid book index: " + args[1]);
+                qWarning() << "Invalid book index" << args[0];
+                emit statusRequested("ERROR: Invalid book index: " + args[0]);
                 return;
             }
-            bool mflag = (args[0] == "menu") ? true : false;
             EB_Position pos;
-            pos.page = args[2].toInt();
-            pos.offset = args[3].toInt();
+            pos.page = args[1].toInt();
+            pos.offset = args[2].toInt();
 
             ReferencePopup *popup =
-                new ReferencePopup(bookList_[index], pos, this, mflag);
+                new ReferencePopup(bookList_[index], pos, this, path == "menu");
             connect(popup->bookBrowser(), SIGNAL(statusRequested(QString)),
                     SIGNAL(statusRequested(QString)));
             connect(popup->bookBrowser(),
@@ -70,18 +69,18 @@ void BookBrowser::setSource(const QUrl &name)
         } else {
             qWarning() << "Invalid Reference Parameter" << args.count();
         }
-    } else if (args[0] == "mpeg") {
-        // args[1] : mpeg file
+    } else if (path == "mpeg") {
+        // args[0] : mpeg file
         if (!CONF->mpegProcess.isEmpty()) {
-            emit processRequested(CONF->mpegProcess + ' ' + args[1]);
+            emit processRequested(CONF->mpegProcess, args);
         } else {
-            qWarning() << "Can't play moview";
-            emit statusRequested("Can't play Movie");
+            qWarning() << "Can't play movie" << CONF->mpegProcess << args[0];
+            emit statusRequested("Can't play movie");
         }
-    } else if (args[0] == "close") {
+    } else if (path == "close") {
         parentWidget()->close();
     } else {
-        qWarning() << "Invalid Command" << args[0];
+        qWarning() << "Invalid Command" << path;
     }
 }
 
@@ -137,7 +136,7 @@ void BookBrowser::contextMenuEvent(QContextMenuEvent* event)
             foreach(const char c, textCursor().selectedText().toUtf8()) {
                 addr += "%" + QString::number((ushort)((uchar)c), 16);
             }
-            emit processRequested(CONF->browserProcess + ' ' + addr);
+            emit processRequested(CONF->browserProcess, QStringList(addr));
         }
     }
     delete menu;

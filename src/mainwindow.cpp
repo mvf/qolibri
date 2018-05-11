@@ -928,7 +928,7 @@ void MainWindow::doSearch()
         foreach(const char c, str.toUtf8()) {
             addr += "%" + QString::number((ushort)((uchar)c), 16);
         }
-        execProcess(CONF->browserProcess + ' ' + addr);
+        execProcess(CONF->browserProcess, QStringList(addr));
     }
 }
 
@@ -953,14 +953,15 @@ void MainWindow::pasteSearchText(const QString &text)
     searchTextEdit->setText(text);
 }
 
-void MainWindow::execProcess(const QString &prog)
+void MainWindow::execProcess(const QString &program, const QStringList &arguments)
 {
-    QProcess *proc = new QProcess(this);
+    QProcess *const proc = new QProcess();
+    connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), proc, SLOT(deleteLater()));
     connect(proc, SIGNAL(error(QProcess::ProcessError)),
             SLOT(execError(QProcess::ProcessError)));
-    proc->start(prog);
+    proc->start(program, arguments);
 
-    QString msg = "Execute: " + prog;
+    QString msg = "Execute: " + program + ' ' + arguments.join(' ');
     showStatus(msg);
 }
 void MainWindow::execError(QProcess::ProcessError e)
@@ -1377,16 +1378,14 @@ void MainWindow::bookViewSlots()
             SLOT(viewSearch(SearchDirection,QString)));
     connect(bookView, SIGNAL(pasteRequested(QString)),
             SLOT(pasteSearchText(QString)));
-    connect(bookView, SIGNAL(processRequested(QString)),
-            SLOT(execProcess(QString)));
+    connect(bookView, SIGNAL(processRequested(QString, QStringList)),
+            SLOT(execProcess(QString, QStringList)));
     connect(bookView, SIGNAL(soundRequested(QString)),
             SLOT(execSound(QString)));
     connect(bookView, SIGNAL(selectionRequested(QString)),
             SLOT(changeOptSearchButtonText(QString)));
     connect(bookView, SIGNAL(allWebLoaded()),
             SLOT(setWebLoaded()));
-    //connect(bookView, SIGNAL(linkRequested(QString)),
-    //        SLOT(execProcess(QString)));
 }
 
 void MainWindow::groupDockSlots()

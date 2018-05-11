@@ -18,7 +18,6 @@ WebPage::WebPage(QWidget *parent, const QString &url, const Query& query)
     connect(this, SIGNAL(loadProgress(int)), SLOT(progress(int)));
     connect(this, SIGNAL(linkClicked(const QUrl&)),
             SLOT(openLink(const QUrl&)));
-    //connect(this, SIGNAL(linkRequested(QString)), SLOT(execProcess(QString)));
 
     QByteArray enc = encString(url);
     QString ustr = setSearchString(url, enc, query.query);
@@ -74,7 +73,7 @@ WebPage::WebPage(QWidget *parent, const QString &url)
 }
 void WebPage::openNewWin()
 {
-    emit linkRequested(CONF->browserProcess + ' ' + hoveredLink);
+    emit processRequested(CONF->browserProcess, QStringList(hoveredLink));
 }
 
 void WebPage::copyHoveredLink(const QString &link, const QString&,
@@ -217,9 +216,7 @@ void WebPage::openLink(const QUrl &url)
         qDebug() << u.toString();
         load(u);
     } else {
-        emit linkRequested(CONF->browserProcess + ' ' + url.toString());
-        //emit linkRequested(CONF->browserProcess + ' ' +
-        //                   QString::fromAscii(url.toEncoded()));
+        emit processRequested(CONF->browserProcess, QStringList(url.toString()));
     }
 
 }
