@@ -122,7 +122,7 @@ INSTALLS += translations samples
 isEmpty(QMAKE_LRELEASE) {
     win32:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]\lrelease.exe
     else:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
-    !exists($$QMAKE_LRELEASE) { QMAKE_LRELEASE = lrelease-qt4 }
+    !exists($$QMAKE_LRELEASE) { QMAKE_LRELEASE = lrelease }
 }
 
 updateqm.input = TRANSLATIONS
