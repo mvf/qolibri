@@ -1,7 +1,5 @@
 #!/usr/bin/make -f
 
-export INSTALL_PREFIX := /usr
-
 %:
 	dh $@ --without autoreconf --parallel
 
