@@ -76,7 +76,7 @@ void Model::load()
     }
     {
         QSettings settings(CONF->settingOrg, "option");
-        m_scanClipboard = settings.value("scan_clipboard", true).toBool();
+        m_scanClipboard = settings.value("scan_clipboard", false).toBool();
     }
 }
 
