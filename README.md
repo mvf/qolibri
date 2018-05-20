@@ -4,6 +4,10 @@ This is a fork of the qolibri software originally developed by [bop](https://osd
 then improved by [Fujii Hironori](https://github.com/fujii),
 [cybersphinx](https://github.com/cybersphinx), and [Matthias von Faber](https://github.com/mvf).
 
+## Install on Debian 9 stretch
+
+See the [releases](https://github.com/ludios/qolibri/releases) for precompiled amd64 packages.
+
 ## Building
 
 This repository includes Debian packaging that should work your Debian package building tools.
