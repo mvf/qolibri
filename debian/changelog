@@ -1,8 +1,10 @@
-qolibri (2.0.0) UNRELEASED; urgency=medium
+qolibri (2.0.1) UNRELEASED; urgency=medium
 
+  [ Ivan Kozik ]
   * Includes https://github.com/cybersphinx/qolibri improvements
 
   * Includes https://github.com/mvf/qolibri improvements
 
- -- Ivan Kozik <ivan@ludios.org>  Sun, 20 May 2018 00:00:00 -0000
+  * Turn off the scan_clipboard behavior by default
 
+ -- Ivan Kozik <ivan@ludios.org>  Sun, 20 May 2018 21:23:41 +0000
