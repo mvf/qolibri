@@ -1,0 +1,23 @@
+Source: qolibri
+Section: education
+Priority: optional
+Maintainer: Ivan Kozik <ivan@ludios.org
+Build-Depends: debhelper (>= 10),
+               qtbase5-dev (>= 5.2.0),
+               qt5-qmake,
+               qt5-default,
+               qttools5-dev-tools,
+               qtmultimedia5-dev,
+               libqt5webkit5-dev,
+               libeb16-dev,
+               zlib1g-dev
+Standards-Version: 4.1.0
+Vcs-Git: https://github.com/ludios/qolibri
+Vcs-Browser: https://github.com/ludios/qolibri
+Homepage: https://github.com/ludios/qolibri
+
+Package: qolibri
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: EPWING Dictionary/Book Viewer
+

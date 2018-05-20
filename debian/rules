@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+
+export INSTALL_PREFIX := /usr
+
+%:
+	dh $@ --without autoreconf --parallel
+
+override_dh_auto_configure:
+	qmake

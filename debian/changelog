@@ -1,0 +1,8 @@
+qolibri (2.0.0) UNRELEASED; urgency=medium
+
+  * Includes https://github.com/cybersphinx/qolibri improvements
+
+  * Includes https://github.com/mvf/qolibri improvements
+
+ -- Ivan Kozik <ivan@ludios.org>  Sun, 20 May 2018 00:00:00 -0000
+
