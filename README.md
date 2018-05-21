@@ -1,6 +1,6 @@
 # qolibri EPWING dictionary viewer
 
-This is a fork of the qolibri software originally developed by [bop](https://osdn.net/users/bop/),
+This is a fork of the qolibri software originally developed by [BOP](https://osdn.net/users/bop/),
 then improved by [Fujii Hironori](https://github.com/fujii),
 [cybersphinx](https://github.com/cybersphinx), and [Matthias von Faber](https://github.com/mvf).
 
