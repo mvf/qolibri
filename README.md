@@ -10,7 +10,7 @@ See the [releases](https://github.com/ludios/qolibri/releases) for precompiled a
 
 ## Building
 
-This repository includes Debian packaging that should work your Debian package building tools.
+This repository includes Debian packaging that should work with your Debian package building tools.
 
 If you would like to build it without using the Debian packaging, run:
 
