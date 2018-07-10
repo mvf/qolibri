@@ -136,10 +136,10 @@ QMAKE_EXTRA_COMPILERS += updateqm
 # QOLIBRI_VERSION_STR     - Version name, e.g. 1.0.4-3-g4dead, or the hard-coded version number
 # QOLIBRI_WEBSITE         - The contents of the WEBSITE variable
 
-VERSION_STR = $$git(describe --always --tags)
+VERSION_STR = $$git(describe --tags --match '[0-9]*' --always)
 
 isEmpty(VERSION_STR) {
-    DEFINES += $$defStr(VERSION_STR, 1.0.4)
+    DEFINES += $$defStr(VERSION_STR, 2.0.2)
 } else {
     DEFINES += $$defStr(VERSION_STR, $$VERSION_STR)
 }
