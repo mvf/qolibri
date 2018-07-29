@@ -48,7 +48,7 @@ void addDirectionMenu(QMenu *menu)
     addDirectionAct(menu, QObject::tr("&Cross search"), CrossSearch);
     menu->addSeparator();
     addDirectionAct(menu, QObject::tr("&Google search"), GoogleSearch);
-    addDirectionAct(menu, QObject::tr("&WikiPedia search"), WikipediaSearch);
+    addDirectionAct(menu, QObject::tr("&Wikipedia search"), WikipediaSearch);
     addDirectionAct(menu, QObject::tr("&User defined URL search"),
                     Option1Search);
 }
