@@ -1,5 +1,5 @@
-#ifndef WEBPAGE_H
-#define WEBPAGE_H
+#ifndef WEBVIEW_H
+#define WEBVIEW_H
 
 #include "method.h"
 
@@ -8,12 +8,12 @@
 struct QTabBar;
 struct Query;
 
-class WebPage : public QWebView
+class WebView : public QWebView
 {
     Q_OBJECT
 public:
-    WebPage(QWidget *parent, const QString &url, const Query& query);
-    WebPage(QWidget *parent, const QString &url);
+    WebView(QWidget *parent, const QString &url, const Query& query);
+    WebView(QWidget *parent, const QString &url);
     void zoomIn();
     void zoomOut();
     void setTabIndex(int index) { tabIndex_ = index; }
@@ -55,4 +55,4 @@ private:
     QTabBar *tabBar_;
 };
 
-#endif // WEBPAGE_H
+#endif // WEBVIEW_H

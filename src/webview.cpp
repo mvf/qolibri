@@ -1,4 +1,4 @@
-#include "webpage.h"
+#include "webview.h"
 #include "configure.h"
 
 #include <QAction>
@@ -6,7 +6,7 @@
 #include <QTabBar>
 #include <QTextCodec>
 
-WebPage::WebPage(QWidget *parent, const QString &url, const Query& query)
+WebView::WebView(QWidget *parent, const QString &url, const Query& query)
     : QWebView(parent), method_(query.method)
 {
     loading_ = true;
@@ -43,7 +43,7 @@ WebPage::WebPage(QWidget *parent, const QString &url, const Query& query)
     show();
 }
 
-WebPage::WebPage(QWidget *parent, const QString &url)
+WebView::WebView(QWidget *parent, const QString &url)
     : QWebView(parent)
 {
     loading_ = true;
@@ -71,12 +71,12 @@ WebPage::WebPage(QWidget *parent, const QString &url)
 
     show();
 }
-void WebPage::openNewWin()
+void WebView::openNewWin()
 {
     emit processRequested(CONF->browserProcess, QStringList(hoveredLink));
 }
 
-void WebPage::copyHoveredLink(const QString &link, const QString&,
+void WebView::copyHoveredLink(const QString &link, const QString&,
                               const QString&)
 {
     if (!link.isEmpty()) {
@@ -84,7 +84,7 @@ void WebPage::copyHoveredLink(const QString &link, const QString&,
     }
 }
 
-void WebPage::contextMenuEvent(QContextMenuEvent* event)
+void WebView::contextMenuEvent(QContextMenuEvent* event)
 {
     QWebView::contextMenuEvent(event);
     //QMenu *menu = createStandardContextMenu();
@@ -93,7 +93,7 @@ void WebPage::contextMenuEvent(QContextMenuEvent* event)
 
 }
 
-QByteArray WebPage::encString(const QString &url)
+QByteArray WebView::encString(const QString &url)
 {
     if (!url.contains(QRegExp("\\{.*\\}"))) {
         return QByteArray();
@@ -104,7 +104,7 @@ QByteArray WebPage::encString(const QString &url)
     }
 }
 
-QString WebPage::setSearchString(const QString &url, const QByteArray &enc,
+QString WebView::setSearchString(const QString &url, const QByteArray &enc,
                                  const QString &query)
 {
     QByteArray bstr;
@@ -126,7 +126,7 @@ QString WebPage::setSearchString(const QString &url, const QByteArray &enc,
     }
     return ustr;
 }
-QString WebPage::directionString(const QString &url)
+QString WebView::directionString(const QString &url)
 {
     if (!url.contains(QRegExp("\\[.*\\]"))) {
         return QString();
@@ -136,7 +136,7 @@ QString WebPage::directionString(const QString &url)
         return w2.trimmed();
     }
 }
-QString WebPage::setDirectionString(const QString &url, const QString &dstr,
+QString WebView::setDirectionString(const QString &url, const QString &dstr,
                                     SearchDirection &direc)
 {
 
@@ -182,7 +182,7 @@ QString WebPage::setDirectionString(const QString &url, const QString &dstr,
 
 }
 
-void WebPage::progressStart()
+void WebView::progressStart()
 {
     loading_ = true;
     if (tabBar_) tabBar_->setTabIcon(tabIndex_, QIcon(":/images/web2.png"));
@@ -190,7 +190,7 @@ void WebPage::progressStart()
     progressCount_ = 0;
 }
 
-void WebPage::progress(int)
+void WebView::progress(int)
 {
     if (!tabBar_) return;
     if (progressCount_ == 0)  {
@@ -202,13 +202,13 @@ void WebPage::progress(int)
     }
 }
 
-void WebPage::progressFinished(bool)
+void WebView::progressFinished(bool)
 {
     loading_ = false;
     if (tabBar_) tabBar_->setTabIcon(tabIndex_, QIcon(":/images/web1.png"));
 }
 
-void WebPage::openLink(const QUrl &url)
+void WebView::openLink(const QUrl &url)
 {
     if (!popupBrowser_) {
         QUrl u = QUrl::fromEncoded(url.toEncoded(), QUrl::TolerantMode);
@@ -221,7 +221,7 @@ void WebPage::openLink(const QUrl &url)
 
 }
 
-void WebPage::changeFont(const QFont &font)
+void WebView::changeFont(const QFont &font)
 {
 
     qDebug() << "WebPage::changeFont" << font.family();
@@ -229,7 +229,7 @@ void WebPage::changeFont(const QFont &font)
 
 }
 
-void WebPage::zoomIn()
+void WebView::zoomIn()
 {
     QWebSettings *s = settings();
     int dsz = s->fontSize(QWebSettings::DefaultFontSize);
@@ -239,7 +239,7 @@ void WebPage::zoomIn()
     reload();
 }
 
-void WebPage::zoomOut()
+void WebView::zoomOut()
 {
     QWebSettings *s = settings();
     int dsz = s->fontSize(QWebSettings::DefaultFontSize);
@@ -249,7 +249,7 @@ void WebPage::zoomOut()
     reload();
 }
 
-void WebPage::setPopupBrowser(bool popup)
+void WebView::setPopupBrowser(bool popup)
 {
     popupBrowser_ = popup;
 }

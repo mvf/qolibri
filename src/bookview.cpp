@@ -24,7 +24,7 @@
 #include "menupage.h"
 #include "infopage.h"
 #include "searchpage.h"
-#include "webpage.h"
+#include "webview.h"
 
 #include <QContextMenuEvent>
 #include <QDesktopWidget>
@@ -176,7 +176,7 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
     foreach(Book *book, query.method.group->bookList()) {
         if (book->bookType() == BookWeb &&
                 book->checkState() == Qt::Checked) {
-            WebPage *wpage = new WebPage(this, book->path(), query);
+            WebView *wpage = new WebView(this, book->path(), query);
             connect(wpage, SIGNAL(loadFinished(bool)),
                     SLOT(webViewFinished(bool)));
             connect(wpage, SIGNAL(processRequested(QString, QStringList)),
@@ -206,7 +206,7 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
 RET_SEARCH BookView::newWebPage(const QString &name, const QString &url,
                                 bool popup_browser)
 {
-    WebPage *wpage = new WebPage(this, url);
+    WebView *wpage = new WebView(this, url);
     connect(wpage, SIGNAL(loadFinished(bool)), SLOT(webViewFinished(bool)));
     connect(wpage, SIGNAL(processRequested(QString, QStringList)),
             SIGNAL(processRequested(QString, QStringList)));
@@ -358,7 +358,7 @@ SearchMethod BookView::pageMethod(int index)
     if (oname == "dicpage"){
         return ((PageWidget*)w)->method();
     } else if (oname == "webpage") {
-        return ((WebPage*)w)->method();
+        return ((WebView*)w)->method();
     } else if (oname == "bookview") {
         BookView *v = (BookView*)widget(index);
         return v->currentPageMethod();
@@ -388,7 +388,7 @@ void BookView::zoomIn()
     if (w->objectName() == "dicpage") {
         ((PageWidget*)w)->zoomIn();
     }else{
-        ((WebPage*)w)->zoomIn();
+        ((WebView*)w)->zoomIn();
     }
 }
 
@@ -404,7 +404,7 @@ void BookView::zoomOut()
     if (w->objectName() == "dicpage") {
         ((PageWidget*)w)->zoomOut();
     }else{
-        ((WebPage*)w)->zoomOut();
+        ((WebView*)w)->zoomOut();
     }
 }
 
@@ -444,7 +444,7 @@ void BookView::stopAllLoading()
 {
     for(int i=0; i < count(); i++) {
         if (widget(i)->objectName() == "webpage") {
-            WebPage *w = (WebPage*)widget(i);
+            WebView *w = (WebView*)widget(i);
             w->stop();
         } else if (widget(i)->objectName() == "bookview") {
             BookView *w = (BookView*)widget(i);
@@ -457,7 +457,7 @@ bool BookView::checkLoaded() {
     bool all_loaded = true;
     for(int i=0; i < count(); i++) {
         if (widget(i)->objectName() == "webpage") {
-            WebPage *w = (WebPage*)widget(i);
+            WebView *w = (WebView*)widget(i);
             if (w->loading()) {
                 all_loaded = false;
                 break;
