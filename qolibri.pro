@@ -33,7 +33,7 @@ HEADERS += \
            src/titlelabel.h \
            src/toolbar.h \
            src/treescrollpopup.h \
-           src/webpage.h \
+           src/webview.h \
 
 SOURCES += \
            src/allpage.cpp \
@@ -69,7 +69,7 @@ SOURCES += \
            src/textcodec.cpp \
            src/toolbar.cpp \
            src/treescrollpopup.cpp \
-           src/webpage.cpp \
+           src/webview.cpp \
 
 RESOURCES += qolibri.qrc
 

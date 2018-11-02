@@ -29,7 +29,7 @@
 #include "ssheetsetting.h"
 #include "configure.h"
 #include "optiondialog.h"
-#include "webpage.h"
+#include "webview.h"
 
 #include <QClipboard>
 #include <QCloseEvent>
@@ -599,7 +599,7 @@ void MainWindow::showTabInfo(int index)
         reloadAct->setEnabled(false);
         showStatus(i.text());
     } else if (t == BookWeb) {
-        WebPage *w = (WebPage*)(bookView->pageWidget(index));
+        WebView *w = (WebView*)(bookView->pageWidget(index));
         showStatus(w->url().toString());
         webBar->show();
         reloadAct->setEnabled(true);
@@ -1020,7 +1020,7 @@ void MainWindow::addMark()
         s.replace("&&", "&");
         groupDock->addMark(s, m);
     } else {
-        WebPage *w = (WebPage*)(bookView->currentPageWidget());
+        WebView *w = (WebView*)(bookView->currentPageWidget());
         groupDock->addMark(w->title(), w->url().toString());
 
 //        QTabWidget *v = bookView;
@@ -1332,7 +1332,7 @@ void MainWindow::aboutQolibri()
 
 void MainWindow::goPrev()
 {
-    WebPage *w = (WebPage*)bookView->currentPageWidget();
+    WebView *w = (WebView*)bookView->currentPageWidget();
     w->back();
     if (w->history()->canGoBack()) {
         goPrevAct->setEnabled(true);
@@ -1348,7 +1348,7 @@ void MainWindow::goPrev()
 
 void MainWindow::goNext()
 {
-    WebPage *w = (WebPage*)bookView->currentPageWidget();
+    WebView *w = (WebView*)bookView->currentPageWidget();
     w->forward();
     if (w->history()->canGoBack()) {
         goPrevAct->setEnabled(true);
@@ -1364,7 +1364,7 @@ void MainWindow::goNext()
 
 void MainWindow::reload()
 {
-    WebPage *w = (WebPage*)bookView->currentPageWidget();
+    WebView *w = (WebView*)bookView->currentPageWidget();
     w->reload();
 }
 
