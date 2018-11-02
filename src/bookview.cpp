@@ -176,7 +176,7 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
     foreach(Book *book, query.method.group->bookList()) {
         if (book->bookType() == BookWeb &&
                 book->checkState() == Qt::Checked) {
-            WebView *wpage = new WebView(this, book->path(), query);
+            WebView *wpage = new WebView(this);
             connect(wpage, SIGNAL(loadFinished(bool)),
                     SLOT(webViewFinished(bool)));
             connect(wpage, SIGNAL(processRequested(QString, QStringList)),
@@ -192,6 +192,7 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
             if (!focus_page) {
                 focus_page = (QWidget *)wpage;
             }
+            wpage->load(book->path(), query);
         }
     }
     emit popupBrowserSet(popup_browser);
@@ -206,7 +207,7 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
 RET_SEARCH BookView::newWebPage(const QString &name, const QString &url,
                                 bool popup_browser)
 {
-    WebView *wpage = new WebView(this, url);
+    WebView *wpage = new WebView(this);
     connect(wpage, SIGNAL(loadFinished(bool)), SLOT(webViewFinished(bool)));
     connect(wpage, SIGNAL(processRequested(QString, QStringList)),
             SIGNAL(processRequested(QString, QStringList)));
@@ -217,6 +218,7 @@ RET_SEARCH BookView::newWebPage(const QString &name, const QString &url,
     wpage->setTabIndex(idx);
     wpage->setTabBar(tabBar());
     setCurrentWidget(wpage);
+    wpage->load(url);
     emit tabChanged(count());
 
     return NORMAL;
