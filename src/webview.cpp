@@ -1,35 +1,38 @@
 #include "webview.h"
+#include "webpage.h"
 #include "configure.h"
 
 #include <QAction>
+#include <QContextMenuEvent>
 #include <QDebug>
+#include <QMenu>
 #include <QTabBar>
 #include <QTextCodec>
+#include <QWebEngineContextMenuData>
+#include <QWebEngineHistory>
+#include <QWebEngineSettings>
 
 WebView::WebView(QWidget *parent)
-    : QWebView(parent)
+    : QWebEngineView(parent)
     , loading_(false)
-    , popupBrowser_(false)
     , progressCount_(0)
     , tabBar_(0)
 {
     setObjectName("webpage");
-    page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+
+    WebPage *const webPage = new WebPage(this);
+    connect(webPage, SIGNAL(linkClicked(const QUrl&)), SLOT(openLink(const QUrl&)));
+    connect(webPage, SIGNAL(linkHovered(QString)), SLOT(copyHoveredLink(QString)));
+    connect(webPage->action(QWebEnginePage::OpenLinkInNewWindow), SIGNAL(triggered()), SLOT(openNewWin()));
+    setPage(webPage);
+
     connect(this, SIGNAL(loadStarted()), SLOT(progressStart()));
     connect(this, SIGNAL(loadFinished(bool)), SLOT(progressFinished(bool)));
     connect(this, SIGNAL(loadProgress(int)), SLOT(progress(int)));
-    connect(this, SIGNAL(linkClicked(const QUrl&)),
-            SLOT(openLink(const QUrl&)));
 
-    QAction *newWinAct = pageAction(QWebPage::OpenLinkInNewWindow);
-    connect(newWinAct, SIGNAL(triggered()), SLOT(openNewWin()));
-    connect(page(), SIGNAL(linkHovered(QString,QString,QString)),
-            SLOT(copyHoveredLink(QString,QString,QString)));
-
-    QWebSettings *ws = settings();
-    ws->setAttribute(QWebSettings::JavascriptEnabled, true);
-    ws->setAttribute(QWebSettings::JavaEnabled, true);
-    ws->setAttribute(QWebSettings::PluginsEnabled, true);
+    QWebEngineSettings *ws = settings();
+    ws->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
+    ws->setAttribute(QWebEngineSettings::PluginsEnabled, true);
 }
 
 void WebView::openNewWin()
@@ -37,8 +40,7 @@ void WebView::openNewWin()
     emit processRequested(CONF->browserProcess, QStringList(hoveredLink));
 }
 
-void WebView::copyHoveredLink(const QString &link, const QString&,
-                              const QString&)
+void WebView::copyHoveredLink(const QString &link)
 {
     if (!link.isEmpty()) {
         hoveredLink = link;
@@ -64,11 +66,11 @@ void WebView::load(const QString &url, const Query &query)
 
 void WebView::contextMenuEvent(QContextMenuEvent* event)
 {
-    QWebView::contextMenuEvent(event);
-    //QMenu *menu = createStandardContextMenu();
-    //QAction *a = menu->exec(event->globalPos());
-    //delete menu;
-
+    if (WebPage *webPage = qobject_cast<WebPage *>(page())) {
+        if (QMenu *menu = webPage->createContextMenu()) {
+            menu->popup(event->globalPos());
+        }
+    }
 }
 
 QByteArray WebView::encString(const QString &url)
@@ -162,11 +164,11 @@ QString WebView::setDirectionString(const QString &url, const QString &dstr,
 
 void WebView::changeFontSize(int delta)
 {
-    QWebSettings *s = settings();
-    int dsz = s->fontSize(QWebSettings::DefaultFontSize);
-    int fsz = s->fontSize(QWebSettings::DefaultFixedFontSize);
-    s->setFontSize(QWebSettings::DefaultFontSize, dsz + delta);
-    s->setFontSize(QWebSettings::DefaultFixedFontSize, fsz + delta);
+    QWebEngineSettings *s = settings();
+    int dsz = s->fontSize(QWebEngineSettings::DefaultFontSize);
+    int fsz = s->fontSize(QWebEngineSettings::DefaultFixedFontSize);
+    s->setFontSize(QWebEngineSettings::DefaultFontSize, dsz + delta);
+    s->setFontSize(QWebEngineSettings::DefaultFixedFontSize, fsz + delta);
 }
 
 void WebView::progressStart()
@@ -197,22 +199,14 @@ void WebView::progressFinished(bool)
 
 void WebView::openLink(const QUrl &url)
 {
-    if (!popupBrowser_) {
-        QUrl u = QUrl::fromEncoded(url.toEncoded(), QUrl::TolerantMode);
-        qDebug() << url.toEncoded();
-        qDebug() << u.toString();
-        load(u);
-    } else {
-        emit processRequested(CONF->browserProcess, QStringList(url.toString()));
-    }
-
+    emit processRequested(CONF->browserProcess, QStringList(url.toString()));
 }
 
 void WebView::changeFont(const QFont &font)
 {
 
     qDebug() << "WebPage::changeFont" << font.family();
-    settings()->setFontFamily(QWebSettings::StandardFont, font.family());
+    settings()->setFontFamily(QWebEngineSettings::StandardFont, font.family());
 
 }
 
@@ -228,6 +222,8 @@ void WebView::zoomOut()
 
 void WebView::setPopupBrowser(bool popup)
 {
-    popupBrowser_ = popup;
+    if (WebPage *webPage = qobject_cast<WebPage *>(page())) {
+        webPage->setDelegateLinks(popup);
+    }
 }
 
