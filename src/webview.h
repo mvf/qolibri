@@ -45,7 +45,7 @@ private:
     QString directionString(const QString &url);
     QString setDirectionString(const QString &url, const QString &dstr,
                                SearchDirection &direc);
-
+    void changeFontSize(int delta);
     QString hoveredLink;
     bool loading_;
     bool popupBrowser_;

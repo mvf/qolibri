@@ -182,6 +182,15 @@ QString WebView::setDirectionString(const QString &url, const QString &dstr,
 
 }
 
+void WebView::changeFontSize(int delta)
+{
+    QWebSettings *s = settings();
+    int dsz = s->fontSize(QWebSettings::DefaultFontSize);
+    int fsz = s->fontSize(QWebSettings::DefaultFixedFontSize);
+    s->setFontSize(QWebSettings::DefaultFontSize, dsz + delta);
+    s->setFontSize(QWebSettings::DefaultFixedFontSize, fsz + delta);
+}
+
 void WebView::progressStart()
 {
     loading_ = true;
@@ -231,22 +240,12 @@ void WebView::changeFont(const QFont &font)
 
 void WebView::zoomIn()
 {
-    QWebSettings *s = settings();
-    int dsz = s->fontSize(QWebSettings::DefaultFontSize);
-    int fsz = s->fontSize(QWebSettings::DefaultFixedFontSize);
-    s->setFontSize(QWebSettings::DefaultFontSize, dsz + 1);
-    s->setFontSize(QWebSettings::DefaultFixedFontSize, fsz + 1);
-    reload();
+    changeFontSize(1);
 }
 
 void WebView::zoomOut()
 {
-    QWebSettings *s = settings();
-    int dsz = s->fontSize(QWebSettings::DefaultFontSize);
-    int fsz = s->fontSize(QWebSettings::DefaultFixedFontSize);
-    s->setFontSize(QWebSettings::DefaultFontSize, dsz - 1);
-    s->setFontSize(QWebSettings::DefaultFixedFontSize, fsz - 1);
-    reload();
+    changeFontSize(-1);
 }
 
 void WebView::setPopupBrowser(bool popup)
