@@ -41,7 +41,7 @@
 #include <QStatusBar>
 #include <QTimer>
 #include <QToolBar>
-#include <QWebHistory>
+#include <QWebEngineHistory>
 
 const char *Program = { "qolibri" };
 

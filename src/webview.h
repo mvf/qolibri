@@ -3,12 +3,12 @@
 
 #include "method.h"
 
-#include <QWebView>
+#include <QWebEngineView>
 
 struct QTabBar;
 struct Query;
 
-class WebView : public QWebView
+class WebView : public QWebEngineView
 {
     Q_OBJECT
 public:
@@ -18,7 +18,7 @@ public:
     void setTabIndex(int index) { tabIndex_ = index; }
     void setTabBar(QTabBar *bar) { tabBar_ = bar; }
     SearchMethod method() { return method_; }
-    using QWebView::load;
+    using QWebEngineView::load;
     void load(const QString &url, const Query &query);
     bool loading() { return loading_; }
 
@@ -31,8 +31,7 @@ private slots:
     void progressFinished(bool ok);
     void openLink(const QUrl &url);
     void openNewWin();
-    void copyHoveredLink(const QString &link, const QString &title,
-                         const QString &text);
+    void copyHoveredLink(const QString &link);
     void changeFont(const QFont &font);
     void setPopupBrowser(bool);
 
@@ -49,7 +48,6 @@ private:
     void changeFontSize(int delta);
     QString hoveredLink;
     bool loading_;
-    bool popupBrowser_;
     SearchMethod method_;
     int progressCount_;
     int tabIndex_;

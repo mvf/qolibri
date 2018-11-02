@@ -33,6 +33,7 @@ HEADERS += \
            src/titlelabel.h \
            src/toolbar.h \
            src/treescrollpopup.h \
+           src/webpage.h \
            src/webview.h \
 
 SOURCES += \
@@ -69,6 +70,7 @@ SOURCES += \
            src/textcodec.cpp \
            src/toolbar.cpp \
            src/treescrollpopup.cpp \
+           src/webpage.cpp \
            src/webview.cpp \
 
 RESOURCES += qolibri.qrc
@@ -77,7 +79,7 @@ FORMS += src/optiondialog.ui
 
 lessThan(QT_MAJOR_VERSION, 5): error("Qt 5 or later required")
 
-QT += multimedia network webkit webkitwidgets widgets
+QT += multimedia network webengine webenginewidgets widgets
 
 TARGET = qolibri
 DESTDIR = .
