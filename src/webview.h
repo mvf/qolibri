@@ -12,13 +12,14 @@ class WebView : public QWebView
 {
     Q_OBJECT
 public:
-    WebView(QWidget *parent, const QString &url, const Query& query);
-    WebView(QWidget *parent, const QString &url);
+    explicit WebView(QWidget *parent = 0);
     void zoomIn();
     void zoomOut();
     void setTabIndex(int index) { tabIndex_ = index; }
     void setTabBar(QTabBar *bar) { tabBar_ = bar; }
     SearchMethod method() { return method_; }
+    using QWebView::load;
+    void load(const QString &url, const Query &query);
     bool loading() { return loading_; }
 
 protected:

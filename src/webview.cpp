@@ -6,71 +6,32 @@
 #include <QTabBar>
 #include <QTextCodec>
 
-WebView::WebView(QWidget *parent, const QString &url, const Query& query)
-    : QWebView(parent), method_(query.method)
-{
-    loading_ = true;
-    setObjectName("webpage");
-    page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    tabBar_ = 0;
-    connect(this, SIGNAL(loadStarted()), SLOT(progressStart()));
-    connect(this, SIGNAL(loadFinished(bool)), SLOT(progressFinished(bool)));
-    connect(this, SIGNAL(loadProgress(int)), SLOT(progress(int)));
-    connect(this, SIGNAL(linkClicked(const QUrl&)),
-            SLOT(openLink(const QUrl&)));
-
-    QByteArray enc = encString(url);
-    QString ustr = setSearchString(url, enc, query.query);
-    QString sdir = directionString(url);
-    if (!sdir.isEmpty()) {
-        ustr = setDirectionString(ustr, sdir, method_.direction);
-    }
-
-    QWebSettings *ws = settings();
-    ws->setAttribute(QWebSettings::JavascriptEnabled, true);
-    ws->setAttribute(QWebSettings::JavaEnabled, true);
-    ws->setAttribute(QWebSettings::PluginsEnabled, true);
-    if (enc.isEmpty()) {
-        load(QUrl::fromEncoded(ustr.toLatin1()));
-    } else {
-        load(QUrl::fromEncoded(QTextCodec::codecForName(enc)->fromUnicode(ustr)));
-    }
-    QAction *newWinAct = pageAction(QWebPage::OpenLinkInNewWindow);
-    connect(newWinAct, SIGNAL(triggered()), SLOT(openNewWin()));
-    connect(page(), SIGNAL(linkHovered(QString,QString,QString)),
-            SLOT(copyHoveredLink(QString,QString,QString)));
-
-    show();
-}
-
-WebView::WebView(QWidget *parent, const QString &url)
+WebView::WebView(QWidget *parent)
     : QWebView(parent)
+    , loading_(false)
+    , popupBrowser_(false)
+    , progressCount_(0)
+    , tabBar_(0)
 {
-    loading_ = true;
     setObjectName("webpage");
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    tabBar_ = 0;
     connect(this, SIGNAL(loadStarted()), SLOT(progressStart()));
     connect(this, SIGNAL(loadFinished(bool)), SLOT(progressFinished(bool)));
     connect(this, SIGNAL(loadProgress(int)), SLOT(progress(int)));
     connect(this, SIGNAL(linkClicked(const QUrl&)),
             SLOT(openLink(const QUrl&)));
+
     QAction *newWinAct = pageAction(QWebPage::OpenLinkInNewWindow);
     connect(newWinAct, SIGNAL(triggered()), SLOT(openNewWin()));
     connect(page(), SIGNAL(linkHovered(QString,QString,QString)),
             SLOT(copyHoveredLink(QString,QString,QString)));
 
-    //qDebug() << url;
-
     QWebSettings *ws = settings();
     ws->setAttribute(QWebSettings::JavascriptEnabled, true);
     ws->setAttribute(QWebSettings::JavaEnabled, true);
     ws->setAttribute(QWebSettings::PluginsEnabled, true);
-
-    load(url);
-
-    show();
 }
+
 void WebView::openNewWin()
 {
     emit processRequested(CONF->browserProcess, QStringList(hoveredLink));
@@ -81,6 +42,23 @@ void WebView::copyHoveredLink(const QString &link, const QString&,
 {
     if (!link.isEmpty()) {
         hoveredLink = link;
+    }
+}
+
+void WebView::load(const QString &url, const Query &query)
+{
+    loading_ = true;
+    method_ = query.method;
+    QByteArray enc = encString(url);
+    QString ustr = setSearchString(url, enc, query.query);
+    QString sdir = directionString(url);
+    if (!sdir.isEmpty()) {
+        ustr = setDirectionString(ustr, sdir, method_.direction);
+    }
+    if (enc.isEmpty()) {
+        load(QUrl::fromEncoded(ustr.toLatin1()));
+    } else {
+        load(QUrl::fromEncoded(QTextCodec::codecForName(enc)->fromUnicode(ustr)));
     }
 }
 
