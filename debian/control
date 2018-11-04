@@ -8,7 +8,7 @@ Build-Depends: debhelper (>= 10),
                qt5-default,
                qttools5-dev-tools,
                qtmultimedia5-dev,
-               libqt5webkit5-dev,
+               qtwebengine5-dev,
                libeb16-dev,
                zlib1g-dev
 Standards-Version: 4.1.0

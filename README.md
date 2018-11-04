@@ -29,7 +29,7 @@ If you would like to build it without using the Debian packaging, run:
 
 ```
 sudo apt-get install --no-install-recommends qtbase5-dev qt5-qmake qt5-default \
- qttools5-dev-tools qtmultimedia5-dev libqt5webkit5-dev libeb16-dev zlib1g-dev
+ qttools5-dev-tools qtmultimedia5-dev qtwebengine5-dev libeb16-dev zlib1g-dev
 qmake
 make
 ```

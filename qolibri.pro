@@ -141,7 +141,7 @@ QMAKE_EXTRA_COMPILERS += updateqm
 VERSION_STR = $$git(describe --tags --match '[0-9]*' --always)
 
 isEmpty(VERSION_STR) {
-    DEFINES += $$defStr(VERSION_STR, 2.0.2)
+    DEFINES += $$defStr(VERSION_STR, 2.1.0)
 } else {
     DEFINES += $$defStr(VERSION_STR, $$VERSION_STR)
 }
