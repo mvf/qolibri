@@ -15,6 +15,10 @@ If you find a security bug, please report it like a regular bug.
     <img src="https://user-images.githubusercontent.com/4458/43369811-c1e0421c-9363-11e8-8abb-91b9ce2e4ce0.png">
 </p>
 
+## Install on Windows
+
+See the [releases](https://github.com/ludios/qolibri/releases) for builds.  Extract with 7-Zip.
+
 ## Install on Debian 9 stretch
 
 See the [releases](https://github.com/ludios/qolibri/releases) for precompiled
