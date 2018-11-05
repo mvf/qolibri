@@ -74,6 +74,7 @@ SOURCES += \
            src/webview.cpp \
 
 RESOURCES += qolibri.qrc
+RC_FILE = qolibri.rc
 
 FORMS += src/optiondialog.ui
 
