@@ -5,7 +5,7 @@
 
 #include <QWebEngineView>
 
-struct QTabBar;
+class QTabBar;
 struct Query;
 
 class WebView : public QWebEngineView
