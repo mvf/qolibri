@@ -2,7 +2,8 @@ Source: qolibri
 Section: education
 Priority: optional
 Maintainer: Ivan Kozik <ivan@ludios.org
-Build-Depends: debhelper (>= 10),
+Build-Depends: cmake (>= 3.5),
+               debhelper (>= 10),
                qtbase5-dev (>= 5.2.0),
                qt5-qmake,
                qt5-default,

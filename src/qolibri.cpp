@@ -120,20 +120,14 @@ int main(int argc, char *argv[])
         }
     }
 
-
     QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name(),
-                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    app.installTranslator(&qtTranslator);
+    if (qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+        QApplication::installTranslator(&qtTranslator);
 
-#if defined(QOLIBRI_PKGDATADIR)
-    QString path(QOLIBRI_PKGDATADIR "/translations");
-#else
-    QString path = QCoreApplication::applicationDirPath() + "/translations";
-#endif
     QTranslator trans;
-    trans.load(QString("qolibri_") + QLocale::system().name(), path);
-    app.installTranslator(&trans);
+    QString thename(QStringLiteral(":/translations/qolibri_") + QLocale::system().name());
+    if (trans.load(thename))
+        QApplication::installTranslator(&trans);
 
     MainWindow mainWin(&model, searchText);
 

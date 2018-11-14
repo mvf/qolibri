@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/translations">
+        <file>qolibri_ja_JP.qm</file>
+    </qresource>
+</RCC>
