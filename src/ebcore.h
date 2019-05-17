@@ -52,14 +52,12 @@ public:
     QString getMenu();
     int initBook(const QString &path, int subbook=-1, int refpos=0);
     int initSubBook(int index, int refpos=0);
-    void initHook(int fsize, QHash<QString, QString> *flist,
-                  int indent_offset = 50, bool rub = true)
+    void initHook(int fsize, QHash<QString, QString> *flist, int indent_offset = 50)
     {
         ebCache.init(subbookTitle());
         indentOffset = indent_offset;
         fontSize = fsize;
         fontList = flist;
-        ruby = rub;
         current_indent = 0;
     }
 
@@ -142,7 +140,6 @@ public:
     int current_indent;
     int monoWidth;
     int monoHeight;
-    bool ruby;
 
 public:
 

@@ -235,11 +235,6 @@ void MainWindow::createMenus()
 
     smenu->addAction(QIcon(":/images/delete.png"), tr("&Clear cache"),
                      this, SLOT(clearCache()));
-    toggleRubyAct = smenu->addAction(QIcon(":/images/ruby.png"),
-                                     tr("&Ruby(subscription) on/off"), this,
-                                     SLOT(toggleRuby()));
-    toggleRubyAct->setCheckable(true);
-    toggleRubyAct->setIconVisibleInMenu(false);
 
     QMenu *hmenu = menuBar()->addMenu(tr("&Help"));
     hmenu->addAction(QIcon(
@@ -298,9 +293,6 @@ void MainWindow::createToolBars()
     bar2->addAction(addMarkAct);
     bar2->addAction(toggleScanClipboardAct);
     bar2->addAction(toggleDockAct);
-#ifdef RUBY_ON_TOOLBAR
-    bar2->addAction(toggleRubyAct);
-#endif
 
     webBar = addToolBar("Web");
     webBar->setMovable(false);
@@ -534,7 +526,6 @@ SearchMethod MainWindow::readMethodSetting(const QSettings &set)
                                          LogicAND).toInt();
     m.limitBook = set.value("limit_book", 100).toInt();
     m.limitTotal = set.value("limit_total", 1000).toInt();
-    m.ruby = set.value("ruby", true).toBool();
 
     return m;
 }
@@ -545,7 +536,6 @@ void MainWindow::writeMethodSetting(const SearchMethod &m, QSettings *set)
     set->setValue("narrowing_logic", m.logic);
     set->setValue("limit_book", m.limitBook);
     set->setValue("limit_total", m.limitTotal);
-    set->setValue("ruby", m.ruby);
     if (m.group) {
         set->setValue("group", m.group->name());
     }
@@ -660,11 +650,6 @@ void MainWindow::toggleBar()
         model->setBookMode(ModeDictionary);
         toggleBarAct->setIcon(QIcon(":images/find_l.png"));
     }
-}
-
-void MainWindow::toggleRuby()
-{
-    model->method.ruby = toggleRubyAct->isChecked();
 }
 
 void MainWindow::changeOptSearchButtonText(const QString &str)

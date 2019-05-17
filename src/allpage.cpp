@@ -46,8 +46,7 @@ RET_SEARCH AllPage::readPage(int page)
        0) {
         return NO_BOOK;
     }
-    eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList(),
-                  CONF->indentOffset, method_.ruby);
+    eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList(), CONF->indentOffset);
     bookBrowser_->addBookList(method_.bookReader);
 
     QTreeWidgetItem *current_item = top_tree;

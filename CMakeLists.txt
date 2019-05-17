@@ -97,11 +97,6 @@ if (${QOLIBRI_FIXED_POPUP})
     target_compile_definitions(qolibri PRIVATE FIXED_POPUP)
 endif()
 
-set(QOLIBRI_RUBY_ON_TOOLBAR OFF CACHE BOOL "Show the Ruby action on the toolbar (in addition to the menu entry)")
-if (${QOLIBRI_RUBY_ON_TOOLBAR})
-    target_compile_definitions(qolibri PRIVATE RUBY_ON_TOOLBAR)
-endif()
-
 if ("${QOLIBRI_COMMIT_DATE}" STREQUAL "")
     execute_process(COMMAND git log -1 --format=%ci WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" OUTPUT_VARIABLE QOLIBRI_COMMIT_DATE)
     string(REGEX REPLACE "(\r?\n)+$" "" QOLIBRI_COMMIT_DATE "${QOLIBRI_COMMIT_DATE}")

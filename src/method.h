@@ -47,7 +47,6 @@ struct SearchMethod {
     NarrowingLogic  logic;
     int             limitTotal;
     int             limitBook;
-    bool            ruby;
 
     RET_SEARCH checkLimit(int totalCount, int matchCount, int textLength) const;
 };

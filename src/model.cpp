@@ -346,7 +346,6 @@ SearchMethod Model::readMethodSetting(const QSettings &set)
                                          LogicAND).toInt();
     m.limitBook = set.value("limit_book", 100).toInt();
     m.limitTotal = set.value("limit_total", 1000).toInt();
-    m.ruby = set.value("ruby", true).toBool();
 
     return m;
 }
@@ -357,7 +356,6 @@ void Model::writeMethodSetting(const SearchMethod &m, QSettings *set)
     set->setValue("narrowing_logic", m.logic);
     set->setValue("limit_book", m.limitBook);
     set->setValue("limit_total", m.limitTotal);
-    set->setValue("ruby", m.ruby);
     if (m.group) {
         set->setValue("group", m.group->name());
     }

@@ -80,7 +80,6 @@ private slots:
     void setStatusBarSheet();
     void setConfig();
     void toggleBar();
-    void toggleRuby();
     void toggleDock(bool check);
     void toggleNewTab(bool check);
     void toggleNewBrowser(bool check);
@@ -155,7 +154,6 @@ private:
     QAction *toggleBrowserAct;
     QAction *toggleDockAct;
     QAction *toggleBarAct;
-    QAction *toggleRubyAct;
     QAction *toggleMethodBarAct;
     QAction *toggleScanClipboardAct;
     QAction *booksAct;

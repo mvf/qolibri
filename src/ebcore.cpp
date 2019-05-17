@@ -281,11 +281,11 @@ QByteArray EbCore::hookEndNarrow(int, const unsigned int*)
 }
 QByteArray EbCore::hookBeginSubscript(int, const unsigned int*)
 {
-    return (ruby) ? "<sub>" : QByteArray();
+    return QByteArrayLiteral("<sub>");
 }
 QByteArray EbCore::hookEndSubscript(int, const unsigned int*)
 {
-    return (ruby) ? "</sub>" : QByteArray();
+    return QByteArrayLiteral("</sub>");
 }
 QByteArray EbCore::hookSetIndent(int, const unsigned int* argv)
 {
