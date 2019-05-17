@@ -113,13 +113,7 @@ FontSetting::FontSetting(Book *pbook, QWidget *parent)
 int FontSetting::setupTreeWidget(const QString &font_path)
 {
     QList<QTreeWidgetItem *> items;
-#ifdef USE_GIF_FOR_FONT
-    QStringList flist = QDir(font_path).entryList(QStringList() << "*.gif",
-                                                  QDir::Files, QDir::Name);
-#else
-    QStringList flist = QDir(font_path).entryList(QStringList() << "*.png",
-                                                  QDir::Files, QDir::Name);
-#endif
+    QStringList flist = QDir(font_path).entryList(QStringList() << "*.png", QDir::Files, QDir::Name);
     cacheDir = font_path;
     if (flist.count() < 1) {
         return 0;
@@ -149,11 +143,7 @@ void FontSetting::selectFont(QTreeWidgetItem *current, QTreeWidgetItem*)
     if (!current) {
         return;
     }
-#ifdef USE_GIF_FOR_FONT
-    QString fname = cacheDir + "/" + current->text(1) + ".gif";
-#else
     QString fname = cacheDir + "/" + current->text(1) + ".png";
-#endif
     fontButton->setIcon(QIcon(fname));
     fontCodeLabel->setText(current->text(1));
     fontCodeEdit->setText(current->text(2));

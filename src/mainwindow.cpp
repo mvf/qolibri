@@ -1159,14 +1159,7 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
         int i = eb.narrowFontStart();
         while (i >= 0)
         {
-            QByteArray fname = 'n' + eb.numToBStr(i, 16);
-
-#ifdef USE_GIF_FOR_FONT
-            fname += ".gif";
-#else
-            fname += ".png";
-#endif
-
+            QByteArray fname = 'n' + eb.numToBStr(i, 16) + ".png";
             QByteArray bitmap = eb.narrowFontCharacterBitmap(i);
             if (bitmap.isEmpty())
             {
@@ -1174,11 +1167,7 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
                 continue;
             }
 
-#ifdef USE_GIF_FOR_FONT
-            QByteArray cnv = eb.narrowBitmapToGif(bitmap);
-#else
             QByteArray cnv = eb.narrowBitmapToPng(bitmap);
-#endif
             if (cnv.isEmpty())
             {
                 qDebug() << "Font Conversion Error" << fname;
@@ -1202,14 +1191,7 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
         int i = eb.wideFontStart();
         while (i >= 0)
         {
-            QByteArray fname = 'w' + eb.numToBStr(i, 16);
-
-#ifdef USE_GIF_FOR_FONT
-            fname += ".gif";
-#else
-            fname += ".png";
-#endif
-
+            QByteArray fname = 'w' + eb.numToBStr(i, 16) + ".png";
             QByteArray bitmap = eb.wideFontCharacterBitmap(i);
             if (bitmap.isEmpty())
             {
@@ -1217,11 +1199,7 @@ QString MainWindow::loadAllExternalFont(Book *pbook)
                 continue;
             }
 
-#ifdef USE_GIF_FOR_FONT
-            QByteArray cnv = eb.wideBitmapToGif(bitmap);
-#else
             QByteArray cnv = eb.wideBitmapToPng(bitmap);
-#endif
             if (cnv.isEmpty())
             {
                 qDebug() << "Font Conversion Error" << fname;

@@ -385,21 +385,13 @@ QByteArray EbCore::hookNarrowFont(int, const unsigned int *argv)
     if (!isHaveNarrowFont())
         return errorBStr("外字(" + fname + ")");
 
-#ifdef USE_GIF_FOR_FONT
-    fname += ".gif";
-#else
     fname += ".png";
-#endif
 
     QByteArray bitmap = narrowFontCharacterBitmap(fcode);
     if (bitmap.isEmpty())
         return errorBStr("Font Extract Error");
 
-#ifdef USE_GIF_FOR_FONT
-    QByteArray cnv = narrowBitmapToGif(bitmap);
-#else
     QByteArray cnv = narrowBitmapToPng(bitmap);
-#endif
     if (cnv.isEmpty())
         return errorBStr("Font Conversion Error");
 
@@ -424,21 +416,13 @@ QByteArray EbCore::hookWideFont(int, const unsigned int *argv)
     if (!isHaveWideFont())
         return errorBStr("外字(" + fname + ")");
 
-#ifdef USE_GIF_FOR_FONT
-    fname += ".gif";
-#else
     fname += ".png";
-#endif
 
     QByteArray bitmap = wideFontCharacterBitmap(fcode);
     if (bitmap.isEmpty())
         return errorBStr("Font Extract Error");
 
-#ifdef USE_GIF_FOR_FONT
-    QByteArray cnv = wideBitmapToGif(bitmap);
-#else
     QByteArray cnv = wideBitmapToPng(bitmap);
-#endif
     if (cnv.isEmpty())
         return errorBStr("Font Conversion Error");
 

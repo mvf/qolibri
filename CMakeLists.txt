@@ -102,11 +102,6 @@ if (${QOLIBRI_RUBY_ON_TOOLBAR})
     target_compile_definitions(qolibri PRIVATE RUBY_ON_TOOLBAR)
 endif()
 
-set(QOLIBRI_GIF_FONTS OFF CACHE BOOL "Cache bitmap fonts as GIF instead of PNG")
-if (${QOLIBRI_GIF_FONTS})
-    target_compile_definitions(qolibri PRIVATE USE_GIF_FOR_FONT)
-endif()
-
 if ("${QOLIBRI_COMMIT_DATE}" STREQUAL "")
     execute_process(COMMAND git log -1 --format=%ci WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" OUTPUT_VARIABLE QOLIBRI_COMMIT_DATE)
     string(REGEX REPLACE "(\r?\n)+$" "" QOLIBRI_COMMIT_DATE "${QOLIBRI_COMMIT_DATE}")
