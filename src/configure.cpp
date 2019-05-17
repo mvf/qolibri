@@ -28,8 +28,6 @@ const bool highlightMatch_Def = true;
 const bool beepSound_Def = true;
 const bool serverMode_Def = false;
 const bool convertFullwidth_Def = true;
-const int stepBookHitMax_Def = 10;
-const int stepTotalHitMax_Def = 100;
 const int maxLimitBookHit_Def = 15000;
 const int maxLimitTotalHit_Def = 15000;
 const int historyMax_Def = 500;
@@ -96,8 +94,6 @@ void Configure::load()
     portNo = conf.value("port_no", portNo_Def).toInt();
     maxLimitBookHit = conf.value("limt_book", maxLimitBookHit_Def).toInt();
     maxLimitTotalHit = conf.value("limit_total", maxLimitTotalHit_Def).toInt();
-    stepBookHitMax = conf.value("step_book", stepBookHitMax_Def).toInt();
-    stepTotalHitMax = conf.value("step_total", stepTotalHitMax_Def).toInt();
     browserFont.fromString(conf.value("browser_font", qApp->font()).toString());
     dictionarySearchPath = conf.value("dictionary_search_path", QDir::homePath()).toString();
 
@@ -142,8 +138,6 @@ void Configure::save()
     conf.setValue("limit_total", maxLimitTotalHit);
     conf.setValue("indent_offset", indentOffset);
     conf.setValue("port_no", portNo);
-    conf.setValue("step_book", stepBookHitMax);
-    conf.setValue("step_total", stepTotalHitMax);
     conf.setValue("browser_font", browserFont.toString());
     conf.setValue("dictionary_search_path", dictionarySearchPath);
 
@@ -171,8 +165,6 @@ void Configure::setDefault()
     portNo = portNo_Def;
     maxLimitBookHit = maxLimitBookHit_Def;
     maxLimitTotalHit = maxLimitTotalHit_Def;
-    stepBookHitMax = stepBookHitMax_Def;
-    stepTotalHitMax = stepTotalHitMax_Def;
     browserFont = qApp->font();
 }
 

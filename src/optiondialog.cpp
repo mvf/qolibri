@@ -48,8 +48,6 @@ void OptionDialog::reset()
     limitMenuBox->setValue(d->limitMenuHit);
     limitMaxBookBox->setValue(d->maxLimitBookHit);
     limitMaxTotalBox->setValue(d->maxLimitTotalHit);
-    stepBookHitBox->setValue(d->stepBookHitMax);
-    stepTotalHitBox->setValue(d->stepTotalHitMax);
 }
 
 void OptionDialog::accept()
@@ -74,6 +72,4 @@ void OptionDialog::accept()
     d->limitMenuHit = limitMenuBox->value();
     d->maxLimitBookHit = limitMaxBookBox->value();
     d->maxLimitTotalHit = limitMaxTotalBox->value();
-    d->stepBookHitMax = stepBookHitBox->value();
-    d->stepTotalHitMax = stepTotalHitBox->value();
 }
