@@ -391,11 +391,7 @@ void HistoryTab::addHistory(const QString &str, const SearchMethod &method,
 }
 
 GroupDock::GroupDock(QWidget *parent, Model *model_)
-#if defined (Q_WS_MAC)
-    : QTabWidget(parent)
-#else
     : QDockWidget(parent)
-#endif
     , model(model_)
 {
     connect(this, SIGNAL(groupChanged(int)), model, SLOT(setGroupIndex(int)));
@@ -404,11 +400,7 @@ GroupDock::GroupDock(QWidget *parent, Model *model_)
     connect(model, SIGNAL(bookIndexChanged(int)), SLOT(setCurrentBook(int)));
     connect(model, SIGNAL(dictionaryGroupsChanged()), SLOT(changeGroupList()));
 
-#if defined (Q_WS_MAC)
-    QTabWidget* tabWidget = this;
-#else
     tabWidget = new QTabWidget(this);
-#endif
     groupTab = new GroupTab(this);
     tabWidget->addTab(groupTab, QIcon(":/images/group.png"), tr("Group"));
     connect(groupTab, SIGNAL(bookViewRequested(Book*)),
@@ -438,11 +430,7 @@ GroupDock::GroupDock(QWidget *parent, Model *model_)
             SIGNAL(pasteRequested(QString, SearchMethod)));
     tabWidget->addTab(historyTab, QIcon(":/images/history.png"), tr("History"));
 
-#if defined (Q_WS_MAC)
-    setWindowFlags(Qt::Drawer);
-#else
     setWidget(tabWidget);
-#endif
 
     changeGroupList();
     //connect(this, SIGNAL(closed()), parent, SLOT(closedDock()));

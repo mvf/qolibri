@@ -18,7 +18,6 @@
 ***************************************************************************/
 
 #include "ssheetsetting.h"
-#include "titlelabel.h"
 
 #include <QDialogButtonBox>
 #include <QFileDialog>
@@ -46,11 +45,7 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
                              bool dic, QWidget *parent)
     : QDialog(parent), initialSheet(current), defaultSheet(defsheet)
 {
-#ifdef Q_WS_MAC
-    setWindowFlags(Qt::Sheet);
-#else
     setWindowTitle(tr("Browser style sheet setting"));
-#endif
 
     QFile file((dic) ? ":/data/dict-style.html" : ":/data/book-style.html");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -58,10 +53,6 @@ SSheetSetting::SSheetSetting(const QString &current, const QString &defsheet,
     testText = in.readAll();
 
     QVBoxLayout *v = new QVBoxLayout;
-#ifdef Q_WS_MAC
-    TitleLabel *l = new TitleLabel(tr("Browser style sheet setting"));
-    v->addWidget(l);
-#endif
     QSplitter *splitter = new QSplitter(this);
     edit = new QTextEdit();
     edit->setPlainText(current);
@@ -146,17 +137,9 @@ SSheetOptSetting::SSheetOptSetting(const QString &current,
                                    const QString &defsheet, QWidget *parent)
     : QDialog(parent), initialSheet(current), defaultSheet(defsheet)
 {
-#ifndef Q_WS_MAC
-    setWindowFlags(Qt::Sheet);
-#else
     setWindowTitle(tr("Style sheet setting"));
-#endif
 
     QVBoxLayout *v = new QVBoxLayout;
-#ifdef Q_WS_MAC
-    TitleLabel *l = new TitleLabel(tr("Style sheet setting"));
-    v->addWidget(l);
-#endif
     edit = new QTextEdit();
     edit->setPlainText(current);
 

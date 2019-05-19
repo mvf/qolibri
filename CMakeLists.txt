@@ -81,7 +81,6 @@ add_executable(qolibri WIN32
     src/ssheetsetting.h
     src/textcodec.cpp
     src/textcodec.h
-    src/titlelabel.h
     src/toolbar.cpp
     src/toolbar.h
     src/treescrollpopup.cpp

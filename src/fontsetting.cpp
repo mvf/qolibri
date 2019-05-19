@@ -30,13 +30,8 @@
 #include <QPushButton>
 #include <QTreeWidget>
 
-#ifdef Q_WS_MAC
-FontSetting::FontSetting(Book *pbook, QWidget *parent)
-    : QDialog(parent, Qt::Tool), book(pbook)
-#else
 FontSetting::FontSetting(Book *pbook, QWidget *parent)
     : QDialog(parent), book(pbook)
-#endif
 {
     setWindowTitle(tr("Alternate font setting"));
 

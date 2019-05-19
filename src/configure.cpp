@@ -36,8 +36,8 @@ const int limitMenuHit_Def = 1000;
 const int indentOffset_Def = 30;
 const int portNo_Def = 5626;
 
-#if defined (Q_WS_MAC)
-const char* waveProcess_Def = "";
+#if defined (Q_OS_MAC)
+const char* waveProcess_Def = "afplay";
 const char* mpegProcess_Def = "open";
 const char* browserProcess_Def = "open";
 #elif defined (Q_WS_WIN)

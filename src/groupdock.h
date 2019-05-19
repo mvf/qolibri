@@ -148,27 +148,16 @@ public:
 
 };
 
-#if defined (Q_WS_MAC)
-class GroupDock : public QTabWidget
-#else
 class GroupDock : public QDockWidget
-#endif
 {
     Q_OBJECT
 public:
     GroupDock(QWidget *parent, Model *model_);
 
-#if defined (Q_WS_MAC)
-    inline void changeCurrentTab(QWidget *w)
-    {
-        setCurrentWidget(w);
-    }
-#else
     inline void changeCurrentTab(QWidget *w)
     {
         tabWidget->setCurrentWidget(w);
     }
-#endif
     inline QListWidget *bookListWidget() const
     {
         return groupTab->bookWidget()->bookListWidget();
@@ -243,9 +232,7 @@ signals:
     void fullRequested();
 
 private:
-#if !defined (Q_WS_MAC)
     QTabWidget * tabWidget;
-#endif
     GroupTab * groupTab;
     MarkTab *markTab;
     HistoryTab *historyTab;

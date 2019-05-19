@@ -21,9 +21,6 @@
 #include "book.h"
 #include "bookwidget.h"
 #include "groupwidget.h"
-#ifdef Q_WS_MAC
-#include "titlelabel.h"
-#endif
 #include "ebcore.h"
 
 #include <QDialogButtonBox>
@@ -154,11 +151,7 @@ BookSetting::BookSetting(Model *model_, QWidget *parent)
     , findStop(false)
     , model(model_)
 {
-#ifdef Q_WS_MAC
-    setWindowFlags(Qt::Sheet);
-#else
     setWindowTitle(tr("Book and group settings"));
-#endif
     localBooks_ = new Group(*(model->localBooks));
     webSites_ = new Group(*(model->webSites));
 
@@ -304,10 +297,6 @@ BookSetting::BookSetting(Model *model_, QWidget *parent)
     connect(buttonBox, SIGNAL(accepted()), SLOT(accept()));
     connect(buttonBox, SIGNAL(rejected()), SLOT(reject()));
     QVBoxLayout *v = new QVBoxLayout;
-#ifdef Q_WS_MAC
-    TitleLabel *l = new TitleLabel(tr("Book and group settings"));
-    v->addWidget(l);
-#endif
     v->addLayout(g);
     v->addWidget(buttonBox);
     setLayout(v);

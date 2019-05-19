@@ -52,15 +52,6 @@ const char *Program = { "qolibri" };
 MainWindow::MainWindow(Model *model_, const QString &s_text)
     : model(model_)
 {
-#ifdef Q_WS_MAC
-    //setUnifiedTitleAndToolBarOnMac(true);
-    //setAttribute(Qt::WA_MacBrushedMetal);
-#endif
-    //qDebug() << QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-    //qDebug() << QCoreApplication::applicationDirPath();
-
-    //CONF->load();
-
     QEb::initialize();
 
     bookView = new BookView(this);
@@ -251,10 +242,7 @@ void MainWindow::createToolBars()
     QToolBar *bar1 = addToolBar("Search/Read Book");
     bar1->setMovable(false);
     bar1->addAction(toggleBarAct);
-#ifdef Q_WS_MAC
-    bar1->addSeparator();
-#endif
-    //bar1->addWidget(new QLabel("  "));
+
     searchBar = addToolBar("Search");
     searchBar->setMovable(false);
     searchBar->addWidget(new DictionaryGroupComboBox(this, model));
@@ -280,7 +268,6 @@ void MainWindow::createToolBars()
 
     methodBar = addToolBar(tr("Search methods"));
     methodBar->setMovable(false);
-    //methodBar->addWidget(new QLabel("  "));
 
     methodBar->addWidget(new DirectionComboBox(this, model));
     methodBar->addWidget(new LogicComboBox(this, model));
@@ -288,10 +275,8 @@ void MainWindow::createToolBars()
     QToolBar *bar2 = addToolBar("Options 1");
 
     bar2->setMovable(false);
-#ifdef Q_WS_MAC
-    bar2->addSeparator();
-#endif
-    //bar2->addAction(booksAct);
+
+
     bar2->addAction(addMarkAct);
     bar2->addAction(toggleScanClipboardAct);
     bar2->addAction(toggleDockAct);
