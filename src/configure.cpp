@@ -40,7 +40,7 @@ const int portNo_Def = 5626;
 const char* waveProcess_Def = "afplay";
 const char* mpegProcess_Def = "open";
 const char* browserProcess_Def = "open";
-#elif defined (Q_WS_WIN)
+#elif defined (Q_OS_WIN)
 const char* waveProcess_Def = "";
 const char* browserProcess_Def =
     "\"C:/Program Files/Internet Explorer/IEXPLORE.EXE\"";
