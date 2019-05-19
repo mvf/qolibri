@@ -142,7 +142,6 @@ void BookBrowser::contextMenuEvent(QContextMenuEvent* event)
     delete menu;
 }
 
-//#ifdef Q_WS_X11
 // Implement for linux.
 // For "selectionChanged" SIGNAL not allways invoked at mouse move and
 // release timing.
@@ -153,7 +152,6 @@ void BookBrowser::mouseReleaseEvent(QMouseEvent *ev)
 
     QTextEdit::mouseReleaseEvent(ev);
 }
-//#endif
 
 void BookBrowser::changeTextSelection()
 {

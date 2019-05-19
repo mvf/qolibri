@@ -59,9 +59,6 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
 
     groupDock = new GroupDock(this, model);
     groupDockSlots();
-//#if defined (Q_WS_X11) || defined (Q_WS_WIN)
-//    groupDock->hide();
-//#endif
 
     groupDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 

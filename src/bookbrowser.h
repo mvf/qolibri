@@ -21,9 +21,7 @@ public:
 protected:
     QList<Book*> bookList_;
     void contextMenuEvent(QContextMenuEvent* event);
-//#ifdef Q_WS_X11
     void mouseReleaseEvent(QMouseEvent* event);
-//#endif
 
 signals:
     void searchRequested(SearchDirection, const QString &);
