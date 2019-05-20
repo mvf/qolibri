@@ -458,7 +458,7 @@ QByteArray EbCore::hookNarrowJISX0208(int, const unsigned int *argv)
     code[2] = '\0';
 
     str = eucToUtf(code);
-    qDebug() << subbookTitle() << "Not narrowed:" << str << QString::number(argv[0],16);
+    //qDebug() << subbookTitle() << "Not narrowed:" << str << QString::number(argv[0],16);
     return str.toUtf8();
 }
 QByteArray EbCore::hookWideJISX0208(int, const unsigned int *argv)
