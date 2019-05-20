@@ -59,8 +59,8 @@ void BookBrowser::setSource(const QUrl &name)
                     SIGNAL(searchRequested(SearchDirection,QString)));
             connect(popup->bookBrowser(), SIGNAL(pasteRequested(QString)),
                     SIGNAL(pasteRequested(QString)));
-            connect(popup->bookBrowser(), SIGNAL(processRequested(QString)),
-                    SIGNAL(processRequested(QString)));
+            connect(popup->bookBrowser(), SIGNAL(processRequested(QString, QStringList)),
+                    SIGNAL(processRequested(QString, QStringList)));
             connect(popup->bookBrowser(), SIGNAL(soundRequested(QString)),
                     SIGNAL(soundRequested(QString)));
             connect(popup->bookBrowser(), SIGNAL(selectionRequested(QString)),
