@@ -31,7 +31,7 @@ class BookView : public QTabWidget
 public:
     BookView(QWidget *parent);
     RET_SEARCH newPage(QWidget *parent, const Query& query,
-                       bool new_tab, bool popup_browser);
+                       bool new_tab, bool popup_browser, bool book_tree_visible);
     RET_SEARCH newWebPage(const QString &name, const QString &url,
                            bool popup_browser);
     BookType pageType(int index);

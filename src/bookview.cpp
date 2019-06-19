@@ -66,7 +66,7 @@ BookView::BookView(QWidget *parent)
 }
 
 RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
-                             bool popup_browser)
+                             bool popup_browser, bool book_tree_visible)
 {
     stopFlag = false;
 
@@ -105,6 +105,7 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
         Q_ASSERT(0);
     }
 
+    page->setBookTreeVisible(book_tree_visible);
     connect(page, SIGNAL(statusRequested(QString)),
             SIGNAL(statusRequested(QString)));
     connect(page->bookBrowser(), SIGNAL(statusRequested(QString)),
@@ -124,6 +125,8 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
             SIGNAL(selectionRequested(QString)));
     connect(parent, SIGNAL(viewFontChanged(QFont)), page,
             SLOT(changeFont(QFont)));
+    connect(parent, SIGNAL(bookTreeToggled(bool)), page,
+            SLOT(setBookTreeVisible(bool)));
 
     RET_SEARCH retStatus = page->search(query);
 

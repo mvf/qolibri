@@ -98,3 +98,7 @@ void PageWidget::zoomOut()
     bookBrowser_->setFont(font);
 }
 
+void PageWidget::setBookTreeVisible(bool visible)
+{
+    bookTree->setVisible(visible);
+}

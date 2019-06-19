@@ -301,6 +301,11 @@ void MainWindow::createToolBars()
     toggleMethodBarAct->setIcon(QIcon(":/images/configure.png"));
     toggleMethodBarAct->setIconVisibleInMenu(false);
     vmenu->addAction(toggleMethodBarAct);
+
+    toggleBookTreeAct = new QAction(tr("&Book Tree Panel"));
+    toggleBookTreeAct->setCheckable(true);
+    connect(toggleBookTreeAct, SIGNAL(toggled(bool)), SIGNAL(bookTreeToggled(bool)));
+    vmenu->addAction(toggleBookTreeAct);
 }
 
 void MainWindow::createStatusBar()
@@ -344,6 +349,8 @@ void MainWindow::readSettings()
     if (!method_bar) {
         methodBar->hide();
     }
+    bool book_tree = settings.value("book_tree", true).toBool();
+    toggleBookTreeAct->setChecked(book_tree);
     bool tab = settings.value("newtab", 1).toBool();
     toggleTabsAct->setChecked(tab);
     bool browser = settings.value("newbrowser", 1).toBool();
@@ -397,6 +404,7 @@ void MainWindow::writeSettings()
     settings.setValue("dockarea", dockWidgetArea(groupDock));
     settings.setValue("search_bar", searchBar->isVisible());
     settings.setValue("method_bar", toggleMethodBarAct->isChecked());
+    settings.setValue("book_tree", toggleBookTreeAct->isChecked());
 
     settings.setValue("newtab", toggleTabsAct->isChecked());
     settings.setValue("newbrowser", toggleBrowserAct->isChecked());
@@ -808,7 +816,7 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
     bool pbrowser = toggleBrowserAct->isChecked();
 
     Query query(queryStr, mthd);
-    RET_SEARCH ret = bookView->newPage(this, query, ntab, pbrowser);
+    RET_SEARCH ret = bookView->newPage(this, query, ntab, pbrowser, toggleBookTreeAct->isChecked());
     groupDock->addHistory(query.toLogicString(), mthd, CONF->historyMax);
 
     emit nowBusy(false);

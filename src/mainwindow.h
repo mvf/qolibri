@@ -54,6 +54,7 @@ signals:
     void searchFinished();
     void nowBusy(bool enable);
     void viewFontChanged(const QFont &font);
+    void bookTreeToggled(bool visible);
 
 public slots:
     //void searchClientText(const QString &str);
@@ -155,6 +156,7 @@ private:
     QAction *toggleDockAct;
     QAction *toggleBarAct;
     QAction *toggleMethodBarAct;
+    QAction *toggleBookTreeAct;
     QAction *toggleScanClipboardAct;
     QAction *booksAct;
     QAction *configAct;

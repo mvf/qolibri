@@ -28,6 +28,9 @@ public:
         return method_;
     }
 
+public slots:
+    void setBookTreeVisible(bool visible);
+
 protected:
     BookBrowser *bookBrowser_;
     QTreeWidget *bookTree;
