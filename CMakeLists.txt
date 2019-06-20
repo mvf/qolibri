@@ -15,7 +15,8 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 COMPONENTS LinguistTools Multimedia Network WebEngine WebEngineWidgets Widgets REQUIRED)
 
-add_executable(qolibri WIN32
+add_executable(qolibri MACOSX_BUNDLE WIN32
+    images/qolibri.icns
     qolibri.qrc
     qolibri.rc
     src/allpage.cpp
@@ -115,6 +116,10 @@ target_compile_definitions(qolibri PRIVATE QOLIBRI_VERSION_STR="${QOLIBRI_VERSIO
 
 set(QOLIBRI_WEBSITE "https://github.com/ludios/qolibri" CACHE STRING "The URL of the website. Adds a hyperlink to the about dialog if non-empty.")
 target_compile_definitions(qolibri PRIVATE QOLIBRI_WEBSITE="${QOLIBRI_WEBSITE}")
+
+# Add application icon to macOS bundle
+set_source_files_properties(images/qolibri.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+set(MACOSX_BUNDLE_ICON_FILE qolibri.icns)
 
 # Link translations into the binary
 configure_file(translations/translations.qrc "${CMAKE_CURRENT_BINARY_DIR}/translations/translations.qrc" COPYONLY)
