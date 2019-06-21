@@ -19,6 +19,10 @@ If you find a security bug, please report it like a regular bug.
 
 See the [releases](https://github.com/ludios/qolibri/releases) for builds.  Extract with 7-Zip.
 
+## Install on macOS
+
+See the [releases](https://github.com/ludios/qolibri/releases) for DMG images.
+
 ## Install on Debian 9 stretch
 
 See the [releases](https://github.com/ludios/qolibri/releases) for precompiled
