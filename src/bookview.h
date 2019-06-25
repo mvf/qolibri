@@ -23,13 +23,16 @@
 #include "book.h"
 #include "method.h"
 
+#include <QKeySequence>
 #include <QTabWidget>
+
+class QAction;
 
 class BookView : public QTabWidget
 {
     Q_OBJECT
 public:
-    BookView(QWidget *parent);
+    explicit BookView(QWidget *parent, const QKeySequence &closeCurrentTabShortcut = QKeySequence());
     RET_SEARCH newPage(QWidget *parent, const Query& query,
                        bool new_tab, bool popup_browser, bool book_tree_visible);
     RET_SEARCH newWebPage(const QString &name, const QString &url,
@@ -47,7 +50,7 @@ public:
 private:
     bool checkLoaded();
     void stopAllLoading();
-
+    QAction *const closeCurrentTabAction;
 
 signals:
     void searchRequested(SearchDirection, const QString&);

@@ -39,27 +39,25 @@
 
 extern bool stopFlag;
 
-BookView::BookView(QWidget *parent)
+BookView::BookView(QWidget *parent, const QKeySequence &closeCurrentTabShortcut)
     : QTabWidget(parent)
+    , closeCurrentTabAction(new QAction(tr("Close This Page"), this))
 {
     setObjectName("bookview");
     setUsesScrollButtons(true);
+
+    closeCurrentTabAction->setIcon(QIcon(":images/closetab.png"));
+    closeCurrentTabAction->setToolTip(tr("Close page"));
+    if (!closeCurrentTabShortcut.isEmpty())
+        closeCurrentTabAction->setShortcut(closeCurrentTabShortcut);
+    connect(closeCurrentTabAction, SIGNAL(triggered()), SLOT(closeTab()));
+
     QToolButton *close_button = new QToolButton(this);
     setCornerWidget(close_button, Qt::TopRightCorner);
-    //QToolButton *close_all_button = new QToolButton(this);
-    //setCornerWidget(close_all_button, Qt::TopLeftCorner);
+    close_button->setDefaultAction(closeCurrentTabAction);
     close_button->setCursor(Qt::ArrowCursor);
     close_button->setAutoRaise(true);
-    close_button->setIcon(QIcon(":images/closetab.png"));
-    close_button->setToolTip(tr("Close page"));
-    close_button->setEnabled(true);
-    //close_all_button->setCursor(Qt::ArrowCursor);
-    //close_all_button->setAutoRaise(true);
-    //close_all_button->setIcon(QIcon(":images/closealltab.png"));
-    //close_all_button->setToolTip(tr("Close All Page"));
-    //close_all_button->setEnabled(true);
-    connect(close_button, SIGNAL(clicked()), SLOT(closeTab()));
-    //connect(close_all_button, SIGNAL(clicked()), SLOT(closeAllTab()));
+
     tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tabBar(), SIGNAL(customContextMenuRequested(const QPoint&)),
             SLOT(showTabBarMenu(const QPoint&)));
@@ -241,7 +239,7 @@ void BookView::showTabBarMenu(const QPoint& pnt)
     QAction *close_left_page = 0;
     QAction *close_right_page = 0;
     QAction *close_all_page = 0;
-    QAction *close_this_page = menu.addAction(tr("Close This Page"));
+    menu.addAction(closeCurrentTabAction);
     if (tabnum > 1)
         close_other_page = menu.addAction(tr("Close Other Pages"));
     if (index > 0)
@@ -254,9 +252,7 @@ void BookView::showTabBarMenu(const QPoint& pnt)
     QAction *sel_act = menu.exec(bar->mapToGlobal(pnt));
     if (!sel_act)
         return;
-    if(sel_act == close_this_page) {
-        closeTab1(index);
-    } else if (sel_act == close_other_page) {
+    if (sel_act == close_other_page) {
         for (int i=tabnum-1; i>index; i--) {
             closeTab1(i);
         }

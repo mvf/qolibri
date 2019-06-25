@@ -54,7 +54,7 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
 {
     QEb::initialize();
 
-    bookView = new BookView(this);
+    bookView = new BookView(this, tr("Ctrl+W"));
     bookViewSlots();
 
     groupDock = new GroupDock(this, model);
