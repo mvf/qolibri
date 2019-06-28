@@ -21,6 +21,7 @@
 #include "mainwindow.h"
 #include "configure.h"
 #include "method.h"
+#include "model.h"
 #include "server.h"
 #include "client.h"
 #include "textcodec.h"

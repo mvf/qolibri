@@ -21,7 +21,6 @@
 #define MAINWINDOW_H
 
 #include "method.h"
-#include "model.h"
 
 #include <QMainWindow>
 #include <QProcess>
@@ -39,6 +38,7 @@ class QMenu;
 
 class GroupDock;
 class BookView;
+class Model;
 
 class MainWindow : public QMainWindow
 {

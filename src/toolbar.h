@@ -20,9 +20,9 @@
 #ifndef TOOLBAR_H
 #define TOOLBAR_H
 
-#include "model.h"
-
 #include <QComboBox>
+
+class Model;
 
 class DirectionComboBox : public QComboBox
 {
