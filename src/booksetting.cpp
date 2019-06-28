@@ -20,6 +20,7 @@
 #include "booksetting.h"
 #include "book.h"
 #include "bookwidget.h"
+#include "configure.h"
 #include "groupwidget.h"
 #include "ebcore.h"
 

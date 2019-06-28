@@ -19,6 +19,7 @@
 ***************************************************************************/
 
 #include "model.h"
+#include "configure.h"
 
 Model::Model()
     : bookMode(ModeDictionary)

@@ -1,6 +1,5 @@
 #include "pagewidget.h"
 #include "bookbrowser.h"
-#include "configure.h"
 #include "treescrollpopup.h"
 
 #include <QApplication>

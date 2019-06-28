@@ -22,7 +22,6 @@
 
 #include "method.h"
 #include "book.h"
-#include "configure.h"
 
 #include <QObject>
 #include <QList>
