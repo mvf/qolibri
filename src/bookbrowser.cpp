@@ -55,6 +55,8 @@ void BookBrowser::setSource(const QUrl &name)
                     SIGNAL(processRequested(QString, QStringList)));
             connect(popup->bookBrowser(), SIGNAL(soundRequested(QString)),
                     SIGNAL(soundRequested(QString)));
+            connect(popup->bookBrowser(), SIGNAL(videoRequested(QString)),
+                    SIGNAL(videoRequested(QString)));
             connect(popup->bookBrowser(), SIGNAL(selectionRequested(QString)),
                     SIGNAL(selectionRequested(QString)));
             popup->show();
@@ -63,12 +65,7 @@ void BookBrowser::setSource(const QUrl &name)
         }
     } else if (path == "mpeg") {
         // args[0] : mpeg file
-        if (!CONF->mpegProcess.isEmpty()) {
-            emit processRequested(CONF->mpegProcess, args);
-        } else {
-            qWarning() << "Can't play movie" << CONF->mpegProcess << args[0];
-            emit statusRequested("Can't play movie");
-        }
+        emit videoRequested(args[0]);
     } else if (path == "close") {
         parentWidget()->close();
     } else {

@@ -974,6 +974,16 @@ void MainWindow::playSound(const QString &fileName)
     }
 }
 
+void MainWindow::playVideo(const QString &fileName)
+{
+    if (!CONF->mpegProcess.isEmpty()) {
+        startProcess(CONF->mpegProcess, QStringList(fileName));
+    } else {
+        qWarning() << "Can't play movie" << CONF->mpegProcess << fileName;
+        showStatus("Can't play movie");
+    }
+}
+
 void MainWindow::checkSound()
 {
     if (sound) {
@@ -1345,6 +1355,8 @@ void MainWindow::bookViewSlots()
             SLOT(startProcess(QString, QStringList)));
     connect(bookView, SIGNAL(soundRequested(QString)),
             SLOT(playSound(QString)));
+    connect(bookView, SIGNAL(videoRequested(QString)),
+            SLOT(playVideo(QString)));
     connect(bookView, SIGNAL(selectionRequested(QString)),
             SLOT(changeOptSearchButtonText(QString)));
     connect(bookView, SIGNAL(allWebLoaded()),

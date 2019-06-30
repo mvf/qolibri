@@ -57,6 +57,7 @@ signals:
     void pasteRequested(const QString&);
     void processRequested(const QString &program, const QStringList &arguments);
     void soundRequested(const QString&);
+    void videoRequested(const QString &fileName);
     void selectionRequested(const QString&);
     void popupBrowserSet(bool);
 

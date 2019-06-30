@@ -29,6 +29,7 @@ signals:
     void pasteRequested(const QString&);
     void processRequested(const QString &program, const QStringList &arguments);
     void soundRequested(const QString& fname);
+    void videoRequested(const QString &fileName);
     void selectionRequested(const QString& str);
     void statusRequested(const QString &str);
 

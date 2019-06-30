@@ -117,6 +117,8 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
             SIGNAL(processRequested(QString, QStringList)));
     connect(page->bookBrowser(), SIGNAL(soundRequested(QString)),
             SIGNAL(soundRequested(QString)));
+    connect(page->bookBrowser(), SIGNAL(videoRequested(QString)),
+            SIGNAL(videoRequested(QString)));
     connect(page, SIGNAL(selectionRequested(QString)),
             SIGNAL(selectionRequested(QString)));
     connect(page->bookBrowser(), SIGNAL(selectionRequested(QString)),
