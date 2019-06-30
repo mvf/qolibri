@@ -1,6 +1,5 @@
 #include "webview.h"
 #include "webpage.h"
-#include "configure.h"
 
 #include <QAction>
 #include <QContextMenuEvent>
@@ -37,7 +36,7 @@ WebView::WebView(QWidget *parent)
 
 void WebView::openNewWin()
 {
-    emit processRequested(CONF->browserProcess, QStringList(hoveredLink));
+    emit externalLinkRequested(hoveredLink);
 }
 
 void WebView::copyHoveredLink(const QString &link)
@@ -199,7 +198,7 @@ void WebView::progressFinished(bool)
 
 void WebView::openLink(const QUrl &url)
 {
-    emit processRequested(CONF->browserProcess, QStringList(url.toString()));
+    emit externalLinkRequested(url.toString());
 }
 
 void WebView::changeFont(const QFont &font)

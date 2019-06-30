@@ -27,9 +27,9 @@ signals:
     void searchRequested(SearchDirection, const QString &);
     //void menuRequested(Book*, int, int);
     void pasteRequested(const QString&);
-    void processRequested(const QString &program, const QStringList &arguments);
     void soundRequested(const QString& fname);
     void videoRequested(const QString &fileName);
+    void externalLinkRequested(const QString &fileName);
     void selectionRequested(const QString& str);
     void statusRequested(const QString &str);
 

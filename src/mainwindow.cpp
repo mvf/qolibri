@@ -984,6 +984,11 @@ void MainWindow::playVideo(const QString &fileName)
     }
 }
 
+void MainWindow::openExternalLink(const QString &url)
+{
+    startProcess(CONF->browserProcess, QStringList(url));
+}
+
 void MainWindow::checkSound()
 {
     if (sound) {
@@ -1351,12 +1356,12 @@ void MainWindow::bookViewSlots()
             SLOT(viewSearch(SearchDirection,QString)));
     connect(bookView, SIGNAL(pasteRequested(QString)),
             SLOT(pasteSearchText(QString)));
-    connect(bookView, SIGNAL(processRequested(QString, QStringList)),
-            SLOT(startProcess(QString, QStringList)));
     connect(bookView, SIGNAL(soundRequested(QString)),
             SLOT(playSound(QString)));
     connect(bookView, SIGNAL(videoRequested(QString)),
             SLOT(playVideo(QString)));
+    connect(bookView, SIGNAL(externalLinkRequested(QString)),
+            SLOT(openExternalLink(QString)));
     connect(bookView, SIGNAL(selectionRequested(QString)),
             SLOT(changeOptSearchButtonText(QString)));
     connect(bookView, SIGNAL(allWebLoaded()),

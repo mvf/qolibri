@@ -99,6 +99,7 @@ private slots:
     void startProcess(const QString &program, const QStringList &arguments);
     void playSound(const QString &fileName);
     void playVideo(const QString &fileName);
+    void openExternalLink(const QString &url);
     void execError(QProcess::ProcessError);
     void checkSound();
     void stopSound();

@@ -51,12 +51,12 @@ void BookBrowser::setSource(const QUrl &name)
                     SIGNAL(searchRequested(SearchDirection,QString)));
             connect(popup->bookBrowser(), SIGNAL(pasteRequested(QString)),
                     SIGNAL(pasteRequested(QString)));
-            connect(popup->bookBrowser(), SIGNAL(processRequested(QString, QStringList)),
-                    SIGNAL(processRequested(QString, QStringList)));
             connect(popup->bookBrowser(), SIGNAL(soundRequested(QString)),
                     SIGNAL(soundRequested(QString)));
             connect(popup->bookBrowser(), SIGNAL(videoRequested(QString)),
                     SIGNAL(videoRequested(QString)));
+            connect(popup->bookBrowser(), SIGNAL(externalLinkRequested(QString)),
+                    SIGNAL(externalLinkRequested(QString)));
             connect(popup->bookBrowser(), SIGNAL(selectionRequested(QString)),
                     SIGNAL(selectionRequested(QString)));
             popup->show();
@@ -125,7 +125,7 @@ void BookBrowser::contextMenuEvent(QContextMenuEvent* event)
             foreach(const char c, textCursor().selectedText().toUtf8()) {
                 addr += "%" + QString::number((ushort)((uchar)c), 16);
             }
-            emit processRequested(CONF->browserProcess, QStringList(addr));
+            emit externalLinkRequested(addr);
         }
     }
     delete menu;

@@ -113,12 +113,12 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
             SIGNAL(searchRequested(SearchDirection,QString)));
     connect(page->bookBrowser(), SIGNAL(pasteRequested(QString)),
             SIGNAL(pasteRequested(QString)));
-    connect(page->bookBrowser(), SIGNAL(processRequested(QString, QStringList)),
-            SIGNAL(processRequested(QString, QStringList)));
     connect(page->bookBrowser(), SIGNAL(soundRequested(QString)),
             SIGNAL(soundRequested(QString)));
     connect(page->bookBrowser(), SIGNAL(videoRequested(QString)),
             SIGNAL(videoRequested(QString)));
+    connect(page->bookBrowser(), SIGNAL(externalLinkRequested(QString)),
+            SIGNAL(externalLinkRequested(QString)));
     connect(page, SIGNAL(selectionRequested(QString)),
             SIGNAL(selectionRequested(QString)));
     connect(page->bookBrowser(), SIGNAL(selectionRequested(QString)),
@@ -182,8 +182,8 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
             WebView *wpage = new WebView(this);
             connect(wpage, SIGNAL(loadFinished(bool)),
                     SLOT(webViewFinished(bool)));
-            connect(wpage, SIGNAL(processRequested(QString, QStringList)),
-                    SIGNAL(processRequested(QString, QStringList)));
+            connect(wpage, SIGNAL(externalLinkRequested(QString)),
+                    SIGNAL(externalLinkRequested(QString)));
             connect(parent, SIGNAL(viewFontChanged(QFont)), wpage,
                     SLOT(changeFont(QFont)));
             connect(this, SIGNAL(popupBrowserSet(bool)), wpage,
@@ -212,8 +212,8 @@ RET_SEARCH BookView::newWebPage(const QString &name, const QString &url,
 {
     WebView *wpage = new WebView(this);
     connect(wpage, SIGNAL(loadFinished(bool)), SLOT(webViewFinished(bool)));
-    connect(wpage, SIGNAL(processRequested(QString, QStringList)),
-            SIGNAL(processRequested(QString, QStringList)));
+    connect(wpage, SIGNAL(externalLinkRequested(QString)),
+            SIGNAL(externalLinkRequested(QString)));
     connect(this, SIGNAL(popupBrowserSet(bool)), wpage,
             SLOT(setPopupBrowser(bool)));
     emit popupBrowserSet(popup_browser);
