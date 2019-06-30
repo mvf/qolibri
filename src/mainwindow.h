@@ -97,7 +97,7 @@ private slots:
 
     void addMark();
     void startProcess(const QString &program, const QStringList &arguments);
-    void execSound(const QString& fname);
+    void playSound(const QString &fileName);
     void execError(QProcess::ProcessError);
     void checkSound();
     void stopSound();

@@ -4,7 +4,6 @@
 #include "referencepopup.h"
 
 #include <QApplication>
-#include <QAudioDeviceInfo>
 #include <QContextMenuEvent>
 #include <QDebug>
 #include <QMenu>
@@ -27,14 +26,7 @@ void BookBrowser::setSource(const QUrl &name)
 
     if (path == "sound") {
         // args[0] : wave file
-        if (!CONF->waveProcess.isEmpty()) {
-            emit processRequested(CONF->waveProcess, args);
-        } else if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) {
-            emit soundRequested(args[0]);
-        } else {
-            qWarning() << "Can't play sound" << CONF->waveProcess << args[0];
-            emit statusRequested("Can't play sound");
-        }
+        emit soundRequested(args[0]);
     } else if (path == "book" || path == "menu") {
         // args[0] : book index
         // args[1] : page

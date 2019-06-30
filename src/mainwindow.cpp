@@ -32,6 +32,7 @@
 #include "webview.h"
 
 #include <QApplication>
+#include <QAudioDeviceInfo>
 #include <QClipboard>
 #include <QCloseEvent>
 #include <QDir>
@@ -954,16 +955,23 @@ void MainWindow::execError(QProcess::ProcessError e)
     QMessageBox::warning(this, Program, msg );
 }
 
-void MainWindow::execSound(const QString &fname)
+void MainWindow::playSound(const QString &fileName)
 {
-    stopSound();
-    checkSound();
-    stopAct->setEnabled(true);
-    sound = new QSound(fname, this);
-    sound->play();
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), SLOT(checkSound()));
-    timer->start(1000);
+    if (!CONF->waveProcess.isEmpty()) {
+        startProcess(CONF->waveProcess, QStringList(fileName));
+    } else if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) {
+        stopSound();
+        checkSound();
+        stopAct->setEnabled(true);
+        sound = new QSound(fileName, this);
+        sound->play();
+        timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), SLOT(checkSound()));
+        timer->start(1000);
+    } else {
+        qWarning() << "Can't play sound" << CONF->waveProcess << fileName;
+        showStatus("Can't play sound");
+    }
 }
 
 void MainWindow::checkSound()
@@ -1336,7 +1344,7 @@ void MainWindow::bookViewSlots()
     connect(bookView, SIGNAL(processRequested(QString, QStringList)),
             SLOT(startProcess(QString, QStringList)));
     connect(bookView, SIGNAL(soundRequested(QString)),
-            SLOT(execSound(QString)));
+            SLOT(playSound(QString)));
     connect(bookView, SIGNAL(selectionRequested(QString)),
             SLOT(changeOptSearchButtonText(QString)));
     connect(bookView, SIGNAL(allWebLoaded()),
