@@ -96,7 +96,7 @@ private slots:
     void changeOptSearchButtonText(const QString &str);
 
     void addMark();
-    void execProcess(const QString &program, const QStringList &arguments);
+    void startProcess(const QString &program, const QStringList &arguments);
     void execSound(const QString& fname);
     void execError(QProcess::ProcessError);
     void checkSound();

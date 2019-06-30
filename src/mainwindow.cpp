@@ -905,7 +905,7 @@ void MainWindow::doSearch()
         foreach(const char c, str.toUtf8()) {
             addr += "%" + QString::number((ushort)((uchar)c), 16);
         }
-        execProcess(CONF->browserProcess, QStringList(addr));
+        startProcess(CONF->browserProcess, QStringList(addr));
     }
 }
 
@@ -930,7 +930,7 @@ void MainWindow::pasteSearchText(const QString &text)
     searchTextEdit->setText(text);
 }
 
-void MainWindow::execProcess(const QString &program, const QStringList &arguments)
+void MainWindow::startProcess(const QString &program, const QStringList &arguments)
 {
     QProcess *const proc = new QProcess();
     connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), proc, SLOT(deleteLater()));
@@ -1334,7 +1334,7 @@ void MainWindow::bookViewSlots()
     connect(bookView, SIGNAL(pasteRequested(QString)),
             SLOT(pasteSearchText(QString)));
     connect(bookView, SIGNAL(processRequested(QString, QStringList)),
-            SLOT(execProcess(QString, QStringList)));
+            SLOT(startProcess(QString, QStringList)));
     connect(bookView, SIGNAL(soundRequested(QString)),
             SLOT(execSound(QString)));
     connect(bookView, SIGNAL(selectionRequested(QString)),
