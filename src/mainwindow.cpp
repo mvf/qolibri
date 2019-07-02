@@ -35,6 +35,7 @@
 #include <QAudioDeviceInfo>
 #include <QClipboard>
 #include <QCloseEvent>
+#include <QDesktopServices>
 #include <QDir>
 #include <QFontDialog>
 #include <QMenuBar>
@@ -906,7 +907,7 @@ void MainWindow::doSearch()
         foreach(const char c, str.toUtf8()) {
             addr += "%" + QString::number((ushort)((uchar)c), 16);
         }
-        startProcess(CONF->browserProcess, QStringList(addr));
+        openExternalLink(addr);
     }
 }
 
@@ -978,15 +979,34 @@ void MainWindow::playVideo(const QString &fileName)
 {
     if (!CONF->mpegProcess.isEmpty()) {
         startProcess(CONF->mpegProcess, QStringList(fileName));
-    } else {
-        qWarning() << "Can't play movie" << CONF->mpegProcess << fileName;
-        showStatus("Can't play movie");
+        return;
     }
+
+    if (QDesktopServices::openUrl(QUrl::fromLocalFile(fileName)))
+        return;
+
+    QMessageBox::warning(this, Program,
+                         tr("Failed to start system default application to play video file:\n\n"
+                            "%1\n\n"
+                            "Please check the system's default application for this file extension "
+                            "or set a custom video player in the qolibri options.").arg(fileName));
 }
 
 void MainWindow::openExternalLink(const QString &url)
 {
-    startProcess(CONF->browserProcess, QStringList(url));
+    if (!CONF->browserProcess.isEmpty()) {
+        startProcess(CONF->browserProcess, QStringList(url));
+        return;
+    }
+
+    if (QDesktopServices::openUrl(url))
+        return;
+
+    QMessageBox::warning(this, Program,
+                         tr("Failed to start system default application to open URL:\n\n"
+                            "%1\n\n"
+                            "Please check the system's default browser settings "
+                            "or set a custom browser in the qolibri options.").arg(url));
 }
 
 void MainWindow::checkSound()
