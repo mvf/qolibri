@@ -40,6 +40,7 @@
 #include <QFontDialog>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QProcess>
 #include <QSound>
 #include <QStatusBar>
 #include <QTimer>
@@ -936,24 +937,20 @@ void MainWindow::startProcess(const QString &program, const QStringList &argumen
 {
     QProcess *const proc = new QProcess();
     connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), proc, SLOT(deleteLater()));
-    connect(proc, SIGNAL(error(QProcess::ProcessError)),
-            SLOT(execError(QProcess::ProcessError)));
+    connect(proc, SIGNAL(error(QProcess::ProcessError)), SLOT(processError()));
     proc->start(program, arguments);
-
-    QString msg = "Execute: " + program + ' ' + arguments.join(' ');
-    showStatus(msg);
+    showStatus(tr("Execute: %1 %2").arg(program, arguments.join(' ')));
 }
-void MainWindow::execError(QProcess::ProcessError e)
+
+void MainWindow::processError()
 {
-    QString msg;
-    if (e == QProcess::FailedToStart) {
-        msg = tr("Failed to start process.");
-    } else {
-        msg = QString(tr("Error occurred during staring process(code=%1)."))
-                      .arg((int)e);
+    if (QProcess *const proc = qobject_cast<QProcess *>(sender())) {
+        QMessageBox::warning(this, Program,
+                             tr("Error running external program:\n\n%1 %2\n\n%3").arg(
+                                 proc->program(),
+                                 proc->arguments().join(' '),
+                                 proc->errorString()));
     }
-    showStatus(msg);
-    QMessageBox::warning(this, Program, msg );
 }
 
 void MainWindow::playSound(const QString &fileName)

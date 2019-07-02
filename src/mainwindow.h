@@ -23,7 +23,6 @@
 #include "method.h"
 
 #include <QMainWindow>
-#include <QProcess>
 #include <QAction>
 
 class QComboBox;
@@ -100,7 +99,7 @@ private slots:
     void playSound(const QString &fileName);
     void playVideo(const QString &fileName);
     void openExternalLink(const QString &url);
-    void execError(QProcess::ProcessError);
+    void processError();
     void checkSound();
     void stopSound();
     void clearCache();
