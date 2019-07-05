@@ -38,22 +38,10 @@ const int portNo_Def = 5626;
 
 #if defined (Q_OS_MAC)
 const char* waveProcess_Def = "afplay";
-const char* mpegProcess_Def = "open";
-const char* browserProcess_Def = "open";
-#elif defined (Q_OS_WIN)
-const char* waveProcess_Def = "";
-const char* browserProcess_Def =
-    "\"C:/Program Files/Internet Explorer/IEXPLORE.EXE\"";
-const char* mpegProcess_Def =
-    "\"C:/Program Files/Windows Media Player/wmplayer.exe\"";
 #elif defined (Q_OS_LINUX)
 const char* waveProcess_Def = "mpv";
-const char* mpegProcess_Def = "xdg-open";
-const char* browserProcess_Def = "xdg-open";
 #else
 const char* waveProcess_Def = "";
-const char* mpegProcess_Def = "";
-const char* browserProcess_Def = "";
 #endif
 const char* googleUrl_Def =
     "https://www.google.com/search?rls=ja-jp&ie=UTF-8&oe=UTF-8&q=";
@@ -83,8 +71,8 @@ void Configure::load()
     convertFullwidth = conf.value("convert_fullwidth", convertFullwidth_Def).toBool();
     historyMax = conf.value("hist_max", historyMax_Def).toInt();
     waveProcess = conf.value("wave_proc", waveProcess_Def).toString();
-    mpegProcess = conf.value("mpeg_proc", mpegProcess_Def).toString();
-    browserProcess = conf.value("browser_proc", browserProcess_Def).toString();
+    mpegProcess = conf.value("mpeg_proc").toString();
+    browserProcess = conf.value("browser_proc").toString();
     googleUrl = conf.value("google_url", googleUrl_Def).toString();
     wikipediaUrl = conf.value("wikipedia_url", wikipediaUrl_Def).toString();
     userDefUrl = conf.value("userdef_url", userDefUrl_Def).toString();
@@ -154,8 +142,8 @@ void Configure::setDefault()
     serverMode = serverMode_Def;
     historyMax = historyMax_Def;
     waveProcess = waveProcess_Def;
-    mpegProcess = mpegProcess_Def;
-    browserProcess = browserProcess_Def;
+    mpegProcess.clear();
+    browserProcess.clear();
     googleUrl = googleUrl_Def;
     wikipediaUrl = wikipediaUrl_Def;
     userDefUrl = userDefUrl_Def;
