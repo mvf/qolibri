@@ -33,6 +33,8 @@ add_executable(qolibri MACOSX_BUNDLE WIN32
     src/bookview.h
     src/bookwidget.cpp
     src/bookwidget.h
+    src/browsefileedit.cpp
+    src/browsefileedit.h
     src/client.h
     src/configure.cpp
     src/configure.h
@@ -91,6 +93,8 @@ add_executable(qolibri MACOSX_BUNDLE WIN32
     src/webview.cpp
     src/webview.h
 )
+
+target_include_directories(qolibri PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 set(QOLIBRI_FIXED_POPUP OFF CACHE BOOL "Show popups fixed at window height")
 if (${QOLIBRI_FIXED_POPUP})
