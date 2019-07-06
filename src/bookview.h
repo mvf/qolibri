@@ -55,8 +55,9 @@ private:
 signals:
     void searchRequested(SearchDirection, const QString&);
     void pasteRequested(const QString&);
-    void processRequested(const QString &program, const QStringList &arguments);
     void soundRequested(const QString&);
+    void videoRequested(const QString &fileName);
+    void externalLinkRequested(const QString &fileName);
     void selectionRequested(const QString&);
     void popupBrowserSet(bool);
 

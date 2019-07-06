@@ -32,12 +32,15 @@
 #include "webview.h"
 
 #include <QApplication>
+#include <QAudioDeviceInfo>
 #include <QClipboard>
 #include <QCloseEvent>
+#include <QDesktopServices>
 #include <QDir>
 #include <QFontDialog>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QProcess>
 #include <QSound>
 #include <QStatusBar>
 #include <QTimer>
@@ -905,7 +908,7 @@ void MainWindow::doSearch()
         foreach(const char c, str.toUtf8()) {
             addr += "%" + QString::number((ushort)((uchar)c), 16);
         }
-        execProcess(CONF->browserProcess, QStringList(addr));
+        openExternalLink(addr);
     }
 }
 
@@ -930,40 +933,77 @@ void MainWindow::pasteSearchText(const QString &text)
     searchTextEdit->setText(text);
 }
 
-void MainWindow::execProcess(const QString &program, const QStringList &arguments)
+void MainWindow::startProcess(const QString &program, const QStringList &arguments)
 {
     QProcess *const proc = new QProcess();
     connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), proc, SLOT(deleteLater()));
-    connect(proc, SIGNAL(error(QProcess::ProcessError)),
-            SLOT(execError(QProcess::ProcessError)));
+    connect(proc, SIGNAL(error(QProcess::ProcessError)), SLOT(processError()));
     proc->start(program, arguments);
-
-    QString msg = "Execute: " + program + ' ' + arguments.join(' ');
-    showStatus(msg);
+    showStatus(tr("Execute: %1 %2").arg(program, arguments.join(' ')));
 }
-void MainWindow::execError(QProcess::ProcessError e)
+
+void MainWindow::processError()
 {
-    QString msg;
-    if (e == QProcess::FailedToStart) {
-        msg = tr("Failed to start process.");
-    } else {
-        msg = QString(tr("Error occurred during staring process(code=%1)."))
-                      .arg((int)e);
+    if (QProcess *const proc = qobject_cast<QProcess *>(sender())) {
+        QMessageBox::warning(this, Program,
+                             tr("Error running external program:\n\n%1 %2\n\n%3").arg(
+                                 proc->program(),
+                                 proc->arguments().join(' '),
+                                 proc->errorString()));
     }
-    showStatus(msg);
-    QMessageBox::warning(this, Program, msg );
 }
 
-void MainWindow::execSound(const QString &fname)
+void MainWindow::playSound(const QString &fileName)
 {
-    stopSound();
-    checkSound();
-    stopAct->setEnabled(true);
-    sound = new QSound(fname, this);
-    sound->play();
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), SLOT(checkSound()));
-    timer->start(1000);
+    if (!CONF->waveProcess.isEmpty()) {
+        startProcess(CONF->waveProcess, QStringList(fileName));
+    } else if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) {
+        stopSound();
+        checkSound();
+        stopAct->setEnabled(true);
+        sound = new QSound(fileName, this);
+        sound->play();
+        timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), SLOT(checkSound()));
+        timer->start(1000);
+    } else {
+        qWarning() << "Can't play sound" << CONF->waveProcess << fileName;
+        showStatus("Can't play sound");
+    }
+}
+
+void MainWindow::playVideo(const QString &fileName)
+{
+    if (!CONF->mpegProcess.isEmpty()) {
+        startProcess(CONF->mpegProcess, QStringList(fileName));
+        return;
+    }
+
+    if (QDesktopServices::openUrl(QUrl::fromLocalFile(fileName)))
+        return;
+
+    QMessageBox::warning(this, Program,
+                         tr("Failed to start system default application to play video file:\n\n"
+                            "%1\n\n"
+                            "Please check the system's default application for this file extension "
+                            "or set a custom video player in the qolibri options.").arg(fileName));
+}
+
+void MainWindow::openExternalLink(const QString &url)
+{
+    if (!CONF->browserProcess.isEmpty()) {
+        startProcess(CONF->browserProcess, QStringList(url));
+        return;
+    }
+
+    if (QDesktopServices::openUrl(url))
+        return;
+
+    QMessageBox::warning(this, Program,
+                         tr("Failed to start system default application to open URL:\n\n"
+                            "%1\n\n"
+                            "Please check the system's default browser settings "
+                            "or set a custom browser in the qolibri options.").arg(url));
 }
 
 void MainWindow::checkSound()
@@ -1333,10 +1373,12 @@ void MainWindow::bookViewSlots()
             SLOT(viewSearch(SearchDirection,QString)));
     connect(bookView, SIGNAL(pasteRequested(QString)),
             SLOT(pasteSearchText(QString)));
-    connect(bookView, SIGNAL(processRequested(QString, QStringList)),
-            SLOT(execProcess(QString, QStringList)));
     connect(bookView, SIGNAL(soundRequested(QString)),
-            SLOT(execSound(QString)));
+            SLOT(playSound(QString)));
+    connect(bookView, SIGNAL(videoRequested(QString)),
+            SLOT(playVideo(QString)));
+    connect(bookView, SIGNAL(externalLinkRequested(QString)),
+            SLOT(openExternalLink(QString)));
     connect(bookView, SIGNAL(selectionRequested(QString)),
             SLOT(changeOptSearchButtonText(QString)));
     connect(bookView, SIGNAL(allWebLoaded()),

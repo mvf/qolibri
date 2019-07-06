@@ -4,7 +4,6 @@
 #include "referencepopup.h"
 
 #include <QApplication>
-#include <QAudioDeviceInfo>
 #include <QContextMenuEvent>
 #include <QDebug>
 #include <QMenu>
@@ -27,14 +26,7 @@ void BookBrowser::setSource(const QUrl &name)
 
     if (path == "sound") {
         // args[0] : wave file
-        if (!CONF->waveProcess.isEmpty()) {
-            emit processRequested(CONF->waveProcess, args);
-        } else if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) {
-            emit soundRequested(args[0]);
-        } else {
-            qWarning() << "Can't play sound" << CONF->waveProcess << args[0];
-            emit statusRequested("Can't play sound");
-        }
+        emit soundRequested(args[0]);
     } else if (path == "book" || path == "menu") {
         // args[0] : book index
         // args[1] : page
@@ -59,10 +51,12 @@ void BookBrowser::setSource(const QUrl &name)
                     SIGNAL(searchRequested(SearchDirection,QString)));
             connect(popup->bookBrowser(), SIGNAL(pasteRequested(QString)),
                     SIGNAL(pasteRequested(QString)));
-            connect(popup->bookBrowser(), SIGNAL(processRequested(QString, QStringList)),
-                    SIGNAL(processRequested(QString, QStringList)));
             connect(popup->bookBrowser(), SIGNAL(soundRequested(QString)),
                     SIGNAL(soundRequested(QString)));
+            connect(popup->bookBrowser(), SIGNAL(videoRequested(QString)),
+                    SIGNAL(videoRequested(QString)));
+            connect(popup->bookBrowser(), SIGNAL(externalLinkRequested(QString)),
+                    SIGNAL(externalLinkRequested(QString)));
             connect(popup->bookBrowser(), SIGNAL(selectionRequested(QString)),
                     SIGNAL(selectionRequested(QString)));
             popup->show();
@@ -71,12 +65,7 @@ void BookBrowser::setSource(const QUrl &name)
         }
     } else if (path == "mpeg") {
         // args[0] : mpeg file
-        if (!CONF->mpegProcess.isEmpty()) {
-            emit processRequested(CONF->mpegProcess, args);
-        } else {
-            qWarning() << "Can't play movie" << CONF->mpegProcess << args[0];
-            emit statusRequested("Can't play movie");
-        }
+        emit videoRequested(args[0]);
     } else if (path == "close") {
         parentWidget()->close();
     } else {
@@ -136,7 +125,7 @@ void BookBrowser::contextMenuEvent(QContextMenuEvent* event)
             foreach(const char c, textCursor().selectedText().toUtf8()) {
                 addr += "%" + QString::number((ushort)((uchar)c), 16);
             }
-            emit processRequested(CONF->browserProcess, QStringList(addr));
+            emit externalLinkRequested(addr);
         }
     }
     delete menu;

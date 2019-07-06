@@ -125,7 +125,11 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="waveProcEdit"/>
+        <widget class="BrowseFileEdit" name="waveProcEdit">
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
+        </widget>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_5">
@@ -135,10 +139,18 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="mpegProcEdit"/>
+        <widget class="BrowseFileEdit" name="mpegProcEdit">
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
+        </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="browserProcEdit"/>
+        <widget class="BrowseFileEdit" name="browserProcEdit">
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
+        </widget>
        </item>
        <item row="3" column="1">
         <widget class="QLineEdit" name="googleUrlEdit"/>
@@ -280,6 +292,34 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>BrowseFileEdit</class>
+   <extends>QWidget</extends>
+   <header>browsefileedit.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>highlightCheck</tabstop>
+  <tabstop>beepSoundCheck</tabstop>
+  <tabstop>convertFullwidthCheck</tabstop>
+  <tabstop>serverModeCheck</tabstop>
+  <tabstop>historyBox</tabstop>
+  <tabstop>indentOffsetBox</tabstop>
+  <tabstop>portNoBox</tabstop>
+  <tabstop>waveProcEdit</tabstop>
+  <tabstop>mpegProcEdit</tabstop>
+  <tabstop>browserProcEdit</tabstop>
+  <tabstop>googleUrlEdit</tabstop>
+  <tabstop>wikipediaUrlEdit</tabstop>
+  <tabstop>userDefUrlEdit</tabstop>
+  <tabstop>limitCharBox</tabstop>
+  <tabstop>limitMenuBox</tabstop>
+  <tabstop>limitMaxBookBox</tabstop>
+  <tabstop>limitMaxTotalBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

@@ -24,6 +24,12 @@ OptionDialog::OptionDialog(QWidget *parent)
     : QDialog(parent)
 {
     setupUi(this);
+    waveProcEdit->setPlaceholderText(tr("(internal audio player)"));
+    waveProcEdit->setFileDialogTitle(tr("Browse for audio player"));
+    mpegProcEdit->setPlaceholderText(tr("(system default video player)"));
+    mpegProcEdit->setFileDialogTitle(tr("Browse for video player"));
+    browserProcEdit->setPlaceholderText(tr("(system default web browser)"));
+    browserProcEdit->setFileDialogTitle(tr("Browse for web browser"));
     reset();
 }
 

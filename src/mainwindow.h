@@ -23,7 +23,6 @@
 #include "method.h"
 
 #include <QMainWindow>
-#include <QProcess>
 #include <QAction>
 
 class QComboBox;
@@ -96,9 +95,11 @@ private slots:
     void changeOptSearchButtonText(const QString &str);
 
     void addMark();
-    void execProcess(const QString &program, const QStringList &arguments);
-    void execSound(const QString& fname);
-    void execError(QProcess::ProcessError);
+    void startProcess(const QString &program, const QStringList &arguments);
+    void playSound(const QString &fileName);
+    void playVideo(const QString &fileName);
+    void openExternalLink(const QString &url);
+    void processError();
     void checkSound();
     void stopSound();
     void clearCache();
