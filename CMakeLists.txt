@@ -121,9 +121,12 @@ target_compile_definitions(qolibri PRIVATE QOLIBRI_VERSION_STR="${QOLIBRI_VERSIO
 set(QOLIBRI_WEBSITE "https://github.com/ludios/qolibri" CACHE STRING "The URL of the website. Adds a hyperlink to the about dialog if non-empty.")
 target_compile_definitions(qolibri PRIVATE QOLIBRI_WEBSITE="${QOLIBRI_WEBSITE}")
 
-# Add application icon to macOS bundle
-set_source_files_properties(images/qolibri.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-set(MACOSX_BUNDLE_ICON_FILE qolibri.icns)
+if (APPLE)
+    set_source_files_properties(images/qolibri.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    set(MACOSX_BUNDLE_ICON_FILE qolibri.icns)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Info.plist.in" "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" @ONLY)
+    set_target_properties(qolibri PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist")
+endif()
 
 # Link translations into the binary
 configure_file(translations/translations.qrc "${CMAKE_CURRENT_BINARY_DIR}/translations/translations.qrc" COPYONLY)
