@@ -1,3 +1,10 @@
+qolibri (2.1.2) UNRELEASED; urgency=medium
+
+  * Add system default browser/video player support
+  * Add Ctrl+W shortcut to close current tab
+
+ -- Matthias von Faber <mvf@gmx.eu>  Tue, 9 Jul 2019 00:00:00 +0000
+
 qolibri (2.1.1) UNRELEASED; urgency=medium
 
   * Add option to hide book tree panel
