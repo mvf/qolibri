@@ -4,7 +4,8 @@
 #include "configure.h"
 #include "ebook.h"
 
-#include <QDesktopWidget>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QScrollBar>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -71,9 +72,10 @@ void ReferencePopup::showEvent(QShowEvent*)
         resize(sz);
     }
     QScrollBar *vb = bookBrowser_->verticalScrollBar();
+    const QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
     if ( vb && vb->maximum() > 0) {
         int h = vb->maximum() - vb->minimum() + vb->pageStep() + 10;
-        int ph = QDesktopWidget().screenGeometry().height() - 50;
+        int ph = screenGeometry.height() - 50;
         if ( h > ph ) {
             h = ph;
         }
@@ -81,12 +83,12 @@ void ReferencePopup::showEvent(QShowEvent*)
     }
 
     int posx = QCursor::pos().x();
-    if ((posx + sz.width()) > QDesktopWidget().screenGeometry().width())
-        posx = QDesktopWidget().screenGeometry().width() - sz.width();
+    if ((posx + sz.width()) > screenGeometry.width())
+        posx = screenGeometry.width() - sz.width();
 
     int posy = QCursor::pos().y();
-    if ((posy + sz.height()) > QDesktopWidget().screenGeometry().height())
-        posy = QDesktopWidget().screenGeometry().height() - sz.height();
+    if ((posy + sz.height()) > screenGeometry.height())
+        posy = screenGeometry.height() - sz.height();
 
     move(QPoint(posx, posy));
     resize(sz);

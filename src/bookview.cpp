@@ -27,7 +27,6 @@
 #include "webview.h"
 
 #include <QContextMenuEvent>
-#include <QDesktopWidget>
 #include <QDir>
 #include <QHeaderView>
 #include <QMenu>
