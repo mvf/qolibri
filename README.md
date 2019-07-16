@@ -23,7 +23,7 @@ See the [releases](https://github.com/ludios/qolibri/releases) for builds.  Extr
 
 See the [releases](https://github.com/ludios/qolibri/releases) for DMG images.
 
-## Install on Debian 9 stretch
+## Install on Debian 10 "buster"
 
 See the [releases](https://github.com/ludios/qolibri/releases) for precompiled
 amd64 packages.
