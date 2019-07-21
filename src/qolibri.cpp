@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(qolibri);
 
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
     configure_s = new Configure();
