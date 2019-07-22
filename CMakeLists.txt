@@ -128,6 +128,11 @@ if (APPLE)
     set_target_properties(qolibri PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist")
 endif()
 
+if (WIN32) # Includes Win64
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/qolibri.manifest.in" "${CMAKE_CURRENT_BINARY_DIR}/qolibri.manifest" @ONLY)
+    target_sources(qolibri PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/qolibri.manifest")
+endif()
+
 # Link translations into the binary
 configure_file(translations/translations.qrc "${CMAKE_CURRENT_BINARY_DIR}/translations/translations.qrc" COPYONLY)
 set(TS_FILES translations/qolibri_ja_JP.ts)
