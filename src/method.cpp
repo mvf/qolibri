@@ -44,8 +44,10 @@ void addDirectionMenu(QMenu *menu)
 {
     addDirectionAct(menu, QObject::tr("&Exact word search"), ExactWordSearch);
     addDirectionAct(menu, QObject::tr("&Forward search"), ForwardSearch);
+    addDirectionAct(menu, QObject::tr("&Backward search"), BackwardSearch);
     addDirectionAct(menu, QObject::tr("&Keyword search"), KeywordSearch);
     addDirectionAct(menu, QObject::tr("&Cross search"), CrossSearch);
+    addDirectionAct(menu, QObject::tr("Full &text search"), FullTextSearch);
     menu->addSeparator();
     addDirectionAct(menu, QObject::tr("&Google search"), GoogleSearch);
     addDirectionAct(menu, QObject::tr("&Wikipedia search"), WikipediaSearch);
