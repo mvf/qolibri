@@ -37,6 +37,7 @@
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QDir>
+#include <QElapsedTimer>
 #include <QFontDialog>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -807,7 +808,7 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
     if (queryStr.isEmpty())
         return;
 
-    QTime pTime;
+    QElapsedTimer pTime;
 
     pTime.start();
 
