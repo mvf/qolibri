@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
+set(CMAKE_CXX_STANDARD 17)
+
 # Visual Studio: Enable parallel builds
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 # Visual Studio: Preselect qolibri as the solution's startup project
