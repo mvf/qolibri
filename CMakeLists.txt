@@ -136,6 +136,10 @@ if (APPLE)
 endif()
 
 if (WIN32) # Includes Win64
+    set(QOLIBRI_EB_UTF8_PATHS ON CACHE BOOL "Force UTF-8 encoding in path names at EB API boundary")
+    if(QOLIBRI_EB_UTF8_PATHS)
+        target_compile_definitions(qolibri PRIVATE QOLIBRI_EB_UTF8_PATHS)
+    endif()
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/qolibri.manifest.in" "${CMAKE_CURRENT_BINARY_DIR}/qolibri.manifest" @ONLY)
     target_sources(qolibri PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/qolibri.manifest")
 endif()
