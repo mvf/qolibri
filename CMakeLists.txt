@@ -96,6 +96,11 @@ add_executable(qolibri MACOSX_BUNDLE WIN32
     src/webview.h
 )
 
+set(QOLIBRI_EB_SOURCE_DIR "" CACHE STRING "Optional path to cmake-enabled EB library source tree")
+if(QOLIBRI_EB_SOURCE_DIR)
+    add_subdirectory("${QOLIBRI_EB_SOURCE_DIR}" eb)
+endif()
+
 target_include_directories(qolibri PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 set(QOLIBRI_FIXED_POPUP OFF CACHE BOOL "Show popups fixed at window height")
