@@ -113,11 +113,11 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
 
 void MainWindow::createActions()
 {
-    toggleScanClipboardAct = new QAction(tr("Scan clipboard"), this);
-    toggleScanClipboardAct->setCheckable(true);
-    toggleScanClipboardAct->setIconVisibleInMenu(false);
-    toggleScanClipboardAct->setIcon(QIcon(":/images/paste.png"));
-    connect(toggleScanClipboardAct, SIGNAL(toggled(bool)), SLOT(connectClipboard()));
+    toggleWatchClipboardAct = new QAction(tr("Watch clipboard"), this);
+    toggleWatchClipboardAct->setCheckable(true);
+    toggleWatchClipboardAct->setIconVisibleInMenu(false);
+    toggleWatchClipboardAct->setIcon(QIcon(":/images/paste.png"));
+    connect(toggleWatchClipboardAct, SIGNAL(toggled(bool)), SLOT(connectClipboard()));
 }
 
 void MainWindow::createMenus()
@@ -185,7 +185,7 @@ void MainWindow::createMenus()
     addMarkAct = smenu->addAction(QIcon(":/images/bookmark.png"),
                                   tr("Bookmark"),
                                   this, SLOT(addMark()));
-    smenu->addAction(toggleScanClipboardAct);
+    smenu->addAction(toggleWatchClipboardAct);
 
     CONNECT_BUSY(addMarkAct);
     toggleTabsAct = smenu->addAction(QIcon(":/images/tabs.png"),
@@ -277,7 +277,7 @@ void MainWindow::createToolBars()
 
 
     bar2->addAction(addMarkAct);
-    bar2->addAction(toggleScanClipboardAct);
+    bar2->addAction(toggleWatchClipboardAct);
     bar2->addAction(toggleDockAct);
 
     webBar = addToolBar("Web");
@@ -365,7 +365,7 @@ void MainWindow::readSettings()
             act->trigger();
         }
     }
-    toggleScanClipboardAct->setChecked(settings.value("scan_clipboard", false).toBool());
+    toggleWatchClipboardAct->setChecked(settings.value("watch_clipboard", false).toBool());
 
     QSettings hist(CONF->settingOrg, "EpwingHistory");
     int hcnt = hist.beginReadArray("History");
@@ -412,7 +412,7 @@ void MainWindow::writeSettings()
     settings.setValue("newtab", toggleTabsAct->isChecked());
     settings.setValue("newbrowser", toggleBrowserAct->isChecked());
     settings.setValue("searchsel", optDirection);
-    settings.setValue("scan_clipboard", toggleScanClipboardAct->isChecked());
+    settings.setValue("watch_clipboard", toggleWatchClipboardAct->isChecked());
 
     QSettings history(CONF->settingOrg, "EpwingHistory");
     history.beginWriteArray("History");
@@ -1292,7 +1292,7 @@ void MainWindow::startClipboardSelectionTimer()
 
 void MainWindow::connectClipboard()
 {
-    if (toggleScanClipboardAct->isChecked())
+    if (toggleWatchClipboardAct->isChecked())
     {
         connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(searchClipboard()));
         connect(QApplication::clipboard(), SIGNAL(selectionChanged()), this, SLOT(startClipboardSelectionTimer()));

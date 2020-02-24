@@ -158,7 +158,7 @@ private:
     QAction *toggleBarAct;
     QAction *toggleMethodBarAct;
     QAction *toggleBookTreeAct;
-    QAction *toggleScanClipboardAct;
+    QAction *toggleWatchClipboardAct;
     QAction *booksAct;
     QAction *configAct;
     QAction *sSheetAct;
