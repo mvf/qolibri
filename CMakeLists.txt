@@ -38,6 +38,9 @@ add_executable(qolibri MACOSX_BUNDLE WIN32
     src/browsefileedit.cpp
     src/browsefileedit.h
     src/client.h
+    src/clipboardoptionswidget.cpp
+    src/clipboardoptionswidget.h
+    src/clipboardoptionswidget.ui
     src/configure.cpp
     src/configure.h
     src/ebcache.cpp

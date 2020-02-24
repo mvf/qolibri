@@ -28,6 +28,7 @@ class OptionDialog : public QDialog, private Ui::OptionDialog
 
 public:
     OptionDialog(QWidget *parent = 0);
+    void insertTab(int index, QWidget *page, const QString &label);
 
 public slots:
     void accept();
