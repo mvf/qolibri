@@ -100,7 +100,6 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
 
     connect(this, SIGNAL(searchFinished()), SLOT(checkNextSearch()));
     connectClipboard();
-    connect(model, SIGNAL(scanClipboardChanged(bool)), SLOT(connectClipboard()));
     QTimer::singleShot(0, searchTextEdit, SLOT(setFocus()));
 
     clipboardsearchtimer = new QTimer;
@@ -116,10 +115,9 @@ void MainWindow::createActions()
 {
     toggleScanClipboardAct = new QAction(tr("Scan clipboard"), this);
     toggleScanClipboardAct->setCheckable(true);
-    toggleScanClipboardAct->setChecked(model->scanClipboard());
     toggleScanClipboardAct->setIconVisibleInMenu(false);
     toggleScanClipboardAct->setIcon(QIcon(":/images/paste.png"));
-    model->connect(toggleScanClipboardAct, SIGNAL(toggled(bool)), SLOT(setScanClipboard(bool)));
+    connect(toggleScanClipboardAct, SIGNAL(toggled(bool)), SLOT(connectClipboard()));
 }
 
 void MainWindow::createMenus()
@@ -367,6 +365,7 @@ void MainWindow::readSettings()
             act->trigger();
         }
     }
+    toggleScanClipboardAct->setChecked(settings.value("scan_clipboard", false).toBool());
 
     QSettings hist(CONF->settingOrg, "EpwingHistory");
     int hcnt = hist.beginReadArray("History");
@@ -413,6 +412,7 @@ void MainWindow::writeSettings()
     settings.setValue("newtab", toggleTabsAct->isChecked());
     settings.setValue("newbrowser", toggleBrowserAct->isChecked());
     settings.setValue("searchsel", optDirection);
+    settings.setValue("scan_clipboard", toggleScanClipboardAct->isChecked());
 
     QSettings history(CONF->settingOrg, "EpwingHistory");
     history.beginWriteArray("History");
@@ -1292,7 +1292,7 @@ void MainWindow::startClipboardSelectionTimer()
 
 void MainWindow::connectClipboard()
 {
-    if (model->scanClipboard())
+    if (toggleScanClipboardAct->isChecked())
     {
         connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(searchClipboard()));
         connect(QApplication::clipboard(), SIGNAL(selectionChanged()), this, SLOT(startClipboardSelectionTimer()));
