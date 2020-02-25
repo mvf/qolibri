@@ -21,6 +21,7 @@
 #include "ebook.h"
 #include "book.h"
 #include "bookview.h"
+#include "clipboardoptionswidget.h"
 #include "toolbar.h"
 #include "globaleventfilter.h"
 #include "groupdock.h"
@@ -33,7 +34,6 @@
 
 #include <QApplication>
 #include <QAudioDeviceInfo>
-#include <QClipboard>
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QDir>
@@ -99,13 +99,13 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
     }
 
     connect(this, SIGNAL(searchFinished()), SLOT(checkNextSearch()));
-    connectClipboard();
-    connect(model, SIGNAL(scanClipboardChanged(bool)), SLOT(connectClipboard()));
     QTimer::singleShot(0, searchTextEdit, SLOT(setFocus()));
 
     clipboardsearchtimer = new QTimer;
     clipboardsearchtimer->setSingleShot(true);
-    connect(clipboardsearchtimer, SIGNAL(timeout()), this, SLOT(searchClipboardSelection()));
+    connect(clipboardsearchtimer, &QTimer::timeout, [this] {
+        searchClientText(QApplication::clipboard()->text(QClipboard::Selection), watchClipboardRaiseWindow);
+    });
 
     GlobalEventFilter *gef = new GlobalEventFilter();
     qApp->installEventFilter(gef);
@@ -114,12 +114,11 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
 
 void MainWindow::createActions()
 {
-    toggleScanClipboardAct = new QAction(tr("Scan clipboard"), this);
-    toggleScanClipboardAct->setCheckable(true);
-    toggleScanClipboardAct->setChecked(model->scanClipboard());
-    toggleScanClipboardAct->setIconVisibleInMenu(false);
-    toggleScanClipboardAct->setIcon(QIcon(":/images/paste.png"));
-    model->connect(toggleScanClipboardAct, SIGNAL(toggled(bool)), SLOT(setScanClipboard(bool)));
+    toggleWatchClipboardAct = new QAction(tr("Watch clipboard"), this);
+    toggleWatchClipboardAct->setCheckable(true);
+    toggleWatchClipboardAct->setIconVisibleInMenu(false);
+    toggleWatchClipboardAct->setIcon(QIcon(":/images/paste.png"));
+    connect(toggleWatchClipboardAct, &QAction::toggled, this, &MainWindow::connectClipboard);
 }
 
 void MainWindow::createMenus()
@@ -187,7 +186,7 @@ void MainWindow::createMenus()
     addMarkAct = smenu->addAction(QIcon(":/images/bookmark.png"),
                                   tr("Bookmark"),
                                   this, SLOT(addMark()));
-    smenu->addAction(toggleScanClipboardAct);
+    smenu->addAction(toggleWatchClipboardAct);
 
     CONNECT_BUSY(addMarkAct);
     toggleTabsAct = smenu->addAction(QIcon(":/images/tabs.png"),
@@ -279,7 +278,7 @@ void MainWindow::createToolBars()
 
 
     bar2->addAction(addMarkAct);
-    bar2->addAction(toggleScanClipboardAct);
+    bar2->addAction(toggleWatchClipboardAct);
     bar2->addAction(toggleDockAct);
 
     webBar = addToolBar("Web");
@@ -367,6 +366,10 @@ void MainWindow::readSettings()
             act->trigger();
         }
     }
+    toggleWatchClipboardAct->setChecked(settings.value("watch_clipboard", false).toBool());
+    watchClipboardMode = QClipboard::Mode(settings.value("watch_clipboard_mode", QClipboard::Clipboard).toInt());
+    watchClipboardSelectionDelay = settings.value("watch_clipboard_selection_delay", 300).toInt();
+    watchClipboardRaiseWindow = settings.value("watch_clipboard_raise_window", true).toBool();
 
     QSettings hist(CONF->settingOrg, "EpwingHistory");
     int hcnt = hist.beginReadArray("History");
@@ -413,6 +416,10 @@ void MainWindow::writeSettings()
     settings.setValue("newtab", toggleTabsAct->isChecked());
     settings.setValue("newbrowser", toggleBrowserAct->isChecked());
     settings.setValue("searchsel", optDirection);
+    settings.setValue("watch_clipboard", toggleWatchClipboardAct->isChecked());
+    settings.setValue("watch_clipboard_mode", watchClipboardMode);
+    settings.setValue("watch_clipboard_selection_delay", watchClipboardSelectionDelay);
+    settings.setValue("watch_clipboard_raise_window", watchClipboardRaiseWindow);
 
     QSettings history(CONF->settingOrg, "EpwingHistory");
     history.beginWriteArray("History");
@@ -1136,7 +1143,18 @@ void MainWindow::clearCache()
 void MainWindow::setConfig()
 {
     OptionDialog dlg(this);
-    dlg.exec();
+    auto *const cow = ClipboardOptionsWidget::maybeCreate(this);
+    if (cow) {
+        cow->setMode(watchClipboardMode);
+        cow->setRaiseWindowEnabled(watchClipboardRaiseWindow);
+        cow->setSelectionDelay(watchClipboardSelectionDelay);
+        dlg.insertTab(1, cow, tr("Clipboard"));
+    }
+    if (dlg.exec() == QDialog::Accepted && cow) {
+        watchClipboardMode = cow->mode();
+        watchClipboardRaiseWindow = cow->isRaiseWindowEnabled();
+        watchClipboardSelectionDelay = cow->selectionDelay();
+    }
 }
 
 void MainWindow::changeSearchText(const QString&)
@@ -1255,9 +1273,10 @@ void MainWindow::checkNextSearch()
 
 }
 
-void MainWindow::searchClientText(const QString &str)
+void MainWindow::searchClientText(const QString &str, bool raiseWindow)
 {
-    raise();
+    if (raiseWindow)
+        raise();
     if (str.isEmpty()) {
         return;
     }
@@ -1270,40 +1289,24 @@ void MainWindow::searchClientText(const QString &str)
     viewSearch();
 }
 
-void MainWindow::searchClipboard()
+void MainWindow::connectClipboard(bool enable)
 {
-    searchClientText(QApplication::clipboard()->text(QClipboard::Clipboard));
-}
+    auto *const clipboard = QApplication::clipboard();
+    if (enable) {
+        connect(clipboard, &QClipboard::changed, [this, clipboard](QClipboard::Mode mode) {
+            if (mode != watchClipboardMode)
+                return;
 
-void MainWindow::searchClipboardSelection()
-{
-    searchClientText(QApplication::clipboard()->text(QClipboard::Selection));
-}
+            if (QApplication::activeModalWidget())
+                return;
 
-void MainWindow::searchClipboardFindbuffer()
-{
-    searchClientText(QApplication::clipboard()->text(QClipboard::FindBuffer));
-}
-
-void MainWindow::startClipboardSelectionTimer()
-{
-        clipboardsearchtimer->start(300);
-}
-
-void MainWindow::connectClipboard()
-{
-    if (model->scanClipboard())
-    {
-        connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(searchClipboard()));
-        connect(QApplication::clipboard(), SIGNAL(selectionChanged()), this, SLOT(startClipboardSelectionTimer()));
-        connect(QApplication::clipboard(), SIGNAL(findBufferChanged()), this, SLOT(searchClipboardFindbuffer()));
-    }
-    else
-    {
-        disconnect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(searchClipboard()));
-        disconnect(QApplication::clipboard(), SIGNAL(selectionChanged()), this, SLOT(startClipboardSelectionTimer()));
-        disconnect(QApplication::clipboard(), SIGNAL(findBufferChanged()), this, SLOT(searchClipboardFindbuffer()));
-    }
+            if (mode == QClipboard::Selection && watchClipboardSelectionDelay)
+                clipboardsearchtimer->start(watchClipboardSelectionDelay);
+            else
+                searchClientText(clipboard->text(mode), watchClipboardRaiseWindow);
+        });
+    } else
+        clipboard->disconnect(SIGNAL(changed(QClipboard::Mode)));
 }
 
 void MainWindow::aboutQolibri()

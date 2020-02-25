@@ -24,6 +24,7 @@
 
 #include <QMainWindow>
 #include <QAction>
+#include <QClipboard>
 
 class QComboBox;
 class QLineEdit;
@@ -59,7 +60,7 @@ public slots:
     //void searchClientText(const QString &str);
 
 private slots:
-    void connectClipboard();
+    void connectClipboard(bool enable);
     void viewInfo(Book *book);
     void viewMenu();
     void viewFull();
@@ -106,11 +107,7 @@ private slots:
     void setDockOff();
 
     void checkNextSearch();
-    void searchClientText(const QString &str);
-    void searchClipboard();
-    void searchClipboardSelection();
-    void searchClipboardFindbuffer();
-    void startClipboardSelectionTimer();
+    void searchClientText(const QString &str, bool raiseWindow=true);
 
     void aboutQolibri();
 
@@ -158,7 +155,7 @@ private:
     QAction *toggleBarAct;
     QAction *toggleMethodBarAct;
     QAction *toggleBookTreeAct;
-    QAction *toggleScanClipboardAct;
+    QAction *toggleWatchClipboardAct;
     QAction *booksAct;
     QAction *configAct;
     QAction *sSheetAct;
@@ -188,6 +185,10 @@ private:
     QStringList  clientText;
 
     Qt::DockWidgetArea dockPosition;
+
+    QClipboard::Mode watchClipboardMode;
+    int watchClipboardSelectionDelay;
+    bool watchClipboardRaiseWindow;
 };
 
 #endif

@@ -23,7 +23,6 @@
 
 Model::Model()
     : bookMode(ModeDictionary)
-    , m_scanClipboard(false)
 {
 }
 
@@ -75,10 +74,6 @@ void Model::load()
         method = readMethodSetting(settings);
         setMethod(method);
     }
-    {
-        QSettings settings(CONF->settingOrg, "option");
-        m_scanClipboard = settings.value("scan_clipboard", false).toBool();
-    }
 }
 
 void Model::save()
@@ -123,10 +118,6 @@ void Model::save()
     {
         QSettings settings(CONF->settingOrg, "EpwingViewer");
         writeMethodSetting(method, &settings);
-    }
-    {
-        QSettings settings(CONF->settingOrg, "option");
-        settings.setValue("scan_clipboard", m_scanClipboard);
     }
 }
 
@@ -371,15 +362,3 @@ void Model::writeMethodSetting(const SearchMethod &m, QSettings *set)
     }
 }
 
-bool Model::scanClipboard()
-{
-    return m_scanClipboard;
-}
-
-void Model::setScanClipboard(bool v)
-{
-    if (m_scanClipboard == v)
-        return;
-    m_scanClipboard = v;
-    emit scanClipboardChanged(v);
-}

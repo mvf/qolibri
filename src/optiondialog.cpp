@@ -33,6 +33,11 @@ OptionDialog::OptionDialog(QWidget *parent)
     reset();
 }
 
+void OptionDialog::insertTab(int index, QWidget *page, const QString &label)
+{
+    tabWidget->insertTab(index, page, label);
+}
+
 void OptionDialog::reset()
 {
     Configure *d = CONF;

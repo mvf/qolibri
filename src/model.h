@@ -46,8 +46,6 @@ public:
     void setLocalBooks(const Group *);
     void setWebSites(const Group *);
 
-    bool scanClipboard();
-
     QList <Group*> groupList;
     Group* localBooks;
     Group* webSites;
@@ -68,7 +66,6 @@ public slots:
     void setReaderBookIndex(int index);
     void setLimitBook(int val);
     void setLimitTotal(int val);
-    void setScanClipboard(bool);
 
 signals:
     void bookModeChanged(BookMode);
@@ -83,14 +80,12 @@ signals:
     void readerBookIndexChanged(int index);
     void limitBookChanged(int val);
     void limitTotalChanged(int val);
-    void scanClipboardChanged(bool);
 
 private:
     Group *groupFromName(const QString &name);
     Book *bookFromName(Group* group, const QString &name);
     SearchMethod readMethodSetting(const QSettings &);
     void writeMethodSetting(const SearchMethod&, QSettings*);
-    bool m_scanClipboard;
 };
 
 #endif // MODEL_H
