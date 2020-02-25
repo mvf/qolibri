@@ -15,20 +15,23 @@ If you find a security bug, please report it like a regular bug.
     <img src="https://user-images.githubusercontent.com/4458/43369811-c1e0421c-9363-11e8-8abb-91b9ce2e4ce0.png">
 </p>
 
-## Install on Windows
+## Installation
 
-See the [releases](https://github.com/ludios/qolibri/releases) for builds.  Extract with 7-Zip.
+### Release binaries
 
-## Install on macOS
+See [Releases](https://github.com/ludios/qolibri/releases) for pre-compiled binaries for the
+following operating systems:
 
-See the [releases](https://github.com/ludios/qolibri/releases) for DMG images.
+- **Windows 7** and later (32-bit, [7-Zip](https://www.7-zip.org/) archive)
+- **macOS** 10.13 "High Sierra" and later (64-bit, .dmg image)
+- **Linux** (AMD64, .deb package for Debian 10 "buster", also works on most other distros)
 
-## Install on Debian 10 "buster"
+### Linux distributions
 
-See the [releases](https://github.com/ludios/qolibri/releases) for precompiled
-amd64 packages.
+- [Arch Linux](https://www.archlinux.org/): AUR: https://aur.archlinux.org/packages/qolibri/
+- [Void Linux](https://voidlinux.org/): `xbps-install qolibri`
 
-## Install from source
+### Building from source
 
 Please see the [wiki](https://github.com/ludios/qolibri/wiki) for instructions
 on how to build and install qolibri from source.
