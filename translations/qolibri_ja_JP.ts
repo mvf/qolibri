@@ -608,8 +608,8 @@ Search Method: %2</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="175"/>
-        <source>&amp;Setting</source>
+        <location filename="mainwindow.cpp" line="179"/>
+        <source>&amp;Settings</source>
         <translation>設定(&amp;S)</translation>
     </message>
     <message>
@@ -903,37 +903,47 @@ Search Method: %2</source>
         <translation>テキスト</translation>
     </message>
     <message>
-        <location filename="method.cpp" line="72"/>
+        <location filename="method.cpp" line="45"/>
         <source>&amp;Exact word search</source>
         <translation>完全一致 (&amp;E)</translation>
     </message>
     <message>
-        <location filename="method.cpp" line="73"/>
+        <location filename="method.cpp" line="46"/>
         <source>&amp;Forward search</source>
         <translation>前方一致 (&amp;F)</translation>
     </message>
     <message>
-        <location filename="method.cpp" line="74"/>
+        <location filename="method.cpp" line="47"/>
+        <source>&amp;Backward search</source>
+        <translation>後方一致 (&amp;B)</translation>
+    </message>
+    <message>
+        <location filename="method.cpp" line="48"/>
         <source>&amp;Keyword search</source>
         <translation>条件検索 (&amp;K)</translation>
     </message>
     <message>
-        <location filename="method.cpp" line="75"/>
+        <location filename="method.cpp" line="49"/>
         <source>&amp;Cross search</source>
         <translation>クロス検索 (&amp;C)</translation>
     </message>
     <message>
-        <location filename="method.cpp" line="77"/>
+        <location filename="method.cpp" line="50"/>
+        <source>Full &amp;text search</source>
+        <translation>全文検索 (&amp;T)</translation>
+    </message>
+    <message>
+        <location filename="method.cpp" line="52"/>
         <source>&amp;Google search</source>
         <translation>Googleで検索 (&amp;G)</translation>
     </message>
     <message>
-        <location filename="method.cpp" line="78"/>
-        <source>&amp;WikiPedia search</source>
-        <translation>WikiPediaで検索 (&amp;W)</translation>
+        <location filename="method.cpp" line="53"/>
+        <source>&amp;Wikipedia search</source>
+        <translation>Wikipediaで検索 (&amp;W)</translation>
     </message>
     <message>
-        <location filename="method.cpp" line="79"/>
+        <location filename="method.cpp" line="54"/>
         <source>&amp;User defined URL search</source>
         <translation>ユーザ定義のURLで検索 (&amp;U)</translation>
     </message>
