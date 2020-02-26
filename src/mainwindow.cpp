@@ -79,6 +79,7 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
 
     setCentralWidget(bookView);
 
+    connect(model, &Model::groupIndexChanged, this, &MainWindow::setTitle);
     setTitle();
     qApp->setWindowIcon(QIcon(":/images/title.png"));
 
