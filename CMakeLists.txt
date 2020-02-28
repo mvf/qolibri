@@ -7,7 +7,7 @@ add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 # Visual Studio: Preselect qolibri as the solution's startup project
 set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT qolibri)
 
-project(qolibri VERSION 2.1.2)
+project(qolibri VERSION 2.1.3)
 
 include(GNUInstallDirs)
 
