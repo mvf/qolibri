@@ -35,8 +35,8 @@
     </message>
     <message>
         <location filename="booksetting.cpp" line="209"/>
-        <source>Name :</source>
-        <translation type="unfinished"></translation>
+        <source>Name:</source>
+        <translation>名前:</translation>
     </message>
     <message>
         <location filename="booksetting.cpp" line="218"/>
@@ -46,17 +46,17 @@
     <message>
         <location filename="booksetting.cpp" line="228"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>追加</translation>
     </message>
     <message>
         <location filename="booksetting.cpp" line="248"/>
         <source>Add Dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>辞書を追加</translation>
     </message>
     <message>
         <location filename="booksetting.cpp" line="249"/>
         <source>Add Web Site</source>
-        <translation type="unfinished"></translation>
+        <translation>ウエブサイトを追加</translation>
     </message>
     <message>
         <source>All Books</source>
@@ -73,27 +73,27 @@
     <message>
         <location filename="bookview.cpp" line="1853"/>
         <source>Close This Page</source>
-        <translation type="unfinished"></translation>
+        <translation>このページを閉じる</translation>
     </message>
     <message>
         <location filename="bookview.cpp" line="1855"/>
         <source>Close Other Pages</source>
-        <translation type="unfinished"></translation>
+        <translation>他のページを閉じる</translation>
     </message>
     <message>
         <location filename="bookview.cpp" line="1857"/>
         <source>Close Left Pages</source>
-        <translation type="unfinished"></translation>
+        <translation>左のページを閉じる</translation>
     </message>
     <message>
         <location filename="bookview.cpp" line="1859"/>
         <source>Close Right Pages</source>
-        <translation type="unfinished"></translation>
+        <translation>右のページを閉じる</translation>
     </message>
     <message>
         <location filename="bookview.cpp" line="1861"/>
         <source>Close All Pages</source>
-        <translation type="unfinished"></translation>
+        <translation>全てのページを閉じる</translation>
     </message>
 </context>
 <context>
@@ -195,8 +195,8 @@
     <name>EpwingFileSetting</name>
     <message>
         <location filename="booksetting.cpp" line="90"/>
-        <source>Name :</source>
-        <translation type="unfinished"></translation>
+        <source>Name:</source>
+        <translation>名前:</translation>
     </message>
     <message>
         <location filename="booksetting.cpp" line="100"/>
@@ -211,7 +211,7 @@
     <message>
         <location filename="booksetting.cpp" line="127"/>
         <source>Epwing File Setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Epwingフアイル設定</translation>
     </message>
 </context>
 <context>
@@ -313,12 +313,12 @@
     <message>
         <location filename="groupdock.cpp" line="257"/>
         <source>Groups:</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ:</translation>
     </message>
     <message>
         <location filename="groupdock.cpp" line="260"/>
         <source>Books:</source>
-        <translation type="unfinished"></translation>
+        <translation>書籍:</translation>
     </message>
     <message>
         <location filename="groupdock.cpp" line="336"/>
@@ -368,12 +368,12 @@ Search Method: %2</source>
     <message>
         <location filename="toolbar.cpp" line="43"/>
         <source>AND</source>
-        <translation type="unfinished">AND</translation>
+        <translation>AND</translation>
     </message>
     <message>
         <location filename="toolbar.cpp" line="44"/>
         <source>OR</source>
-        <translation type="unfinished">OR</translation>
+        <translation>OR</translation>
     </message>
 </context>
 <context>
@@ -700,7 +700,7 @@ Search Method: %2</source>
     <message>
         <location filename="model.cpp" line="68"/>
         <source>All books</source>
-        <translation type="unfinished">全辞書</translation>
+        <translation>全辞書</translation>
     </message>
 </context>
 <context>
@@ -713,12 +713,12 @@ Search Method: %2</source>
     <message>
         <location filename="optiondialog.ui" line="24"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>一般</translation>
     </message>
     <message>
         <location filename="optiondialog.ui" line="30"/>
         <source>Emphasize match string</source>
-        <translation> 検索文字列を強調表示</translation>
+        <translation>検索文字列を強調表示</translation>
     </message>
     <message>
         <location filename="optiondialog.ui" line="37"/>
@@ -1015,18 +1015,18 @@ Search Method: %2</source>
     <name>WebSetting</name>
     <message>
         <location filename="booksetting.cpp" line="37"/>
-        <source>Name :</source>
-        <translation type="unfinished"></translation>
+        <source>Name:</source>
+        <translation>名前:</translation>
     </message>
     <message>
         <location filename="booksetting.cpp" line="47"/>
-        <source>URL :</source>
-        <translation type="unfinished"></translation>
+        <source>URL:</source>
+        <translation>URL:</translation>
     </message>
     <message>
         <location filename="booksetting.cpp" line="62"/>
         <source>Web Site Setting</source>
-        <translation type="unfinished"></translation>
+        <translation>ウエブサイト設定</translation>
     </message>
 </context>
 </TS>
