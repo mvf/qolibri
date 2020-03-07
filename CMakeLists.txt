@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_CXX_STANDARD 17)
 
+if(APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "macOS deployment target")
+endif()
+
 # Visual Studio: Enable parallel builds
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 # Visual Studio: Preselect qolibri as the solution's startup project
