@@ -43,7 +43,7 @@ RET_SEARCH SearchWholePage::search(const Query& query)
             eb.unsetSubbook();
             continue;
         }
-        eb.initHook(bookBrowser_->fontSize(), book->fontList(), CONF->indentOffset);
+        eb.initHook(bookBrowser_->fontSize(), book->fontList());
         bookBrowser_->addBookList(book);
         book_count++;
 

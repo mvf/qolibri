@@ -52,13 +52,11 @@ public:
     QString getMenu();
     int initBook(const QString &path, int subbook=-1, int refpos=0);
     int initSubBook(int index, int refpos=0);
-    void initHook(int fsize, QHash<QString, QString> *flist, int indent_offset = 50)
+    void initHook(int fsize, QHash<QString, QString> *flist)
     {
         ebCache.init(subbookTitle());
-        indentOffset = indent_offset;
         fontSize = fsize;
         fontList = flist;
-        current_indent = 0;
     }
 
 
@@ -81,7 +79,6 @@ public:
     QByteArray hookEndNarrow(int, const unsigned int*);
     QByteArray hookBeginSubscript(int, const unsigned int*);
     QByteArray hookEndSubscript(int, const unsigned int*);
-    QByteArray hookSetIndent(int, const unsigned int*);
     QByteArray hookNewline(int, const unsigned int*);
     QByteArray hookBeginSuperscript(int, const unsigned int*);
     QByteArray hookEndSuperscript(int, const unsigned int*);
@@ -136,8 +133,6 @@ public:
     QList <CandItem> candList;
     int refPosition;
     int fontSize;
-    int indentOffset;
-    int current_indent;
     int monoWidth;
     int monoHeight;
 

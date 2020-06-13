@@ -25,7 +25,7 @@ RET_SEARCH InfoPage::search(const Query& query)
     if (eb.initBook(book->path(), book->bookNo()) < 0) {
         return NO_BOOK;
     }
-    eb.initHook(bookBrowser_->fontSize(), book->fontList(), CONF->indentOffset);
+    eb.initHook(bookBrowser_->fontSize(), book->fontList());
 
     QString mstr;
 

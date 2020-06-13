@@ -287,19 +287,6 @@ QByteArray EbCore::hookEndSubscript(int, const unsigned int*)
 {
     return QByteArrayLiteral("</sub>");
 }
-QByteArray EbCore::hookSetIndent(int, const unsigned int* argv)
-{
-    const int new_indent = argv[1];
-    if (new_indent <= current_indent)
-        current_indent = 0;
-    QByteArray ret = "<span>";
-    for (int i = 0; i < (new_indent - current_indent); i++)
-        ret += "&nbsp;&nbsp;&nbsp;";
-    ret += "</span>";
-    current_indent = new_indent;
-    return ret;
-}
-
 QByteArray EbCore::hookNewline(int, const unsigned int*)
 {
     return "<br>";

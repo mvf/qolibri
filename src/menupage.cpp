@@ -30,7 +30,7 @@ RET_SEARCH MenuPage::fullMenuPage()
         0) {
         return NO_BOOK;
     }
-    eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList(), CONF->indentOffset);
+    eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList());
 
     EB_Position pos = eb.menu();
     if (!eb.isValidPosition(pos)){
@@ -65,7 +65,7 @@ void MenuPage::selectMenuPage(int index)
     checkMax = false;
     EbMenu eb;
     eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo());
-    eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList(), CONF->indentOffset);
+    eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList());
     if (index < 0) {
         topCands = eb.topMenu();
         index = 0;

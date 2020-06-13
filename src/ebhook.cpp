@@ -45,7 +45,6 @@
 //HOOK_FUNC(END_NARROW, EbCore, hookEndNarrow)
 HOOK_FUNC(BEGIN_SUBSCRIPT, EbCore, hookBeginSubscript)
 HOOK_FUNC(END_SUBSCRIPT, EbCore, hookEndSubscript)
-HOOK_FUNC(SET_INDENT, EbCore, hookSetIndent)
 //HOOK_FUNC(NEWLINE, EbCore, hookNewline)
 HOOK_FUNC(BEGIN_SUPERSCRIPT, EbCore, hookBeginSuperscript)
 HOOK_FUNC(END_SUPERSCRIPT, EbCore, hookEndSuperscript)
@@ -97,7 +96,6 @@ EB_Hook hooks[] = {
     //HOOK_S(END_NARROW),
     HOOK_S(BEGIN_SUBSCRIPT),
     HOOK_S(END_SUBSCRIPT),
-    HOOK_S(SET_INDENT),
     //HOOK_S(NEWLINE),
     HOOK_S(BEGIN_SUPERSCRIPT),
     HOOK_S(END_SUPERSCRIPT),
@@ -147,7 +145,6 @@ EB_Hook hooks_cand[] = {
     //HOOK_S(END_NARROW),
     HOOK_S(BEGIN_SUBSCRIPT),
     HOOK_S(END_SUBSCRIPT),
-    HOOK_S(SET_INDENT),
     //HOOK_S(NEWLINE),
     HOOK_S(BEGIN_SUPERSCRIPT),
     HOOK_S(END_SUPERSCRIPT),
