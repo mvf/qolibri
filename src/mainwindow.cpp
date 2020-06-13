@@ -39,6 +39,7 @@
 #include <QDir>
 #include <QElapsedTimer>
 #include <QFontDialog>
+#include <QLocale>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QProcess>
@@ -658,7 +659,7 @@ void MainWindow::toggleBar()
 
 void MainWindow::changeOptSearchButtonText(const QString &str)
 {
-    QStringList list = str.split(QRegExp("\\W+"), QString::SkipEmptyParts);
+    QStringList list = str.split(QRegExp("\\W+"), Qt::SkipEmptyParts);
 
     if (list.count() > 0) {
         optSearchButton->setText(list[0]);
@@ -891,7 +892,7 @@ void MainWindow::pasteMethod(const QString &str, const SearchMethod &m)
     if (m.direction == WholeRead || m.direction == MenuRead ||
         m.direction == BookInfo ) {
     } else {
-        QStringList list = str.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+        QStringList list = str.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
         searchTextEdit->setText(list.join(" "));
     }
 }
@@ -1312,7 +1313,7 @@ void MainWindow::connectClipboard(bool enable)
 
 void MainWindow::aboutQolibri()
 {
-    const QString gitCommitDate(QDateTime::fromString(QOLIBRI_GIT_COMMIT_DATE, Qt::ISODate).toString(Qt::DefaultLocaleShortDate));
+    const QString gitCommitDate(QLocale().toString(QDateTime::fromString(QOLIBRI_GIT_COMMIT_DATE, Qt::ISODate), QLocale::ShortFormat));
     const QUrl website(QOLIBRI_WEBSITE, QUrl::StrictMode);
     QString msg(tr("<h2>qolibri</h2>"
                    "<h3>EPWING Dictionary/Book Viewer</h3>"
