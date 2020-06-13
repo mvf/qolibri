@@ -108,6 +108,7 @@ if(QOLIBRI_EB_SOURCE_DIR)
     add_subdirectory("${QOLIBRI_EB_SOURCE_DIR}" eb)
 endif()
 
+target_compile_definitions(qolibri PRIVATE QT_USE_QSTRINGBUILDER)
 target_include_directories(qolibri PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 set(QOLIBRI_FIXED_POPUP OFF CACHE BOOL "Show popups fixed at window height")
