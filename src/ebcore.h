@@ -60,7 +60,7 @@ public:
     }
 
     QString text(const EB_Position &pos, bool hflag=true);
-    QString heading(const EB_Position &pos, bool hflag=true);
+    QString heading(const EB_Position &pos);
     QList <CandItem> candidate(const EB_Position &pos, QString *txt);
 
     QByteArray errorBStr(const QByteArray &error_message);

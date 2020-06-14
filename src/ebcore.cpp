@@ -195,19 +195,17 @@ QString EbCore::text(const EB_Position &pos, bool hflag)
     return str.trimmed();
 }
 
-QString EbCore::heading(const EB_Position &pos, bool hflag)
+QString EbCore::heading(const EB_Position &pos)
 {
 
     if (seekText(pos) != EB_SUCCESS) {
         return QString();
     }
 
-    QString str = readHeading((void*)this, hflag);
-    if (hflag) {
-        for (int i = 0; i < refList.count(); i++) {
-            QString f = "<R" + numToStr(i) + "R>";
-            str.replace(f, refList[i]);
-        }
+    QString str = readHeading((void*)this);
+    for (int i = 0; i < refList.count(); i++) {
+        QString f = "<R" + numToStr(i) + "R>";
+        str.replace(f, refList[i]);
     }
     return str.trimmed();
 }
