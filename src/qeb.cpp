@@ -223,19 +223,14 @@ QString QEb::readText(void *para, bool hook_flag)
     return b;
 
 }
-QString QEb::readHeading(void *para, bool hook_flag)
+QString QEb::readHeading(void *para)
 {
     char buff[1024+1];
     ssize_t len;
     QByteArray b;
     for(;;) {
         EB_Error_Code ecode;
-        if (hook_flag)
-            ecode = eb_read_heading(&book, &appendix, &hookset, para,
-                                    1024, buff, &len);
-        else
-            ecode = eb_read_heading(&book, &appendix, NULL, para,
-                                    1024, buff, &len);
+        ecode = eb_read_heading(&book, &appendix, &hookset, para, 1024, buff, &len);
         if (ecode != EB_SUCCESS) {
             dispError("eb_read_heading", ecode);
             break;

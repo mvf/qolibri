@@ -95,7 +95,7 @@ public:
     EB_Position startText();
     EB_Error_Code seekText(const EB_Position &pos);
     QString readText(void *para, bool hook_flag=true);
-    QString readHeading(void *para, bool hook_flag=true);
+    QString readHeading(void *para);
     EB_Error_Code forwardText();
     EB_Position copyright();
     bool isHaveCopyright() { return (eb_have_copyright(&book) == 1); }
