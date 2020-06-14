@@ -59,7 +59,6 @@ public:
         fontList = flist;
     }
 
-
     QString text(const EB_Position &pos, bool hflag=true);
     QString heading(const EB_Position &pos, bool hflag=true);
     QList <CandItem> candidate(const EB_Position &pos, QString *txt);
@@ -74,16 +73,10 @@ public:
         { return numToBStr(p1) + 'x' + numToBStr(p2) + '.' + ftype; }
 
 // Hook Callbacks
-    QByteArray hookInitialize(int, const unsigned int*);
-    QByteArray hookBeginNarrow(int, const unsigned int*);
-    QByteArray hookEndNarrow(int, const unsigned int*);
     QByteArray hookBeginSubscript(int, const unsigned int*);
     QByteArray hookEndSubscript(int, const unsigned int*);
-    QByteArray hookNewline(int, const unsigned int*);
     QByteArray hookBeginSuperscript(int, const unsigned int*);
     QByteArray hookEndSuperscript(int, const unsigned int*);
-    QByteArray hookBeginNoNewline(int, const unsigned int*);
-    QByteArray hookEndNoNewline(int, const unsigned int*);
     QByteArray hookBeginEmphasis(int, const unsigned int*);
     QByteArray hookEndEmphasis(int, const unsigned int*);
     QByteArray hookBeginCandidate(int, const unsigned int*);
@@ -92,8 +85,6 @@ public:
     QByteArray hookEndCandidateLeaf(int, const unsigned int*);
     QByteArray hookBeginReference(int, const unsigned int*);
     QByteArray hookEndReference(int, const unsigned int*);
-    QByteArray hookBeginKeyword(int, const unsigned int*);
-    QByteArray hookEndKeyword(int, const unsigned int*);
     QByteArray hookNarrowFont(int, const unsigned int*);
     QByteArray hookWideFont(int, const unsigned int*);
     QByteArray hookISO8859_1(int, const unsigned int*);
@@ -140,7 +131,6 @@ public:
 
     QList <EB_Subbook_Code> subBookList;
     QList <EB_Subbook_Code> subAppendixList;
-
 };
 
 #endif

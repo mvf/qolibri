@@ -236,15 +236,6 @@ QByteArray EbCore::fontToHtmlBStr(const QByteArray &fname,
 {
     QByteArray ret = "<img src=\"" + ebCache.fontCacheRel.toUtf8() + fname  +
                      "\"";
-
-#if 0
-    if (fontSize != 16) {
-        int h = fontSize;
-        int w = (n_or_w == NarrowCode) ? (h / 2) : h;
-        ret += " height=" + numToBStr(h) +
-               " width=" + numToBStr(w);
-    }
-#endif
     ret += " />";
     return ret;
 }
@@ -264,21 +255,6 @@ bool EbCore::makeBinaryFile(const QString &fname, const QByteArray &data)
 }
 
 // Hook Callbacks
-QByteArray EbCore::hookInitialize(int, const unsigned int*)
-{
-    qDebug() << "HOOK_INITIALIZE";
-    return QByteArray();
-}
-QByteArray EbCore::hookBeginNarrow(int, const unsigned int*)
-{
-    qDebug() << "HOOK_BEGIN_NARROW";
-    return QByteArray();
-}
-QByteArray EbCore::hookEndNarrow(int, const unsigned int*)
-{
-    qDebug() << "HOOK_END_NARROW";
-    return QByteArray();
-}
 QByteArray EbCore::hookBeginSubscript(int, const unsigned int*)
 {
     return QByteArrayLiteral("<sub>");
@@ -287,10 +263,6 @@ QByteArray EbCore::hookEndSubscript(int, const unsigned int*)
 {
     return QByteArrayLiteral("</sub>");
 }
-QByteArray EbCore::hookNewline(int, const unsigned int*)
-{
-    return "<br>";
-}
 QByteArray EbCore::hookBeginSuperscript(int, const unsigned int*)
 {
     return "<sup>";
@@ -298,16 +270,6 @@ QByteArray EbCore::hookBeginSuperscript(int, const unsigned int*)
 QByteArray EbCore::hookEndSuperscript(int, const unsigned int*)
 {
     return "</sup>";
-}
-QByteArray EbCore::hookBeginNoNewline(int, const unsigned int*)
-{
-    qDebug() << "HOOK_BEGIN_NO_NEWLINE";
-    return QByteArray();
-}
-QByteArray EbCore::hookEndNoNewline(int, const unsigned int*)
-{
-    qDebug() << "HOOK_END_NO_NEWLINE";
-    return QByteArray();
 }
 QByteArray EbCore::hookBeginEmphasis(int, const unsigned int*)
 {
@@ -352,14 +314,6 @@ QByteArray EbCore::hookEndReference(int, const unsigned int *argv)
                      numToBStr(argv[1]) + '?' + numToBStr(argv[2]);
     refList << ref;
     return "</a>";
-}
-QByteArray EbCore::hookBeginKeyword(int, const unsigned int*)
-{
-    return "<span class=key>";
-}
-QByteArray EbCore::hookEndKeyword(int, const unsigned int*)
-{
-    return "</span>";
 }
 QByteArray EbCore::hookNarrowFont(int, const unsigned int *argv)
 {

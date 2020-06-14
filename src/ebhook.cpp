@@ -41,15 +41,10 @@
     }
 
 
-//HOOK_FUNC(BEGIN_NARROW, EbCore, hookBeginNarrow)
-//HOOK_FUNC(END_NARROW, EbCore, hookEndNarrow)
 HOOK_FUNC(BEGIN_SUBSCRIPT, EbCore, hookBeginSubscript)
 HOOK_FUNC(END_SUBSCRIPT, EbCore, hookEndSubscript)
-//HOOK_FUNC(NEWLINE, EbCore, hookNewline)
 HOOK_FUNC(BEGIN_SUPERSCRIPT, EbCore, hookBeginSuperscript)
 HOOK_FUNC(END_SUPERSCRIPT, EbCore, hookEndSuperscript)
-//HOOK_FUNC(BEGIN_NO_NEWLINE, EbCore, hookBeginNoNewline)
-//HOOK_FUNC(END_NO_NEWLINE, EbCore, hookEndNoNewline)
 HOOK_FUNC(BEGIN_EMPHASIS, EbCore, hookBeginEmphasis)
 HOOK_FUNC(END_EMPHASIS, EbCore, hookEndEmphasis)
 HOOK_FUNC(BEGIN_CANDIDATE, EbCore, hookBeginCandidate)
@@ -58,8 +53,6 @@ HOOK_FUNC(END_CANDIDATE_GROUP2, EbCore, hookEndCandidateGroupMENU)
 HOOK_FUNC(END_CANDIDATE_LEAF, EbCore, hookEndCandidateLeaf)
 HOOK_FUNC(BEGIN_REFERENCE, EbCore, hookBeginReference)
 HOOK_FUNC(END_REFERENCE, EbCore, hookEndReference)
-//HOOK_FUNC(BEGIN_KEYWORD, EbCore, hookBeginKeyword)
-//HOOK_FUNC(END_KEYWORD, EbCore, hookEndKeyword)
 HOOK_FUNC(NARROW_FONT, EbCore, hookNarrowFont)
 HOOK_FUNC(WIDE_FONT, EbCore, hookWideFont)
 HOOK_FUNC(ISO8859_1, EbCore, hookISO8859_1)
@@ -92,15 +85,10 @@ HOOK_FUNC(END_CLICKABLE_AREA, EbCore, hookEndClickableArea)
 #define HOOK_S(code) { EB_HOOK_##code, Hook##code }
 
 EB_Hook hooks[] = {
-    //HOOK_S(BEGIN_NARROW),
-    //HOOK_S(END_NARROW),
     HOOK_S(BEGIN_SUBSCRIPT),
     HOOK_S(END_SUBSCRIPT),
-    //HOOK_S(NEWLINE),
     HOOK_S(BEGIN_SUPERSCRIPT),
     HOOK_S(END_SUPERSCRIPT),
-    //HOOK_S(BEGIN_NO_NEWLINE),
-    //HOOK_S(END_NO_NEWLINE),
     HOOK_S(BEGIN_EMPHASIS),
     HOOK_S(END_EMPHASIS),
     HOOK_S(BEGIN_CANDIDATE),
@@ -108,8 +96,6 @@ EB_Hook hooks[] = {
     HOOK_S(END_CANDIDATE_LEAF),
     HOOK_S(BEGIN_REFERENCE),
     HOOK_S(END_REFERENCE),
-    //HOOK_S(BEGIN_KEYWORD),
-    //HOOK_S(END_KEYWORD),
     HOOK_S(NARROW_FONT),
     HOOK_S(WIDE_FONT),
     HOOK_S(ISO8859_1),
@@ -141,24 +127,15 @@ EB_Hook hooks[] = {
     { EB_HOOK_NULL, NULL }
 };
 EB_Hook hooks_cand[] = {
-    //HOOK_S(BEGIN_NARROW),
-    //HOOK_S(END_NARROW),
     HOOK_S(BEGIN_SUBSCRIPT),
     HOOK_S(END_SUBSCRIPT),
-    //HOOK_S(NEWLINE),
     HOOK_S(BEGIN_SUPERSCRIPT),
     HOOK_S(END_SUPERSCRIPT),
-    //HOOK_S(BEGIN_NO_NEWLINE),
-    //HOOK_S(END_NO_NEWLINE),
     HOOK_S(BEGIN_EMPHASIS),
     HOOK_S(END_EMPHASIS),
-    //HOOK_S(BEGIN_CANDIDATE),
-    //HOOK_S(END_CANDIDATE_GROUP),
     HOOK_S(END_CANDIDATE_LEAF),
     HOOK_S(BEGIN_REFERENCE),
     HOOK_S(END_REFERENCE),
-    //HOOK_S(BEGIN_KEYWORD),
-    //HOOK_S(END_KEYWORD),
     HOOK_S(NARROW_FONT),
     HOOK_S(WIDE_FONT),
     HOOK_S(ISO8859_1),
