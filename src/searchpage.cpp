@@ -46,7 +46,7 @@ RET_SEARCH SearchPage::doSearch(const Query& query, PageItems &items, int &itemI
 
     items.addHItem(0, "TOP", "tmp");
 
-    EBook eb;
+    EBook eb(HookText);
     int req_cnt = query.method.limitBook;
     bool break_flag = false;
 

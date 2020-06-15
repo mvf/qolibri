@@ -21,7 +21,7 @@ RET_SEARCH InfoPage::search(const Query& query)
     items.composeHLine(1, "TOP", book->name());
 
     bookBrowser_->addBookList(book);
-    EBook eb;
+    EBook eb(HookText);
     if (eb.initBook(book->path(), book->bookNo()) < 0) {
         return NO_BOOK;
     }

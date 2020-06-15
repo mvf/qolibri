@@ -41,7 +41,7 @@ RET_SEARCH AllPage::readPage(int page)
     }
     QTreeWidgetItem *top_tree = item.curItem();
 
-    EbAll eb;
+    EbAll eb(HookText);
     if(eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
        0) {
         return NO_BOOK;
@@ -120,7 +120,7 @@ void AllPage::changePage(QTreeWidgetItem *item, int)
 
 RET_SEARCH AllPage::initSeqHits()
 {
-    EbAll eb;
+    EbAll eb(HookText);
 
     if (eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
         0)

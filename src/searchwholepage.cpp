@@ -13,7 +13,7 @@ SearchWholePage::SearchWholePage(QWidget *parent, const SearchMethod &method)
 RET_SEARCH SearchWholePage::search(const Query& query)
 {
     RET_SEARCH retStatus = NORMAL;
-    EbAll eb;
+    EbAll eb(HookText);
 
     int search_total = 0;
     int book_count = 0;

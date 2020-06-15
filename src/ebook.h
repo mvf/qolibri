@@ -41,7 +41,7 @@ public:
 class EBook : public EbCore
 {
 public:
-    EBook(HookMode hmode = HookText);
+    EBook(HookMode hmode);
     ~EBook();
 
     int searchQuery(int maxcnt, const QString &query, SearchType type);
@@ -79,7 +79,7 @@ private:
 class EbAll : public EBook
 {
 public:
-    EbAll(HookMode mode=HookText) : EBook(mode) {}
+    EbAll(HookMode mode) : EBook(mode) {}
     ~EbAll() {}
 
     int hitFull(int maxcnt);
