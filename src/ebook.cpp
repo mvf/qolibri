@@ -18,7 +18,6 @@
 ***************************************************************************/
 
 #include "ebook.h"
-#include "textcodec.h"
 
 #include <eb/eb.h>
 #include <eb/binary.h>

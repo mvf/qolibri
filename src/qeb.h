@@ -44,6 +44,8 @@ protected:
     EB_BookList bookList;
     EB_Error_Code lastError;
 
+    static QTextCodec *const eucCodec;
+
 public:
     QEb() {}
     ~QEb() {}

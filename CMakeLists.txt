@@ -91,8 +91,6 @@ add_executable(qolibri MACOSX_BUNDLE WIN32
     src/server.h
     src/ssheetsetting.cpp
     src/ssheetsetting.h
-    src/textcodec.cpp
-    src/textcodec.h
     src/toolbar.cpp
     src/toolbar.h
     src/treescrollpopup.cpp

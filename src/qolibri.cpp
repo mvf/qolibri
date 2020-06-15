@@ -24,7 +24,6 @@
 #include "model.h"
 #include "server.h"
 #include "client.h"
-#include "textcodec.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

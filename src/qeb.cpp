@@ -18,7 +18,6 @@
 ***************************************************************************/
 
 #include "qeb.h"
-#include "textcodec.h"
 
 #include <QSize>
 #include <QStringList>
@@ -44,6 +43,8 @@ QByteArray encodePath(const QString &path)
 }
 
 } // anonymous namespace
+
+QTextCodec *const QEb::eucCodec = QTextCodec::codecForName("EUC-JP");
 
 EB_Error_Code QEb::bind(const QString &path)
 {
@@ -97,7 +98,7 @@ QString QEb::subbookTitle()
         dispError("eb_subbook_title", ecode);
         return QString();
     }
-    return eucToUtf(title);
+    return eucCodec->toUnicode(title);
 }
 
 EB_Error_Code QEb::setSubbook(EB_Subbook_Code code)
@@ -110,21 +111,21 @@ EB_Error_Code QEb::setSubbook(EB_Subbook_Code code)
 
 EB_Error_Code QEb::searchWord(const QString &word)
 {
-    EB_Error_Code ecode = eb_search_word(&book, utfToEuc(word));
+    EB_Error_Code ecode = eb_search_word(&book, eucCodec->fromUnicode(word));
     if (ecode != EB_SUCCESS)
         dispError("eb_search_word", ecode);
     return ecode;
 }
 EB_Error_Code QEb::searchEndword(const QString &word)
 {
-    EB_Error_Code ecode = eb_search_endword(&book, utfToEuc(word));
+    EB_Error_Code ecode = eb_search_endword(&book, eucCodec->fromUnicode(word));
     if (ecode != EB_SUCCESS)
         dispError("eb_search_endword", ecode);
     return ecode;
 }
 EB_Error_Code QEb::searchExactword(const QString &word)
 {
-    EB_Error_Code ecode = eb_search_exactword(&book, utfToEuc(word));
+    EB_Error_Code ecode = eb_search_exactword(&book, eucCodec->fromUnicode(word));
     if (ecode != EB_SUCCESS)
         dispError("eb_search_exactword", ecode);
     return ecode;
@@ -133,7 +134,7 @@ QList <QByteArray> QEb::toEucList(const QStringList &words)
 {
     QList <QByteArray> blist;
     for (int i = 0; i < words.count(); i++)
-        blist << utfToEuc(words[i]);
+        blist << eucCodec->fromUnicode(words[i]);
     return blist;
 }
 EB_Error_Code QEb::searchKeyword(const QStringList &words)
@@ -288,7 +289,7 @@ QString QEb::currentCandidate()
     if (characterCode() == EB_CHARCODE_ISO8859_1)
         return QString::fromLatin1(s);
     else
-        return eucToUtf(s);
+        return eucCodec->toUnicode(s);
 }
 
 EB_Error_Code QEb::setHooks(const EB_Hook *hooks)
@@ -624,7 +625,7 @@ QString QEb::appendixPath()
         dispError("eb_appendix_path", ecode);
         return QString();
     }
-    return eucToUtf(path);
+    return eucCodec->toUnicode(path);
 }
 QList <EB_Subbook_Code> QEb::appendixSubbookList()
 {
@@ -648,7 +649,7 @@ QString QEb::appendixSubbookDirectory()
         dispError("eb_appendix_subbook_directory", ecode);
         return QString();
     }
-    return eucToUtf(dir);
+    return eucCodec->toUnicode(dir);
 }
 bool QEb::isHaveAppendixSubbook(EB_Subbook_Code code)
 {

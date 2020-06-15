@@ -19,7 +19,6 @@
 
 #include "qeb.h"
 #include "ebcore.h"
-#include "textcodec.h"
 
 #include <QFile>
 #include <QFileInfo>
@@ -378,7 +377,7 @@ QByteArray EbCore::hookISO8859_1(int, const unsigned int*)
     qWarning() << "HOOK_ISO08858_1";
     return QByteArray();
 }
-QByteArray EbCore::hookNarrowJISX0208(int, const unsigned int *argv)
+QByteArray EbCore::hookNarrowJISX0208(int argc, const unsigned int *argv)
 {
     QString str;
 
@@ -391,22 +390,12 @@ QByteArray EbCore::hookNarrowJISX0208(int, const unsigned int *argv)
         return str.toUtf8();
     }
 
-    char code[3];
-    code[0] = argv[0] >> 8;
-    code[1] = argv[0] & 0xff;
-    code[2] = '\0';
-
-    str = eucToUtf(code);
-    //qDebug() << subbookTitle() << "Not narrowed:" << str << QString::number(argv[0],16);
-    return str.toUtf8();
+    return hookWideJISX0208(argc, argv);
 }
 QByteArray EbCore::hookWideJISX0208(int, const unsigned int *argv)
 {
-    char code[3];
-    code[0] = argv[0] >> 8;
-    code[1] = argv[0] & 0xff;
-    code[2] = '\0';
-    return eucToUtf(code).toUtf8();
+    const char code[] = { char(argv[0] >> 8), char(argv[0] & 0xff) };
+    return eucCodec->toUnicode(code, std::size(code)).toUtf8();
 }
 QByteArray EbCore::hookGB2312(int, const unsigned int*)
 {
