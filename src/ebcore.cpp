@@ -183,12 +183,6 @@ QString EbCore::text(const EB_Position &pos, bool hflag)
             x = str.indexOf(f, x);
             str.replace(x, f.length(), refList[i]);
         }
-        x = 0;
-        for (int i = 0; i < mpegList.count(); i++) {
-            const QString f = "<M" + numToStr(i) + "M>";
-            x = str.indexOf(f, x);
-            str.replace(x, f.length(), mpegList[i]);
-        }
     }
 
     return str.trimmed();
@@ -545,8 +539,8 @@ QByteArray EbCore::hookEndWave(int, const unsigned int*)
 }
 QByteArray EbCore::hookBeginMpeg(int, const unsigned int*)
 {
-    return "<a class=mpg href=\"mpeg?<M" + numToBStr(mpegList.count()) +
-           "M>\">";
+    return "<a class=mpg href=\"mpeg?<R" + numToBStr(refList.count()) +
+           "R>\">";
 }
 QByteArray EbCore::hookEndMpeg(int, const unsigned int *argv)
 {
@@ -562,7 +556,7 @@ QByteArray EbCore::hookEndMpeg(int, const unsigned int *argv)
             QFile::copy(path, dst_file);
         ebCache.mpegCacheList << fname;
     }
-    mpegList << dst_file.toUtf8();
+    refList << dst_file.toUtf8();
     return QByteArray();
 }
 QByteArray EbCore::hookBeginGraphicReference(int, const unsigned int*)

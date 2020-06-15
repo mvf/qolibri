@@ -120,7 +120,6 @@ public:
     QMap<uint,QString> eucWideToUtfNarrow;
     QHash<QString, QString> *fontList;
     QList <QByteArray> refList;
-    QList <QByteArray> mpegList;
     QList <CandItem> candList;
     int refPosition;
     int fontSize;
