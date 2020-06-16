@@ -98,10 +98,6 @@ public:
     {
         return bookWidget_;
     }
-    inline QListWidget *groupWidget() const
-    {
-        return groupWidget_;
-    }
     void changeGroupList(QList<Group*> *gList);
     void changeGroupNoSignal(int index);
 
@@ -157,15 +153,6 @@ public:
     inline void changeCurrentTab(QWidget *w)
     {
         tabWidget->setCurrentWidget(w);
-    }
-    inline QListWidget *bookListWidget() const
-    {
-        return groupTab->bookWidget()->bookListWidget();
-    }
-
-    inline QListWidget *groupWidget() const
-    {
-        return groupTab->groupWidget();
     }
     inline QListWidget *historyListWidget() const
     {
