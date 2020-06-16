@@ -60,11 +60,8 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
     QEb::initialize();
 
     bookView = new BookView(this, tr("Ctrl+W"));
-    bookViewSlots();
 
     groupDock = new GroupDock(this, model);
-    groupDockSlots();
-
     groupDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
     createActions();
@@ -112,6 +109,8 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
     GlobalEventFilter *gef = new GlobalEventFilter();
     qApp->installEventFilter(gef);
     connect(gef, SIGNAL(focusSearch()), this, SLOT(focusSearch()));
+    bookViewSlots();
+    groupDockSlots();
 }
 
 void MainWindow::createActions()
@@ -634,13 +633,6 @@ void MainWindow::toggleNewBrowser(bool check)
     //qDebug() << "toggleNewBrowser";
     bookView->setPopupBrowser(check);
 }
-
-
-void MainWindow::setDockOff()
-{
-    toggleDockAct->setChecked(false);
-}
-
 
 void MainWindow::toggleBar()
 {
@@ -1393,7 +1385,7 @@ void MainWindow::bookViewSlots()
 
 void MainWindow::groupDockSlots()
 {
-    connect(groupDock, SIGNAL(closed()), SLOT(setDockOff()));
+    connect(groupDock, &QDockWidget::visibilityChanged, toggleDockAct, &QAction::setChecked);
     connect(groupDock, SIGNAL(searchRequested(QString, SearchMethod)),
             SLOT(viewSearch(QString, SearchMethod)));
     connect(groupDock, SIGNAL(webRequested(QString, QString)),

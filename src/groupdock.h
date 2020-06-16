@@ -198,14 +198,7 @@ public slots:
         groupTab->changeGroupNoSignal(index);
     }
 
-protected:
-    void closeEvent(QCloseEvent*)
-    {
-        emit closed();
-    }
-
 signals:
-    void closed();
     // from Gtab
     void searchRequested(const QString &name, const SearchMethod &method );
     void webRequested(const QString &name, const QString &url );

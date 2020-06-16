@@ -433,5 +433,4 @@ GroupDock::GroupDock(QWidget *parent, Model *model_)
     setWidget(tabWidget);
 
     changeGroupList();
-    //connect(this, SIGNAL(closed()), parent, SLOT(closedDock()));
 }

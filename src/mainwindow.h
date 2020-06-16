@@ -104,7 +104,6 @@ private slots:
     void checkSound();
     void stopSound();
     void clearCache();
-    void setDockOff();
 
     void checkNextSearch();
     void searchClientText(const QString &str, bool raiseWindow=true);
