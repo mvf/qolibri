@@ -39,6 +39,16 @@ PageWidget::PageWidget(QWidget *parent, const SearchMethod &method)
             SLOT(popupSlide(QPoint)));
 }
 
+void PageWidget::collapseBookTree()
+{
+    try {
+        QTreeWidgetItem* root = bookTree->topLevelItem(0);
+        for (int i = 0; i < root->childCount(); i++) {
+                root->child(i)->setExpanded(false);
+        }
+    } catch (...) {};
+}
+
 bool PageWidget::checkStop()
 {
     QEventLoop().processEvents();
