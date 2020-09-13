@@ -651,7 +651,7 @@ void MainWindow::toggleBar()
 
 void MainWindow::changeOptSearchButtonText(const QString &str)
 {
-    QStringList list = str.split(QRegExp("\\W+"), Qt::SkipEmptyParts);
+    QStringList list = str.split(QRegExp("\\W+"), QString::SkipEmptyParts);
 
     if (list.count() > 0) {
         optSearchButton->setText(list[0]);
@@ -884,7 +884,7 @@ void MainWindow::pasteMethod(const QString &str, const SearchMethod &m)
     if (m.direction == WholeRead || m.direction == MenuRead ||
         m.direction == BookInfo ) {
     } else {
-        QStringList list = str.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
+        QStringList list = str.split(QRegExp("\\s+"), QString::SkipEmptyParts);
         searchTextEdit->setText(list.join(" "));
     }
 }
