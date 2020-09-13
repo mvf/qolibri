@@ -16,6 +16,8 @@ public:
 
     virtual RET_SEARCH search(const Query&) = 0;
 
+    void collapseBookTree();
+
     void zoomIn();
     void zoomOut();
     BookBrowser* bookBrowser()
