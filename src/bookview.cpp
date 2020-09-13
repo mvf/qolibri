@@ -129,6 +129,10 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
 
     RET_SEARCH retStatus = page->search(query);
 
+    // Collapse the book tree by default.
+    // This makes jumping between books easier.
+    page->collapseBookTree();
+
     QWidget *focus_page = 0;
     BookView *view = this;
     if (retStatus == NORMAL) {
