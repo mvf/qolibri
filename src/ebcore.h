@@ -52,18 +52,15 @@ public:
     QString getMenu();
     int initBook(const QString &path, int subbook=-1, int refpos=0);
     int initSubBook(int index, int refpos=0);
-    void initHook(int fsize, QHash<QString, QString> *flist, int indent_offset = 50)
+    void initHook(int fsize, QHash<QString, QString> *flist)
     {
         ebCache.init(subbookTitle());
-        indentOffset = indent_offset;
         fontSize = fsize;
         fontList = flist;
-        current_indent = 0;
     }
 
-
     QString text(const EB_Position &pos, bool hflag=true);
-    QString heading(const EB_Position &pos, bool hflag=true);
+    QString heading(const EB_Position &pos);
     QList <CandItem> candidate(const EB_Position &pos, QString *txt);
 
     QByteArray errorBStr(const QByteArray &error_message);
@@ -76,17 +73,10 @@ public:
         { return numToBStr(p1) + 'x' + numToBStr(p2) + '.' + ftype; }
 
 // Hook Callbacks
-    QByteArray hookInitialize(int, const unsigned int*);
-    QByteArray hookBeginNarrow(int, const unsigned int*);
-    QByteArray hookEndNarrow(int, const unsigned int*);
     QByteArray hookBeginSubscript(int, const unsigned int*);
     QByteArray hookEndSubscript(int, const unsigned int*);
-    QByteArray hookSetIndent(int, const unsigned int*);
-    QByteArray hookNewline(int, const unsigned int*);
     QByteArray hookBeginSuperscript(int, const unsigned int*);
     QByteArray hookEndSuperscript(int, const unsigned int*);
-    QByteArray hookBeginNoNewline(int, const unsigned int*);
-    QByteArray hookEndNoNewline(int, const unsigned int*);
     QByteArray hookBeginEmphasis(int, const unsigned int*);
     QByteArray hookEndEmphasis(int, const unsigned int*);
     QByteArray hookBeginCandidate(int, const unsigned int*);
@@ -95,8 +85,6 @@ public:
     QByteArray hookEndCandidateLeaf(int, const unsigned int*);
     QByteArray hookBeginReference(int, const unsigned int*);
     QByteArray hookEndReference(int, const unsigned int*);
-    QByteArray hookBeginKeyword(int, const unsigned int*);
-    QByteArray hookEndKeyword(int, const unsigned int*);
     QByteArray hookNarrowFont(int, const unsigned int*);
     QByteArray hookWideFont(int, const unsigned int*);
     QByteArray hookISO8859_1(int, const unsigned int*);
@@ -132,12 +120,9 @@ public:
     QMap<uint,QString> eucWideToUtfNarrow;
     QHash<QString, QString> *fontList;
     QList <QByteArray> refList;
-    QList <QByteArray> mpegList;
     QList <CandItem> candList;
     int refPosition;
     int fontSize;
-    int indentOffset;
-    int current_indent;
     int monoWidth;
     int monoHeight;
 
@@ -145,7 +130,6 @@ public:
 
     QList <EB_Subbook_Code> subBookList;
     QList <EB_Subbook_Code> subAppendixList;
-
 };
 
 #endif

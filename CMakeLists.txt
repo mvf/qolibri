@@ -91,8 +91,6 @@ add_executable(qolibri MACOSX_BUNDLE WIN32
     src/server.h
     src/ssheetsetting.cpp
     src/ssheetsetting.h
-    src/textcodec.cpp
-    src/textcodec.h
     src/toolbar.cpp
     src/toolbar.h
     src/treescrollpopup.cpp
@@ -108,6 +106,7 @@ if(QOLIBRI_EB_SOURCE_DIR)
     add_subdirectory("${QOLIBRI_EB_SOURCE_DIR}" eb)
 endif()
 
+target_compile_definitions(qolibri PRIVATE QT_USE_QSTRINGBUILDER)
 target_include_directories(qolibri PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 set(QOLIBRI_FIXED_POPUP OFF CACHE BOOL "Show popups fixed at window height")
@@ -134,6 +133,10 @@ target_compile_definitions(qolibri PRIVATE QOLIBRI_VERSION_STR="${QOLIBRI_VERSIO
 
 set(QOLIBRI_WEBSITE "https://github.com/ludios/qolibri" CACHE STRING "The URL of the website. Adds a hyperlink to the about dialog if non-empty.")
 target_compile_definitions(qolibri PRIVATE QOLIBRI_WEBSITE="${QOLIBRI_WEBSITE}")
+
+if(NOT MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "[Cc][Ll][Aa][Nn][Gg]|[Gg][Nn][Uu]")
+    target_compile_options(qolibri PRIVATE -pedantic)
+endif ()
 
 if (APPLE)
     set_source_files_properties(images/qolibri.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")

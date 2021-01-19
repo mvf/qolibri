@@ -18,7 +18,6 @@
 ***************************************************************************/
 
 #include "ebook.h"
-#include "textcodec.h"
 
 #include <eb/eb.h>
 #include <eb/binary.h>
@@ -58,7 +57,7 @@ int EBook::searchQuery(int maxcnt, const QString& query, SearchType type)
     case SearchKeyWord:
     case SearchCrossWord:
     {
-        words = query.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+        words = query.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
         return hitMultiWord(maxcnt, words, type);
     }
     default:

@@ -98,10 +98,10 @@ void ReferencePopup::showEvent(QShowEvent*)
 
 QString ReferencePopup::browserText(Book *book, const EB_Position &pos)
 {
-    EBook eb;
+    EBook eb(HookText);
 
     eb.initBook(book->path(), book->bookNo());
-    eb.initHook(16, book->fontList(), CONF->indentOffset);
+    eb.initHook(16, book->fontList());
     bookBrowser_->setSearchPaths(QStringList() << EbCache::cachePath);
     QString text = eb.text(pos);
     QString ttl;

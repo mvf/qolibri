@@ -41,12 +41,12 @@ RET_SEARCH AllPage::readPage(int page)
     }
     QTreeWidgetItem *top_tree = item.curItem();
 
-    EbAll eb;
+    EbAll eb(HookText);
     if(eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
        0) {
         return NO_BOOK;
     }
-    eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList(), CONF->indentOffset);
+    eb.initHook(bookBrowser_->fontSize(), method_.bookReader->fontList());
     bookBrowser_->addBookList(method_.bookReader);
 
     QTreeWidgetItem *current_item = top_tree;
@@ -120,7 +120,7 @@ void AllPage::changePage(QTreeWidgetItem *item, int)
 
 RET_SEARCH AllPage::initSeqHits()
 {
-    EbAll eb;
+    EbAll eb(HookText);
 
     if (eb.initBook(method_.bookReader->path(), method_.bookReader->bookNo()) <
         0)

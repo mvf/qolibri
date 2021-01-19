@@ -39,6 +39,7 @@
 #include <QDir>
 #include <QElapsedTimer>
 #include <QFontDialog>
+#include <QLocale>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QProcess>
@@ -59,11 +60,8 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
     QEb::initialize();
 
     bookView = new BookView(this, tr("Ctrl+W"));
-    bookViewSlots();
 
     groupDock = new GroupDock(this, model);
-    groupDockSlots();
-
     groupDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
     createActions();
@@ -111,6 +109,8 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
     GlobalEventFilter *gef = new GlobalEventFilter();
     qApp->installEventFilter(gef);
     connect(gef, SIGNAL(focusSearch()), this, SLOT(focusSearch()));
+    bookViewSlots();
+    groupDockSlots();
 }
 
 void MainWindow::createActions()
@@ -634,13 +634,6 @@ void MainWindow::toggleNewBrowser(bool check)
     bookView->setPopupBrowser(check);
 }
 
-
-void MainWindow::setDockOff()
-{
-    toggleDockAct->setChecked(false);
-}
-
-
 void MainWindow::toggleBar()
 {
     if (searchBar->isVisible()) {
@@ -658,7 +651,7 @@ void MainWindow::toggleBar()
 
 void MainWindow::changeOptSearchButtonText(const QString &str)
 {
-    QStringList list = str.split(QRegExp("\\W+"), QString::SkipEmptyParts);
+    QStringList list = str.split(QRegExp("\\W+"), Qt::SkipEmptyParts);
 
     if (list.count() > 0) {
         optSearchButton->setText(list[0]);
@@ -891,7 +884,7 @@ void MainWindow::pasteMethod(const QString &str, const SearchMethod &m)
     if (m.direction == WholeRead || m.direction == MenuRead ||
         m.direction == BookInfo ) {
     } else {
-        QStringList list = str.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+        QStringList list = str.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
         searchTextEdit->setText(list.join(" "));
     }
 }
@@ -1312,7 +1305,7 @@ void MainWindow::connectClipboard(bool enable)
 
 void MainWindow::aboutQolibri()
 {
-    const QString gitCommitDate(QDateTime::fromString(QOLIBRI_GIT_COMMIT_DATE, Qt::ISODate).toString(Qt::DefaultLocaleShortDate));
+    const QString gitCommitDate(QLocale().toString(QDateTime::fromString(QOLIBRI_GIT_COMMIT_DATE, Qt::ISODate), QLocale::ShortFormat));
     const QUrl website(QOLIBRI_WEBSITE, QUrl::StrictMode);
     QString msg(tr("<h2>qolibri</h2>"
                    "<h3>EPWING Dictionary/Book Viewer</h3>"
@@ -1392,7 +1385,7 @@ void MainWindow::bookViewSlots()
 
 void MainWindow::groupDockSlots()
 {
-    connect(groupDock, SIGNAL(closed()), SLOT(setDockOff()));
+    connect(groupDock, &QDockWidget::visibilityChanged, toggleDockAct, &QAction::setChecked);
     connect(groupDock, SIGNAL(searchRequested(QString, SearchMethod)),
             SLOT(viewSearch(QString, SearchMethod)));
     connect(groupDock, SIGNAL(webRequested(QString, QString)),

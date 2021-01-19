@@ -19,7 +19,6 @@
 
 #include "qeb.h"
 #include "ebcore.h"
-#include "textcodec.h"
 
 #include <QFile>
 #include <QFileInfo>
@@ -184,30 +183,22 @@ QString EbCore::text(const EB_Position &pos, bool hflag)
             x = str.indexOf(f, x);
             str.replace(x, f.length(), refList[i]);
         }
-        x = 0;
-        for (int i = 0; i < mpegList.count(); i++) {
-            const QString f = "<M" + numToStr(i) + "M>";
-            x = str.indexOf(f, x);
-            str.replace(x, f.length(), mpegList[i]);
-        }
     }
 
     return str.trimmed();
 }
 
-QString EbCore::heading(const EB_Position &pos, bool hflag)
+QString EbCore::heading(const EB_Position &pos)
 {
 
     if (seekText(pos) != EB_SUCCESS) {
         return QString();
     }
 
-    QString str = readHeading((void*)this, hflag);
-    if (hflag) {
-        for (int i = 0; i < refList.count(); i++) {
-            QString f = "<R" + numToStr(i) + "R>";
-            str.replace(f, refList[i]);
-        }
+    QString str = readHeading((void*)this);
+    for (int i = 0; i < refList.count(); i++) {
+        QString f = "<R" + numToStr(i) + "R>";
+        str.replace(f, refList[i]);
     }
     return str.trimmed();
 }
@@ -236,15 +227,6 @@ QByteArray EbCore::fontToHtmlBStr(const QByteArray &fname,
 {
     QByteArray ret = "<img src=\"" + ebCache.fontCacheRel.toUtf8() + fname  +
                      "\"";
-
-#if 0
-    if (fontSize != 16) {
-        int h = fontSize;
-        int w = (n_or_w == NarrowCode) ? (h / 2) : h;
-        ret += " height=" + numToBStr(h) +
-               " width=" + numToBStr(w);
-    }
-#endif
     ret += " />";
     return ret;
 }
@@ -264,21 +246,6 @@ bool EbCore::makeBinaryFile(const QString &fname, const QByteArray &data)
 }
 
 // Hook Callbacks
-QByteArray EbCore::hookInitialize(int, const unsigned int*)
-{
-    qDebug() << "HOOK_INITIALIZE";
-    return QByteArray();
-}
-QByteArray EbCore::hookBeginNarrow(int, const unsigned int*)
-{
-    qDebug() << "HOOK_BEGIN_NARROW";
-    return QByteArray();
-}
-QByteArray EbCore::hookEndNarrow(int, const unsigned int*)
-{
-    qDebug() << "HOOK_END_NARROW";
-    return QByteArray();
-}
 QByteArray EbCore::hookBeginSubscript(int, const unsigned int*)
 {
     return QByteArrayLiteral("<sub>");
@@ -287,23 +254,6 @@ QByteArray EbCore::hookEndSubscript(int, const unsigned int*)
 {
     return QByteArrayLiteral("</sub>");
 }
-QByteArray EbCore::hookSetIndent(int, const unsigned int* argv)
-{
-    const int new_indent = argv[1];
-    if (new_indent <= current_indent)
-        current_indent = 0;
-    QByteArray ret = "<span>";
-    for (int i = 0; i < (new_indent - current_indent); i++)
-        ret += "&nbsp;&nbsp;&nbsp;";
-    ret += "</span>";
-    current_indent = new_indent;
-    return ret;
-}
-
-QByteArray EbCore::hookNewline(int, const unsigned int*)
-{
-    return "<br>";
-}
 QByteArray EbCore::hookBeginSuperscript(int, const unsigned int*)
 {
     return "<sup>";
@@ -311,16 +261,6 @@ QByteArray EbCore::hookBeginSuperscript(int, const unsigned int*)
 QByteArray EbCore::hookEndSuperscript(int, const unsigned int*)
 {
     return "</sup>";
-}
-QByteArray EbCore::hookBeginNoNewline(int, const unsigned int*)
-{
-    qDebug() << "HOOK_BEGIN_NO_NEWLINE";
-    return QByteArray();
-}
-QByteArray EbCore::hookEndNoNewline(int, const unsigned int*)
-{
-    qDebug() << "HOOK_END_NO_NEWLINE";
-    return QByteArray();
 }
 QByteArray EbCore::hookBeginEmphasis(int, const unsigned int*)
 {
@@ -365,14 +305,6 @@ QByteArray EbCore::hookEndReference(int, const unsigned int *argv)
                      numToBStr(argv[1]) + '?' + numToBStr(argv[2]);
     refList << ref;
     return "</a>";
-}
-QByteArray EbCore::hookBeginKeyword(int, const unsigned int*)
-{
-    return "<span class=key>";
-}
-QByteArray EbCore::hookEndKeyword(int, const unsigned int*)
-{
-    return "</span>";
 }
 QByteArray EbCore::hookNarrowFont(int, const unsigned int *argv)
 {
@@ -439,7 +371,7 @@ QByteArray EbCore::hookISO8859_1(int, const unsigned int*)
     qWarning() << "HOOK_ISO08858_1";
     return QByteArray();
 }
-QByteArray EbCore::hookNarrowJISX0208(int, const unsigned int *argv)
+QByteArray EbCore::hookNarrowJISX0208(int argc, const unsigned int *argv)
 {
     QString str;
 
@@ -452,22 +384,12 @@ QByteArray EbCore::hookNarrowJISX0208(int, const unsigned int *argv)
         return str.toUtf8();
     }
 
-    char code[3];
-    code[0] = argv[0] >> 8;
-    code[1] = argv[0] & 0xff;
-    code[2] = '\0';
-
-    str = eucToUtf(code);
-    //qDebug() << subbookTitle() << "Not narrowed:" << str << QString::number(argv[0],16);
-    return str.toUtf8();
+    return hookWideJISX0208(argc, argv);
 }
 QByteArray EbCore::hookWideJISX0208(int, const unsigned int *argv)
 {
-    char code[3];
-    code[0] = argv[0] >> 8;
-    code[1] = argv[0] & 0xff;
-    code[2] = '\0';
-    return eucToUtf(code).toUtf8();
+    const char code[] = { char(argv[0] >> 8), char(argv[0] & 0xff) };
+    return eucCodec->toUnicode(code, std::size(code)).toUtf8();
 }
 QByteArray EbCore::hookGB2312(int, const unsigned int*)
 {
@@ -617,8 +539,8 @@ QByteArray EbCore::hookEndWave(int, const unsigned int*)
 }
 QByteArray EbCore::hookBeginMpeg(int, const unsigned int*)
 {
-    return "<a class=mpg href=\"mpeg?<M" + numToBStr(mpegList.count()) +
-           "M>\">";
+    return "<a class=mpg href=\"mpeg?<R" + numToBStr(refList.count()) +
+           "R>\">";
 }
 QByteArray EbCore::hookEndMpeg(int, const unsigned int *argv)
 {
@@ -634,7 +556,7 @@ QByteArray EbCore::hookEndMpeg(int, const unsigned int *argv)
             QFile::copy(path, dst_file);
         ebCache.mpegCacheList << fname;
     }
-    mpegList << dst_file.toUtf8();
+    refList << dst_file.toUtf8();
     return QByteArray();
 }
 QByteArray EbCore::hookBeginGraphicReference(int, const unsigned int*)

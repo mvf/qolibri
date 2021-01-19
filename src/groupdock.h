@@ -98,10 +98,6 @@ public:
     {
         return bookWidget_;
     }
-    inline QListWidget *groupWidget() const
-    {
-        return groupWidget_;
-    }
     void changeGroupList(QList<Group*> *gList);
     void changeGroupNoSignal(int index);
 
@@ -158,15 +154,6 @@ public:
     {
         tabWidget->setCurrentWidget(w);
     }
-    inline QListWidget *bookListWidget() const
-    {
-        return groupTab->bookWidget()->bookListWidget();
-    }
-
-    inline QListWidget *groupWidget() const
-    {
-        return groupTab->groupWidget();
-    }
     inline QListWidget *historyListWidget() const
     {
         return historyTab->listWidget();
@@ -211,14 +198,7 @@ public slots:
         groupTab->changeGroupNoSignal(index);
     }
 
-protected:
-    void closeEvent(QCloseEvent*)
-    {
-        emit closed();
-    }
-
 signals:
-    void closed();
     // from Gtab
     void searchRequested(const QString &name, const SearchMethod &method );
     void webRequested(const QString &name, const QString &url );

@@ -41,20 +41,20 @@ public:
 class EBook : public EbCore
 {
 public:
-    EBook(HookMode hmode = HookText);
+    EBook(HookMode hmode);
     ~EBook();
 
     int searchQuery(int maxcnt, const QString &query, SearchType type);
 
     // return number of Sub Book
-    QString hitText(int index, bool hook = true)
+    QString hitText(int index)
     {
-        return EbCore::text(hits[index].text, hook);
+        return EbCore::text(hits[index].text);
     }
 
-    QString hitHeading(int index, bool hook = true)
+    QString hitHeading(int index)
     {
-        return EbCore::heading(hits[index].heading, hook);
+        return EbCore::heading(hits[index].heading);
     }
 
     inline EB_Hit hit(int index)
@@ -79,7 +79,7 @@ private:
 class EbAll : public EBook
 {
 public:
-    EbAll(HookMode mode=HookText) : EBook(mode) {}
+    EbAll(HookMode mode) : EBook(mode) {}
     ~EbAll() {}
 
     int hitFull(int maxcnt);
