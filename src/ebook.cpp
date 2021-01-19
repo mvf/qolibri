@@ -19,12 +19,12 @@
 
 #include "ebook.h"
 
-#include <eb/eb.h>
-#include <eb/binary.h>
-#include <eb/text.h>
-#include <eb/font.h>
-#include <eb/appendix.h>
-#include <eb/error.h>
+#include <ebu/eb.h>
+#include <ebu/binary.h>
+#include <ebu/text.h>
+#include <ebu/font.h>
+#include <ebu/appendix.h>
+#include <ebu/error.h>
 
 const int HitsBufferSize = 10000;
 

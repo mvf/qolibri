@@ -3,7 +3,7 @@
 
 #include <QDebug>
 
-#include <eb/eb.h>
+#include <ebu/eb.h>
 
 BookBrowserPopup::BookBrowserPopup(QWidget *parent)
 : BookBrowser(parent)

@@ -24,13 +24,13 @@
 #include <QList>
 #include <QTextCodec>
 
-#include <eb/eb.h>
-#include <eb/text.h>
-#include <eb/binary.h>
-#include <eb/font.h>
-#include <eb/appendix.h>
-#include <eb/booklist.h>
-#include <eb/error.h>
+#include <ebu/eb.h>
+#include <ebu/text.h>
+#include <ebu/binary.h>
+#include <ebu/font.h>
+#include <ebu/appendix.h>
+#include <ebu/booklist.h>
+#include <ebu/error.h>
 
 #define toUTF(q_bytearray) \
     QTextCodec::codecForLocale()->toUnicode(q_bytearray)

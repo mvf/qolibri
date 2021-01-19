@@ -20,12 +20,12 @@
 #include "qeb.h"
 #include "ebcore.h"
 
-#include <eb/eb.h>
-#include <eb/binary.h>
-#include <eb/text.h>
-#include <eb/font.h>
-#include <eb/appendix.h>
-#include <eb/error.h>
+#include <ebu/eb.h>
+#include <ebu/binary.h>
+#include <ebu/text.h>
+#include <ebu/font.h>
+#include <ebu/appendix.h>
+#include <ebu/error.h>
 
 #define HOOK_FUNC(code,class_name,function) \
     EB_Error_Code Hook##code(EB_Book *book, EB_Appendix*, \

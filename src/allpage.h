@@ -3,7 +3,7 @@
 
 #include "pagewidget.h"
 
-#include <eb/eb.h>
+#include <ebu/eb.h>
 
 class AllPage : public PageWidget
 {

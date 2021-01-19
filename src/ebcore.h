@@ -25,8 +25,8 @@
 
 #include <QStack>
 
-#include <eb/eb.h>
-#include <eb/text.h>
+#include <ebu/eb.h>
+#include <ebu/text.h>
 
 extern EB_Hook hooks[];
 extern EB_Hook hooks_cand[];

@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QMenu>
 
-#include <eb/eb.h>
+#include <ebu/eb.h>
 
 BookBrowser::BookBrowser(QWidget *parent)
 : QTextBrowser(parent)

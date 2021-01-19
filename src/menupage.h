@@ -4,7 +4,7 @@
 #include "ebcore.h"
 #include "pagewidget.h"
 
-#include <eb/eb.h>
+#include <ebu/eb.h>
 
 class EbMenu;
 class PageItems;

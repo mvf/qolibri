@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include <eb/eb.h>
+#include <ebu/eb.h>
 
 class Book;
 class BookBrowser;

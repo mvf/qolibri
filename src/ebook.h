@@ -24,7 +24,7 @@
 
 #include <QTextCodec>
 
-#include <eb/eb.h>
+#include <ebu/eb.h>
 
 enum SearchType { SearchWord, SearchEndWord, SearchExactWord,
                   SearchKeyWord, SearchCrossWord };
