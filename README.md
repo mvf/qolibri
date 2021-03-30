@@ -28,8 +28,9 @@ following operating systems:
 
 ### Linux distributions
 
-- [Arch Linux](https://www.archlinux.org/): AUR: https://aur.archlinux.org/packages/qolibri/
+- [Arch Linux](https://www.archlinux.org/): [AUR](https://aur.archlinux.org/packages/qolibri/)
 - [Void Linux](https://voidlinux.org/): `xbps-install qolibri`
+- [openSUSE](https://www.opensuse.org/): `zypper in qolibri` [OBS](https://software.opensuse.org/package/qolibri)
 
 ### Building from source
 
