@@ -65,37 +65,3 @@ QString Query::toLogicString() const
 {
     return query;
 }
-
-QStringList stemWords(const QString &words)
-{
-    struct {
-        const char* suffix;
-        const char* stem;
-    } dict[] = {
-        {"ies",  "y"},
-        {"ied",  "y"},
-        {"es",  ""},
-        {"ting",  "te"},
-        {"ing",  ""},
-        {"ing",  "e"},
-        {"ed",  "e"},
-        {"ed",  ""},
-        {"id",  "y"},
-        {"ices",  "ex"},
-        {"ves",  "fe"},
-        {"s",  ""},
-    };
-
-    QStringList list;
-    for (size_t i=0; i<sizeof(dict)/sizeof(dict[0]); i++) {
-        QString suffix(dict[i].suffix);
-        if (words.endsWith(suffix, Qt::CaseInsensitive)) {
-            QString stem(dict[i].stem);
-            QString t(words);
-            t.chop(suffix.length());
-            t.append(stem);
-            list << t;
-        }
-    }
-    return list;
-}
