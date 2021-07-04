@@ -12,22 +12,9 @@ SearchPage::SearchPage(QWidget *parent, const SearchMethod &method)
 
 RET_SEARCH SearchPage::search(const Query& query)
 {
-    QStringList queries;
-    queries << query.query;
-    switch (query.method.direction) {
-    case ExactWordSearch:
-    case ForwardSearch:
-        queries << stemWords(query.query);
-        break;
-    default:
-        break;
-    }
-    RET_SEARCH retStatus = NOT_HIT;
     PageItems items(CONF->dictSheet);
     int itemIndex = 0;
-    foreach (const QString &q, queries) {
-        retStatus = doSearch(Query(q, query.method), items, itemIndex);
-    }
+    const RET_SEARCH retStatus = doSearch(query, items, itemIndex);
 
     bookTree->insertTopLevelItems(0, items.topItems());
     bookTree->setCurrentItem(bookTree->topLevelItem(0));
