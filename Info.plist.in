@@ -21,7 +21,7 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>@CMAKE_OSX_DEPLOYMENT_TARGET@</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2007-2020 BOP et al.</string>
+	<string>Copyright © 2007-2021 BOP et al.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
