@@ -1,4 +1,5 @@
 *.orig
 .*.sw?
 /*.user
+/*build*/
 /.idea/
