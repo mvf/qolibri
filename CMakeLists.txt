@@ -28,7 +28,6 @@ find_package(ZLIB REQUIRED)
 add_executable(qolibri MACOSX_BUNDLE WIN32
     images/qolibri.icns
     qolibri.qrc
-    qolibri.rc
     src/allpage.cpp
     src/allpage.h
     src/book.cpp
@@ -158,7 +157,11 @@ if (WIN32) # Includes Win64
         target_compile_definitions(qolibri PRIVATE QOLIBRI_EB_UTF8_PATHS)
     endif()
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/qolibri.manifest.in" "${CMAKE_CURRENT_BINARY_DIR}/qolibri.manifest" @ONLY)
-    target_sources(qolibri PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/qolibri.manifest")
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/qolibri.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/qolibri.rc" @ONLY)
+    target_sources(qolibri PRIVATE
+        "${CMAKE_CURRENT_BINARY_DIR}/qolibri.manifest"
+        "${CMAKE_CURRENT_BINARY_DIR}/qolibri.rc"
+    )
 endif()
 
 # Link translations into the binary
