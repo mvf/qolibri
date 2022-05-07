@@ -33,17 +33,16 @@
 #include "webview.h"
 
 #include <QApplication>
-#include <QAudioDeviceInfo>
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QDir>
 #include <QElapsedTimer>
 #include <QFontDialog>
 #include <QLocale>
+#include <QMediaPlayer>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QProcess>
-#include <QSound>
 #include <QStatusBar>
 #include <QTimer>
 #include <QToolBar>
@@ -89,7 +88,6 @@ MainWindow::MainWindow(Model *model_, const QString &s_text)
     }
 
     sound = NULL;
-    timer = NULL;
     if (model->groupList[0]->bookList().count() == 0) {
         QTimer::singleShot(0, this, SLOT(setBooks()));
     } else if (!s_text.isEmpty()) {
@@ -141,7 +139,6 @@ void MainWindow::createMenus()
 
     stopAct = fmenu->addAction(QIcon(":/images/stop.png"), tr("&Cancel"),
                                bookView, SLOT(stopSearch()), Qt::Key_Escape);
-    connect(stopAct, SIGNAL(triggered()), SLOT(stopSound()));
     stopAct->setEnabled(false);
     exitAct = fmenu->addAction(tr("E&xit"), this, SLOT(close()), tr("Ctrl+Q"));
     CONNECT_BUSY(exitAct);
@@ -959,19 +956,30 @@ void MainWindow::playSound(const QString &fileName)
 {
     if (!CONF->waveProcess.isEmpty()) {
         startProcess(CONF->waveProcess, QStringList(fileName));
-    } else if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) {
-        stopSound();
-        checkSound();
-        stopAct->setEnabled(true);
-        sound = new QSound(fileName, this);
-        sound->play();
-        timer = new QTimer(this);
-        connect(timer, SIGNAL(timeout()), SLOT(checkSound()));
-        timer->start(1000);
-    } else {
-        qWarning() << "Can't play sound" << CONF->waveProcess << fileName;
-        showStatus("Can't play sound");
+        return;
     }
+
+    if (!sound) {
+        sound = new QMediaPlayer(this);
+        connect(sound, &QMediaPlayer::stateChanged, [this](QMediaPlayer::State newState) {
+            stopAct->setEnabled(newState == QMediaPlayer::PlayingState);
+        });
+        connect(sound, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error), [this](QMediaPlayer::Error) {
+            if (auto const errorString{sound->errorString()}; !errorString.isEmpty())
+                processLabel->setText(tr("Internal audio playback failed: %1").arg(errorString));
+        });
+        connect(stopAct, &QAction::triggered, sound, &QMediaPlayer::stop);
+    }
+
+    if (sound->isAvailable()) {
+        sound->setMedia(QUrl::fromLocalFile(fileName));
+        sound->play();
+        return;
+    }
+
+    QMessageBox::warning(this, Program,
+                         tr("Internal audio player unavailable on this system.\n\n"
+                            "Please set an external audio player in the qolibri options."));
 }
 
 void MainWindow::playVideo(const QString &fileName)
@@ -1006,29 +1014,6 @@ void MainWindow::openExternalLink(const QString &url)
                             "%1\n\n"
                             "Please check the system's default browser settings "
                             "or set a custom browser in the qolibri options.").arg(url));
-}
-
-void MainWindow::checkSound()
-{
-    if (sound) {
-        if (sound->isFinished()) {
-            delete sound;
-            sound = NULL;
-            stopAct->setEnabled(false);
-        }
-    }
-    if (!sound && timer) {
-        timer->stop();
-        delete timer;
-        timer = NULL;
-    }
-}
-
-void MainWindow::stopSound()
-{
-    if (sound) {
-        sound->stop();
-    }
 }
 
 void MainWindow::addMark()
