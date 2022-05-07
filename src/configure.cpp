@@ -36,13 +36,6 @@ const int limitMenuHit_Def = 1000;
 const int indentOffset_Def = 30;
 const int portNo_Def = 5626;
 
-#if defined (Q_OS_MAC)
-const char* waveProcess_Def = "afplay";
-#elif defined (Q_OS_LINUX)
-const char* waveProcess_Def = "mpv";
-#else
-const char* waveProcess_Def = "";
-#endif
 const char* googleUrl_Def =
     "https://www.google.com/search?rls=ja-jp&ie=UTF-8&oe=UTF-8&q=";
 const char* wikipediaUrl_Def = "https://ja.wikipedia.org/wiki/";
@@ -70,7 +63,7 @@ void Configure::load()
     serverMode = conf.value("server_mode", serverMode_Def).toBool();
     convertFullwidth = conf.value("convert_fullwidth", convertFullwidth_Def).toBool();
     historyMax = conf.value("hist_max", historyMax_Def).toInt();
-    waveProcess = conf.value("wave_proc", waveProcess_Def).toString();
+    waveProcess = conf.value("wave_proc").toString();
     mpegProcess = conf.value("mpeg_proc").toString();
     browserProcess = conf.value("browser_proc").toString();
     googleUrl = conf.value("google_url", googleUrl_Def).toString();
@@ -141,7 +134,7 @@ void Configure::setDefault()
     beepSound = beepSound_Def;
     serverMode = serverMode_Def;
     historyMax = historyMax_Def;
-    waveProcess = waveProcess_Def;
+    waveProcess.clear();
     mpegProcess.clear();
     browserProcess.clear();
     googleUrl = googleUrl_Def;

@@ -29,9 +29,9 @@
 class QComboBox;
 class QLineEdit;
 class QLabel;
+class QMediaPlayer;
 class QSpinBox;
 class QSettings;
-class QSound;
 class QTimer;
 class QPushButton;
 class QMenu;
@@ -101,8 +101,6 @@ private slots:
     void playVideo(const QString &fileName);
     void openExternalLink(const QString &url);
     void processError();
-    void checkSound();
-    void stopSound();
     void clearCache();
 
     void checkNextSearch();
@@ -177,9 +175,8 @@ private:
 
     QPushButton *optSearchButton;
 
-    QSound *sound;
+    QMediaPlayer *sound;
     SearchDirection optDirection;
-    QTimer *timer;
     QTimer *clipboardsearchtimer;
     QStringList  clientText;
 
