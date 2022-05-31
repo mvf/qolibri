@@ -1,5 +1,6 @@
 *.orig
 .*.sw?
+.DS_Store
 /*.user
 /*build*/
 /.idea/
