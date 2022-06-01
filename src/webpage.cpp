@@ -1,8 +1,15 @@
 #include "webpage.h"
 
 #include <QMenu>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 2, 0))
 #include <QWebEngineContextMenuData>
+#else
+#include <QWebEngineContextMenuRequest>
+#endif
 #include <QWebEngineHistory>
+#include <QWebEngineView>
+
+#include <memory>
 
 WebPage::WebPage(QObject* parent)
 : QWebEnginePage(parent)
@@ -23,47 +30,56 @@ bool WebPage::acceptNavigationRequest(const QUrl &url, NavigationType type, bool
 // Stripped-down version of QWebEnginePage::createStandardContextMenu to
 // have consistent menus across platforms and Qt versions and to only
 // offer options that are actually supported
-QMenu *WebPage::createContextMenu() const
+QMenu *WebPage::createContextMenu(const QWebEngineView &view) const
 {
-    const QWebEngineContextMenuData &cmdata = contextMenuData();
-    if (!cmdata.isValid())
-        return 0;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 2, 0))
+    using QWebEngineContextMenuRequest = QWebEngineContextMenuData;
 
-    QWidget *const view = this->view();
-    QMenu *const menu = new QMenu(view);
+    const auto &request = contextMenuData();
+    if (!request.isValid())
+        return nullptr;
+#else
+    const auto *const pRequest = view.lastContextMenuRequest();
+    if (!pRequest)
+        return nullptr;
 
-    if (cmdata.selectedText().isEmpty()) {
-        QAction *action = new QAction(QIcon::fromTheme(QStringLiteral("go-previous")), tr("&Back"), menu);
-        connect(action, SIGNAL(triggered()), view, SLOT(back()));
+    const auto &request = *pRequest;
+#endif
+
+    auto menu = std::make_unique<QMenu>();
+
+    if (request.selectedText().isEmpty()) {
+        auto *action = new QAction(QIcon::fromTheme(QStringLiteral("go-previous")), tr("&Back"), menu.get());
+        connect(action, &QAction::triggered, &view, &QWebEngineView::back);
         action->setEnabled(history()->canGoBack());
         menu->addAction(action);
 
-        action = new QAction(QIcon::fromTheme(QStringLiteral("go-next")), tr("&Forward"), menu);
-        connect(action, SIGNAL(triggered()), view, SLOT(forward()));
+        action = new QAction(QIcon::fromTheme(QStringLiteral("go-next")), tr("&Forward"), menu.get());
+        connect(action, &QAction::triggered, &view, &QWebEngineView::forward);
         action->setEnabled(history()->canGoForward());
         menu->addAction(action);
 
-        action = new QAction(QIcon::fromTheme(QStringLiteral("view-refresh")), tr("&Reload"), menu);
-        connect(action, SIGNAL(triggered()), view, SLOT(reload()));
+        action = new QAction(QIcon::fromTheme(QStringLiteral("view-refresh")), tr("&Reload"), menu.get());
+        connect(action, &QAction::triggered, &view, &QWebEngineView::reload);
         menu->addAction(action);
     } else {
         menu->addAction(action(Copy));
         menu->addAction(action(Unselect));
     }
 
-    if (!cmdata.linkText().isEmpty()) {
+    if (!request.linkText().isEmpty()) {
         menu->addAction(action(OpenLinkInNewWindow));
         menu->addAction(action(CopyLinkToClipboard));
     }
 
-    if (cmdata.mediaUrl().isValid()) {
-        switch (cmdata.mediaType()) {
-        case QWebEngineContextMenuData::MediaTypeImage:
+    if (request.mediaUrl().isValid()) {
+        switch (request.mediaType()) {
+        case QWebEngineContextMenuRequest::MediaTypeImage:
             menu->addAction(action(CopyImageUrlToClipboard));
             menu->addAction(action(CopyImageToClipboard));
             break;
-        case QWebEngineContextMenuData::MediaTypeAudio:
-        case QWebEngineContextMenuData::MediaTypeVideo:
+        case QWebEngineContextMenuRequest::MediaTypeAudio:
+        case QWebEngineContextMenuRequest::MediaTypeVideo:
             menu->addAction(action(CopyMediaUrlToClipboard));
             menu->addAction(action(ToggleMediaPlayPause));
             menu->addAction(action(ToggleMediaLoop));
@@ -72,10 +88,10 @@ QMenu *WebPage::createContextMenu() const
         default:
             break;
         }
-    } else if (cmdata.mediaType() == QWebEngineContextMenuData::MediaTypeCanvas) {
+    } else if (request.mediaType() == QWebEngineContextMenuRequest::MediaTypeCanvas) {
         menu->addAction(action(CopyImageToClipboard));
     }
 
     menu->setAttribute(Qt::WA_DeleteOnClose, true);
-    return menu;
+    return menu.release();
 }

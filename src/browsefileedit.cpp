@@ -24,7 +24,7 @@ BrowseFileEdit::BrowseFileEdit(QWidget *parent)
     connect(browseBtn, SIGNAL(clicked()), SLOT(browse()));
 
     QLayout *const layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(lineEdit);
     layout->addWidget(browseBtn);
     setLayout(layout);

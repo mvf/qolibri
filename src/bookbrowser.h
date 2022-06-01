@@ -13,15 +13,19 @@ class BookBrowser : public QTextBrowser
     Q_OBJECT
 public:
     BookBrowser(QWidget *parent = 0);
-    void setSource(const QUrl &name);
+    void setSource(const QUrl &name); // virtual before Qt6
     int fontSize() const;
     void addBookList(Book *book);
     void setBrowser(const QString &str);
 
 protected:
     QList<Book*> bookList_;
+    void doSetSource(const QUrl &url, QTextDocument::ResourceType type); // virtual since Qt6
     void contextMenuEvent(QContextMenuEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
+
+private:
+    void doSetSource(const QUrl &name);
 
 signals:
     void searchRequested(SearchDirection, const QString &);

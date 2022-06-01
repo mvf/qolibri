@@ -23,7 +23,7 @@ TreeScrollPopup::TreeScrollPopup(QTreeWidgetItem *item, QWidget *parent)
         sbar->setValue(0);
     }
     QVBoxLayout *v = new QVBoxLayout();
-    v->setMargin(5);
+    v->setContentsMargins(5, 5, 5, 5);
     v->setSpacing(5);
     v->addWidget(sbar);
     setLayout(v);

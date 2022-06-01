@@ -22,7 +22,20 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 COMPONENTS LinguistTools Multimedia Network WebEngine WebEngineWidgets Widgets REQUIRED)
+set(QOLIBRI_QT5 OFF CACHE BOOL "Use Qt 5, don't try to find Qt 6 first")
+if(NOT QOLIBRI_QT5)
+    find_package(Qt6 6.2 COMPONENTS Core5Compat LinguistTools Multimedia Network WebEngineCore WebEngineWidgets Widgets)
+endif()
+if(NOT Qt6_FOUND)
+    if("${QT_DEFAULT_MAJOR_VERSION}")
+        message(FATAL_ERROR
+            "Qt 6 was found, but it didn't include all required components. To "
+            "proceed with Qt 6, install the components reported missing above. "
+            "To ignore the Qt 6 installation and build against Qt 5, configure "
+            "with -DQOLIBRI_QT5=ON in a fresh build directory.")
+    endif()
+    find_package(Qt5 5.15 COMPONENTS LinguistTools Multimedia Network WebEngine WebEngineWidgets Widgets REQUIRED)
+endif()
 find_package(ZLIB REQUIRED)
 
 add_executable(qolibri MACOSX_BUNDLE WIN32
@@ -168,9 +181,14 @@ endif()
 configure_file(translations/translations.qrc "${CMAKE_CURRENT_BINARY_DIR}/translations/translations.qrc" COPYONLY)
 set(TS_FILES translations/qolibri_ja_JP.ts)
 set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/translations")
-qt5_add_translation(QM_FILES ${TS_FILES})
+qt_add_translation(QM_FILES ${TS_FILES})
 target_sources(qolibri PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/translations/translations.qrc" ${QM_FILES} ${TS_FILES})
 
-target_link_libraries(qolibri Qt5::Multimedia Qt5::Network Qt5::WebEngine Qt5::WebEngineWidgets Qt5::Widgets "${EB_LIBRARY}" ZLIB::ZLIB)
+target_link_libraries(qolibri PRIVATE Qt::Multimedia Qt::Network Qt::WebEngineWidgets Qt::Widgets "${EB_LIBRARY}" ZLIB::ZLIB)
+foreach(lib Core5Compat WebEngine WebEngineCore)
+    if(TARGET Qt::${lib})
+        target_link_libraries(qolibri PRIVATE Qt::${lib})
+    endif()
+endforeach()
 
 install(TARGETS qolibri DESTINATION "${CMAKE_INSTALL_BINDIR}")

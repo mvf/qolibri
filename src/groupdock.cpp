@@ -103,7 +103,7 @@ GTab::GTab(QWidget *parent)
     buttonLayout->addWidget(viewButton);
     v->addLayout(buttonLayout);
     v->setSpacing(0);
-    v->setMargin(0);
+    v->setContentsMargins(0, 0, 0, 0);
     setLayout(v);
 
     connect(listWidget_, SIGNAL(customContextMenuRequested(QPoint)),
@@ -265,12 +265,12 @@ GroupTab::GroupTab(QWidget *parent)
     v->addWidget(new QLabel(tr("Books:")));
     v->addWidget(bookWidget_);
 
-    v->setMargin(0);
+    v->setContentsMargins(0, 0, 0, 0);
     v->setSpacing(0);
 
     QVBoxLayout *v2 = new QVBoxLayout();
     v2->addLayout(v);
-    v2->setMargin(0);
+    v2->setContentsMargins(0, 0, 0, 0);
     v2->setSpacing(0);
     setLayout(v2);
 

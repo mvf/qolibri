@@ -34,7 +34,7 @@ ReferencePopup::ReferencePopup(Book *book, const EB_Position &pos,
 
     QVBoxLayout *v = new QVBoxLayout();
     v->addWidget(bookBrowser_);
-    v->setMargin(0);
+    v->setContentsMargins(0, 0, 0, 0);
     v->setSpacing(0);
     setLayout(v);
 

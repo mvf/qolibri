@@ -31,7 +31,7 @@ BookWidget::BookWidget(Group *grp, QWidget *parent)
     groupNameLabel->setFrameShape(QFrame::StyledPanel);
     groupNameLabel->setAlignment(Qt::AlignCenter);
     QHBoxLayout *h = new QHBoxLayout();
-    h->setMargin(0);
+    h->setContentsMargins(0, 0, 0, 0);
     h->addStretch();
     upButton = new QPushButton(this);
     upButton->setIcon(QIcon(":images/uparrow.png"));
@@ -75,7 +75,7 @@ BookWidget::BookWidget(Group *grp, QWidget *parent)
             SLOT(changeSelect(QListWidgetItem *, QListWidgetItem*)));
 
     QVBoxLayout *v = new QVBoxLayout;
-    v->setMargin(0);
+    v->setContentsMargins(0, 0, 0, 0);
     v->setSpacing(0);
     if (groupNameLabel) v->addWidget(groupNameLabel);
     v->addWidget(bookListWidget_);

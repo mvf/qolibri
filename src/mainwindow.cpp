@@ -32,7 +32,9 @@
 #include "optiondialog.h"
 #include "webview.h"
 
+#include <QActionGroup>
 #include <QApplication>
+#include <QAudioOutput>
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QDir>
@@ -43,6 +45,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QProcess>
+#include <QRegularExpression>
 #include <QStatusBar>
 #include <QTimer>
 #include <QToolBar>
@@ -648,7 +651,7 @@ void MainWindow::toggleBar()
 
 void MainWindow::changeOptSearchButtonText(const QString &str)
 {
-    QStringList list = str.split(QRegExp("\\W+"), QString::SkipEmptyParts);
+    auto list{str.split(QRegularExpression{"\\W+"}, Qt::SkipEmptyParts)};
 
     if (list.count() > 0) {
         optSearchButton->setText(list[0]);
@@ -881,7 +884,7 @@ void MainWindow::pasteMethod(const QString &str, const SearchMethod &m)
     if (m.direction == WholeRead || m.direction == MenuRead ||
         m.direction == BookInfo ) {
     } else {
-        QStringList list = str.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+        auto list{str.split(QRegularExpression{"\\s+"}, Qt::SkipEmptyParts)};
         searchTextEdit->setText(list.join(" "));
     }
 }
@@ -961,18 +964,31 @@ void MainWindow::playSound(const QString &fileName)
 
     if (!sound) {
         sound = new QMediaPlayer(this);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         connect(sound, &QMediaPlayer::stateChanged, [this](QMediaPlayer::State newState) {
+#else
+        sound->setAudioOutput(new QAudioOutput(sound));
+        connect(sound, &QMediaPlayer::playbackStateChanged, [this](QMediaPlayer::PlaybackState newState) {
+#endif
             stopAct->setEnabled(newState == QMediaPlayer::PlayingState);
         });
-        connect(sound, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error), [this](QMediaPlayer::Error) {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+        connect(sound, qOverload<QMediaPlayer::Error>(&QMediaPlayer::error), [this](QMediaPlayer::Error) {
             if (auto const errorString{sound->errorString()}; !errorString.isEmpty())
+#else
+        connect(sound, &QMediaPlayer::errorOccurred, [this](QMediaPlayer::Error, QString const &errorString) {
+#endif
                 processLabel->setText(tr("Internal audio playback failed: %1").arg(errorString));
         });
         connect(stopAct, &QAction::triggered, sound, &QMediaPlayer::stop);
     }
 
     if (sound->isAvailable()) {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         sound->setMedia(QUrl::fromLocalFile(fileName));
+#else
+        sound->setSource(QUrl::fromLocalFile(fileName));
+#endif
         sound->play();
         return;
     }

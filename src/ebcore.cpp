@@ -64,7 +64,9 @@ void EbCore::initializeEucWideToUtfNarrow()
     QFile file(":/data/euc-wide-to-utf-narrow");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QTextStream in(&file);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     in.setCodec("UTF-8");
+#endif
     QString line = in.readLine();
     while (!line.isNull()) {
         QStringList list = line.remove('\n').split(' ');

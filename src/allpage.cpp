@@ -113,7 +113,7 @@ void AllPage::changePage(QTreeWidgetItem *item, int)
     QString anc = item->text(1);
 
     if (anc.at(0) == 'P') {
-        int page = anc.midRef(1).toInt();
+        int page = QStringView{anc}.mid(1).toInt();
         readPage(page);
     }
 }

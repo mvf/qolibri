@@ -40,7 +40,9 @@ void Book::loadAlterFont()
 
     fontList_ = new QHash<QString, QString>;
     QTextStream in(&file);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     in.setCodec("UTF-8");
+#endif
     QString line = in.readLine();
     while (!line.isNull()) {
         QStringList list = line.remove('\n').split(' ');
@@ -61,7 +63,9 @@ void Book::saveAlterFont()
     }
 
     QTextStream out(&file);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     out.setCodec("UTF-8");
+#endif
     QHashIterator<QString, QString> i(*fontList_);
     while (i.hasNext()) {
         i.next();
