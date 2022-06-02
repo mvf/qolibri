@@ -26,6 +26,8 @@
 #include <eb/appendix.h>
 #include <eb/error.h>
 
+#include <QRegularExpression>
+
 const int HitsBufferSize = 10000;
 
 QList <CandItem> EbMenu::topMenu()
@@ -57,7 +59,7 @@ int EBook::searchQuery(int maxcnt, const QString& query, SearchType type)
     case SearchKeyWord:
     case SearchCrossWord:
     {
-        words = query.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+        words = query.split(QRegularExpression{"\\s+"}, Qt::SkipEmptyParts);
         return hitMultiWord(maxcnt, words, type);
     }
     default:
@@ -240,10 +242,10 @@ void EBook::getText(int index, QString *head_l, QString *head_v, QString *text)
     QString h_l = h_v;
 
     if (h_l.contains('<')) {
-        h_l.replace(QRegExp("<img[^>]+>"), "?");
+        h_l.replace(QRegularExpression{"<img[^>]+>"}, "?");
         //h_l.replace(regRep1, "?");
         if (h_l.contains('<')) {
-            h_l.replace(QRegExp("<[^>]+>"), "");
+            h_l.replace(QRegularExpression{"<[^>]+>"}, "");
             //h_l.replace(regRep2, "");
 	}
     }

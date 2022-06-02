@@ -45,7 +45,7 @@ GroupWidget::GroupWidget(QList <Group*> *group, QWidget *parent)
     }
     QHBoxLayout *h2 = new QHBoxLayout();
     {
-        h2->setMargin(0);
+        h2->setContentsMargins(0, 0, 0, 0);
         upButton = new QPushButton(this);
         upButton->setIcon(QIcon(":images/uparrow.png"));
         downButton = new QPushButton(this);
@@ -62,7 +62,7 @@ GroupWidget::GroupWidget(QList <Group*> *group, QWidget *parent)
     }
     groupListWidget = new QListWidget(this);
     QVBoxLayout *v = new QVBoxLayout;
-    v->setMargin(0);
+    v->setContentsMargins(0, 0, 0, 0);
     v->setSpacing(0);
     v->addLayout(h1);
     v->addWidget(groupListWidget);

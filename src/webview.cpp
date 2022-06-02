@@ -5,10 +5,9 @@
 #include <QContextMenuEvent>
 #include <QDebug>
 #include <QMenu>
+#include <QRegularExpression>
 #include <QTabBar>
 #include <QTextCodec>
-#include <QWebEngineContextMenuData>
-#include <QWebEngineHistory>
 #include <QWebEngineSettings>
 
 WebView::WebView(QWidget *parent)
@@ -65,8 +64,8 @@ void WebView::load(const QString &url, const Query &query)
 
 void WebView::contextMenuEvent(QContextMenuEvent* event)
 {
-    if (WebPage *webPage = qobject_cast<WebPage *>(page())) {
-        if (QMenu *menu = webPage->createContextMenu()) {
+    if (auto *webPage = qobject_cast<WebPage *>(page())) {
+        if (auto *menu = webPage->createContextMenu(*this)) {
             menu->popup(event->globalPos());
         }
     }
@@ -74,7 +73,7 @@ void WebView::contextMenuEvent(QContextMenuEvent* event)
 
 QByteArray WebView::encString(const QString &url)
 {
-    if (!url.contains(QRegExp("\\{.*\\}"))) {
+    if (!url.contains(QRegularExpression{"\\{.*\\}"})) {
         return QByteArray();
     } else {
         QString w1 = url.mid(url.indexOf('{')+1);
@@ -97,7 +96,7 @@ QString WebView::setSearchString(const QString &url, const QByteArray &enc,
         fstr += "%" + QString::number((ushort)((uchar)c), 16).toUpper();
     }
     QString ustr = url;
-    QRegExp rx("\\{.*\\}");
+    QRegularExpression rx{"\\{.*\\}"};
     if (!url.contains(rx)) {
         ustr += fstr;
     } else {
@@ -107,7 +106,7 @@ QString WebView::setSearchString(const QString &url, const QByteArray &enc,
 }
 QString WebView::directionString(const QString &url)
 {
-    if (!url.contains(QRegExp("\\[.*\\]"))) {
+    if (!url.contains(QRegularExpression{"\\[.*\\]"})) {
         return QString();
     } else {
         QString w1 = url.mid(url.indexOf('[')+1);
@@ -157,8 +156,7 @@ QString WebView::setDirectionString(const QString &url, const QString &dstr,
         return url;
     }
 
-    return QString(url).replace(QRegExp("\\[.*\\]"), udirec);
-
+    return QString{url}.replace(QRegularExpression{"\\[.*\\]"}, udirec);
 }
 
 void WebView::changeFontSize(int delta)

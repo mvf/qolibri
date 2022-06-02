@@ -21,6 +21,11 @@ BookBrowser::BookBrowser(QWidget *parent)
 
 void BookBrowser::setSource(const QUrl &name)
 {
+    doSetSource(name);
+}
+
+void BookBrowser::doSetSource(const QUrl &name)
+{
     const QString path = name.path();
     const QStringList args = name.query().split('?');
 
@@ -90,6 +95,11 @@ void BookBrowser::setBrowser(const QString &str)
     QApplication::restoreOverrideCursor();
 }
 
+void BookBrowser::doSetSource(const QUrl &url, QTextDocument::ResourceType type)
+{
+    doSetSource(url);
+}
+
 void BookBrowser::contextMenuEvent(QContextMenuEvent* event)
 {
     QMenu *menu = createStandardContextMenu();
@@ -139,7 +149,7 @@ void BookBrowser::mouseReleaseEvent(QMouseEvent *ev)
     if (ev->button() == Qt::LeftButton)
         changeTextSelection();
 
-    QTextEdit::mouseReleaseEvent(ev);
+    QTextBrowser::mouseReleaseEvent(ev);
 }
 
 void BookBrowser::changeTextSelection()

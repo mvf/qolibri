@@ -6,6 +6,7 @@
 #include "pageitems.h"
 
 #include <QDir>
+#include <QRegularExpression>
 
 InfoPage::InfoPage(QWidget *parent, const SearchMethod &method)
     : PageWidget(parent, method)
@@ -89,9 +90,9 @@ RET_SEARCH InfoPage::search(const Query& query)
         file.open(QIODevice::ReadOnly);
         QString str(QTextCodec::codecForName("Shift-JIS")->toUnicode(file.readAll()));
         str.remove("\r");
-        if (!fname.rightRef(4).compare(QStringLiteral(".htm"), Qt::CaseInsensitive) ||
-            !fname.rightRef(5).compare(QStringLiteral(".html"), Qt::CaseInsensitive)) {
-            QRegExp reg("(<body[^>]*>|</body>)", Qt::CaseInsensitive);
+        if (!fname.endsWith(QStringLiteral(".htm"), Qt::CaseInsensitive) ||
+            !fname.endsWith(QStringLiteral(".html"), Qt::CaseInsensitive)) {
+            QRegularExpression reg{"(<body[^>]*>|</body>)", QRegularExpression::CaseInsensitiveOption};
             QStringList list = str.split(reg);
             if (list.count() < 3) continue;
             items.composeHLine(2, toAnchor("F", i), fname);
@@ -116,8 +117,8 @@ QString InfoPage::convSpecialChar(const QString &str) const
 {
     QString wrk = str;
 
-    wrk.replace(QRegExp("<(?!lt;)"), "&lt;");
-    wrk.replace(QRegExp(">(?!gt;)"), "&gt;");
+    wrk.replace(QRegularExpression{"<(?!lt;)"}, "&lt;");
+    wrk.replace(QRegularExpression{">(?!gt;)"}, "&gt;");
     return wrk;
 }
 
