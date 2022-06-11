@@ -22,33 +22,11 @@
 #include <QSize>
 #include <QStringList>
 
-namespace {
-
-QString decodePath(const char *path)
-{
-#ifdef QOLIBRI_EB_UTF8_PATHS
-    return QString::fromUtf8(path);
-#else
-    return QString::fromLocal8Bit(path);
-#endif
-}
-
-QByteArray encodePath(const QString &path)
-{
-#ifdef QOLIBRI_EB_UTF8_PATHS
-    return path.toUtf8();
-#else
-    return path.toLocal8Bit();
-#endif
-}
-
-} // anonymous namespace
-
 QTextCodec *const QEb::eucCodec = QTextCodec::codecForName("EUC-JP");
 
 EB_Error_Code QEb::bind(const QString &path)
 {
-    EB_Error_Code ecode = eb_bind(&book, encodePath(path));
+    EB_Error_Code ecode = eb_bind(&book, path.toLocal8Bit());
     if (ecode != EB_SUCCESS)
         dispError("eb_bind(" + path + ")", ecode);
     return ecode;
@@ -61,7 +39,7 @@ QString QEb::path()
         dispError("eb_path", ecode);
         return QString();
     }
-    return decodePath(s);
+    return QString::fromLocal8Bit(s);
 }
 EB_Character_Code QEb::characterCode()
 {
@@ -612,7 +590,7 @@ QString QEb::composeMoviePathName(const unsigned int *argv)
 
 EB_Error_Code QEb::bindAppendix(const QString &path)
 {
-    EB_Error_Code ecode = eb_bind_appendix(&appendix, encodePath(path));
+    EB_Error_Code ecode = eb_bind_appendix(&appendix, path.toLocal8Bit());
     if (ecode != EB_SUCCESS)
         dispError("eb_bind_appendix", ecode);
     return ecode;
