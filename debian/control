@@ -1,7 +1,7 @@
 Source: qolibri
 Section: education
 Priority: optional
-Maintainer: Ivan Kozik <ivan@ludios.org
+Maintainer: Matthias von Faber <mvf@gmx.eu>
 Build-Depends: cmake (>= 3.5),
                debhelper (>= 10),
                qtbase5-dev (>= 5.2.0),
@@ -13,9 +13,9 @@ Build-Depends: cmake (>= 3.5),
                libeb16-dev,
                zlib1g-dev
 Standards-Version: 4.1.0
-Vcs-Git: https://github.com/ludios/qolibri
-Vcs-Browser: https://github.com/ludios/qolibri
-Homepage: https://github.com/ludios/qolibri
+Vcs-Git: https://github.com/mvf/qolibri
+Vcs-Browser: https://github.com/mvf/qolibri
+Homepage: https://github.com/mvf/qolibri
 
 Package: qolibri
 Architecture: any

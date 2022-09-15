@@ -148,7 +148,7 @@ if ("${QOLIBRI_VERSION_STR}" STREQUAL "")
 endif()
 target_compile_definitions(qolibri PRIVATE QOLIBRI_VERSION_STR="${QOLIBRI_VERSION_STR}")
 
-set(QOLIBRI_WEBSITE "https://github.com/ludios/qolibri" CACHE STRING "The URL of the website. Adds a hyperlink to the about dialog if non-empty.")
+set(QOLIBRI_WEBSITE "https://github.com/mvf/qolibri" CACHE STRING "The URL of the website. Adds a hyperlink to the about dialog if non-empty.")
 target_compile_definitions(qolibri PRIVATE QOLIBRI_WEBSITE="${QOLIBRI_WEBSITE}")
 
 if(NOT MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "[Cc][Ll][Aa][Nn][Gg]|[Gg][Nn][Uu]")

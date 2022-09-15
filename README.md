@@ -19,7 +19,7 @@ If you find a security bug, please report it like a regular bug.
 
 ### Release binaries
 
-See [Releases](https://github.com/ludios/qolibri/releases) for pre-compiled binaries for the
+See [Releases](https://github.com/mvf/qolibri/releases) for pre-compiled binaries for the
 following operating systems:
 
 - **Windows 7** and later (32-bit, [7-Zip](https://www.7-zip.org/) archive)
@@ -34,7 +34,7 @@ following operating systems:
 
 ### Building from source
 
-Please see the [wiki](https://github.com/ludios/qolibri/wiki) for instructions
+Please see the [wiki](https://github.com/mvf/qolibri/wiki) for instructions
 on how to build and install qolibri from source.
 
 ## Help with usage
