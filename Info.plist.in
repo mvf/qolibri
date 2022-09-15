@@ -8,8 +8,15 @@
 	<string>@PROJECT_NAME@</string>
 	<key>CFBundleIconFile</key>
 	<string>@MACOSX_BUNDLE_ICON_FILE@</string>
+	<key>CFBundleIdentifier</key>
+	<string>io.github.mvf.qolibri</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>ja</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>@PROJECT_NAME@</string>
 	<key>CFBundlePackageType</key>
