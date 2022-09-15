@@ -512,7 +512,7 @@ Search Method: %2</source>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="235"/>
-        <source>about q&amp;olibri</source>
+        <source>About q&amp;olibri</source>
         <translation>q&amp;olibriについて</translation>
     </message>
     <message>
@@ -669,7 +669,7 @@ Search Method: %2</source>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="234"/>
-        <source>about &amp;QT</source>
+        <source>About &amp;Qt</source>
         <translation>&amp;Qtについて</translation>
     </message>
     <message>

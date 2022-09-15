@@ -183,6 +183,7 @@ void MainWindow::createMenus()
     CONNECT_BUSY(booksAct);
     configAct = toolsMenu->addAction(QIcon(":/images/setting.png"),
                                      tr("Options..."), this, SLOT(setConfig()));
+    configAct->setMenuRole(QAction::PreferencesRole);
     CONNECT_BUSY(configAct);
     addMarkAct = toolsMenu->addAction(QIcon(":/images/bookmark.png"),
                                       tr("Bookmark"),
@@ -233,8 +234,8 @@ void MainWindow::createMenus()
     QMenu *hmenu = menuBar()->addMenu(tr("&Help"));
     hmenu->addAction(QIcon(
         ":/qt-project.org/"
-        "qmessagebox/images/qtlogo-64.png"), tr("About &QT..."), qApp, SLOT(aboutQt()));
-    hmenu->addAction(QIcon(":/images/title.png"), tr("About q&olibri..."), this, SLOT(aboutQolibri()));
+        "qmessagebox/images/qtlogo-64.png"), tr("About &Qt"), qApp, SLOT(aboutQt()))->setMenuRole(QAction::AboutQtRole);
+    hmenu->addAction(QIcon(":/images/title.png"), tr("About q&olibri"), this, SLOT(aboutQolibri()))->setMenuRole(QAction::AboutRole);
 }
 
 void MainWindow::createToolBars()
