@@ -117,14 +117,14 @@ int main(int argc, char *argv[])
         }
     }
 
-    QTranslator qtTranslator;
-    if (qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
-        QApplication::installTranslator(&qtTranslator);
+    QTranslator qtTranslator, appTranslator;
+    if (QLocale locale; locale.language() == QLocale::Japanese) {
+        if (qtTranslator.load(locale, QStringLiteral("qt"), QStringLiteral("_"), QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+            QApplication::installTranslator(&qtTranslator);
 
-    QTranslator trans;
-    QString thename(QStringLiteral(":/translations/qolibri_") + QLocale::system().name());
-    if (trans.load(thename))
-        QApplication::installTranslator(&trans);
+        if (appTranslator.load(locale, QStringLiteral("qolibri"), QStringLiteral("_"), QStringLiteral(":/translations")))
+            QApplication::installTranslator(&appTranslator);
+    }
 
     MainWindow mainWin(&model, searchText);
 
