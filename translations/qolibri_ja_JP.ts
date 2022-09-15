@@ -608,9 +608,9 @@ Search Method: %2</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="179"/>
-        <source>&amp;Settings</source>
-        <translation>設定(&amp;S)</translation>
+        <location filename="mainwindow.cpp" line="180"/>
+        <source>&amp;Tools</source>
+        <translation>ツール (&amp;T)</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="126"/>

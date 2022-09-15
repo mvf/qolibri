@@ -177,37 +177,37 @@ void MainWindow::createMenus()
     reloadAct->setEnabled(false);
 
 
-    QMenu *smenu = menuBar()->addMenu(tr("&Settings"));
-    booksAct = smenu->addAction(QIcon(":/images/books.png"), tr("Book and group settings..."),
-                                this, SLOT(setBooks()));
+    QMenu *toolsMenu = menuBar()->addMenu(tr("&Tools"));
+    booksAct = toolsMenu->addAction(QIcon(":/images/books.png"), tr("Book and group settings..."),
+                                    this, SLOT(setBooks()));
     CONNECT_BUSY(booksAct);
-    configAct = smenu->addAction(QIcon(":/images/setting.png"),
-                                 tr("Options..."), this, SLOT(setConfig()));
+    configAct = toolsMenu->addAction(QIcon(":/images/setting.png"),
+                                     tr("Options..."), this, SLOT(setConfig()));
     CONNECT_BUSY(configAct);
-    addMarkAct = smenu->addAction(QIcon(":/images/bookmark.png"),
-                                  tr("Bookmark"),
-                                  this, SLOT(addMark()));
-    smenu->addAction(toggleWatchClipboardAct);
+    addMarkAct = toolsMenu->addAction(QIcon(":/images/bookmark.png"),
+                                      tr("Bookmark"),
+                                      this, SLOT(addMark()));
+    toolsMenu->addAction(toggleWatchClipboardAct);
 
     CONNECT_BUSY(addMarkAct);
-    toggleTabsAct = smenu->addAction(QIcon(":/images/tabs.png"),
-                                     tr("Search result tabs on/off"),
-                                     this, SLOT(toggleNewTab(bool)));
+    toggleTabsAct = toolsMenu->addAction(QIcon(":/images/tabs.png"),
+                                         tr("Search result tabs on/off"),
+                                         this, SLOT(toggleNewTab(bool)));
     toggleTabsAct->setCheckable(true);
     toggleTabsAct->setIconVisibleInMenu(false);
     CONNECT_BUSY(toggleTabsAct);
-    toggleBrowserAct = smenu->addAction(QIcon(":/images/new_browser.png"),
-                                     tr("Popup New Browser on/off"),
-                                     this, SLOT(toggleNewBrowser(bool)));
+    toggleBrowserAct = toolsMenu->addAction(QIcon(":/images/new_browser.png"),
+                                            tr("Popup New Browser on/off"),
+                                            this, SLOT(toggleNewBrowser(bool)));
     toggleBrowserAct->setCheckable(true);
     toggleBrowserAct->setIconVisibleInMenu(false);
     CONNECT_BUSY(toggleBrowserAct);
-    fontAct = smenu->addAction(QIcon(":/images/font1.png"),
-                               tr("Set browser font..."),
-                               this, SLOT(setViewFont()));
+    fontAct = toolsMenu->addAction(QIcon(":/images/font1.png"),
+                                   tr("Set browser font..."),
+                                   this, SLOT(setViewFont()));
 
-    QMenu *ms = smenu->addMenu(QIcon(":/images/stylesheet.png"),
-                               tr("Edit style sheet"));
+    QMenu *ms = toolsMenu->addMenu(QIcon(":/images/stylesheet.png"),
+                                   tr("Edit style sheet"));
     sSheetAct = ms->menuAction();
     connect(sSheetAct, SIGNAL(triggered(bool)), SLOT(setDictSheet()));
     ms->addAction(QIcon(":/images/stylesheet.png"),
@@ -216,8 +216,8 @@ void MainWindow::createMenus()
                   tr("Book style sheet..."), this, SLOT(setBookSheet()));
     ms->addAction(QIcon(":/images/stylesheet3.png"),
                   tr("Internal style sheet 1..."), this, SLOT(setStatusBarSheet()));
-    optDirectionMenu = smenu->addMenu(QIcon(":/images/find_l.png"),
-                                   tr("Search options"));
+    optDirectionMenu = toolsMenu->addMenu(QIcon(":/images/find_l.png"),
+                                          tr("Search options"));
     addDirectionMenu(optDirectionMenu);
     QActionGroup *actg = new QActionGroup(this);
     foreach(QAction * a, optDirectionMenu->actions()) {
@@ -227,8 +227,8 @@ void MainWindow::createMenus()
     connect(optDirectionMenu, SIGNAL(triggered(QAction*)),
             SLOT(changeOptDirection(QAction*)));
 
-    smenu->addAction(QIcon(":/images/delete.png"), tr("&Clear cache"),
-                     this, SLOT(clearCache()));
+    toolsMenu->addAction(QIcon(":/images/delete.png"), tr("&Clear cache"),
+                         this, SLOT(clearCache()));
 
     QMenu *hmenu = menuBar()->addMenu(tr("&Help"));
     hmenu->addAction(QIcon(
