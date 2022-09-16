@@ -199,9 +199,13 @@ QString QEb::readText(void *para, bool hook_flag)
         //if (len < 1024)
         //    break;
     }
-    return b;
 
+    if (!hook_flag)
+        return eucCodec->toUnicode(b);
+
+    return b;
 }
+
 QString QEb::readHeading(void *para)
 {
     char buff[1024+1];
