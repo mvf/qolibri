@@ -88,7 +88,7 @@ public:
 
 private:
     EB_Position seekPosition;
-    bool firstSeek;
+    bool firstSeek = true;
 };
 
 #endif
