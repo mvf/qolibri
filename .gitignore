@@ -1,7 +1,9 @@
 *.orig
+*~
 .*.sw?
 .DS_Store
 /*.user
 /*build*/
 /.idea/
+/.vs/
 /.vscode/
