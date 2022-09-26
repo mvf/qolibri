@@ -62,8 +62,7 @@ public slots:
 private slots:
     void connectClipboard(bool enable);
     void viewInfo(Book *book);
-    void viewMenu();
-    void viewFull();
+    void viewPseudoSearch(SearchDirection direction);
     void viewSearch();
     void viewSearch(const QString &str, const SearchMethod &method);
     void viewSearch(SearchDirection d, const QString &str);

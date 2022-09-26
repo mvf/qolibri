@@ -132,12 +132,12 @@ void MainWindow::createMenus()
     CONNECT_BUSY(enterAct);
     openBookAct = fmenu->addAction(QIcon(":/images/bookopen.png"),
                                    tr("&Open book"),
-                                   this, SLOT(viewMenu()), tr("Ctrl+O"));
+                                   [this] { viewPseudoSearch(MenuRead); }, tr("Ctrl+O"));
     CONNECT_BUSY(openBookAct);
 
     viewAllAct = fmenu->addAction(QIcon(":/images/find.png"),
                                   tr("&View all data"),
-                                  this, SLOT(viewFull()), tr("Ctrl+D"));
+                                  [this] { viewPseudoSearch(WholeRead); }, tr("Ctrl+D"));
     CONNECT_BUSY(viewAllAct);
 
     stopAct = fmenu->addAction(QIcon(":/images/stop.png"), tr("&Cancel"),
@@ -763,11 +763,11 @@ void MainWindow::focusSearch()
     searchTextEdit->selectAll();
 }
 
-void MainWindow::viewMenu()
+void MainWindow::viewPseudoSearch(SearchDirection direction)
 {
     SearchMethod m = model->method;
 
-    m.direction = MenuRead;
+    m.direction = direction;
     if (model->bookMode == ModeDictionary) {
         m.groupReader = model->method.group;
         m.bookReader = model->method.book;
@@ -783,22 +783,6 @@ void MainWindow::viewMenu()
         return;
     }
 
-    viewSearch(m.bookReader->name(), m);
-
-    if (model->bookMode == ModeDictionary) {
-        focusSearch();
-    }
-}
-
-void MainWindow::viewFull()
-{
-    SearchMethod m = model->method;
-
-    m.direction = WholeRead;
-    if (model->bookMode == ModeDictionary) {
-        m.groupReader = model->method.group;
-        m.bookReader = model->method.book;
-    }
     viewSearch(m.bookReader->name(), m);
     focusSearch();
 }
