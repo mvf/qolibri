@@ -292,14 +292,12 @@ void MainWindow::createToolBars()
     webBar->addAction(reloadAct);
     webBar->hide();
 
-#if 0
     methodBar->addSeparator();
     methodBar->addAction(booksAct);
     methodBar->addAction(fontAct);
     methodBar->addAction(sSheetAct);
     methodBar->addAction(toggleTabsAct);
     methodBar->addAction(toggleBrowserAct);
-#endif
 
     toggleMethodBarAct = methodBar->toggleViewAction();
     toggleMethodBarAct->setText(tr("Option bar on/off"));
