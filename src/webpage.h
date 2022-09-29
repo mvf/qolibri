@@ -3,6 +3,7 @@
 
 #include <QWebEnginePage>
 
+class QMenu;
 class QWebEngineView;
 
 class WebPage : public QWebEnginePage
