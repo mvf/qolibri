@@ -1380,8 +1380,8 @@ void MainWindow::groupDockSlots()
             SLOT(viewInfo(Book*)));
     connect(groupDock, SIGNAL(fontViewRequested(Book*)),
             SLOT(setBookFont(Book*)));
-    connect(groupDock, SIGNAL(menuRequested()), SLOT(viewMenu()));
-    connect(groupDock, SIGNAL(fullRequested()), SLOT(viewFull()));
+    connect(groupDock, &GroupDock::menuRequested, [this] { viewPseudoSearch(MenuRead); });
+    connect(groupDock, &GroupDock::fullRequested, [this] { viewPseudoSearch(WholeRead); });
 }
 
 void MainWindow::setWebLoaded()
