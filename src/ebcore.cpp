@@ -22,6 +22,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QTextCodec>
 
 #include <eb/eb.h>
 #include <eb/binary.h>
@@ -30,6 +31,9 @@
 #include <eb/appendix.h>
 #include <eb/error.h>
 
+namespace {
+const auto *const gb2312Codec = QTextCodec::codecForName("GB2312");
+} // anonymous namespace
 
 EbCore::EbCore(HookMode hmode) : QEb()
 {
@@ -393,9 +397,13 @@ QByteArray EbCore::hookWideJISX0208(int, const unsigned int *argv)
     const char code[] = { char(argv[0] >> 8), char(argv[0] & 0xff) };
     return eucCodec->toUnicode(code, std::size(code)).toUtf8();
 }
-QByteArray EbCore::hookGB2312(int, const unsigned int*)
+QByteArray EbCore::hookGB2312(int, const unsigned int *argv)
 {
-    return errorBStr("HOOK_GB2312 Not Supported");
+    if (!gb2312Codec)
+        return errorBStr("GB2312 codec missing"); // Qt built without big_codecs
+
+    const char code[] = { char(argv[0] >> 8), char(argv[0] & 0xff) };
+    return gb2312Codec->toUnicode(code, std::size(code)).toUtf8();
 }
 QByteArray EbCore::hookBeginMonoGraphic(int, const unsigned int *argv)
 {
