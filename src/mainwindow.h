@@ -63,7 +63,6 @@ private slots:
     void connectClipboard(bool enable);
     void viewInfo(Book *book);
     void viewPseudoSearch(SearchDirection direction);
-    void viewSearch();
     void viewSearch(const QString &str, const SearchMethod &method);
     void viewSearch(SearchDirection d, const QString &str);
     void viewWeb(const QString &name, const QString &url);
@@ -109,6 +108,7 @@ private slots:
 
 
 private:
+    void viewSearch();
     void createActions();
     void createMenus();
     void createToolBars();
@@ -184,7 +184,7 @@ private:
     QClipboard::Mode watchClipboardMode;
     int watchClipboardSelectionDelay;
     bool watchClipboardRaiseWindow;
+    QString lastClipboardText;
 };
 
 #endif
-
