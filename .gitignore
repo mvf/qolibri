@@ -4,6 +4,7 @@
 .DS_Store
 /*.user
 /*build*/
+/.cache/
 /.idea/
 /.vs/
 /.vscode/
