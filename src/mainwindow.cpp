@@ -31,6 +31,7 @@
 #include "configure.h"
 #include "optiondialog.h"
 #include "webview.h"
+#include "settings.h"
 
 #include <QActionGroup>
 #include <QApplication>
@@ -331,7 +332,7 @@ void MainWindow::createStatusBar()
 
 void MainWindow::readSettings()
 {
-    QSettings settings(CONF->settingOrg, "EpwingViewer");
+    Settings settings{"EpwingViewer"};
     QSize size = settings.value("size", QSize(800, 600)).toSize();
 
     resize(size);
@@ -371,7 +372,7 @@ void MainWindow::readSettings()
     watchClipboardSelectionDelay = settings.value("watch_clipboard_selection_delay", 300).toInt();
     watchClipboardRaiseWindow = settings.value("watch_clipboard_raise_window", true).toBool();
 
-    QSettings hist(CONF->settingOrg, "EpwingHistory");
+    Settings hist{"EpwingHistory"};
     int hcnt = hist.beginReadArray("History");
     for (int i = 0; i < hcnt && i < CONF->historyMax; i++) {
         hist.setArrayIndex(i);
@@ -383,7 +384,7 @@ void MainWindow::readSettings()
     }
     hist.endArray();
 
-    QSettings mark(CONF->settingOrg, "EpwingBookmark");
+    Settings mark{"EpwingBookmark"};
     int mcnt = mark.beginReadArray("Bookmark");
     for (int i = 0; i < mcnt; i++) {
         mark.setArrayIndex(i);
@@ -404,7 +405,7 @@ void MainWindow::readSettings()
 
 void MainWindow::writeSettings()
 {
-    QSettings settings(CONF->settingOrg, "EpwingViewer");
+    Settings settings{"EpwingViewer"};
 
     settings.setValue("size", size());
     settings.setValue("dock", toggleDockAct->isChecked());
@@ -421,7 +422,7 @@ void MainWindow::writeSettings()
     settings.setValue("watch_clipboard_selection_delay", watchClipboardSelectionDelay);
     settings.setValue("watch_clipboard_raise_window", watchClipboardRaiseWindow);
 
-    QSettings history(CONF->settingOrg, "EpwingHistory");
+    Settings history{"EpwingHistory"};
     history.beginWriteArray("History");
     QListWidget *hlist = groupDock->historyListWidget();
     for (int i = 0; i < hlist->count(); i++) {
@@ -433,7 +434,7 @@ void MainWindow::writeSettings()
     }
     history.endArray();
 
-    QSettings mark(CONF->settingOrg, "EpwingBookmark");
+    Settings mark{"EpwingBookmark"};
     mark.beginWriteArray("Bookmark");
     QListWidget *mlist = groupDock->markListWidget();
     for (int i = 0; i < mlist->count(); i++) {

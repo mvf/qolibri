@@ -18,10 +18,10 @@
 ***************************************************************************/
 
 #include "configure.h"
+#include "settings.h"
 
 #include <QApplication>
 #include <QDir>
-#include <QSettings>
 #include <QTextStream>
 
 const bool highlightMatch_Def = true;
@@ -56,7 +56,7 @@ Configure *Configure::configure()
 
 void Configure::load()
 {
-    QSettings conf(CONF->settingOrg, "EpwingConfigure");
+    Settings conf{"EpwingConfigure"};
 
     highlightMatch = conf.value("highlight_match", highlightMatch_Def).toBool();
     beepSound = conf.value("beep_sound", beepSound_Def).toBool();
@@ -92,7 +92,7 @@ void Configure::load()
     defStatusbarStyle = stream.readAll();
     file.close();
 
-    QSettings ssheets(CONF->settingOrg, "EpwingStyleSheet");
+    Settings ssheets{"EpwingStyleSheet"};
     dictSheet = ssheets.value("dictionary", defDictStyle).toString();
     bookSheet = ssheets.value("book", defBookStyle).toString();
     statusBarSheet = ssheets.value("widgets1", defStatusbarStyle).toString();
@@ -100,7 +100,7 @@ void Configure::load()
 
 void Configure::save()
 {
-    QSettings conf(CONF->settingOrg, "EpwingConfigure");
+    Settings conf{"EpwingConfigure"};
 
     conf.setValue("hightlight_match", highlightMatch);
     conf.setValue("beep_sound", beepSound);
@@ -122,7 +122,7 @@ void Configure::save()
     conf.setValue("browser_font", browserFont.toString());
     conf.setValue("dictionary_search_path", dictionarySearchPath);
 
-    QSettings ssheets(settingOrg, "EpwingStyleSheet");
+    Settings ssheets{"EpwingStyleSheet"};
     ssheets.setValue("dictionary", dictSheet);
     ssheets.setValue("book", bookSheet);
     ssheets.setValue("widgets1", statusBarSheet );

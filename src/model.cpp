@@ -19,7 +19,7 @@
 ***************************************************************************/
 
 #include "model.h"
-#include "configure.h"
+#include "settings.h"
 
 Model::Model()
     : bookMode(ModeDictionary)
@@ -32,7 +32,7 @@ Model::~Model()
 
 void Model::load()
 {
-    QSettings groups(CONF->settingOrg, "EpwingGroups");
+    Settings groups{"EpwingGroups"};
     localBooks = new Group("Local Books");
     webSites = new Group("Web Sites");
     int gcnt = groups.beginReadArray("DictionaryGroups");
@@ -70,7 +70,7 @@ void Model::load()
     emit dictionaryGroupsChanged();
 
     {
-        QSettings settings(CONF->settingOrg, "EpwingViewer");
+        Settings settings{"EpwingViewer"};
         method = readMethodSetting(settings);
         setMethod(method);
     }
@@ -78,7 +78,7 @@ void Model::load()
 
 void Model::save()
 {
-    QSettings groups(CONF->settingOrg, "EpwingGroups");
+    Settings groups{"EpwingGroups"};
 
     groups.beginWriteArray("DictionaryGroups");
     for (int i = 0; i < groupList.count()+2 ; i++) {
@@ -116,7 +116,7 @@ void Model::save()
     groups.endArray();
 
     {
-        QSettings settings(CONF->settingOrg, "EpwingViewer");
+        Settings settings{"EpwingViewer"};
         writeMethodSetting(method, &settings);
     }
 }

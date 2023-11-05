@@ -25,7 +25,8 @@
 
 #include <QObject>
 #include <QList>
-#include <QSettings>
+
+class QSettings;
 
 enum BookMode { ModeDictionary, ModeBook };
 

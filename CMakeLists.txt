@@ -103,6 +103,8 @@ add_executable(qolibri MACOSX_BUNDLE WIN32
     src/searchwholepage.cpp
     src/searchwholepage.h
     src/server.h
+    src/settings.cpp
+    src/settings.h
     src/ssheetsetting.cpp
     src/ssheetsetting.h
     src/toolbar.cpp
