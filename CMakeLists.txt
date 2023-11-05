@@ -186,3 +186,6 @@ foreach(lib Core5Compat WebEngine WebEngineCore)
 endforeach()
 
 install(TARGETS qolibri DESTINATION "${CMAKE_INSTALL_BINDIR}")
+if(UNIX AND NOT APPLE)
+    install(FILES qolibri.desktop DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications")
+endif()
