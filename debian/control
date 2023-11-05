@@ -4,10 +4,9 @@ Priority: optional
 Maintainer: Matthias von Faber <mvf@gmx.eu>
 Build-Depends: cmake (>= 3.5),
                debhelper (>= 10),
-               qtbase5-dev (>= 5.2.0),
+               qtbase5-dev (>= 5.15.0),
                qt5-qmake,
-               qt5-default,
-               qttools5-dev-tools,
+               qttools5-dev,
                qtmultimedia5-dev,
                qtwebengine5-dev,
                libeb16-dev,
