@@ -955,6 +955,12 @@ void MainWindow::playSound(const QString &fileName)
         connect(sound, &QMediaPlayer::playbackStateChanged, [this](QMediaPlayer::PlaybackState newState) {
 #endif
             stopAct->setEnabled(newState == QMediaPlayer::PlayingState);
+            if (newState == QMediaPlayer::StoppedState)
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+                sound->setMedia(QUrl{});
+#else
+                sound->setSource(QUrl{});
+#endif
         });
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         connect(sound, qOverload<QMediaPlayer::Error>(&QMediaPlayer::error), [this](QMediaPlayer::Error) {
