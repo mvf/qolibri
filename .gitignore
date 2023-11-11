@@ -8,3 +8,5 @@
 /.idea/
 /.vs/
 /.vscode/
+/out/
+CMakeSettings.json
