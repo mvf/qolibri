@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "macOS deployment target")
 # Visual Studio: Enable parallel builds
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
+# Visual Studio: UTF-8 source and execution encoding, invalid UTF-8 in sources is an error
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8;/we4828>")
 # Visual Studio: Preselect qolibri as the solution's startup project
 set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT qolibri)
 # Copyright info, compiled into application metadata on some platforms
