@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.11)
+# Touch files extracted from downloaded archives
+cmake_policy(SET CMP0135 NEW)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -36,7 +38,6 @@ if(NOT Qt6_FOUND)
     endif()
     find_package(Qt5 5.15 COMPONENTS LinguistTools Multimedia Network WebEngine WebEngineWidgets Widgets REQUIRED)
 endif()
-find_package(ZLIB REQUIRED)
 
 add_executable(qolibri MACOSX_BUNDLE WIN32
     images/qolibri.icns
@@ -119,12 +120,30 @@ add_executable(qolibri MACOSX_BUNDLE WIN32
     src/webview.h
 )
 
-set(QOLIBRI_EB_SOURCE_DIR "" CACHE STRING "Optional path to cmake-enabled EB library source tree")
-if(QOLIBRI_EB_SOURCE_DIR)
-    add_subdirectory("${QOLIBRI_EB_SOURCE_DIR}" eb)
-    set(EB_LIBRARY eb)
-else()
+set(QOLIBRI_USE_SYSTEM_EB OFF CACHE BOOL "Use shared EB library provided by the OS")
+set(QOLIBRI_EB_SOURCE_DIR "" CACHE STRING "Path to cmake-enabled EB sources")
+set(QOLIBRI_EB_SOURCE_URL "https://github.com/mvf/eb/archive/qolibri.tar.gz" CACHE STRING "URL to cmake-enabled EB source tarball")
+set(EB_ZLIB_VERSION "1.3.1" CACHE STRING "ZLIB version when building from source")
+
+if(QOLIBRI_USE_SYSTEM_EB)
+    message(STATUS "Using system EB library")
     find_library(EB_LIBRARY eb REQUIRED)
+    message(STATUS "Found EB library: ${EB_LIBRARY}")
+    add_library(eb SHARED IMPORTED)
+    if(WIN32)
+        set_target_properties(eb PROPERTIES IMPORTED_IMPLIB "${EB_LIBRARY}")
+    else()
+        set_target_properties(eb PROPERTIES IMPORTED_LOCATION "${EB_LIBRARY}")
+    endif()
+    add_library(eb::eb ALIAS eb)
+elseif(QOLIBRI_EB_SOURCE_DIR)
+    message(STATUS "Using EB library from ${QOLIBRI_EB_SOURCE_DIR}")
+    add_subdirectory("${QOLIBRI_EB_SOURCE_DIR}" eb)
+else()
+    message(STATUS "Using EB sources from ${QOLIBRI_EB_SOURCE_URL}")
+    include(FetchContent)
+    FetchContent_Declare(eb URL "${QOLIBRI_EB_SOURCE_URL}")
+    FetchContent_MakeAvailable(eb)
 endif()
 
 target_compile_definitions(qolibri PRIVATE QT_USE_QSTRINGBUILDER)
@@ -182,7 +201,7 @@ set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURR
 qt_add_translation(QM_FILES ${TS_FILES})
 target_sources(qolibri PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/translations/translations.qrc" ${QM_FILES} ${TS_FILES})
 
-target_link_libraries(qolibri PRIVATE Qt::Multimedia Qt::Network Qt::WebEngineWidgets Qt::Widgets "${EB_LIBRARY}" ZLIB::ZLIB)
+target_link_libraries(qolibri PRIVATE Qt::Multimedia Qt::Network Qt::WebEngineWidgets Qt::Widgets eb::eb)
 foreach(lib Core5Compat WebEngine WebEngineCore)
     if(TARGET Qt::${lib})
         target_link_libraries(qolibri PRIVATE Qt::${lib})
