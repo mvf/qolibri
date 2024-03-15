@@ -18,6 +18,7 @@
 ***************************************************************************/
 
 #include "ebook.h"
+#include "method.h"
 
 #include <eb/eb.h>
 #include <eb/binary.h>
@@ -53,26 +54,26 @@ EBook::~EBook()
 {
 }
 
-int EBook::searchQuery(int maxcnt, const QString& query, SearchType type)
+int EBook::searchQuery(int maxcnt, const QString& query, SearchDirection direction)
 {
-    switch (type) {
-    case SearchKeyWord:
-    case SearchCrossWord:
+    switch (direction) {
+    case KeywordSearch:
+    case CrossSearch:
     {
         words = query.split(QRegularExpression{"\\s+"}, Qt::SkipEmptyParts);
-        return hitMultiWord(maxcnt, words, type);
+        return hitMultiWord(maxcnt, words, direction);
     }
     default:
         words = QStringList(query);
-        return hitWord(maxcnt, query, type);
+        return hitWord(maxcnt, query, direction);
     }
 }
 
-int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
+int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchDirection direction)
 {
     hits.clear();
-    if ((stype == SearchKeyWord && !isHaveWordSearch()) ||
-        (stype == SearchCrossWord && !isHaveCrossSearch()) )
+    if ((direction == KeywordSearch && !isHaveWordSearch()) ||
+        (direction == CrossSearch && !isHaveCrossSearch()) )
         return 0;
 
     if ( maxcnt <= 0 )
@@ -80,7 +81,7 @@ int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
     int count = 0;
     for (;;) {
         EB_Error_Code ecode;
-        if (stype == SearchKeyWord) {
+        if (direction == KeywordSearch) {
             ecode = searchKeyword(words);
         } else {
             ecode = searchCross(words);
@@ -116,19 +117,19 @@ int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchType stype)
     return count;
 }
 
-int EBook::hitWord(int maxcnt, const QString &word, SearchType type)
+int EBook::hitWord(int maxcnt, const QString &word, SearchDirection direction)
 {
     hits.clear();
     if ( maxcnt <= 0 ) maxcnt = HitsBufferSize;
     EB_Error_Code ecode;
-    if (type == SearchWord) {
+    if (direction == ForwardSearch) {
 	if (!isHaveWordSearch())
 	    return 0;
         ecode = searchWord(word);
         if (ecode != EB_SUCCESS) {
             return -1;
         }
-    } else if (type == SearchEndWord) {
+    } else if (direction == BackwardSearch) {
 	if (!isHaveEndwordSearch())
 	    return 0;
         ecode = searchEndword(word);

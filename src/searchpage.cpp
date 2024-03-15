@@ -37,18 +37,6 @@ RET_SEARCH SearchPage::doSearch(const Query& query, PageItems &items, int &itemI
     int req_cnt = query.method.limitBook;
     bool break_flag = false;
 
-    SearchType type = SearchExactWord;
-    switch (query.method.direction) {
-    case KeywordSearch:   type = SearchKeyWord; break;
-    case CrossSearch:     type = SearchCrossWord; break;
-    case ExactWordSearch: type = SearchExactWord; break;
-    case ForwardSearch:   type = SearchWord; break;
-    case BackwardSearch:  type = SearchEndWord; break;
-    default:
-        Q_ASSERT(0);
-        qWarning() << "Invalid Search Method" << query.method.direction;
-    }
-
     int totalMatchCount = 0;
     int bookIndex = 0;
 
@@ -65,7 +53,7 @@ RET_SEARCH SearchPage::doSearch(const Query& query, PageItems &items, int &itemI
         eb.initHook(bookBrowser_->fontSize(), book->fontList());
 
         int hit_num = 0;
-        hit_num = eb.searchQuery(req_cnt, query.query, type);
+        hit_num = eb.searchQuery(req_cnt, query.query, query.method.direction);
         if (hit_num <= 0) {
             eb.unsetSubbook();
             continue;

@@ -21,13 +21,11 @@
 #define EBOOK_H
 
 #include "ebcore.h"
+#include "method.h"
 
 #include <QTextCodec>
 
 #include <eb/eb.h>
-
-enum SearchType { SearchWord, SearchEndWord, SearchExactWord,
-                  SearchKeyWord, SearchCrossWord };
 
 class EbMenu : public EbCore
 {
@@ -44,7 +42,7 @@ public:
     EBook(HookMode hmode);
     ~EBook();
 
-    int searchQuery(int maxcnt, const QString &query, SearchType type);
+    int searchQuery(int maxcnt, const QString &query, SearchDirection direction);
 
     // return number of Sub Book
     QString hitText(int index)
@@ -71,9 +69,8 @@ protected:
 
 private:
     QStringList words;
-    int hitWord(int maxcnt, const QString &word, SearchType type);
-    int hitMultiWord(int maxcnt, const QStringList &word_list, SearchType type);
-
+    int hitWord(int maxcnt, const QString &word, SearchDirection direction);
+    int hitMultiWord(int maxcnt, const QStringList &word_list, SearchDirection direction);
 };
 
 class EbAll : public EBook
