@@ -38,6 +38,7 @@ RET_SEARCH SearchPage::doSearch(const Query& query, PageItems &items, int &itemI
 
     int totalMatchCount = 0;
     int bookIndex = 0;
+    const auto &highlightMatches = CONF->highlightMatch ? query.words : decltype(query.words){};
 
     foreach(Book *book, query.method.group->bookList()) {
         if (book->bookType() != BookLocal) continue;
@@ -64,7 +65,7 @@ RET_SEARCH SearchPage::doSearch(const Query& query, PageItems &items, int &itemI
             QString head_i;
             QString head_v;
             QString text_v;
-            eb.getMatch(i, &head_i, &head_v, &text_v, CONF->highlightMatch);
+            eb.getMatch(i, &head_i, &head_v, &text_v, highlightMatches);
             itemIndex++;
             matchCount++;
 

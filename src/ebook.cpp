@@ -56,7 +56,6 @@ EBook::~EBook()
 
 int EBook::search(const Query &query)
 {
-    words = query.words;
     switch (query.method.direction) {
     case KeywordSearch:
     case CrossSearch:
@@ -216,14 +215,12 @@ static QString emphasize(const QString &str, const QString &word)
     return ret;
 }
 
-void EBook::getMatch(int index, QString *head_l, QString *head_v, QString *text, bool highlightMatches)
+void EBook::getMatch(int index, QString *head_l, QString *head_v, QString *text, const QStringList &highlightMatches)
 {
     getText(index, head_l, head_v, text);
-    if (highlightMatches) {
-        foreach(QString s, words) {
-            *head_v = emphasize(*head_v, s);
-            *text = emphasize(*text, s);
-        }
+    for (const auto &s : highlightMatches) {
+        *head_v = emphasize(*head_v, s);
+        *text = emphasize(*text, s);
     }
 }
 

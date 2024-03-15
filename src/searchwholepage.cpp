@@ -25,6 +25,7 @@ RET_SEARCH SearchWholePage::search(const Query& query)
 
     bool break_flag = false;
     RET_SEARCH break_check = NORMAL;
+    const auto &highlightMatches = CONF->highlightMatch ? query.words : decltype(query.words){};
 
     foreach(Book * book, query.method.group->bookList()) {
         if (book->bookType() != BookLocal) continue;
@@ -65,7 +66,7 @@ RET_SEARCH SearchWholePage::search(const Query& query)
                 QString head_i;
                 QString head_v;
                 QString text_v;
-                eb.getMatch(i, &head_i, &head_v, &text_v, CONF->highlightMatch);
+                eb.getMatch(i, &head_i, &head_v, &text_v, highlightMatches);
                 totalCount++;
                 matchCount++;
 
