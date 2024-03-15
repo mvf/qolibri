@@ -34,7 +34,6 @@ RET_SEARCH SearchPage::doSearch(const Query& query, PageItems &items, int &itemI
     items.addHItem(0, "TOP", "tmp");
 
     EBook eb(HookText);
-    int req_cnt = query.method.limitBook;
     bool break_flag = false;
 
     int totalMatchCount = 0;
@@ -52,8 +51,7 @@ RET_SEARCH SearchPage::doSearch(const Query& query, PageItems &items, int &itemI
 
         eb.initHook(bookBrowser_->fontSize(), book->fontList());
 
-        int hit_num = 0;
-        hit_num = eb.searchQuery(req_cnt, query.query, query.method.direction);
+        const auto hit_num = eb.search(query);
         if (hit_num <= 0) {
             eb.unsetSubbook();
             continue;

@@ -21,12 +21,20 @@
 #include "configure.h"
 
 #include <QMenu>
+#include <QRegularExpression>
 
+namespace {
 void addDirectionAct(QMenu *menu, const QString &title, SearchDirection direc)
 {
     QAction *act =  menu->addAction(title);
     act->setData(direc);
 }
+
+QStringList makeWords(const QString &query, SearchDirection direction)
+{
+    return query.split(QRegularExpression{QStringLiteral(u"[\\s　]+")}, Qt::SkipEmptyParts);
+}
+} // anonymous namespace
 
 RET_SEARCH SearchMethod::checkLimit(int totalCount, int matchCount, int textLength) const
 {
@@ -56,12 +64,12 @@ void addDirectionMenu(QMenu *menu)
 }
 
 Query::Query(const QString &query_, const SearchMethod &method_)
-    : query(query_.simplified())
+    : words(makeWords(query_, method_.direction))
     , method(method_)
 {
 }
 
 QString Query::toLogicString() const
 {
-    return query;
+    return words.join(' ');
 }

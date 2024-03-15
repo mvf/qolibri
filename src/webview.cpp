@@ -50,7 +50,7 @@ void WebView::load(const QString &url, const Query &query)
     loading_ = true;
     method_ = query.method;
     QByteArray enc = encString(url);
-    QString ustr = setSearchString(url, enc, query.query);
+    QString ustr = setSearchString(url, enc, query.words.join(' '));
     QString sdir = directionString(url);
     if (!sdir.isEmpty()) {
         ustr = setDirectionString(ustr, sdir, method_.direction);

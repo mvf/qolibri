@@ -55,9 +55,10 @@ void addDirectionMenu(QMenu *menu);
 
 struct Query {
     Query(const QString &query_, const SearchMethod &method_);
-    QString query;
+    QStringList words;
     SearchMethod method;
     QString toLogicString() const;
+    bool isValid() const { return !words.isEmpty(); }
 };
 
 #endif

@@ -54,18 +54,17 @@ EBook::~EBook()
 {
 }
 
-int EBook::searchQuery(int maxcnt, const QString& query, SearchDirection direction)
+int EBook::search(const Query &query)
 {
-    switch (direction) {
+    words = query.words;
+    switch (query.method.direction) {
     case KeywordSearch:
     case CrossSearch:
     {
-        words = query.split(QRegularExpression{"\\s+"}, Qt::SkipEmptyParts);
-        return hitMultiWord(maxcnt, words, direction);
+        return hitMultiWord(query.method.limitBook, words, query.method.direction);
     }
     default:
-        words = QStringList(query);
-        return hitWord(maxcnt, query, direction);
+        return hitWord(query.method.limitBook, query.words.first(), query.method.direction);
     }
 }
 

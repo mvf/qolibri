@@ -790,7 +790,8 @@ void MainWindow::viewPseudoSearch(SearchDirection direction)
 
 void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
 {
-    if (queryStr.isEmpty())
+    const Query query{queryStr, mthd};
+    if (!query.isValid())
         return;
 
     QElapsedTimer pTime;
@@ -804,7 +805,6 @@ void MainWindow::viewSearch(const QString &queryStr, const SearchMethod &mthd)
     bool ntab = toggleTabsAct->isChecked();
     bool pbrowser = toggleBrowserAct->isChecked();
 
-    Query query(queryStr, mthd);
     RET_SEARCH ret = bookView->newPage(this, query, ntab, pbrowser, toggleBookTreeAct->isChecked());
     groupDock->addHistory(query.toLogicString(), mthd, CONF->historyMax);
 

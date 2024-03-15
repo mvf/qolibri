@@ -42,7 +42,7 @@ public:
     EBook(HookMode hmode);
     ~EBook();
 
-    int searchQuery(int maxcnt, const QString &query, SearchDirection direction);
+    int search(const Query &query);
 
     // return number of Sub Book
     QString hitText(int index)
