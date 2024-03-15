@@ -60,30 +60,29 @@ int EBook::search(const Query &query)
     switch (query.method.direction) {
     case KeywordSearch:
     case CrossSearch:
-    {
-        return hitMultiWord(query.method.limitBook, words, query.method.direction);
-    }
+        return searchMultiWord(query);
     default:
-        return hitWord(query.method.limitBook, query.words.first(), query.method.direction);
+        return searchSingleWord(query);
     }
 }
 
-int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchDirection direction)
+int EBook::searchMultiWord(const Query &query)
 {
     hits.clear();
-    if ((direction == KeywordSearch && !isHaveWordSearch()) ||
-        (direction == CrossSearch && !isHaveCrossSearch()) )
+    if ((query.method.direction == KeywordSearch && !isHaveWordSearch()) ||
+        (query.method.direction == CrossSearch && !isHaveCrossSearch()) )
         return 0;
 
+    auto maxcnt = query.method.limitBook;
     if ( maxcnt <= 0 )
         maxcnt = HitsBufferSize;
     int count = 0;
     for (;;) {
         EB_Error_Code ecode;
-        if (direction == KeywordSearch) {
-            ecode = searchKeyword(words);
+        if (query.method.direction == KeywordSearch) {
+            ecode = searchKeyword(query.words);
         } else {
-            ecode = searchCross(words);
+            ecode = searchCross(query.words);
         }
         if (ecode != EB_SUCCESS) {
             break;
@@ -116,29 +115,30 @@ int EBook::hitMultiWord(int maxcnt, const QStringList &words, SearchDirection di
     return count;
 }
 
-int EBook::hitWord(int maxcnt, const QString &word, SearchDirection direction)
+int EBook::searchSingleWord(const Query &query)
 {
     hits.clear();
+    auto maxcnt = query.method.limitBook;
     if ( maxcnt <= 0 ) maxcnt = HitsBufferSize;
     EB_Error_Code ecode;
-    if (direction == ForwardSearch) {
+    if (query.method.direction == ForwardSearch) {
 	if (!isHaveWordSearch())
 	    return 0;
-        ecode = searchWord(word);
+        ecode = searchWord(query.words.first());
         if (ecode != EB_SUCCESS) {
             return -1;
         }
-    } else if (direction == BackwardSearch) {
+    } else if (query.method.direction == BackwardSearch) {
 	if (!isHaveEndwordSearch())
 	    return 0;
-        ecode = searchEndword(word);
+        ecode = searchEndword(query.words.first());
         if (ecode != EB_SUCCESS) {
             return -1;
         }
     } else {
 	if (!isHaveExactwordSearch())
 	    return 0;
-        ecode = searchExactword(word);
+        ecode = searchExactword(query.words.first());
         if (ecode != EB_SUCCESS) {
             return -1;
         }

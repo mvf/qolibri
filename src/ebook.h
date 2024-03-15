@@ -69,8 +69,8 @@ protected:
 
 private:
     QStringList words;
-    int hitWord(int maxcnt, const QString &word, SearchDirection direction);
-    int hitMultiWord(int maxcnt, const QStringList &word_list, SearchDirection direction);
+    int searchSingleWord(const Query &query);
+    int searchMultiWord(const Query &query);
 };
 
 class EbAll : public EBook
