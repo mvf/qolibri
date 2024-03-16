@@ -30,6 +30,19 @@ void addDirectionAct(QMenu *menu, const QString &title, SearchDirection direc)
     act->setData(direc);
 }
 
+bool isMatch(const Query &query, const QString &str, QStringList::const_iterator it)
+{
+    do {
+        if (str.contains(*it, Qt::CaseInsensitive)) {
+            if (query.method.logic == LogicOR)
+                return true;
+        } else if (query.method.logic == LogicAND)
+            return false;
+    } while (++it != query.words.constEnd());
+
+    return query.method.logic == LogicAND;
+}
+
 QStringList makeWords(const QString &query, SearchDirection direction)
 {
     return query.split(QRegularExpression{QStringLiteral(u"[\\s　]+")}, Qt::SkipEmptyParts);
@@ -72,4 +85,20 @@ Query::Query(const QString &query_, const SearchMethod &method_)
 QString Query::toLogicString() const
 {
     return words.join(' ');
+}
+
+bool Query::isFilteredMatch(const QString &str) const
+{
+    auto it{words.constBegin()};
+    if (method.direction <= BackwardSearch) {
+        if (++it == words.constEnd())
+            return true;
+    }
+
+    return isMatch(*this, str, it);
+}
+
+bool Query::isFulltextMatch(const QString &str) const
+{
+    return isMatch(*this, str, words.constBegin());
 }

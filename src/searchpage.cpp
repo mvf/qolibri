@@ -61,6 +61,8 @@ RET_SEARCH SearchPage::doSearch(const Query& query, PageItems &items, int &itemI
         int matchCount = 0;
         for (int i = 0; i < hit_num; i++) {
             if (checkStop()) break;
+            if (query.needsFiltering() && !query.isFilteredMatch(eb.hitText(i, false)))
+                continue;
 
             QString head_i;
             QString head_v;

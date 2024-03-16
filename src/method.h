@@ -58,6 +58,9 @@ struct Query {
     QStringList words;
     SearchMethod method;
     QString toLogicString() const;
+    bool needsFiltering() const { return words.size() > 1 && method.direction <= BackwardSearch; }
+    bool isFilteredMatch(const QString &str) const;
+    bool isFulltextMatch(const QString &str) const;
     bool isValid() const { return !words.isEmpty(); }
 };
 

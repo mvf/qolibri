@@ -63,6 +63,9 @@ RET_SEARCH SearchWholePage::search(const Query& query)
             search_total += hit_num;
 
             for (int i = 0; i < hit_num; i++) {
+                if (!query.isFulltextMatch(eb.hitText(i, false)))
+                    continue;
+
                 QString head_i;
                 QString head_v;
                 QString text_v;

@@ -45,9 +45,9 @@ public:
     int search(const Query &query);
 
     // return number of Sub Book
-    QString hitText(int index)
+    QString hitText(int index, bool hflag = true)
     {
-        return EbCore::text(hits[index].text);
+        return EbCore::text(hits[index].text, hflag);
     }
 
     QString hitHeading(int index)
