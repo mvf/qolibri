@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.11)
-# Touch files extracted from downloaded archives
-cmake_policy(SET CMP0135 NEW)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.24")
+    # Touch files extracted from downloaded archives
+    cmake_policy(SET CMP0135 NEW)
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
