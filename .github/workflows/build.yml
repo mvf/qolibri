@@ -1,0 +1,196 @@
+name: Build
+
+on:
+  push:
+    branches: [ actions ]
+
+jobs:
+  build:
+    name: ${{ matrix.job.name }}
+    runs-on: ${{ matrix.job.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - name: Ubuntu
+            runner: ubuntu-latest
+
+          - name: Windows x86 Qt5
+            runner: windows-latest
+            qt_arch: win32_msvc2019
+            qt_version: 5.15.2
+            qt_archives: d3dcompiler_47 opengl32sw qtbase qtlocation qtmultimedia qttools qttranslations qtwebchannel qtdeclarative
+            qt_modules: qtwebengine
+            cmake_args: -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DQOLIBRI_QT5=ON
+            win_arch: x86
+
+          - name: Windows x64 Qt6
+            runner: windows-latest
+            qt_arch: win64_msvc2019_64
+            qt_version: 6.6.2
+            qt_archives: d3dcompiler_47 opengl32sw qtbase qtdeclarative qttools qttranslations
+            qt_modules: qt5compat qtmultimedia qtpositioning qtwebchannel qtwebengine
+            cmake_args: -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
+            win_arch: x64
+
+          - name: macOS 10.13 Qt5
+            runner: macos-latest
+            qt_arch: clang_64
+            qt_version: 5.15.2
+            qt_archives: qtwebchannel qttranslations qttools qtmultimedia qtlocation qtdeclarative qtbase
+            qt_modules: qtwebengine
+            cmake_args: -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DQOLIBRI_QT5=ON
+
+          - name: macOS 11.0 Qt6
+            runner: macos-latest
+            qt_arch: clang_64
+            qt_version: 6.6.2
+            qt_archives: qttranslations qttools qtdeclarative qtbase
+            qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
+            cmake_args: -DCMAKE_OSX_ARCHITECTURES='x86_64;arm64'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Checkout repository
+        run: |
+          echo lol
+        shell: bash
+
+      - name: Install dependencies (Ubuntu)
+        if: ${{ startsWith(matrix.job.runner, 'ubuntu') }}
+        run: |
+          set -ex
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            debhelper \
+            fakeroot \
+            libeb16-dev \
+            ninja-build \
+            zlib1g-dev \
+            \
+            qt5-qmake \
+            qtmultimedia5-dev \
+            qttools5-dev \
+            qtwebengine5-dev \
+            \
+            libqt6core5compat6-dev \
+            libqt6opengl6-dev \
+            qt6-declarative-dev \
+            qt6-l10n-tools \
+            qt6-multimedia-dev \
+            qt6-tools-dev \
+            qt6-tools-dev-tools \
+            qt6-webengine-dev \
+            qt6-webengine-dev-tools
+
+      - name: Install Qt (Windows, macOS)
+        uses: jurplel/install-qt-action@v3
+        if: ${{ matrix.job.qt_version }}
+        with:
+          arch: ${{ matrix.job.qt_arch }}
+          version: ${{ matrix.job.qt_version }}
+          archives: ${{ matrix.job.qt_archives }}
+          modules: ${{ matrix.job.qt_modules }}
+
+      - name: Install Ninja (Windows)
+        if: ${{ startsWith(matrix.job.runner, 'windows') }}
+        run: |
+          if ((Get-Command "ninja.exe" -ErrorAction SilentlyContinue) -eq $null)
+          {
+             choco install ninja
+          }
+
+      - name: Install Ninja (macOS)
+        if: ${{ startsWith(matrix.job.runner, 'macos') }}
+        env:
+          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
+        run: |
+          brew install ninja
+
+      - name: Set up environment (Windows)
+        uses: ilammy/msvc-dev-cmd@v1
+        if: ${{ matrix.job.win_arch }}
+        with:
+          arch: ${{ matrix.job.win_arch }}
+
+      - name: Configure (Windows, macOS)
+        if: ${{ !startsWith(matrix.job.runner, 'ubuntu') }}
+        run: >
+          cmake -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_INSTALL_PREFIX=build
+          ${{ matrix.job.cmake_args }}
+
+      - name: Build Qt5 (Ubuntu)
+        if: ${{ startsWith(matrix.job.runner, 'ubuntu') }}
+        run: |
+          set -ex
+          export BUILD_DIR="build/qt5"
+          export INSTALL_DIR="qolibri-qt5-$(uname -m)-$(git describe --always --dirty)"
+          cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR" -DQOLIBRI_QT5=ON
+          cmake --build "$BUILD_DIR"
+          cmake --install "$BUILD_DIR" --strip
+          tar -C build -cJf "build/$INSTALL_DIR".tar.xz "$INSTALL_DIR"
+
+      - name: Build Qt6 (Ubuntu)
+        if: ${{ startsWith(matrix.job.runner, 'ubuntu') }}
+        run: |
+          set -ex
+          export BUILD_DIR="build/qt6"
+          export INSTALL_DIR="qolibri-qt6-$(uname -m)-$(git describe --always --dirty)"
+          cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR"
+          cmake --build "$BUILD_DIR"
+          cmake --install "$BUILD_DIR" --strip
+          tar -C build -cJf "build/$INSTALL_DIR".tar.xz "$INSTALL_DIR"
+
+      - name: Build .deb package (Ubuntu)
+        if: ${{ startsWith(matrix.job.runner, 'ubuntu') }}
+        run: |
+          set -ex
+          dpkg-buildpackage
+          mv ../*.deb build/
+
+      - name: Build (Windows, macOS)
+        if: ${{ !startsWith(matrix.job.runner, 'ubuntu') }}
+        run: |
+          cmake --build build
+
+      - name: Deploy (Windows)
+        if: ${{ startsWith(matrix.job.runner, 'windows') }}
+        run: |
+          cmake --install build
+          windeployqt --release build/bin
+
+      - name: Deploy (macOS)
+        if: ${{ startsWith(matrix.job.runner, 'macos') }}
+        run: |
+          set -e
+          cd build
+          macdeployqt qolibri.app -dmg -fs=apfs
+
+      - name: Upload artifact (Ubuntu, macOS)
+        uses: actions/upload-artifact@v4
+        if: ${{ !startsWith(matrix.job.runner, 'windows') }}
+        with:
+          name: ${{ matrix.job.name }}
+          if-no-files-found: error
+          compression-level: 0
+          path: |
+            build/*.deb
+            build/*.dmg
+            build/*.tar.xz
+
+      - name: Upload artifact (Windows)
+        uses: actions/upload-artifact@v4
+        if: ${{ startsWith(matrix.job.runner, 'windows') }}
+        with:
+          name: ${{ matrix.job.name }}
+          if-no-files-found: error
+          path:
+            build/bin/
+
