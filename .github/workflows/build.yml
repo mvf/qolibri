@@ -141,7 +141,8 @@ jobs:
           cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR" -DQOLIBRI_QT5=ON
           cmake --build "$BUILD_DIR"
           cmake --install "$BUILD_DIR" --strip
-          tar -C build -cJf "build/$INSTALL_DIR".tar.xz "$INSTALL_DIR"
+          mkdir -p build/bin
+          tar -C build -cJf build/bin/"$INSTALL_DIR".tar.xz "$INSTALL_DIR"
 
       - name: Build Qt6 (Ubuntu)
         if: ${{ startsWith(matrix.job.runner, 'ubuntu') }}
@@ -152,14 +153,16 @@ jobs:
           cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR"
           cmake --build "$BUILD_DIR"
           cmake --install "$BUILD_DIR" --strip
-          tar -C build -cJf "build/$INSTALL_DIR".tar.xz "$INSTALL_DIR"
+          mkdir -p build/bin
+          tar -C build -cJf build/bin/"$INSTALL_DIR".tar.xz "$INSTALL_DIR"
 
       - name: Build .deb package (Ubuntu)
         if: ${{ startsWith(matrix.job.runner, 'ubuntu') }}
         run: |
           set -ex
           dpkg-buildpackage
-          mv ../*.deb build/
+          mkdir -p build/bin
+          mv ../*.deb build/bin/
 
       - name: Build (Windows, macOS)
         if: ${{ !startsWith(matrix.job.runner, 'ubuntu') }}
@@ -177,7 +180,9 @@ jobs:
         run: |
           set -e
           cd build
+          mkdir bin
           macdeployqt qolibri.app -dmg -fs=apfs
+          mv qolibri.dmg "bin/qolibri-${{ steps.env.outputs.platform }}-${{ steps.env.outputs.version }}".dmg
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -186,8 +191,5 @@ jobs:
           if-no-files-found: error
           compression-level: ${{ startsWith(matrix.job.runner, 'windows') && 6 || 0 }}
           path: |
-            build/*.deb
-            build/*.dmg
-            build/*.tar.xz
-            build/bin
+            build/bin/
 
