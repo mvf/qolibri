@@ -53,9 +53,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Checkout repository
+      - name: Populate environment
+        id: env
         run: |
-          echo lol
+          echo "platform=$(echo '${{ matrix.job.name }}' | tr '[:upper:] ' '[:lower:]-')" >> "$GITHUB_OUTPUT"
+          rev=${GITHUB_SHA::${#GITHUB_SHA}-33}
+          ver=$(grep '^project(.* VERSION' CMakeLists.txt)
+          ver=${ver##* }
+          ver=${ver%)}
+          echo "version=$ver+g$rev" >> "$GITHUB_OUTPUT"
         shell: bash
 
       - name: Install dependencies (Ubuntu)
@@ -131,7 +137,7 @@ jobs:
         run: |
           set -ex
           export BUILD_DIR="build/qt5"
-          export INSTALL_DIR="qolibri-qt5-$(uname -m)-$(git describe --always --dirty)"
+          export INSTALL_DIR="qolibri-$(uname -m)-qt5-${{ steps.env.outputs.version }}"
           cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR" -DQOLIBRI_QT5=ON
           cmake --build "$BUILD_DIR"
           cmake --install "$BUILD_DIR" --strip
@@ -142,7 +148,7 @@ jobs:
         run: |
           set -ex
           export BUILD_DIR="build/qt6"
-          export INSTALL_DIR="qolibri-qt6-$(uname -m)-$(git describe --always --dirty)"
+          export INSTALL_DIR="qolibri-$(uname -m)-qt6-${{ steps.env.outputs.version }}"
           cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR"
           cmake --build "$BUILD_DIR"
           cmake --install "$BUILD_DIR" --strip
@@ -173,24 +179,15 @@ jobs:
           cd build
           macdeployqt qolibri.app -dmg -fs=apfs
 
-      - name: Upload artifact (Ubuntu, macOS)
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
-        if: ${{ !startsWith(matrix.job.runner, 'windows') }}
         with:
-          name: ${{ matrix.job.name }}
+          name: qolibri-${{ steps.env.outputs.platform }}-${{ steps.env.outputs.version }}.zip
           if-no-files-found: error
-          compression-level: 0
+          compression-level: ${{ startsWith(matrix.job.runner, 'windows') && 6 || 0 }}
           path: |
             build/*.deb
             build/*.dmg
             build/*.tar.xz
-
-      - name: Upload artifact (Windows)
-        uses: actions/upload-artifact@v4
-        if: ${{ startsWith(matrix.job.runner, 'windows') }}
-        with:
-          name: ${{ matrix.job.name }}
-          if-no-files-found: error
-          path:
-            build/bin/
+            build/bin
 
