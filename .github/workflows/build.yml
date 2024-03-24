@@ -13,10 +13,12 @@ jobs:
       matrix:
         job:
           - name: Ubuntu
-            runner: ubuntu-latest
+            runner: ubuntu-22.04
+            target: ubuntu22.04
 
           - name: Windows x86 Qt5
             runner: windows-latest
+            target: win32
             qt_arch: win32_msvc2019
             qt_version: 5.15.2
             qt_archives: d3dcompiler_47 opengl32sw qtbase qtlocation qtmultimedia qttools qttranslations qtwebchannel qtdeclarative
@@ -26,6 +28,7 @@ jobs:
 
           - name: Windows x64 Qt6
             runner: windows-latest
+            target: win64
             qt_arch: win64_msvc2019_64
             qt_version: 6.6.2
             qt_archives: d3dcompiler_47 opengl32sw qtbase qtdeclarative qttools qttranslations
@@ -35,6 +38,7 @@ jobs:
 
           - name: macOS 10.13 Qt5
             runner: macos-latest
+            target: macos10.13
             qt_arch: clang_64
             qt_version: 5.15.2
             qt_archives: qtwebchannel qttranslations qttools qtmultimedia qtlocation qtdeclarative qtbase
@@ -43,11 +47,12 @@ jobs:
 
           - name: macOS 11.0 Qt6
             runner: macos-latest
+            target: macos11
             qt_arch: clang_64
             qt_version: 6.6.2
             qt_archives: qttranslations qttools qtdeclarative qtbase
             qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
-            cmake_args: -DCMAKE_OSX_ARCHITECTURES='x86_64;arm64'
+            cmake_args: -DCMAKE_OSX_ARCHITECTURES='arm64;x86_64'
 
     steps:
       - name: Checkout repository
@@ -56,12 +61,15 @@ jobs:
       - name: Populate environment
         id: env
         run: |
-          echo "platform=$(echo '${{ matrix.job.name }}' | tr '[:upper:] ' '[:lower:]-')" >> "$GITHUB_OUTPUT"
-          rev=${GITHUB_SHA::${#GITHUB_SHA}-33}
-          ver=$(grep '^project(.* VERSION' CMakeLists.txt)
-          ver=${ver##* }
-          ver=${ver%)}
-          echo "version=$ver+g$rev" >> "$GITHUB_OUTPUT"
+          if [ "$GITHUB_REF_TYPE" = 'tag' ]; then
+            echo "version='$GITHUB_REF_NAME'" >> "$GITHUB_OUTPUT"
+          else
+            rev=${GITHUB_SHA::${#GITHUB_SHA}-33}
+            ver=$(grep '^project(.* VERSION' CMakeLists.txt)
+            ver=${ver##* }
+            ver=${ver%)}
+            echo "version=$ver+g$rev" >> "$GITHUB_OUTPUT"
+          fi
         shell: bash
 
       - name: Install dependencies (Ubuntu)
@@ -190,16 +198,37 @@ jobs:
       - name: Deploy (macOS)
         if: ${{ startsWith(matrix.job.runner, 'macos') }}
         run: |
-          set -e
+          set -ex
+          volname='qolibri_${{ steps.env.outputs.version }}_${{ matrix.job.target }}'
           cd build
+          macdeployqt qolibri.app
           mkdir bin
-          macdeployqt qolibri.app -dmg -fs=apfs
-          mv qolibri.dmg "bin/qolibri-${{ steps.env.outputs.platform }}-${{ steps.env.outputs.version }}".dmg
+          if [ '${{ matrix.job.target }}' = 'macos11' ]; then
+            for arch in arm64 x86_64; do
+              (
+                mkdir bin/"$arch"
+                cp -a qolibri.app bin/"$arch"
+                for file in $(find bin/"$arch" -type f); do
+                  file -b "$file" | grep -q '^Mach-O universal binary ' || continue
+                  lipo -thin "$arch" -output "$file.$arch" "$file"
+                  mv "$file.$arch" "$file"
+                done
+                hdiutil create -srcfolder bin/"$arch" -volname "$volname"-"$arch" -format ULMO bin/"$volname"-"$arch".dmg
+                rm -rf bin/"$arch"
+              ) &
+            done
+            for job in $(jobs -p); do
+              wait "$job"
+            done
+          else
+            mv qolibri.app bin/
+            hdiutil create -srcfolder bin -volname "$volname" -format ULFO "$volname".dmg
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: qolibri-${{ steps.env.outputs.platform }}-${{ steps.env.outputs.version }}
+          name: qolibri_${{ steps.env.outputs.version }}_${{ matrix.job.target }}
           if-no-files-found: error
           compression-level: ${{ startsWith(matrix.job.runner, 'windows') && 6 || 0 }}
           path: |
