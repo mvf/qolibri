@@ -130,6 +130,7 @@ jobs:
           cmake -B build -G Ninja
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_INSTALL_PREFIX=build
+          -DQOLIBRI_VERSION_STR="${{ steps.env.outputs.version }}"
           ${{ matrix.job.cmake_args }}
 
       - name: Build Qt5 (Ubuntu)
@@ -138,7 +139,7 @@ jobs:
           set -ex
           export BUILD_DIR="build/qt5"
           export INSTALL_DIR="qolibri-$(uname -m)-qt5-${{ steps.env.outputs.version }}"
-          cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR" -DQOLIBRI_QT5=ON
+          cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR" -DQOLIBRI_VERSION_STR='${{ steps.env.outputs.version }}' -DQOLIBRI_QT5=ON
           cmake --build "$BUILD_DIR"
           cmake --install "$BUILD_DIR" --strip
           mkdir -p build/bin
@@ -150,7 +151,7 @@ jobs:
           set -ex
           export BUILD_DIR="build/qt6"
           export INSTALL_DIR="qolibri-$(uname -m)-qt6-${{ steps.env.outputs.version }}"
-          cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR"
+          cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR" -DQOLIBRI_VERSION_STR='${{ steps.env.outputs.version }}'
           cmake --build "$BUILD_DIR"
           cmake --install "$BUILD_DIR" --strip
           mkdir -p build/bin
@@ -160,6 +161,17 @@ jobs:
         if: ${{ startsWith(matrix.job.runner, 'ubuntu') }}
         run: |
           set -ex
+          mv debian/changelog debian/changelog.old
+          {
+              echo "qolibri (${{ steps.env.outputs.version }}) UNRELEASED; urgency=low
+
+            * $(git show -s --format='%s')
+
+           -- $(git show -s --format='%an <%ae>')  $(date -R)
+          "
+              cat debian/changelog.old
+          } > debian/changelog
+          sed -i '/dh_auto_configure --/ s/$/ -DQOLIBRI_VERSION_STR="${{ steps.env.outputs.version }}"/' debian/rules
           dpkg-buildpackage
           mkdir -p build/bin
           mv ../*.deb build/bin/
@@ -187,7 +199,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: qolibri-${{ steps.env.outputs.platform }}-${{ steps.env.outputs.version }}.zip
+          name: qolibri-${{ steps.env.outputs.platform }}-${{ steps.env.outputs.version }}
           if-no-files-found: error
           compression-level: ${{ startsWith(matrix.job.runner, 'windows') && 6 || 0 }}
           path: |
