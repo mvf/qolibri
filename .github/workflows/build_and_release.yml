@@ -1,0 +1,275 @@
+name: Build / Release
+
+on:
+  pull_request:
+  push:
+    branches: [ 'main' ]
+    tags: [ '*' ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.job.name }}
+    runs-on: ${{ matrix.job.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - name: Ubuntu 22.04
+            runner: ubuntu-22.04
+            target: ubuntu22.04-amd64
+
+          - name: Windows x86
+            runner: windows-latest
+            target: win32
+            qt_arch: win32_msvc2019
+            qt_version: 5.15.2
+            qt_archives: d3dcompiler_47 opengl32sw qtbase qtlocation qtmultimedia qttools qttranslations qtwebchannel qtdeclarative
+            qt_modules: qtwebengine
+            cmake_args: -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DQOLIBRI_QT5=ON
+            win_arch: x86
+
+          - name: Windows x64
+            runner: windows-latest
+            target: win64
+            qt_arch: win64_msvc2019_64
+            qt_version: 6.6.2
+            qt_archives: d3dcompiler_47 opengl32sw qtbase qtdeclarative qttools qttranslations
+            qt_modules: qt5compat qtmultimedia qtpositioning qtwebchannel qtwebengine
+            cmake_args: -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
+            win_arch: x64
+
+          - name: macOS 10.13
+            runner: macos-latest
+            target: macos10.13
+            qt_arch: clang_64
+            qt_version: 5.15.2
+            qt_archives: qtwebchannel qttranslations qttools qtmultimedia qtlocation qtdeclarative qtbase
+            qt_modules: qtwebengine
+            cmake_args: -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DQOLIBRI_QT5=ON
+            macos_dmg_format: ULFO
+
+          - name: macOS 11 ARM
+            runner: macos-latest
+            target: macos11-arm
+            qt_arch: clang_64
+            qt_version: 6.6.2
+            qt_archives: qttranslations qttools qtdeclarative qtbase
+            qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
+            cmake_args: -DCMAKE_OSX_ARCHITECTURES='arm64'
+            macos_dmg_format: ULMO
+            macos11_arch: arm64
+
+          - name: macOS 11 Intel
+            runner: macos-latest
+            target: macos11-intel
+            qt_arch: clang_64
+            qt_version: 6.6.2
+            qt_archives: qttranslations qttools qtdeclarative qtbase
+            qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
+            cmake_args: -DCMAKE_OSX_ARCHITECTURES='x86_64'
+            macos_dmg_format: ULMO
+            macos11_arch: x86_64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Populate environment
+        id: env
+        run: |
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            echo "version=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+          else
+            rev=${GITHUB_SHA::${#GITHUB_SHA}-33}
+            ver=$(grep '^project(.* VERSION' CMakeLists.txt)
+            ver=${ver##* }
+            ver=${ver%)}
+            echo "version=$ver+g$rev" >> "$GITHUB_OUTPUT"
+          fi
+        shell: bash
+
+      - name: Install dependencies (Ubuntu)
+        if: ${{ startsWith(matrix.job.runner, 'ubuntu') }}
+        run: |
+          set -ex
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            debhelper \
+            fakeroot \
+            libeb16-dev \
+            ninja-build \
+            zlib1g-dev \
+            \
+            qt5-qmake \
+            qtmultimedia5-dev \
+            qttools5-dev \
+            qtwebengine5-dev \
+            \
+            libqt6core5compat6-dev \
+            libqt6opengl6-dev \
+            qt6-declarative-dev \
+            qt6-l10n-tools \
+            qt6-multimedia-dev \
+            qt6-tools-dev \
+            qt6-tools-dev-tools \
+            qt6-webengine-dev \
+            qt6-webengine-dev-tools
+
+      - name: Install Qt (Windows, macOS)
+        uses: jurplel/install-qt-action@v3
+        if: ${{ matrix.job.qt_version }}
+        with:
+          arch: ${{ matrix.job.qt_arch }}
+          version: ${{ matrix.job.qt_version }}
+          archives: ${{ matrix.job.qt_archives }}
+          modules: ${{ matrix.job.qt_modules }}
+
+      - name: Install Ninja (Windows)
+        if: ${{ startsWith(matrix.job.runner, 'windows') }}
+        run: |
+          if ((Get-Command "ninja.exe" -ErrorAction SilentlyContinue) -eq $null)
+          {
+             choco install ninja
+          }
+
+      - name: Install Ninja (macOS)
+        if: ${{ startsWith(matrix.job.runner, 'macos') }}
+        env:
+          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
+        run: |
+          brew install ninja
+
+      - name: Set up MSVC environment (Windows)
+        uses: ilammy/msvc-dev-cmd@v1
+        if: ${{ matrix.job.win_arch }}
+        with:
+          arch: ${{ matrix.job.win_arch }}
+
+      - name: Configure (Windows, macOS)
+        if: ${{ !startsWith(matrix.job.runner, 'ubuntu') }}
+        run: >
+          cmake -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_INSTALL_PREFIX=build
+          -DQOLIBRI_VERSION_STR="${{ steps.env.outputs.version }}"
+          ${{ matrix.job.cmake_args }}
+
+      - name: Build Qt5 (Ubuntu)
+        if: ${{ startsWith(matrix.job.runner, 'ubuntu') }}
+        run: |
+          set -ex
+          export BUILD_DIR="build/qt5"
+          export INSTALL_DIR="qolibri_${{ steps.env.outputs.version }}_${{ matrix.job.target }}_qt5"
+          cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR" -DQOLIBRI_VERSION_STR='${{ steps.env.outputs.version }}' -DQOLIBRI_QT5=ON
+          cmake --build "$BUILD_DIR"
+          cmake --install "$BUILD_DIR" --strip
+          mkdir -p build/bin
+          tar -C build -cJf build/bin/"$INSTALL_DIR".tar.xz "$INSTALL_DIR"
+
+      - name: Build Qt6 (Ubuntu)
+        if: ${{ startsWith(matrix.job.runner, 'ubuntu') }}
+        run: |
+          set -ex
+          export BUILD_DIR="build/qt6"
+          export INSTALL_DIR="qolibri_${{ steps.env.outputs.version }}_${{ matrix.job.target }}_qt6"
+          cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR" -DQOLIBRI_VERSION_STR='${{ steps.env.outputs.version }}'
+          cmake --build "$BUILD_DIR"
+          cmake --install "$BUILD_DIR" --strip
+          mkdir -p build/bin
+          tar -C build -cJf build/bin/"$INSTALL_DIR".tar.xz "$INSTALL_DIR"
+
+      - name: Build .deb package (Ubuntu)
+        if: ${{ startsWith(matrix.job.runner, 'ubuntu') }}
+        run: |
+          set -ex
+          if [ "$GITHUB_REF_TYPE" != tag ]; then
+            mv debian/changelog debian/changelog.old
+            {
+              echo "qolibri (${{ steps.env.outputs.version }}) UNRELEASED; urgency=low
+
+              * $(git show -s --format='%s')
+
+             -- $(git show -s --format='%an <%ae>')  $(date -R)
+            "
+              cat debian/changelog.old
+            } > debian/changelog
+            sed -i '/dh_auto_configure --/ s/$/ -DQOLIBRI_VERSION_STR="${{ steps.env.outputs.version }}"/' debian/rules
+          fi
+          dpkg-buildpackage
+          mkdir -p build/bin
+          mv ../*.deb build/bin/
+
+      - name: Build (Windows, macOS)
+        if: ${{ !startsWith(matrix.job.runner, 'ubuntu') }}
+        run: |
+          cmake --build build
+
+      - name: Deploy (Windows)
+        if: ${{ startsWith(matrix.job.runner, 'windows') }}
+        run: |
+          set name=qolibri_${{ steps.env.outputs.version }}_${{ matrix.job.target }}
+          cd build
+          md "%name%" bin
+          move qolibri.exe "%name%"
+          windeployqt --release "%name%"
+          7z a -mx9 "%name%.7z" "%name%"
+          move "%name%.7z" bin
+        shell: cmd
+
+      - name: Deploy (macOS)
+        if: ${{ startsWith(matrix.job.runner, 'macos') }}
+        run: |
+          set -ex
+          volname='qolibri_${{ steps.env.outputs.version }}_${{ matrix.job.target }}'
+          cd build
+          macdeployqt qolibri.app
+          mkdir bin
+          mv qolibri.app bin/
+          if [ '${{ matrix.job.macos11_arch }}' ]; then
+            arch='${{ matrix.job.macos11_arch }}'
+            for file in $(find bin/ -type f); do
+              file -b "$file" | grep -q '^Mach-O universal binary ' || continue
+              lipo -thin "$arch" -output "$file.$arch" "$file"
+              mv "$file.$arch" "$file"
+            done
+          fi
+          hdiutil create -srcfolder bin -volname "$volname" -format ${{ matrix.job.macos_dmg_format }} "$volname".dmg
+          mv bin/qolibri.app .
+          mv "$volname".dmg bin/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qolibri_${{ steps.env.outputs.version }}_${{ matrix.job.target }}
+          if-no-files-found: error
+          compression-level: 0
+          path: |
+            build/bin/
+
+  release:
+    name: Release (tags only)
+    if: github.ref_type == 'tag'
+    needs: build
+    permissions:
+      actions: write
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: List artifacts
+        run: ls -laR
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: qolibri_*
+
