@@ -33,7 +33,7 @@ jobs:
             runner: windows-latest
             target: win64
             qt_arch: win64_msvc2019_64
-            qt_version: 6.6.2
+            qt_version: 6.7.2
             qt_archives: d3dcompiler_47 opengl32sw qtbase qtdeclarative qttools qttranslations
             qt_modules: qt5compat qtmultimedia qtpositioning qtwebchannel qtwebengine
             cmake_args: -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
@@ -46,14 +46,14 @@ jobs:
             qt_version: 5.15.2
             qt_archives: qtwebchannel qttranslations qttools qtmultimedia qtlocation qtdeclarative qtbase
             qt_modules: qtwebengine
-            cmake_args: -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DQOLIBRI_QT5=ON
+            cmake_args: -DCMAKE_OSX_ARCHITECTURES='x86_64' -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DQOLIBRI_QT5=ON
             macos_dmg_format: ULFO
 
           - name: macOS 11 ARM
             runner: macos-latest
             target: macos11-arm
             qt_arch: clang_64
-            qt_version: 6.6.2
+            qt_version: 6.7.2
             qt_archives: qttranslations qttools qtdeclarative qtbase
             qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
             cmake_args: -DCMAKE_OSX_ARCHITECTURES='arm64'
@@ -64,7 +64,7 @@ jobs:
             runner: macos-latest
             target: macos11-intel
             qt_arch: clang_64
-            qt_version: 6.6.2
+            qt_version: 6.7.2
             qt_archives: qttranslations qttools qtdeclarative qtbase
             qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
             cmake_args: -DCMAKE_OSX_ARCHITECTURES='x86_64'
@@ -119,7 +119,7 @@ jobs:
             qt6-webengine-dev-tools
 
       - name: Install Qt (Windows, macOS)
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         if: ${{ matrix.job.qt_version }}
         with:
           arch: ${{ matrix.job.qt_arch }}
