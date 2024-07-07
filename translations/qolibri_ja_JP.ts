@@ -798,12 +798,12 @@ Search Method: %2</source>
     <message>
         <location filename="optiondialog.ui" line="223"/>
         <source>Limit of hits per book</source>
-        <translation>最大検索数の限度(辞書)</translation>
+        <translation>最大検索数(辞書)</translation>
     </message>
     <message>
         <location filename="optiondialog.ui" line="243"/>
         <source>Limit of total hits</source>
-        <translation>最大検索数の限度 (全体)</translation>
+        <translation>最大検索数(全体)</translation>
     </message>
     <message>
         <location filename="optiondialog.ui" line="263"/>

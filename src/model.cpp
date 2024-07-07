@@ -20,6 +20,7 @@
 
 #include "model.h"
 #include "settings.h"
+#include "configure.h"
 
 Model::Model()
     : bookMode(ModeDictionary)
@@ -336,8 +337,8 @@ SearchMethod Model::readMethodSetting(const QSettings &set)
                                              ExactWordSearch).toInt();
     m.logic  = (NarrowingLogic)set.value("narrowing_logic",
                                          LogicAND).toInt();
-    m.limitBook = set.value("limit_book", 100).toInt();
-    m.limitTotal = set.value("limit_total", 1000).toInt();
+    m.limitBook = set.value("limit_book", CONF->limitBookHit).toInt();
+    m.limitTotal = set.value("limit_total", CONF->limitTotalHit).toInt();
 
     return m;
 }

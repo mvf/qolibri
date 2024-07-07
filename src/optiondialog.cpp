@@ -57,8 +57,8 @@ void OptionDialog::reset()
     userDefUrlEdit->setText(d->userDefUrl);
     limitCharBox->setValue(d->limitBrowserChar);
     limitMenuBox->setValue(d->limitMenuHit);
-    limitMaxBookBox->setValue(d->maxLimitBookHit);
-    limitMaxTotalBox->setValue(d->maxLimitTotalHit);
+    limitBookBox->setValue(d->limitBookHit);
+    limitTotalBox->setValue(d->limitTotalHit);
 }
 
 void OptionDialog::accept()
@@ -81,6 +81,6 @@ void OptionDialog::accept()
     d->userDefUrl = userDefUrlEdit->text();
     d->limitBrowserChar = limitCharBox->value();
     d->limitMenuHit = limitMenuBox->value();
-    d->maxLimitBookHit = limitMaxBookBox->value();
-    d->maxLimitTotalHit = limitMaxTotalBox->value();
+    d->limitBookHit = limitBookBox->value();
+    d->limitTotalHit = limitTotalBox->value();
 }

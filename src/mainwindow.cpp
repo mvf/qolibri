@@ -1128,17 +1128,21 @@ void MainWindow::clearCache()
 void MainWindow::setConfig()
 {
     OptionDialog dlg(this);
-    auto *const cow = ClipboardOptionsWidget::maybeCreate(this);
+    auto *const cow = ClipboardOptionsWidget::maybeCreate(&dlg);
     if (cow) {
         cow->setMode(watchClipboardMode);
         cow->setRaiseWindowEnabled(watchClipboardRaiseWindow);
         cow->setSelectionDelay(watchClipboardSelectionDelay);
         dlg.insertTab(1, cow, tr("Clipboard"));
     }
-    if (dlg.exec() == QDialog::Accepted && cow) {
-        watchClipboardMode = cow->mode();
-        watchClipboardRaiseWindow = cow->isRaiseWindowEnabled();
-        watchClipboardSelectionDelay = cow->selectionDelay();
+    if (dlg.exec() == QDialog::Accepted) {
+        model->setLimitBook(CONF->limitBookHit);
+        model->setLimitTotal(CONF->limitTotalHit);
+        if (cow) {
+            watchClipboardMode = cow->mode();
+            watchClipboardRaiseWindow = cow->isRaiseWindowEnabled();
+            watchClipboardSelectionDelay = cow->selectionDelay();
+        }
     }
 }
 

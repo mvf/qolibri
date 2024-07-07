@@ -38,8 +38,8 @@ public:
     bool beepSound;
     bool serverMode;
     bool convertFullwidth;
-    int maxLimitBookHit;
-    int maxLimitTotalHit;
+    int limitBookHit;
+    int limitTotalHit;
     int historyMax;
     int limitBrowserChar;
     int limitMenuHit;

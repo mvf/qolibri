@@ -28,8 +28,8 @@ const bool highlightMatch_Def = true;
 const bool beepSound_Def = true;
 const bool serverMode_Def = false;
 const bool convertFullwidth_Def = true;
-const int maxLimitBookHit_Def = 15000;
-const int maxLimitTotalHit_Def = 15000;
+const int limitBookHit_Def = 15000;
+const int limitTotalHit_Def = 15000;
 const int historyMax_Def = 500;
 const int limitBrowserChar_Def = 1000000;
 const int limitMenuHit_Def = 1000;
@@ -73,8 +73,8 @@ void Configure::load()
     limitMenuHit = conf.value("limit_menu", limitMenuHit_Def).toInt();
     indentOffset = conf.value("indent_offset", indentOffset_Def).toInt();
     portNo = conf.value("port_no", portNo_Def).toInt();
-    maxLimitBookHit = conf.value("limt_book", maxLimitBookHit_Def).toInt();
-    maxLimitTotalHit = conf.value("limit_total", maxLimitTotalHit_Def).toInt();
+    limitBookHit = conf.value("limt_book", limitBookHit_Def).toInt();
+    limitTotalHit = conf.value("limit_total", limitTotalHit_Def).toInt();
     browserFont.fromString(conf.value("browser_font", qApp->font()).toString());
     dictionarySearchPath = conf.value("dictionary_search_path", QDir::homePath()).toString();
 
@@ -115,8 +115,8 @@ void Configure::save()
     conf.setValue("userdef_url", userDefUrl);
     conf.setValue("limit_char", limitBrowserChar);
     conf.setValue("limit_menu", limitMenuHit);
-    conf.setValue("limt_book", maxLimitBookHit);
-    conf.setValue("limit_total", maxLimitTotalHit);
+    conf.setValue("limt_book", limitBookHit);
+    conf.setValue("limit_total", limitTotalHit);
     conf.setValue("indent_offset", indentOffset);
     conf.setValue("port_no", portNo);
     conf.setValue("browser_font", browserFont.toString());
@@ -144,8 +144,8 @@ void Configure::setDefault()
     limitMenuHit = limitMenuHit_Def;
     indentOffset = indentOffset_Def;
     portNo = portNo_Def;
-    maxLimitBookHit = maxLimitBookHit_Def;
-    maxLimitTotalHit = maxLimitTotalHit_Def;
+    limitBookHit = limitBookHit_Def;
+    limitTotalHit = limitTotalHit_Def;
     browserFont = qApp->font();
 }
 
