@@ -15,7 +15,7 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8;/we4828>")
 # Visual Studio: Preselect qolibri as the solution's startup project
 set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT qolibri)
 # Copyright info, compiled into application metadata on some platforms
-set(QOLIBRI_COPYRIGHT_YEARS "2007-2024")
+set(QOLIBRI_COPYRIGHT_YEARS "2007-2025")
 set(QOLIBRI_AUTHORS "BOP et al.")
 
 project(qolibri VERSION 2.1.4)
