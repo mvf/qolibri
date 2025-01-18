@@ -15,9 +15,13 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - name: Ubuntu 22.04
+          - name: Ubuntu 22.04 amd64
             runner: ubuntu-22.04
             target: ubuntu22.04-amd64
+
+          - name: Ubuntu 22.04 arm64
+            runner: ubuntu-22.04-arm
+            target: ubuntu22.04-arm64
 
           - name: Windows x86
             runner: windows-latest
@@ -32,8 +36,8 @@ jobs:
           - name: Windows x64
             runner: windows-latest
             target: win64
-            qt_arch: win64_msvc2019_64
-            qt_version: 6.7.2
+            qt_arch: win64_msvc2022_64
+            qt_version: 6.8.1
             qt_archives: d3dcompiler_47 opengl32sw qtbase qtdeclarative qttools qttranslations
             qt_modules: qt5compat qtmultimedia qtpositioning qtwebchannel qtwebengine
             cmake_args: -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
@@ -53,7 +57,7 @@ jobs:
             runner: macos-latest
             target: macos11-arm
             qt_arch: clang_64
-            qt_version: 6.7.2
+            qt_version: 6.8.1
             qt_archives: qttranslations qttools qtdeclarative qtbase
             qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
             cmake_args: -DCMAKE_OSX_ARCHITECTURES='arm64'
@@ -64,7 +68,7 @@ jobs:
             runner: macos-latest
             target: macos11-intel
             qt_arch: clang_64
-            qt_version: 6.7.2
+            qt_version: 6.8.1
             qt_archives: qttranslations qttools qtdeclarative qtbase
             qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
             cmake_args: -DCMAKE_OSX_ARCHITECTURES='x86_64'
@@ -237,7 +241,17 @@ jobs:
               mv "$file.$arch" "$file"
             done
           fi
-          hdiutil create -srcfolder bin -volname "$volname" -format ${{ matrix.job.macos_dmg_format }} "$volname".dmg
+          # https://github.com/actions/runner-images/issues/7522
+          try=1
+          until hdiutil create -srcfolder bin -volname "$volname" -format ${{ matrix.job.macos_dmg_format }} "$volname".dmg
+          do
+            if [ "$try" -eq 10 ]; then
+              echo "Error: hdiutil failed after $try tries"
+              exit 1
+            fi
+            try=$((try + 1))
+            sleep 2
+          done
           mv bin/qolibri.app .
           mv "$volname".dmg bin/
 
