@@ -129,7 +129,7 @@ void MainWindow::createMenus()
     QMenu *fmenu = menuBar()->addMenu(tr("&File"));
 
     enterAct = fmenu->addAction(QIcon(":/images/key_enter.png"), tr("&Search"),
-                                this, SLOT(viewSearch()), tr("Ctrl+F"));
+                                [this]{ lastClipboardText.clear(); viewSearch(); }, tr("Ctrl+F"));
     CONNECT_BUSY(enterAct);
     openBookAct = fmenu->addAction(QIcon(":/images/bookopen.png"),
                                    tr("&Open book"),
@@ -252,7 +252,7 @@ void MainWindow::createToolBars()
 
     searchBar->addAction(clearEditAct);
     searchTextEdit = new QLineEdit(this);
-    connect(searchTextEdit, SIGNAL(returnPressed()), SLOT(viewSearch()));
+    connect(searchTextEdit, &QLineEdit::returnPressed, [this]{ lastClipboardText.clear(); viewSearch(); });
     connect(searchTextEdit, SIGNAL(textChanged(QString)),
             SLOT(changeSearchText(QString)));
     connect(clearEditAct, SIGNAL(triggered()), searchTextEdit, SLOT(clear()));
@@ -1266,9 +1266,10 @@ void MainWindow::searchClientText(const QString &str, bool raiseWindow)
 {
     if (raiseWindow)
         raise();
-    if (str.isEmpty()) {
+    if (str.isEmpty() || str == lastClipboardText) {
         return;
     }
+    lastClipboardText = str;
     if (isBusy()) {
         clientText << str;
         return;
@@ -1308,10 +1309,10 @@ void MainWindow::aboutQolibri()
 
     if (!gitCommitDate.isEmpty())
         msg += tr("<p>Commit date: %1</p>").arg(gitCommitDate);
-   
+
     if (website.isValid())
         msg += QString("<p><a href='%1'>%1</a></p>").arg(website.toString());
-    
+
     msg += tr("<p>Based on <a href='%1'>%1</a></p>").arg("http://qolibri.sourceforge.jp");
     msg += tr("<p>Compiled against Qt version %1</p>").arg(QT_VERSION_STR);
 
