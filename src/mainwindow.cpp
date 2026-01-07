@@ -51,6 +51,7 @@
 #include <QTimer>
 #include <QToolBar>
 #include <QWebEngineHistory>
+#include <QTextStream>
 
 const char *Program = { "qolibri" };
 
@@ -122,6 +123,8 @@ void MainWindow::createActions()
     toggleWatchClipboardAct->setIconVisibleInMenu(false);
     toggleWatchClipboardAct->setIcon(QIcon(":/images/paste.png"));
     connect(toggleWatchClipboardAct, &QAction::toggled, this, &MainWindow::connectClipboard);
+    copyTabListAct = new QAction(tr("Copy list of open tabs"), this);
+    connect(copyTabListAct, &QAction::triggered, this, &MainWindow::copyTabList);
 }
 
 void MainWindow::createMenus()
@@ -191,6 +194,7 @@ void MainWindow::createMenus()
                                       tr("Bookmark"),
                                       this, SLOT(addMark()));
     toolsMenu->addAction(toggleWatchClipboardAct);
+    toolsMenu->addAction(copyTabListAct);
 
     CONNECT_BUSY(addMarkAct);
     toggleTabsAct = toolsMenu->addAction(QIcon(":/images/tabs.png"),
@@ -1297,6 +1301,22 @@ void MainWindow::connectClipboard(bool enable)
         });
     } else
         clipboard->disconnect(SIGNAL(changed(QClipboard::Mode)));
+}
+
+void MainWindow::copyTabList()
+{
+    QString resultString;
+    QTextStream stream(&resultString);
+    // Iterate through tabs and append their titles to the list
+    for (int i = 0; i < bookView->count(); ++i)
+    {
+        QString tabTitle = bookView->tabText(i);
+        stream << tabTitle << Qt::endl;
+    }
+
+    // Paste the list into the clipboard.
+    auto* const clipboard = QApplication::clipboard();
+    clipboard->setText(resultString);
 }
 
 void MainWindow::aboutQolibri()
