@@ -123,7 +123,6 @@ add_executable(qolibri MACOSX_BUNDLE WIN32
 set(QOLIBRI_USE_SYSTEM_EB OFF CACHE BOOL "Use shared EB library provided by the OS")
 set(QOLIBRI_EB_SOURCE_DIR "" CACHE STRING "Path to cmake-enabled EB sources")
 set(QOLIBRI_EB_SOURCE_URL "https://github.com/mvf/eb/archive/qolibri.tar.gz" CACHE STRING "URL to cmake-enabled EB source tarball")
-set(EB_ZLIB_VERSION "1.3.1" CACHE STRING "ZLIB version when building from source")
 
 if(QOLIBRI_USE_SYSTEM_EB)
     message(STATUS "Using system EB library")
