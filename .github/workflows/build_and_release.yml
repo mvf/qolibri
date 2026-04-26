@@ -77,7 +77,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Populate environment
         id: env
@@ -123,7 +123,7 @@ jobs:
             qt6-webengine-dev-tools
 
       - name: Install Qt (Windows, macOS)
-        uses: jurplel/install-qt-action@v4
+        uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730
         if: ${{ matrix.job.qt_version }}
         with:
           arch: ${{ matrix.job.qt_arch }}
@@ -132,7 +132,7 @@ jobs:
           modules: ${{ matrix.job.qt_modules }}
 
       - name: Set up MSVC environment (Windows)
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: TheMrMilchmann/setup-msvc-dev@79dac248aac9d0059f86eae9d8b5bfab4e95e97c
         if: ${{ matrix.job.win_arch }}
         with:
           arch: ${{ matrix.job.win_arch }}
@@ -245,7 +245,7 @@ jobs:
           mv "$volname".dmg bin/
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: qolibri_${{ steps.env.outputs.version }}_${{ matrix.job.target }}
           if-no-files-found: error
@@ -263,7 +263,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           merge-multiple: true
 
@@ -271,7 +271,7 @@ jobs:
         run: ls -laR
 
       - name: Create release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda
         with:
           draft: true
           files: qolibri_*
