@@ -37,7 +37,7 @@ jobs:
             runner: windows-latest
             target: win64
             qt_arch: win64_msvc2022_64
-            qt_version: 6.9.3
+            qt_version: 6.11.0
             qt_archives: d3dcompiler_47 opengl32sw qtbase qtdeclarative qttools qttranslations
             qt_modules: qt5compat qtmultimedia qtpositioning qtwebchannel qtwebengine
             cmake_args: -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
@@ -53,25 +53,25 @@ jobs:
             cmake_args: -DCMAKE_OSX_ARCHITECTURES='x86_64' -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DQOLIBRI_QT5=ON
             macos_dmg_format: ULFO
 
-          - name: macOS 12 ARM
+          - name: macOS 13 ARM
             runner: macos-latest
-            target: macos12-arm
+            target: macos13-arm
             qt_arch: clang_64
-            qt_version: 6.9.3
+            qt_version: 6.11.0
             qt_archives: qttranslations qttools qtdeclarative qtbase
             qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
-            cmake_args: -DCMAKE_OSX_ARCHITECTURES='arm64' -DCMAKE_OSX_DEPLOYMENT_TARGET=12
+            cmake_args: -DCMAKE_OSX_ARCHITECTURES='arm64' -DCMAKE_OSX_DEPLOYMENT_TARGET=13
             macos_dmg_format: ULMO
             macos11_arch: arm64
 
-          - name: macOS 12 Intel
+          - name: macOS 13 Intel
             runner: macos-latest
-            target: macos12-intel
+            target: macos13-intel
             qt_arch: clang_64
-            qt_version: 6.9.3
+            qt_version: 6.11.0
             qt_archives: qttranslations qttools qtdeclarative qtbase
             qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
-            cmake_args: -DCMAKE_OSX_ARCHITECTURES='x86_64' -DCMAKE_OSX_DEPLOYMENT_TARGET=12
+            cmake_args: -DCMAKE_OSX_ARCHITECTURES='x86_64' -DCMAKE_OSX_DEPLOYMENT_TARGET=13
             macos_dmg_format: ULMO
             macos11_arch: x86_64
 
@@ -126,6 +126,7 @@ jobs:
         uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730
         if: ${{ matrix.job.qt_version }}
         with:
+          aqtsource: git+https://github.com/miurahr/aqtinstall.git@151f6f436c2f5a5ceb7890ad970ca6f3b4d83512
           arch: ${{ matrix.job.qt_arch }}
           version: ${{ matrix.job.qt_version }}
           archives: ${{ matrix.job.qt_archives }}
