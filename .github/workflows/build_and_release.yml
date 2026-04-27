@@ -152,7 +152,7 @@ jobs:
         run: |
           set -ex
           export BUILD_DIR="build/qt5"
-          export INSTALL_DIR="qolibri_${{ steps.env.outputs.version }}_${{ matrix.job.target }}_qt5"
+          export INSTALL_DIR="qolibri_${{ steps.env.outputs.version }}_qt5_linux-$(uname -m)"
           cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR" -DQOLIBRI_VERSION_STR='${{ steps.env.outputs.version }}' -DQOLIBRI_QT5=ON
           cmake --build "$BUILD_DIR"
           cmake --install "$BUILD_DIR" --strip
@@ -164,7 +164,7 @@ jobs:
         run: |
           set -ex
           export BUILD_DIR="build/qt6"
-          export INSTALL_DIR="qolibri_${{ steps.env.outputs.version }}_${{ matrix.job.target }}_qt6"
+          export INSTALL_DIR="qolibri_${{ steps.env.outputs.version }}_qt6_linux-$(uname -m)"
           cmake -B "$BUILD_DIR" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="build/$INSTALL_DIR" -DQOLIBRI_VERSION_STR='${{ steps.env.outputs.version }}'
           cmake --build "$BUILD_DIR"
           cmake --install "$BUILD_DIR" --strip
