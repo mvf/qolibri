@@ -152,7 +152,7 @@ RET_SEARCH BookView::newPage(QWidget *parent, const Query& query, bool newTab,
             emit allWebLoaded();
         }
     }
-    if (retStatus != NORMAL) {
+    if (retStatus != NORMAL && retStatus != INTERRUPTED && retStatus < LIMIT_CHAR) {
         delete page;
         if (dcount == 0) return retStatus;
         retStatus = NORMAL;
