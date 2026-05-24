@@ -24,6 +24,11 @@ OptionDialog::OptionDialog(QWidget *parent)
     : QDialog(parent)
 {
     setupUi(this);
+
+    // Indentation is not implemented, so hide these for now
+    indentOffsetBox->hide();
+    indentOffsetLabel->hide();
+
     waveProcEdit->setPlaceholderText(tr("(internal audio player)"));
     waveProcEdit->setFileDialogTitle(tr("Browse for audio player"));
     mpegProcEdit->setPlaceholderText(tr("(system default video player)"));
