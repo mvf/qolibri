@@ -727,7 +727,7 @@ Search Method: %2</source>
     </message>
     <message>
         <location filename="optiondialog.ui" line="44"/>
-        <source>Server mode(must restart)</source>
+        <source>Server mode (requires restart)</source>
         <translation>サーバモード（再起動で有効）</translation>
     </message>
     <message>
@@ -742,8 +742,8 @@ Search Method: %2</source>
     </message>
     <message>
         <location filename="optiondialog.ui" line="90"/>
-        <source>Port No (server mode)</source>
-        <translation>ポート番号（サーバモードで有効）</translation>
+        <source>Port number</source>
+        <translation>ポート番号</translation>
     </message>
     <message>
         <location filename="optiondialog.ui" line="110"/>

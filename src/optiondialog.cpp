@@ -53,6 +53,8 @@ void OptionDialog::reset()
     convertFullwidthCheck->setChecked(d->convertFullwidth);
     historyBox->setValue(d->historyMax);
     indentOffsetBox->setValue(d->indentOffset);
+    portNoLabel->setEnabled(d->serverMode);
+    portNoBox->setEnabled(d->serverMode);
     portNoBox->setValue(d->portNo);
     waveProcEdit->setText(d->waveProcess);
     mpegProcEdit->setText(d->mpegProcess);
