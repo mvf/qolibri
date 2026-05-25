@@ -37,7 +37,7 @@ jobs:
             runner: windows-latest
             target: win64
             qt_arch: win64_msvc2022_64
-            qt_version: 6.11.0
+            qt_version: 6.11.1
             qt_archives: d3dcompiler_47 opengl32sw qtbase qtdeclarative qttools qttranslations
             qt_modules: qt5compat qtmultimedia qtpositioning qtwebchannel qtwebengine
             cmake_args: -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
@@ -57,7 +57,7 @@ jobs:
             runner: macos-latest
             target: macos13-arm
             qt_arch: clang_64
-            qt_version: 6.11.0
+            qt_version: 6.11.1
             qt_archives: qttranslations qttools qtdeclarative qtbase
             qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
             cmake_args: -DCMAKE_OSX_ARCHITECTURES='arm64' -DCMAKE_OSX_DEPLOYMENT_TARGET=13
@@ -68,7 +68,7 @@ jobs:
             runner: macos-latest
             target: macos13-intel
             qt_arch: clang_64
-            qt_version: 6.11.0
+            qt_version: 6.11.1
             qt_archives: qttranslations qttools qtdeclarative qtbase
             qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
             cmake_args: -DCMAKE_OSX_ARCHITECTURES='x86_64' -DCMAKE_OSX_DEPLOYMENT_TARGET=13
