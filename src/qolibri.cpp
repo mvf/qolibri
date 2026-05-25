@@ -33,6 +33,7 @@
 #include <QLibraryInfo>
 #include <QLocale>
 #include <QTranslator>
+#include <QtGlobal>
 #ifdef USE_STATIC_PLUGIN
 #include <QtPlugin>
 #endif
@@ -66,6 +67,9 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(qolibri);
 
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#if defined(Q_OS_WIN) && (QT_VERSION >= QT_VERSION_CHECK(6, 7, 0))
+    QApplication::setStyle("fusion");
+#endif
     QApplication app(argc, argv);
 
     configure_s = new Configure();
