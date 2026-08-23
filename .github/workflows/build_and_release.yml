@@ -15,13 +15,13 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - name: Ubuntu 22.04 amd64
-            runner: ubuntu-22.04
-            target: ubuntu22.04-amd64
+          - name: Ubuntu 24.04 amd64
+            runner: ubuntu-24.04
+            target: ubuntu24.04-amd64
 
-          - name: Ubuntu 22.04 arm64
-            runner: ubuntu-22.04-arm
-            target: ubuntu22.04-arm64
+          - name: Ubuntu 24.04 arm64
+            runner: ubuntu-24.04-arm
+            target: ubuntu24.04-arm64
 
           - name: Windows x86
             runner: windows-latest
@@ -37,7 +37,7 @@ jobs:
             runner: windows-latest
             target: win64
             qt_arch: win64_msvc2022_64
-            qt_version: 6.11.1
+            qt_version: 6.11.2
             qt_archives: d3dcompiler_47 opengl32sw qtbase qtdeclarative qttools qttranslations
             qt_modules: qt5compat qtmultimedia qtpositioning qtwebchannel qtwebengine
             cmake_args: -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
@@ -57,7 +57,7 @@ jobs:
             runner: macos-latest
             target: macos13-arm
             qt_arch: clang_64
-            qt_version: 6.11.1
+            qt_version: 6.11.2
             qt_archives: qttranslations qttools qtdeclarative qtbase
             qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
             cmake_args: -DCMAKE_OSX_ARCHITECTURES='arm64' -DCMAKE_OSX_DEPLOYMENT_TARGET=13
@@ -68,7 +68,7 @@ jobs:
             runner: macos-latest
             target: macos13-intel
             qt_arch: clang_64
-            qt_version: 6.11.1
+            qt_version: 6.11.2
             qt_archives: qttranslations qttools qtdeclarative qtbase
             qt_modules: qtmultimedia qtpositioning qtwebchannel qtwebengine qt5compat
             cmake_args: -DCMAKE_OSX_ARCHITECTURES='x86_64' -DCMAKE_OSX_DEPLOYMENT_TARGET=13
@@ -215,7 +215,21 @@ jobs:
           set -ex
           volname='qolibri_${{ steps.env.outputs.version }}_${{ matrix.job.target }}'
           cd build
-          macdeployqt qolibri.app
+
+          cp -r qolibri.app qolibri.app.undeployed
+          try=1
+          while :; do
+            macdeployqt qolibri.app
+            [ -f qolibri.app/Contents/Resources/qt.conf ] && break
+            if [ "$try" -eq 10 ]; then
+              echo "Error: macdeployqt failed after $try tries"
+              exit 1
+            fi
+            rm -rf qolibri.app
+            cp -r qolibri.app.undeployed qolibri.app
+            try=$((try + 1))
+            sleep 2
+          done
 
           # https://qt-project.atlassian.net/browse/QTBUG-18662
           mkdir -p qolibri.app/Contents/translations
