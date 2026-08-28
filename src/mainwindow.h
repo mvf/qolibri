@@ -61,6 +61,7 @@ public slots:
 
 private slots:
     void connectClipboard(bool enable);
+    void copyTabList();
     void viewInfo(Book *book);
     void viewPseudoSearch(SearchDirection direction);
     void viewSearch();
@@ -152,6 +153,7 @@ private:
     QAction *toggleMethodBarAct;
     QAction *toggleBookTreeAct;
     QAction *toggleWatchClipboardAct;
+    QAction *copyTabListAct;
     QAction *booksAct;
     QAction *configAct;
     QAction *sSheetAct;
